@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Invoice{% endblock %} 
+
+{% block page_title %}Pembelian{% endblock %} 
+
+{% block content %}
+<div class="flex flex-row gap-3 justify-start mb-3">
+    <a href="{% url 'invoice' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pembelian/invoice/' %} text-white bg-customBlue border-customBlue {% endif %}">
+        Invoice
+    </a>
+    <a href="{% url 'invoice_belum' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pembelian/invoice/belumlunas/' %} text-white bg-customBlue border-customBlue {% endif %}">
+        Invoice Belum Lunas
+    </a>
+    <a href="{% url 'invoice_jatuh' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pembelian/invoice/jatuhtempo/' %} text-white bg-customBlue border-customBlue {% endif %}">
+        Invoice Jatuh Tempo
+    </a>
+  </div>
+  <div
+  class="flex flex-col p-2 h-auto mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800"
+>
+    <div class="mt-5 ml-3 flex flex-row justify-between {% if request.path == '/pembelian/invoice/jatuhtempo/' %} flex-col {% endif %}">
+        <div class="justify-start">
+            <input type="text" id="searchInvoice" class="form-control rounded-lg border-gray-200 border-2 max-w-40 focus:border-customBlue lg:max-w-full" placeholder="Cari No Invoice disini...">
+            <button class="bg-customBlue border-customBlue hover:bg-[#243F6B] p-2 rounded-lg text-white w-12" type="button">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        {% if request.path == '/pembelian/invoice/' %}
+        <a href="{% url 'tambah_invoice' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
+            <div class="flex flex-row justify-center items-center">
+                <p class="hidden lg:block p-1 lg:text-gray-400">Tambah Baru</p>
+                <i class="fas fa-plus p-1 text-customBlue"></i>
+            </div>
+        </a>
+        {% elif request.path == '/pembelian/invoice/jatuhtempo/' %}
+        <div class="mt-5 flex">
+            <div class="mx-1">
+                <label for="per_tgl" class="block text-sm font-medium text-gray-700">Per Tanggal</label>
+                <input type="date" id="per_tgl"
+                class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue">
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <table id="allpesanan" class="display cell-border">
+        <thead>
+            <tr>
+                <th>No Invoice</th>
+                <th>Tanggal Invoice</th>
+                {% if request.path == '/pembelian/invoice/' %}
+                <th>No Referensi</th>
+                {% else %}
+                <th>Tanggal Jatuh Tempo</th>
+                {% endif %}
+                <th>Supplier</th>
+                <th>Total</th>
+                {% if request.path == '/pembelian/invoice/' %}
+                <th>Status</th>
+                <th>Terakhir Edit</th>
+                <th>Edit</th>
+                <th>Hapus</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>PB20001</td>
+                <td>01/02/2025</td>
+                {% if request.path == '/pembelian/invoice/' %}
+                <td>BB/001/2001</td>
+                {% else %}
+                <td>01/05/2025</td>
+                {% endif %}
+                <td>PT Maju Jaya</td>
+                <td>Rp 10.050.000,-</td>
+                {% if request.path == '/pembelian/invoice/' %}
+                <td>Belum Lunas</td>
+                <td>03/04/2025</td>
+                <td><button><i class="fa-regular fa-eye text-2xl text-customBlue"></i></button></td>
+                <td><button><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+                {% endif %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

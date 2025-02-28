@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Tambah Barang Katalog{% endblock %} 
+
+{% block page_title %}Katalog{% endblock %} 
+
+{% block content %}
+<div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
+    <div class="flex flex-row justify-between mb-3">
+        <h2 class="text-lg font-semibold">Detail Katalog</h2>
+        <button onclick="window.history.back()"><i class="fa-solid fa-x w-8 text-gray-500"></i></button>
+      </div>
+    <hr class="border-gray-300 pb-3">
+    <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Kode Barang -->
+        <div class="relative">
+            <label for="kode-brg" class="block text-sm font-medium text-gray-700">Kode Barang</label>
+            
+            <!-- Input untuk pencarian -->
+            <input type="text" id="searchKode" placeholder="Masukkan Kode barang"
+                class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm bg-white focus:outline-none focus:ring-customBlue focus:border-customBlue">
+            
+            <!-- Dropdown List -->
+            <ul id="dropdownList" class="absolute w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg hidden z-50 max-h-40 overflow-y-auto">   </ul>
+        </div>
+
+        <!-- Nama Barang -->
+        <div>
+            <label for="nama-brg" class="block text-sm font-medium text-gray-700">Nama Barang</label>
+            <input type="text" id="kode-brg" value="AKI GS SEALED MF - Astra Otoparts" disabled
+              class="mt-1 block w-full border bg-gray-200 border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400">
+          </div>
+        
+        <!-- Kategori -->
+        <div>
+            <label for="kategori" class="block text-sm font-medium text-gray-700">Kategori</label>
+            <input type="text" id="kategori" value="Kelistrikan" disabled
+              class="mt-1 block w-full border bg-gray-200 border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400">
+          </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Harga -->
+            <div>
+            <label for="hrgbrg" class="block text-sm font-medium text-gray-700">Harga Barang</label>
+                <input type="number" id="hrgbrg" placeholder="Masukkan harga barang" value="45.000"
+                    class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700">
+            </div>
+
+            <!-- Harga Setelah Diskon -->
+            <div>
+                <label for="hrgbrg" class="block text-sm font-medium text-gray-700">Harga Setelah Diskon</label>
+                <input type="number" id="hrgbrg" placeholder="Masukkan harga barang setelah diskon" value="45.000"
+                    class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700">
+            </div>
+        </div>
+        <div>
+            <p>Tampilkan pada Katalog Utama</p>
+            <button type="button" id="toggleCheck" class="p-1 mt-1 border-2 rounded-lg border-customBlue hover:bg-gray-200 w-8 h-8">
+                <svg id="checkIcon" class="w-5 h-5 text-green-500 hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 21" fill="currentColor">
+                  <path fill-rule="evenodd" d="M9 16.172l10.293-10.293-1.414-1.414L9 13.344l-4.293-4.293-1.414 1.414L9 16.172z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+      </form>
+      <button class="mt-5 ml-auto text-center">
+        <p class="text-sm font-medium text-gray-700">Simpan</p>
+        <i class="mt-1 fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
+      </button>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    const kodeBarang = ["0001273", "0001274", "0001275", "0001276", "0001277", "0001278"];
+    const searchKode = document.getElementById("searchKode");
+    const dropdownList = document.getElementById("dropdownList");
+
+    function updateDropdown(filterText = "") {
+        let filteredItems = kodeBarang.filter(kode => kode.toLowerCase().includes(filterText.toLowerCase())).slice(0, 3);
+        let displayedItems = filteredItems.slice(0, filterText ? filteredItems.length : 3); // Default 3 item, cari semua saat input
+        
+        dropdownList.innerHTML = displayedItems
+            .map(kode => `<li class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectKode(this)">${kode}</li>`)
+            .join("");
+
+        dropdownList.classList.toggle("hidden", displayedItems.length === 0);
+    }
+
+    // Tampilkan 3 item default saat pertama kali input diklik
+    searchKode.addEventListener("focus", () => {
+        updateDropdown();
+    });
+
+    // Update dropdown berdasarkan pencarian
+    searchKode.addEventListener("input", () => {
+        updateDropdown(searchKode.value);
+    });
+
+    // Sembunyikan dropdown jika klik di luar
+    document.addEventListener("click", (event) => {
+        if (!searchKode.contains(event.target) && !dropdownList.contains(event.target)) {
+            dropdownList.classList.add("hidden");
+        }
+    });
+
+    // Pilih item dan isi input
+    function selectKode(element) {
+        searchKode.value = element.textContent;
+        dropdownList.classList.add("hidden");
+    }
+
+    document.getElementById("toggleCheck").addEventListener("click", function () {
+        document.getElementById("checkIcon").classList.toggle("hidden");
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Faktur{% endblock %} 
+
+{% block page_title %}Penjualan{% endblock %} 
+
+{% block content %}
+<div class="flex flex-row gap-3 justify-start mb-3">
+    <a href="{% url 'faktur' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/penjualan/faktur/' %} text-white bg-customBlue border-customBlue {% endif %}">
+        Faktur
+    </a>
+    <a href="{% url 'faktur_belum' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/penjualan/faktur/belumlunas/' %} text-white bg-customBlue border-customBlue {% endif %}">
+        Faktur Belum Lunas
+    </a>
+    <a href="{% url 'faktur_jatuh' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/penjualan/faktur/jatuhtempo/' %} text-white bg-customBlue border-customBlue {% endif %}">
+        Faktur Jatuh Tempo
+    </a>
+  </div>
+  <div
+  class="flex flex-col p-2 h-auto mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800"
+>
+    <div class="mt-5 ml-3 flex flex-row justify-between {% if request.path == '/penjualan/faktur/jatuhtempo/' %} flex-col {% endif %}">
+        <div class="justify-start">
+            <input type="text" id="searchFaktur" class="form-control rounded-lg border-gray-200 border-2 max-w-40 focus:border-customBlue lg:max-w-full" placeholder="Cari No Faktur disini...">
+            <button class="bg-customBlue border-customBlue hover:bg-[#243F6B] p-2 rounded-lg text-white w-12" type="button">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        {% if request.path == '/penjualan/faktur/jatuhtempo/' %}
+        <div class="mt-5 flex">
+            <div class="mx-1">
+                <label for="per_tgl" class="block text-sm font-medium text-gray-700">Per Tanggal</label>
+                <input type="date" id="per_tgl"
+                class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue">
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <table id="allpesanan" class="display cell-border">
+        <thead>
+            <tr>
+                <th>No Faktur</th>
+                <th>Tanggal Faktur</th>
+                {% if request.path == '/penjualan/faktur/belumlunas' or '/penjualan/faktur/jatuhtempo' %}
+                <th>Tanggal Jatuh Tempo</th>
+                {% endif %}
+                <th>No Referensi</th>
+                <th>Customer</th>
+                <th>Total</th>
+                {% if request.path == '/penjualan/faktur/' %}
+                <th>Status</th>
+                <th>Terakhir Edit</th>
+                <th>Edit</th>
+                <th>Hapus</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>BJ20001</td>
+                <td>01/02/2025</td>
+                <td>BM0001</td>
+                {% if request.path == '/penjualan/faktur/belumlunas' or '/penjualan/faktur/jatuhtempo' %}
+                <td>01/05/2025</td>
+                {% endif %}
+                <td>Ko Andi</td>
+                <td>Rp 1.050.000,-</td>
+                {% if request.path == '/penjualan/faktur/' %}
+                <td>Belum Bayar</td>
+                <td>03/04/2025</td>
+                <td><button><i class="fa-regular fa-eye text-2xl text-customBlue"></i></button></td>
+                <td><button><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+                {% endif %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

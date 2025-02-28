@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}Tambah Barang{% endblock %} 
+
+{% block page_title %}Barang{% endblock %} 
+
+{% block content %}
+<div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
+  <div class="flex flex-row justify-between mb-3">
+    <h2 class="text-lg font-semibold">Detail Barang</h2>
+    <button onclick="window.history.back()"><i class="fa-solid fa-x w-8 text-gray-500"></i></button>
+  </div>
+    <hr class="border-gray-300 pb-3">
+    <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Nama Barang -->
+        <div>
+          <label for="nama-brg" class="block text-sm font-medium text-gray-700">Nama Barang</label>
+          <input type="text" id="nama-brg" placeholder="Masukkan nama barang"
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700">
+        </div>
+        
+        <!-- Kode Barang -->
+        <div>
+          <label for="kode-brg" class="block text-sm font-medium text-gray-700">Kode Barang</label>
+          <input type="text" id="kode-brg" placeholder="Masukkan kode barang"
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700">
+        </div>
+        
+        <!-- Kategori -->
+        <div>
+          <label for="kategori" class="block text-sm font-medium text-gray-700">Kategori</label>
+          <select id="kategori"
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm bg-white focus:outline-none focus:ring-customBlue focus:border-customBlue">
+            <option disabled selected>Masukkan kategori barang</option>
+            <option>Rem</option>
+            <option>Data</option>
+            <option>Data</option>
+          </select>
+        </div>
+        
+        <!-- Merk -->
+        <div>
+          <label for="merk" class="block text-sm font-medium text-gray-700">Merk</label>
+          <select id="merk"
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm bg-white focus:outline-none focus:ring-customBlue focus:border-customBlue">
+            <option disabled selected>Masukkan merek barang</option>
+            <option>Mio</option>
+            <option>Vario</option>
+            <option>Beat</option>
+          </select>
+        </div>
+        
+        <!-- Harga Barang -->
+        <div class="md:col-span-2">
+          <label for="input-hrgbrg" class="block text-sm font-medium text-gray-700">Harga Barang</label>
+            <input type="text" id="input-hrgbrg" placeholder="Masukkan harga barang"
+                class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700">
+        </div>
+        
+        <!-- Stok Minimum -->
+        <div>
+          <label for="stok-minimum" class="block text-sm font-medium text-gray-700">Stok Minimum</label>
+          <div class="flex items-center">
+            <input type="text" id="stok-minimum" placeholder="Masukkan stok minimum barang"
+              class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm focus:outline-none focus:ring-customBlue focus:border-customBlue">
+          </div>
+        </div>
+
+        <!-- Harga Grosir -->
+        <div class="md:col-span-2">
+          <div class="grid grid-cols-3">
+            <label for="stok-minimum" class="block text-sm font-medium text-gray-700">Grosir</label>
+            <label for="stok-minimum" class="block text-center text-sm font-medium text-gray-700">Minimum Pembelian</label>
+            <label for="stok-minimum" class="block text-center text-sm font-medium text-gray-700">Harga Satuan</label>
+          </div>
+          <div class="flex">
+            <div
+              class="mt-1 mr-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400"> Harga Grosir 1:
+            </div>
+            <input type="number" value="12" 
+              class="mt-1 mx-2 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" />
+            <input type="number" value="50.000"
+              class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" />
+          </div>
+          <div class="flex">
+            <div
+              class="mt-1 mr-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400"> Harga Grosir 1:
+            </div>
+            <input type="number" value="12" 
+              class="mt-1 mx-2 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" />
+            <input type="number" value="50.000"
+              class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" />
+          </div>
+        </div>
+        <div class="hidden md:block"></div>
+        
+        <!-- Upload Gambar -->
+        <div class="md:col-span-2">
+            <label for="upload_gambar" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Upload Gambar</label>
+            <div class="flex items- h-[89px] border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                <span id="placeholder" class="flex-grow px-3 py-2 text-sm text-gray-500 dark:text-gray-300">
+                Upload Gambar (0/5)
+                </span>
+                <label for="upload_gambar" class="cursor-pointer px-4 py-2 text-gray-700 rounded-r-lg dark:bg-gray-600 dark:text-white">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 14L11.6464 14.3536L12 14.7071L12.3536 14.3536L12 14ZM12.5 5C12.5 4.72386 12.2761 4.5 12 4.5C11.7239 4.5 11.5 4.72386 11.5 5L12.5 5ZM6.64645 9.35355L11.6464 14.3536L12.3536 13.6464L7.35355 8.64645L6.64645 9.35355ZM12.3536 14.3536L17.3536 9.35355L16.6464 8.64645L11.6464 13.6464L12.3536 14.3536ZM12.5 14L12.5 5L11.5 5L11.5 14L12.5 14Z" fill="#222222"/>
+                    <path d="M5 16L5 17C5 18.1046 5.89543 19 7 19L17 19C18.1046 19 19 18.1046 19 17V16" stroke="#222222"/>
+                    </svg>
+                </label>
+                <input type="file" id="upload_gambar" multiple class="hidden">
+            </div>
+        </div>
+        
+        <!-- Keterangan -->
+        <div class="md:col-span-2">
+          <label for="keterangan" class="block text-sm font-medium text-gray-700">Keterangan</label>
+          <textarea id="keterangan" rows="3" placeholder="Masukkan keterangan"
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue"></textarea>
+        </div>
+      </form>
+      <button class="mt-5 ml-auto text-center">
+        <p class="text-sm font-medium text-gray-700">Simpan</p>
+        <i class="mt-1 fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
+      </button>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  const uploadInput = document.getElementById('upload_gambar');
+  const placeholder = document.getElementById('placeholder');
+
+  uploadInput.addEventListener('change', () => {
+    const fileCount = uploadInput.files.length;
+    placeholder.textContent = `Upload Gambar (${fileCount}/5)`;
+  });
+</script>
+{% endblock %}

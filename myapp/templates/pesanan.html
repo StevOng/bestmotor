@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Pesanan{% endblock %} 
+
+{% block page_title %}Pesanan{% endblock %} 
+
+{% block style %}
+<style>
+    #dt-length-0{
+        width:55px
+    }
+    #dt-search-0{
+        width: 200px
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="grid md:grid-cols-2 gap-4 mb-6">
+    <div
+      class="p-2 border-2 border-gray-200 flex h-24 rounded-md justify-between bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
+    >
+      <div class="flex flex-col justify-between">
+        <p class="*:dark:text-gray-500 text-base font-semibold lg:text-sm">
+          Pesanan Tertunda
+        </p>
+        <div>
+          <p class="*:dark:text-gray-500 text-sm lg:text-xs">Total Pesanan</p>
+          <p
+            class="*:dark:text-gray-500 text-customBlue text-lg font-bold lg:text-xl"
+          >
+            14
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="p-2 border-2 border-gray-200 flex h-24 rounded-md justify-between bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
+    >
+      <div class="flex flex-col justify-between">
+        <p class="*:dark:text-gray-500 text-base font-semibold lg:text-sm">
+          Pesanan Siap Kirim
+        </p>
+        <div>
+          <p class="*:dark:text-gray-500 text-sm lg:text-xs">Total Pesanan</p>
+          <p
+            class="*:dark:text-gray-500 text-customBlue text-lg font-bold lg:text-xl"
+          >
+            71
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-row gap-3 justify-start mb-3">
+    <a href="{% url 'pesanan' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pesanan/' %} text-white bg-customBlue border-customBlue {% endif %}">
+        Semua Pesanan
+    </a>
+    <a href="{% url 'pesanan_tunda' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pesanan/tertunda/' %} text-white bg-customBlue border-customBlue {% endif %}">
+        Pesanan Tertunda
+    </a>
+    <a href="{% url 'pesanan_ready' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pesanan/ready/' %} text-white bg-customBlue border-customBlue {% endif %}">
+        Pesanan Siap Kirim
+    </a>
+  </div>
+  <div
+  class="flex flex-col p-2 h-auto mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800"
+>
+    <p class="ml-3 mt-2 font-bold text-base text-customBlue">{{ halaman }}</p>
+    <div class="mt-4 ml-3 flex flex-row justify-between">
+        <div class="justify-start">
+            <input type="text" id="tableSearch" class="form-control rounded-lg border-gray-200 border-2 max-w-40 focus:border-customBlue lg:max-w-full" placeholder="Cari pesanan disini...">
+            <button class="bg-customBlue border-customBlue hover:bg-[#243F6B] p-2 rounded-lg text-white w-12" type="button">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        {% if halaman == 'Data Semua Pesanan' or halaman == 'Data Pesanan Siap Kirim' %}
+        <a href="{% url 'tambah_pesanan' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
+            <div class="flex flex-row justify-center items-center">
+                <p class="hidden lg:block p-1 lg:text-gray-400">Tambah Pesanan</p>
+                <i class="fas fa-plus p-1 text-customBlue"></i>
+            </div>
+        </a>
+        {% endif %}
+    </div>
+    <table id="allpesanan" class="display cell-border">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>No Pesanan</th>
+                <th>Tanggal Pesanan</th>
+                <th>Nama Pembeli</th>
+                <th>Lokasi Pembeli</th>
+                <th>Nama Sales</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Edit</th>
+                <th>{{ action }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>BM0001</td>
+                <td>01/01/2025</td>
+                <td>Tono</td>
+                <td>NIAS</td>
+                <td>Steven</td>
+                <td>Rp 1.050.000,-</td>
+                <td>Terkirim</td>
+                <td><button><i class="fa-regular fa-eye text-2xl text-customBlue"></i></button></td>
+                <td><button><i class="fa-regular {{icon}} text-2xl {{iconcolor}}"></i></button></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</div>
+{% endblock %}

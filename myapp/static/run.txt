@@ -1,0 +1,1 @@
+npx tailwindcss -i ./myapp/static/css/tailwind_input.css -o ./myapp/static/css/tailwind_output.css --watch
