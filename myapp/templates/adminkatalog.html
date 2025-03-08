@@ -89,7 +89,7 @@
                     </button>
                 </td>
                 <td><a href="{% url 'tambah_barang' %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
-                <td><button><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
+                <td><button onclick="confirmPopupBtn()"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
             </tr>
         </tbody>
     </table>
@@ -161,5 +161,24 @@
           table.search(searchValue).draw();
         });
       });
+
+    function confirmPopupBtn() {
+        const modal = document.getElementById("popupModalConfirm");
+        modal.classList.remove("hidden"); // Tampilkan modal
+        modal.style.display = "flex"; // Pastikan tampil dengan flexbox
+
+        const confirmButton = document.getElementById("confirmAction");
+
+        confirmButton.onclick = function () {
+            console.log("Pesanan dihapus!");
+            closeModalConfirm();
+        };
+    }
+
+    function closeModalConfirm() {
+        const modal = document.getElementById("popupModalConfirm");
+        modal.classList.add("hidden"); // Sembunyikan modal
+        modal.style.display = "none"; // Pastikan modal benar-benar hilang
+    }
 </script>
 {% endblock %}

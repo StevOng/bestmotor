@@ -20,13 +20,13 @@ def dashboard(request):
     return render(request, 'dashboard.html')
 
 def pesanan(request):
-    return render(request, 'pesanan.html', {"halaman": "Data Semua Pesanan", 'icon': 'fa-trash-can', 'iconcolor': 'text-red-500', 'action': 'Hapus'})
+    return render(request, 'pesanan.html', {"halaman": "Data Semua Pesanan"})
 
 def pesanan_tunda(request):
-    return render(request, 'pesanan.html', {"halaman": "Data Pesanan Tertunda", 'icon': 'fa-square-check', 'iconcolor': 'text-green-500', 'action': 'Terima Pesanan'})
+    return render(request, 'pesanan.html', {"halaman": "Data Pesanan Tertunda"})
 
 def pesanan_ready(request):
-    return render(request, 'pesanan.html', {"halaman": "Data Pesanan Siap Kirim", 'icon': 'fa-trash-can', 'iconcolor': 'text-red-500', 'action': 'Hapus'})
+    return render(request, 'pesanan.html', {"halaman": "Data Pesanan Siap Kirim"})
 
 def tambah_pesanan(request):
     if request.method == "GET" and request.headers.get('x-requested-with') == 'XMLHttpRequest':
