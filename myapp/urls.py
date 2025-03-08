@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from . import views
 
 urlpatterns = [
@@ -41,4 +41,6 @@ urlpatterns = [
     path('penjualan/pembayaran/piutang/', views.piutang, name='pembayaran_piutang'),
     path('penjualan/pembayaran/piutang/tambah/', views.tambah_bayarpiutang, name='tambah_bayarpiutang'),
     path('bantuan/', views.bantuan, name='bantuan'),
+    path('not-allowed/', views.halaman403, name='403'),
+    re_path(r'^.*$', views.halaman404, name='404')
 ]
