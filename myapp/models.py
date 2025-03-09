@@ -208,7 +208,11 @@ class Faktur(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='faktur_customer', related_query_name='faktur_customer')
     pembayaran_piutang = models.ForeignKey(PembayaranPiutang, on_delete=models.CASCADE, related_name='faktur_piutang', related_query_name='faktur_piutang')
     total = models.DecimalField(max_digits=19, decimal_places=2)
-    status = models.CharField(max_length=30)
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('ready', 'Ready')
+    ]
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

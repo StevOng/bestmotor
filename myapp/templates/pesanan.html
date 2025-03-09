@@ -88,17 +88,17 @@
                 <i class="fas fa-search"></i>
             </button>
         </div>
-        {% if status == 'ready' %}
+        {% if status == 'ready' or status == 'pending' %}
           <a href="{% url 'tambah_pesanan' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
               <div class="flex flex-row justify-center items-center">
-                  <p class="hidden lg:block p-1 lg:text-gray-400">Pesanan Terkirim</p>
+                  <p class="hidden lg:block p-1 lg:text-gray-400">Tambah Pesanan</p>
                   <i class="fas fa-plus p-1 text-customBlue"></i>
               </div>
           </a>
-        {% elif status == 'pending' %}
-          <a href="{% url 'tambah_pesanan' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
+        {% else %}
+          <a href="#" class="p-2 justify-end border-2 rounded-lg border-gray-200">
             <div class="flex flex-row justify-center items-center">
-                <p class="hidden lg:block p-1 lg:text-gray-400">Tambah Pesanan</p>
+                <p class="hidden lg:block p-1 lg:text-gray-400">Pesanan Terkirim</p>
                 <i class="fas fa-plus p-1 text-customBlue"></i>
             </div>
         </a>
@@ -121,18 +121,20 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>1</td>
-                <td>BM0001</td>
-                <td>01/01/2025</td>
-                <td>Tono</td>
-                <td>NIAS</td>
-                <td>Steven</td>
-                <td>Rp 1.050.000,-</td>
-                <td>Terkirim</td>
+          {% for pesanan in pesanan_list %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ pesanan.detail_faktur.no_faktur }}</td>
+                <td>{{ pesanan.detail_faktur.created_at }}</td>
+                <td>{{ pesanan.customer.nama }}</td>
+                <td>{{ pesanan.customer.lokasi }}</td>
+                <td>{{ pesanan.sales.name }}</td>
+                <td>{{ pesanan.total }}</td>
+                <td>{{ pesanan.status }}</td>
                 <td><button><i class="fa-regular fa-eye text-2xl text-customBlue"></i></button></td>
                 <td><button><i class="fa-regular {{icon}} text-2xl {{iconcolor}}"></i></button></td>
-            </tr>
+              </tr>
+          {% endfor %}
         </tbody>
     </table>
     {% endif %}
