@@ -210,7 +210,8 @@ class Faktur(models.Model):
     total = models.DecimalField(max_digits=19, decimal_places=2)
     STATUS_CHOICES = [
         ('pending', 'Pending'),
-        ('ready', 'Ready')
+        ('ready', 'Ready'),
+        ('shipped', 'Shipped')
     ]
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)

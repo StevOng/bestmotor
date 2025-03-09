@@ -64,9 +64,6 @@ def pesanan(request, status):
     if status == 'pending':
         context = {
             "halaman" : "Data Pesanan Tertunda",
-            "icon" : 'fa-square-check',
-            "iconColor" : 'text-green-500',
-            "action" : 'Terima Pesanan',
             "pesanan_list" : Faktur.objects.filter(status='pending').select_related(
                 'detail_faktur',
                 'customer',
@@ -78,9 +75,6 @@ def pesanan(request, status):
     elif status == 'ready':
         context = {
             "halaman" : "Data Pesanan Siap Kirim",
-            "icon" : 'fa-trash-can',
-            "iconColor" : 'text-red-500',
-            "action" : 'Hapus',
             "pesanan_list" : Faktur.objects.filter(status='ready').select_related(
                 'detail_faktur',
                 'customer',
@@ -92,9 +86,6 @@ def pesanan(request, status):
     else:
         context = {
             "halaman" : "Data Semua Pesanan",
-            "icon" : 'fa-trash-can',
-            "iconColor" : 'text-red-500',
-            "action" : 'Hapus',
             "pesanan_list" : Faktur.objects.all().select_related(
                 'detail_faktur',
                 'customer',
