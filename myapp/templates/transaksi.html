@@ -5,6 +5,29 @@
 {% block page_title %}Barang{% endblock %} 
 
 {% block content %}
+<!-- Overlay & Modal Konfirmasi -->
+<div id="popupModalConfirm" class="fixed inset-0 hidden items-center justify-center z-50 bg-gray-500/50">
+    <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="text-lg font-semibold" id="confirmTitle">Konfirmasi Hapus</h3>
+        <button onclick="closeModalConfirm()" class="text-gray-500 hover:text-red-500">
+          <i class="fa-solid fa-x"></i>
+        </button>
+      </div>
+      <div class="py-4">
+        <p id="confirmMessage">Apakah Anda yakin ingin melanjutkan?</p>
+      </div>
+      <div class="flex justify-end gap-2 mt-4">
+        <button onclick="closeModalConfirm()" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
+          Batal
+        </button>
+        <button id="confirmAction" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
+          Hapus
+        </button>
+      </div>
+    </div>
+  </div>
+
 <div class="flex flex-row gap-3 mb-3">
     <a href="{% url 'transaksi_masuk' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if '/barang/' in request.path %} text-white bg-customBlue border-customBlue {% endif %}">
         {% if request.path == '/barang/masuk/'%}Transaksi Masuk{% else %}Transaksi Keluar{% endif %}
@@ -46,10 +69,46 @@
                 <td>01/01/2025</td>
                 <td>08/01/2025</td>
                 <td>Barang gratis dari Pabrik</td>
-                <td><button><i class="fa-regular fa-eye text-2xl text-customBlue"></i></button></td>
-                <td><button><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
+                <td><a href="{% if request.path == '/barang/masuk/'%}{% url 'tambah_masuk' %}{% else %}{% url 'tambah_keluar' %}{% endif %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                <td><button onclick="{% if request.path == '/barang/masuk/'%} confirmPopupBtnMsk() {% else %} confirmPopupBtnKlr(){% endif %}"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
             </tr>
         </tbody>
     </table>
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    function confirmPopupBtnMsk() {
+        const modal = document.getElementById("popupModalConfirm");
+        modal.classList.remove("hidden"); // Tampilkan modal
+        modal.style.display = "flex"; // Pastikan tampil dengan flexbox
+    
+        const confirmButton = document.getElementById("confirmAction");
+    
+        confirmButton.onclick = function () {
+            console.log("Pesanan dihapus!");
+            closeModalConfirm();
+        };
+    }
+
+    function confirmPopupBtnKlr() {
+        const modal = document.getElementById("popupModalConfirm");
+        modal.classList.remove("hidden"); // Tampilkan modal
+        modal.style.display = "flex"; // Pastikan tampil dengan flexbox
+    
+        const confirmButton = document.getElementById("confirmAction");
+    
+        confirmButton.onclick = function () {
+            console.log("Pesanan dihapus!");
+            closeModalConfirm();
+        };
+    }
+    
+    function closeModalConfirm() {
+        const modal = document.getElementById("popupModalConfirm");
+        modal.classList.add("hidden"); // Sembunyikan modal
+        modal.style.display = "none"; // Pastikan modal benar-benar hilang
+    }
+</script>
 {% endblock %}

@@ -39,12 +39,20 @@
             </button>
         </div>
         {% if request.path == '/barang/' %}
-        <a href="{% url 'tambah_barang' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
-            <div class="flex flex-row justify-center items-center">
-                <p class="hidden lg:block p-1 lg:text-gray-400">Tambah Barang</p>
-                <i class="fas fa-plus p-1 text-customBlue"></i>
-            </div>
-        </a>
+        <div class="inline-flex gap-2">
+            <a href="{% url 'tambah_barang' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
+                <div class="flex flex-row justify-center items-center">
+                    <p class="hidden lg:block p-1 lg:text-gray-400">Tambah Barang</p>
+                    <i class="fas fa-plus p-1 text-customBlue"></i>
+                </div>
+            </a>
+            <a href="{% url 'tambah_barang' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
+                <div class="flex flex-row justify-center items-center">
+                    <p class="hidden lg:block p-1 lg:text-gray-400">Export</p>
+                    <i class="fa-solid fa-arrow-up-from-bracket p-1 text-customBlue"></i>
+                </div>
+            </a>
+        </div>
         {% elif request.path == '/barang/laku/' %}
         <div class="mt-5 flex flex-col md:flex-row">
             <div class="mx-3">
@@ -99,8 +107,8 @@
                 <td>2</td>
                 <td>11</td>
                 {% if request.path == '/barang/'%}
-                <td><button><i class="fa-regular fa-eye text-2xl text-customBlue"></i></button></td>
-                <td><button><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
+                <td><a href="{% url 'tambah_barang' %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                <td><button onclick="confirmPopupBtn()"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
                 {% elif request.path == '/barang/rendah/' %}
                 <td>15</td>
                 <td>2</td>
@@ -109,4 +117,52 @@
         </tbody>
     </table>
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+ {% comment %} tabel barang {% endcomment %}
+ $(document).ready(function () {
+    let table = $('#tabel-brg').DataTable({
+        pageLength: 20,
+        lengthChange: false, // Hilangkan "Show entries"
+        autoWidth: false,
+        ordering: false,
+        scrollX: true,
+        responsive: true,
+        "columnDefs": [
+      { className: "text-center", targets: [-1, -2] } // isi field di tengah
+  ],
+  createdRow: function(row, data, dataIndex) { //menghapus padding field index 0
+    $('td:eq(0)', row).css({'padding': 'unset'});
+}
+    });
+    $('.dt-search').remove();
+    $('.dt-info').remove();
+
+    $('#tableSearch').on('keyup', function () { //search
+      let searchValue = $(this).val();
+      table.search(searchValue).draw();
+    });
+  });
+
+  function confirmPopupBtn() {
+    const modal = document.getElementById("popupModalConfirm");
+    modal.classList.remove("hidden"); // Tampilkan modal
+    modal.style.display = "flex"; // Pastikan tampil dengan flexbox
+
+    const confirmButton = document.getElementById("confirmAction");
+
+    confirmButton.onclick = function () {
+        console.log("Pesanan dihapus!");
+        closeModalConfirm();
+    };
+}
+
+function closeModalConfirm() {
+    const modal = document.getElementById("popupModalConfirm");
+    modal.classList.add("hidden"); // Sembunyikan modal
+    modal.style.display = "none"; // Pastikan modal benar-benar hilang
+}
+</script>
 {% endblock %}

@@ -5,6 +5,7 @@
 {% block page_title %}Penjualan{% endblock %} 
 
 {% block content %}
+<!-- Overlay & Modal Konfirmasi -->
 <div class="flex flex-row gap-3 mb-3">
     <a href="{% url 'pembayaran_piutang' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/penjualan/pembayaran/piutang/' %} text-white bg-customBlue border-customBlue {% endif %}">
         Pembayaran Piutang
@@ -48,10 +49,33 @@
                 <td>0</td>
                 <td>Rp 750.000,-</td>
                 <td>Rp 750.000,-</td>
-                <td><button><i class="fa-regular fa-eye text-2xl text-customBlue"></i></button></td>
-                <td><button><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+                <td><a href="{% url 'tambah_bayarpiutang' %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                <td><button onclick="confirmPopupBtn()"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
             </tr>
         </tbody>
     </table>
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    function confirmPopupBtn() {
+        const modal = document.getElementById("popupModalConfirm");
+        modal.classList.remove("hidden"); // Tampilkan modal
+        modal.style.display = "flex"; // Pastikan tampil dengan flexbox
+    
+        const confirmButton = document.getElementById("confirmAction");
+    
+        confirmButton.onclick = function () {
+            console.log("Pesanan dihapus!");
+            closeModalConfirm();
+        };
+    }
+    
+    function closeModalConfirm() {
+        const modal = document.getElementById("popupModalConfirm");
+        modal.classList.add("hidden"); // Sembunyikan modal
+        modal.style.display = "none"; // Pastikan modal benar-benar hilang
+    }
+</script>
 {% endblock %}
