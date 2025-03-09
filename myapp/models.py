@@ -214,6 +214,25 @@ class Faktur(models.Model):
 
     def __str__(self):
         return f"Faktur {self.id}"
+    
+    def hitung_total(self):
+        detail_faktur = self.detail_faktur
+        barang = self.barang.detail_barang
+
+        if detail_faktur.qty_pesanan >= barang.min_beli_grosir_2:
+            harga_satuan = barang.harga_satuan_2
+        elif detail_faktur.qty_pesanan >= barang.min_beli_grosir_1:
+            harga_satuan = barang.harga_satuan_1
+        else:
+            harga_satuan = self.barang.harga_jual
+
+        subtotal = (harga_satuan - detail_faktur.diskon_barang) * detail_faktur.qty_pesanan
+        total = subtotal + detail_faktur.ppn + detail_faktur.ongkir - detail_faktur.diskon_faktur
+        return total
+    
+    def save(self, *args, **kwargs):
+        self.total = self.hitung_total()
+        super().save(*args, **kwargs)
 
 class Katalog(models.Model):
     barang = models.ForeignKey(Barang, on_delete=models.CASCADE, related_name='katalog_barang', related_query_name='katalog_barang')

@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import Admin, Sales
+from django.contrib.auth import logout
+from .models import Admin, Sales, Faktur
 from .decorators import admin_required, both_required
 
 # Create your views here.
@@ -34,6 +35,10 @@ def login(request):
 
     return render(request, 'login.html')
 
+def logout(request):
+    logout(request)
+    return redirect('login')
+
 @both_required
 def katalog(request):
     categories = ["Mesin", "Kelistrikan", "Suspensi", "Transmisi", "Body", "Ban & Velg", "Knalpot", "Oli Motor", "Aksesoris"]
@@ -53,16 +58,52 @@ def dashboard(request):
     return render(request, 'dashboard.html')
 
 @both_required
-def pesanan(request):
-    return render(request, 'pesanan.html', {"halaman": "Data Semua Pesanan", 'icon': 'fa-trash-can', 'iconcolor': 'text-red-500', 'action': 'Hapus'})
-
-@both_required
-def pesanan_tunda(request):
-    return render(request, 'pesanan.html', {"halaman": "Data Pesanan Tertunda", 'icon': 'fa-square-check', 'iconcolor': 'text-green-500', 'action': 'Terima Pesanan'})
-
-@both_required
-def pesanan_ready(request):
-    return render(request, 'pesanan.html', {"halaman": "Data Pesanan Siap Kirim", 'icon': 'fa-trash-can', 'iconcolor': 'text-red-500', 'action': 'Hapus'})
+def pesanan(request, status):
+    total_pending = Faktur.objects.filter(status='pending').count()
+    total_ready = Faktur.objects.filter(status='ready').count()
+    if status == 'pending':
+        context = {
+            "halaman" : "Data Pesanan Tertunda",
+            "icon" : 'fa-square-check',
+            "iconColor" : 'text-green-500',
+            "action" : 'Terima Pesanan',
+            "pesanan_list" : Faktur.objects.filter(status='pending').select_related(
+                'detail_faktur',
+                'customer',
+                'sales'
+            ),
+            "total_pending" : total_pending,
+            "total_ready" : total_ready
+        }
+    elif status == 'ready':
+        context = {
+            "halaman" : "Data Pesanan Siap Kirim",
+            "icon" : 'fa-trash-can',
+            "iconColor" : 'text-red-500',
+            "action" : 'Hapus',
+            "pesanan_list" : Faktur.objects.filter(status='ready').select_related(
+                'detail_faktur',
+                'customer',
+                'sales'
+            ),
+            "total_pending" : total_pending,
+            "total_ready" : total_ready
+        }
+    else:
+        context = {
+            "halaman" : "Data Semua Pesanan",
+            "icon" : 'fa-trash-can',
+            "iconColor" : 'text-red-500',
+            "action" : 'Hapus',
+            "pesanan_list" : Faktur.objects.all().select_related(
+                'detail_faktur',
+                'customer',
+                'sales'
+            ),
+            "total_pending" : total_pending,
+            "total_ready" : total_ready
+        }
+    return render(request, 'pesanan.html', context)
 
 @both_required
 def tambah_pesanan(request):

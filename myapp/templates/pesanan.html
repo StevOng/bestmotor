@@ -29,7 +29,7 @@
           <p
             class="*:dark:text-gray-500 text-customBlue text-lg font-bold lg:text-xl"
           >
-            14
+            {{ total_pending }}
           </p>
         </div>
       </div>
@@ -46,20 +46,20 @@
           <p
             class="*:dark:text-gray-500 text-customBlue text-lg font-bold lg:text-xl"
           >
-            71
+            {{ total_ready }}
           </p>
         </div>
       </div>
     </div>
   </div>
   <div class="flex flex-row gap-3 justify-start mb-3">
-    <a href="{% url 'pesanan' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pesanan/' %} text-white bg-customBlue border-customBlue {% endif %}">
+    <a href="{% url 'pesanan' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue">
         Semua Pesanan
     </a>
-    <a href="{% url 'pesanan_tunda' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pesanan/tertunda/' %} text-white bg-customBlue border-customBlue {% endif %}">
+    <a href="{% url 'pesanan_tunda' status='pending' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue">
         Pesanan Tertunda
     </a>
-    <a href="{% url 'pesanan_ready' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pesanan/ready/' %} text-white bg-customBlue border-customBlue {% endif %}">
+    <a href="{% url 'pesanan_ready' status='ready' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue">
         Pesanan Siap Kirim
     </a>
   </div>
@@ -74,13 +74,27 @@
                 <i class="fas fa-search"></i>
             </button>
         </div>
-        {% if halaman == 'Data Semua Pesanan' or halaman == 'Data Pesanan Siap Kirim' %}
-        <a href="{% url 'tambah_pesanan' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
+        {% if status == 'ready' %}
+          <a href="{% url 'tambah_pesanan' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
+              <div class="flex flex-row justify-center items-center">
+                  <p class="hidden lg:block p-1 lg:text-gray-400">Pesanan Terkirim</p>
+                  <i class="fas fa-plus p-1 text-customBlue"></i>
+              </div>
+          </a>
+        {% elif status == 'pending' %}
+          <a href="{% url 'tambah_pesanan' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
             <div class="flex flex-row justify-center items-center">
-                <p class="hidden lg:block p-1 lg:text-gray-400">Tambah Pesanan</p>
+                <p class="hidden lg:block p-1 lg:text-gray-400">Terima Pesanan</p>
                 <i class="fas fa-plus p-1 text-customBlue"></i>
             </div>
-        </a>
+          </a>
+        {% else %}
+          <a href="{% url 'tambah_pesanan' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
+              <div class="flex flex-row justify-center items-center">
+                  <p class="hidden lg:block p-1 lg:text-gray-400">Tambah Pesanan</p>
+                  <i class="fas fa-plus p-1 text-customBlue"></i>
+              </div>
+          </a>  
         {% endif %}
     </div>
     <table id="allpesanan" class="display cell-border">
@@ -99,18 +113,20 @@
             </tr>
         </thead>
         <tbody>
+          {% for pesanan in pesanan_list %}
             <tr>
-                <td>1</td>
-                <td>BM0001</td>
-                <td>01/01/2025</td>
-                <td>Tono</td>
-                <td>NIAS</td>
-                <td>Steven</td>
-                <td>Rp 1.050.000,-</td>
-                <td>Terkirim</td>
-                <td><button><i class="fa-regular fa-eye text-2xl text-customBlue"></i></button></td>
-                <td><button><i class="fa-regular {{icon}} text-2xl {{iconcolor}}"></i></button></td>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ pesanan.detail_faktur.no_faktur }}</td>
+              <td>{{ pesanan.detail_faktur.created_at }}</td>
+              <td>{{ pesanan.customer.nama }}</td>
+              <td>{{ pesanan.customer.lokasi }}</td>
+              <td>{{ pesanan.sales.name }}</td>
+              <td>{{ pesanan.total }}</td>
+              <td>{{ pesanan.status }}</td>
+              <td><button><i class="fa-regular fa-eye text-2xl text-customBlue"></i></button></td>
+              <td><button><i class="fa-regular {{icon}} text-2xl {{iconcolor}}"></i></button></td>
             </tr>
+          {% endfor %}
         </tbody>
     </table>
 </div>
