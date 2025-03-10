@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.contrib.auth import logout
 from .models import Admin, Sales, Faktur
 from .decorators import admin_required, both_required
@@ -95,6 +96,33 @@ def pesanan(request, status):
             "total_ready" : total_ready
         }
     return render(request, 'pesanan.html', context)
+
+@admin_required
+def update_status_pesanan(request, pesanan_id):
+    if request.method == 'POST':
+        pesanan = get_object_or_404(Faktur, id=pesanan_id)
+        action = request.POST.get('action')
+
+        if action == 'accept':
+            pesanan.status = 'ready'
+            pesanan.save()
+            return JsonResponse({'status': 'success', 'message': 'Status pesanan berhasil dirubah menjadi ready'})
+        elif action == 'sent':
+            pesanan.status = 'shipped'
+            pesanan.save()
+            return JsonResponse({'status': 'success', 'message': 'Status pesanan berhasil dirubah menjadi shipped'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Telah terjadi kesalahan'}, status=400)
+        
+    return JsonResponse({'status': 'error', 'message': 'Request tidak valid'}, status=400)
+
+@admin_required
+def delete_pesanan(request, pesanan_id):
+    if request.method == 'POST':
+        pesanan = get_object_or_404(Faktur, id=pesanan_id)
+        pesanan.delete()
+        return JsonResponse({'status': 'success', 'message': 'Pesanan berhasil dihapus'})
+    return JsonResponse({'status': 'error', 'message': 'Request tidak valid'}, status=400)
 
 @both_required
 def tambah_pesanan(request):

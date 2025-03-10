@@ -7,6 +7,8 @@ urlpatterns = [
     path('rem/deskripsi/', views.deskripsi, name='deskripsi'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('login/', views.login, name='login'),
+    path('pesanan/<int:pesanan_id>/update-status/', views.update_status_pesanan, name='update_status_pesanan'),
+    path('pesanan/<int:pesanan_id>/delete/', views.delete_pesanan, name='delete_pesanan'),
     path('pesanan/<str:status>/', views.pesanan, name='pesanan'),
     path('pesanan/tambah/', views.tambah_pesanan, name='tambah_pesanan'),
     path('barang/', views.barang, name='barang'),
@@ -40,5 +42,5 @@ urlpatterns = [
     path('penjualan/pembayaran/piutang/tambah/', views.tambah_bayarpiutang, name='tambah_bayarpiutang'),
     path('bantuan/', views.bantuan, name='bantuan'),
     path('not-allowed/', views.halaman403, name='403'),
-    re_path(r'^.*$', views.halaman404, name='404')
+    re_path(r'^.*$', views.halaman404, name='404'),
 ]
