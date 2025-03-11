@@ -126,15 +126,18 @@ def delete_pesanan(request, pesanan_id):
 
 @both_required
 def tambah_pesanan(request):
-    if request.method == "GET" and request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        barang_data = [
-            {"kode": "BR01", "nama": "Rem Honda Vario 3X", "harga": 10000},
-            {"kode": "B02", "nama": "Barang 2", "harga": 20000},
-            {"kode": "B03", "nama": "Barang 3", "harga": 30000},
-            {"kode": "B04", "nama": "Barang 4", "harga": 40000},
-        ]
-        return JsonResponse(barang_data, safe=False)
-    return render(request, 'tambahpesan.html')
+    mode = request.GET.get('mode','tambah') # default mode adalah tambah
+    pesanan_id = request.GET.get('pesanan_id')
+
+    pesanan = None
+    if pesanan_id:
+        pesanan = get_object_or_404(Faktur, id=pesanan_id)
+
+    context = {
+        'mode': mode,
+        'pesanan': pesanan,
+    }
+    return render(request, 'tambahpesan.html', context)
 
 @both_required
 def barang(request):

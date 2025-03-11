@@ -136,6 +136,7 @@
             </tr>
         </thead>
         <tbody>
+          {% for pesanan in pesanan_list %}
             <tr>
                 <td></td>
                 <td>{{ forloop.counter }}</td>
@@ -146,7 +147,7 @@
                 <td>{{ pesanan.sales.name }}</td>
                 <td>{{ pesanan.total }}</td>
                 <td>{{ pesanan.status }}</td>
-                <td><a href="{% url 'tambah_pesanan' %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                <td><a href="{% url 'tambah_pesanan' %}?mode=edit&pesanan_id={{ pesanan.id }}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
                 {% if status == 'pending' %}
                 <td>
                   <button onclick="confirmPopupBtn('accept', {{ pesanan.id }})">
@@ -158,6 +159,7 @@
                 {% endif %}
                 <td><button onclick="confirmPopupBtn('delete', {{ pesanan.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
             </tr>
+          {% endfor %}
         </tbody>
       </table>
     {% elif status == 'ready' %}
@@ -181,6 +183,7 @@
             </tr>
         </thead>
         <tbody>
+          {% for pesanan in pesanan_list %}
             <tr>
                 <td></td>
                 <td>{{ forloop.counter }}</td>
@@ -191,7 +194,7 @@
                 <td>{{ pesanan.sales.name }}</td>
                 <td>{{ pesanan.total }}</td>
                 <td>{{ pesanan.status }}</td>
-                <td><a href="{% url 'tambah_pesanan' %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                <td><a href="{% url 'tambah_pesanan' %}?mode=lihat&pesanan_id={{ pesanan.id }}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
                 {% if status == 'ready' %}
                 <td>
                   <button onclick="confirmPopupBtn('sent', {{ pesanan.id }})">
@@ -203,6 +206,7 @@
                 {% endif %}
                 <td><button onclick="confirmPopupBtn('delete', {{ pesanan.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
             </tr>
+          {% endfor %}
         </tbody>
       </table>
     {% else %}
@@ -222,6 +226,7 @@
             </tr>
         </thead>
         <tbody>
+          {% for pesanan in pesanan_list %}
             <tr>
               <td>{{ forloop.counter }}</td>
               <td>{{ pesanan.detail_faktur.no_faktur }}</td>
@@ -234,6 +239,7 @@
               <td><a href="{% url 'tambah_pesanan' %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
               <td><button onclick="confirmPopupBtn('delete', {{ pesanan.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
             </tr>
+          {% endfor %}
         </tbody>
       </table>
     {% endif %}
