@@ -3,8 +3,12 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import logout
-from .models import Admin, Sales, Faktur
+from django.db.models import F, Case, When, Value, DecimalField
+from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+from .models import Admin, Sales, Faktur, Barang, DetailFaktur, Customer
 from .decorators import admin_required, both_required
+import json
 
 # Create your views here.
 def login(request):
@@ -128,16 +132,116 @@ def delete_pesanan(request, pesanan_id):
 def tambah_pesanan(request):
     mode = request.GET.get('mode','tambah') # default mode adalah tambah
     pesanan_id = request.GET.get('pesanan_id')
+    customers = Customer.objects.all()
 
     pesanan = None
     if pesanan_id:
         pesanan = get_object_or_404(Faktur, id=pesanan_id)
 
+    if pesanan:
+        # ambil data barang terkait dengan faktur/pesanan
+        barang_pesanan = pesanan.barang.annotate(
+            harga = Case(
+                When(detail_faktur__qty_pesanan__gte=F('detail_barang__min_beli_grosir_2'), then=F('detail_barang__harga_satuan_2')),
+                When(detail_faktur__qty_pesanan__gte=F('detail_barang__min_beli_grosir_1'), then=F('detail_barang__harga_satuan_1')),
+                default=F('harga_jual'),
+                output_field=DecimalField()
+            ),
+            qty = F('detail_faktur__qty_pesanan'),
+            disc = F('detail_faktur__diskon_barang')
+        ).values(
+            'id', 'detail_barang__kode', 'detail_barang__nama', 'harga', 'qty', 'disc'
+        )
+        bruto = sum((item['harga'] - item['disc']) * item['qty'] for item in barang_pesanan)
+        nilai_ppn = bruto * (pesanan.detail_faktur.ppn / 100)
+        netto = bruto + nilai_ppn + pesanan.detail_faktur.ongkir - pesanan.detail_faktur.diskon_faktur
+    else:
+        bruto = 0
+        nilai_ppn = 0
+        netto = 0
+        barang_pesanan = []
+
     context = {
         'mode': mode,
+        'customers': customers,
         'pesanan': pesanan,
+        'barang_pesanan': list(barang_pesanan),
+        'bruto': bruto,
+        'nilai_ppn': nilai_ppn,
+        'netto': netto
     }
     return render(request, 'tambahpesan.html', context)
+
+@csrf_exempt
+def simpan_barang(request):
+    if request.method == 'POST':
+        try:
+            # Parse data JSON dari request body
+            data = json.loads(request.body)
+            customer_id = data.get('customer_id')
+            sales_id = request.user.sales.id
+            barang_ids = data.get('barang_ids')
+            top = data.get('top')
+            jatuh_tempo = data.get('jatuh_tempo')
+            alamat_kirim = data.get('alamat_kirim')
+            keterangan = data.get('keterangan')
+            no_referensi = data.get('no_referensi')
+            ppn = data.get('ppn')
+            diskon_faktur = data.get('diskon_faktur')
+            ongkir = data.get('ongkir')
+            qty_pesanan = data.get('qty_pesanan')
+            diskon_barang = data.get('diskon_barang')
+
+            # Validasi data
+            if not all([customer_id, sales_id, barang_ids, top, jatuh_tempo, alamat_kirim, no_referensi, ppn, diskon_faktur, ongkir, qty_pesanan, diskon_barang]):
+                return JsonResponse({'success': False, 'error': 'Data tidak lengkap'})
+
+            # Simpan data ke model DetailFaktur
+            detail_faktur = DetailFaktur(
+                top=top,
+                jatuh_tempo=timezone.make_aware(timezone.datetime.strptime(jatuh_tempo, '%Y-%m-%d')),  # Konversi string ke datetime
+                alamat_kirim=alamat_kirim,
+                keterangan=keterangan,
+                no_referensi=no_referensi,
+                ppn=ppn,
+                diskon_faktur=diskon_faktur,
+                ongkir=ongkir,
+                qty_pesanan=qty_pesanan,
+                diskon_barang=diskon_barang,
+            )
+            detail_faktur.save()  # Simpan ke database
+
+            customer = Customer.objects.get(id=customer_id)
+            sales = Sales.objects.get(id=sales_id)
+
+            for barang_id in barang_ids:
+                barang = Barang.objects.get(id=barang_id)
+                faktur = Faktur(
+                    barang = barang,
+                    detail_faktur = detail_faktur,
+                    sales = sales,
+                    customer = customer,
+                    status = 'pending'
+                )
+                faktur.save()
+
+            return JsonResponse({'success': True, 'id': detail_faktur.id})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Metode request tidak valid'})
+
+@csrf_exempt
+def hapus_barang(request, barang_id):
+    if request.method == 'DELETE':
+        try:
+            barang = Barang.objects.get(id=barang_id)
+            barang.delete()
+            return JsonResponse({'success':True})
+        except Barang.DoesNotExist:
+            return JsonResponse({'success':False, 'error':'Barang tidak ditemukan'})
+        except Exception as e:
+            return JsonResponse({'success':False, 'error':str(e)})
+    return JsonResponse({'success':False, 'error':'Metode request tidak valid'})
 
 @both_required
 def barang(request):

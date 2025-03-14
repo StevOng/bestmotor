@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import Max
+from datetime import timedelta
 
 class Admin(models.Model):
     username = models.CharField(max_length=50, unique=True)
@@ -162,7 +164,7 @@ class Invoice(models.Model):
 class DetailFaktur(models.Model):
     no_faktur = models.CharField(max_length=10, unique=True)
     top = models.IntegerField()
-    jatuh_tempo = models.DateTimeField()
+    jatuh_tempo = models.DateTimeField(null=True, blank=True)
     alamat_kirim = models.CharField(max_length=255)
     keterangan = models.TextField(null=True)
     no_referensi = models.CharField(max_length=50, unique=True)
@@ -176,6 +178,32 @@ class DetailFaktur(models.Model):
 
     def __str__(self):
         return self.no_faktur
+    
+    def set_jatuh_tempo(self):
+        if self.top and self.created_at:
+            self.jatuh_tempo = self.created_at + timedelta(days=self.top)
+        return self.jatuh_tempo
+
+    def generate_no_faktur(self):
+        if not self.no_faktur:  # Jika no_faktur belum diisi
+         # Ambil nomor terakhir dari database
+            last_faktur = DetailFaktur.objects.aggregate(Max('no_faktur'))['no_faktur__max']
+            if last_faktur:
+             # Ambil angka terakhir dan tambahkan 1
+                last_number = int(last_faktur[2:])  # Ambil bagian angka setelah 'BM'
+                new_number = last_number + 1
+            else:
+             # Jika belum ada faktur, mulai dari 1
+                new_number = 1
+         # Format nomor faktur (BM001, BM002, dst.)
+            self.no_faktur = f"BM{new_number:03d}"
+        return self.no_faktur
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.generate_no_faktur()
+        self.jatuh_tempo = self.set_jatuh_tempo()
+        super().save(*args, **kwargs)  # Simpan ke database
 
 class ReturPenjualan(models.Model):
     no_bukti = models.CharField(max_length=10, unique=True)
