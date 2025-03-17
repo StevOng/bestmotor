@@ -6,7 +6,7 @@ from django.contrib.auth import logout
 from django.db.models import F, Case, When, Value, DecimalField
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-from .models import Admin, Sales, Faktur, Barang, DetailFaktur, Customer
+from .models import *
 from .decorators import admin_required, both_required
 import json
 
@@ -101,7 +101,7 @@ def pesanan(request, status):
         }
     return render(request, 'pesanan.html', context)
 
-@admin_required
+@csrf_exempt
 def update_status_pesanan(request, pesanan_id):
     if request.method == 'POST':
         pesanan = get_object_or_404(Faktur, id=pesanan_id)
@@ -120,7 +120,7 @@ def update_status_pesanan(request, pesanan_id):
         
     return JsonResponse({'status': 'error', 'message': 'Request tidak valid'}, status=400)
 
-@admin_required
+@csrf_exempt
 def delete_pesanan(request, pesanan_id):
     if request.method == 'POST':
         pesanan = get_object_or_404(Faktur, id=pesanan_id)
@@ -154,7 +154,7 @@ def tambah_pesanan(request):
         )
         bruto = sum((item['harga'] - item['disc']) * item['qty'] for item in barang_pesanan)
         nilai_ppn = bruto * (pesanan.detail_faktur.ppn / 100)
-        netto = bruto + nilai_ppn + pesanan.detail_faktur.ongkir - pesanan.detail_faktur.diskon_faktur
+        netto = (bruto + nilai_ppn + pesanan.detail_faktur.ongkir) - pesanan.detail_faktur.diskon_faktur
     else:
         bruto = 0
         nilai_ppn = 0
@@ -202,7 +202,6 @@ def simpan_barang(request):
                 jatuh_tempo=timezone.make_aware(timezone.datetime.strptime(jatuh_tempo, '%Y-%m-%d')),  # Konversi string ke datetime
                 alamat_kirim=alamat_kirim,
                 keterangan=keterangan,
-                no_referensi=no_referensi,
                 ppn=ppn,
                 diskon_faktur=diskon_faktur,
                 ongkir=ongkir,
@@ -349,7 +348,133 @@ def retur_jual(request):
 
 @both_required
 def tambah_returjual(request):
-    return render(request, 'tambahreturjual.html')
+    faktur = Faktur.objects.select_related('detail_faktur').get()
+    noFaktur = faktur.detail_faktur.no_faktur
+    return render(request, 'tambahreturjual.html', {'noFaktur':noFaktur})
+
+@csrf_exempt
+def simpan_retur(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            no_faktur = data.get('no_faktur')
+            barang_retur = data.get('barang_retur')  # Format: [{'barang_id': 1, 'qty_retur': 2}, ...]
+
+            ppn = data.get('ppn', 0)  # PPN dalam persen
+            ongkir = data.get('ongkir', 0)
+            diskon_faktur = data.get('diskon_faktur', 0)
+
+            # Hitung bruto, nilai PPN, dan netto
+            bruto = sum((item['harga'] - item['diskon_barang']) * item['qty_retur'] for item in barang_retur)
+            nilai_ppn = bruto * (ppn / 100)
+            netto = (bruto + nilai_ppn + ongkir) - diskon_faktur
+
+            # Simpan retur penjualan
+            retur = ReturPenjualan(
+                no_bukti=ReturPenjualan.generate_no_bukti(),
+                qty_retur=sum(item['qty_retur'] for item in barang_retur),
+                total=netto
+            )
+            retur.save()
+
+            # Update faktur dan barang
+            faktur = Faktur.objects.get(no_faktur=no_faktur)
+            for item in barang_retur:
+                barang = Barang.objects.get(id=item['barang_id'])
+                faktur_barang = faktur.faktur_barang.get(id=item['barang_id'])
+                faktur_barang.qty_pesanan -= item['qty_retur']
+                faktur_barang.save()
+
+                # Update stok barang (jika diperlukan)
+                barang.stok += item['qty_retur']
+                barang.save()
+
+            return JsonResponse({
+                'success': True, 
+                'id': retur.id,
+                'bruto': bruto,
+                'nilai_ppn': nilai_ppn,
+                'netto': netto,
+                'barang_retur': barang_retur
+            })
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Metode request tidak valid'})
+
+@csrf_exempt
+def delete_retur(request):
+    if request.method == 'DELETE':
+        try:
+            retur_id = request.GET.get('id')  # Ambil ID retur dari parameter URL
+            if not retur_id:
+                return JsonResponse({'success': False, 'error': 'ID retur tidak ditemukan'})
+
+            # Cari retur berdasarkan ID
+            retur = ReturPenjualan.objects.get(id=retur_id)
+            
+            # Hapus retur
+            retur.delete()
+
+            return JsonResponse({'success': True, 'message': 'Retur berhasil dihapus'})
+        except ReturPenjualan.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Retur tidak ditemukan'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Metode request tidak valid'})
+
+@csrf_exempt
+def get_faktur_detail(request):
+    if request.method == 'GET':
+        no_faktur = request.GET.get('no_faktur')
+        if not no_faktur:
+            return JsonResponse({'success': False, 'error': 'Parameter no_faktur diperlukan'})
+        try:
+            faktur = Faktur.objects.select_related('detail_faktur', 'customer').get(no_faktur=no_faktur)
+            data = {
+                'no_faktur': faktur.no_faktur,
+                'no_referensi': faktur.detail_faktur.no_referensi,
+                'customer': faktur.customer.nama,
+                'tanggal_faktur': faktur.detail_faktur.created_at.strftime('%Y-%m-%d'),
+                'ppn': faktur.detail_faktur.ppn,
+                'ongkir': faktur.detail_faktur.ongkir,
+                'diskon_faktur': faktur.detail_faktur.diskon_faktur,
+                'barang': [
+                    {
+                        'barang_id': fb.barang.id,
+                        'kode': fb.barang.detail_barang.kode,
+                        'nama': fb.barang.detail_barang.nama,
+                        'harga': fb.barang.harga_jual,
+                        'qty_pesanan': fb.qty_pesanan,
+                        'diskon_barang': fb.diskon_barang,
+                    }
+                    for fb in faktur.faktur_barang.all()
+                ],
+            }
+            return JsonResponse({'success': True, 'data': data})
+        except Faktur.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Faktur tidak ditemukan'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Metode request tidak valid'})
+
+@csrf_exempt
+def get_faktur_list(request):
+    if request.method == 'GET':
+        try:
+            faktur_list = Faktur.objects.select_related('detail_faktur', 'custormer').all()
+            data = []
+            for faktur in faktur_list:
+                data.append({
+                    'no_faktur': faktur.detail_faktur.no_faktur,
+                    'tanggal_faktur': faktur.detail_faktur.created_at.strftime('%d/%m/%Y'),
+                    'no_referensi': faktur.detail_faktur.no_referensi,
+                    'customer': faktur.customer.nama,
+                    'total': faktur.total
+                })
+            return JsonResponse({'success':True, 'data':data})
+        except Exception as e:
+            return JsonResponse({'success':False, 'error':str(e)})
+    return JsonResponse({'success':False, 'error':'Metode tidak valid'})
 
 @both_required
 def piutang(request):

@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener('DOMContentLoaded', function () {
     const mode = "{{ mode }}"
     if (mode === 'lihat') {
-        document.querySelectorAll('input, texarea, select').forEach(element => {
+        document.querySelectorAll('input, textarea, select').forEach(element => {
             if (!element.readOnly) {
                 element.readOnly = true
                 element.classlist.add('bg-gray-200')
@@ -29,7 +29,6 @@ document.querySelector('.btn-simpan').addEventListener('click', function() {
         jatuh_tempo: document.getElementById('jatuh_tempo').value,
         alamat_kirim: document.getElementById('alamat_kirim').value,
         keterangan: document.getElementById('keterangan').value,
-        no_referensi: document.getElementById('no_referensi').value,
         ppn: document.getElementById('ppn').value,
         diskon_faktur: document.getElementById('diskon_faktur').value,
         ongkir: document.getElementById('ongkir').value,

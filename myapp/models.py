@@ -184,7 +184,7 @@ class DetailFaktur(models.Model):
             self.jatuh_tempo = self.created_at + timedelta(days=self.top)
         return self.jatuh_tempo
 
-    def generate_no_faktur(self):
+    def generate_no_referensi(self):
         if not self.no_faktur:  # Jika no_faktur belum diisi
          # Ambil nomor terakhir dari database
             last_faktur = DetailFaktur.objects.aggregate(Max('no_faktur'))['no_faktur__max']
@@ -198,10 +198,23 @@ class DetailFaktur(models.Model):
          # Format nomor faktur (BM001, BM002, dst.)
             self.no_faktur = f"BM{new_number:03d}"
         return self.no_faktur
+    
+    def generate_no_faktur(self):
+        if not self.no_referensi:
+            last_ref = DetailFaktur.objects.aggregate(Max('no_referensi'))['no_referensi__max']
+            if last_ref:
+                last_num = int(last_ref[2:])
+                new_num = last_num + 1
+            else:
+                new_num = 1
+
+            self.no_referensi = f"BJ{new_num:03d}"
+        return self.no_referensi
 
     def save(self, *args, **kwargs):
         if not self.pk:
             self.generate_no_faktur()
+            self.generate_no_referensi
         self.jatuh_tempo = self.set_jatuh_tempo()
         super().save(*args, **kwargs)  # Simpan ke database
 
@@ -214,6 +227,15 @@ class ReturPenjualan(models.Model):
 
     def __str__(self):
         return self.no_bukti
+    
+    def generate_no_bukti(self):
+        last_retur = ReturPenjualan.objects.aggregate(Max('no_bukti'))['no_bukti__max']
+        if last_retur:
+            last_number = int(last_retur[4:])
+            new_number = last_number + 1
+        else:
+            new_number = 1
+        return f"BMRJ{new_number:03d}"
 
 class PembayaranPiutang(models.Model):
     no_bukti = models.CharField(max_length=10, unique=True)
