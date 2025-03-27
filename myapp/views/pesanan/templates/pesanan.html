@@ -43,7 +43,7 @@
           <p
             class="*:dark:text-gray-500 text-customBlue text-lg font-bold lg:text-xl"
           >
-            14
+            {{ total_pending }}
           </p>
         </div>
       </div>
@@ -60,7 +60,7 @@
           <p
             class="*:dark:text-gray-500 text-customBlue text-lg font-bold lg:text-xl"
           >
-            71
+            {{ total_ready }}
           </p>
         </div>
       </div>
@@ -70,10 +70,10 @@
     <a href="{% url 'pesanan' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pesanan/' %} text-white bg-customBlue border-customBlue {% endif %}">
         Semua Pesanan
     </a>
-    <a href="{% url 'pesanan_tunda' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pesanan/tertunda/' %} text-white bg-customBlue border-customBlue {% endif %}">
+    <a href="{% url 'pesanan' status='pending' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pesanan/tertunda/' %} text-white bg-customBlue border-customBlue {% endif %}">
         Pesanan Tertunda
     </a>
-    <a href="{% url 'pesanan_ready' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pesanan/ready/' %} text-white bg-customBlue border-customBlue {% endif %}">
+    <a href="{% url 'pesanan' status='ready' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pesanan/ready/' %} text-white bg-customBlue border-customBlue {% endif %}">
         Pesanan Siap Kirim
     </a>
   </div>
