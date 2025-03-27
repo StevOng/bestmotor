@@ -128,7 +128,7 @@
               <th>Total</th>
               <th>Status</th>
               <th>Edit</th>
-              <th>Hapus</th>
+              <th>Batal</th>
           </tr>
       </thead>
       <tbody>
@@ -142,7 +142,7 @@
               <td>1.050.000,-</td>
               <td>Terkirim</td>
               <td><a href="{% url 'tambah_pesanan' %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
-              <td><button onclick="confirmPopupBtn('delete')"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+              <td><button onclick="confirmPopupBtn('cancel')"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
           </tr>
       </tbody>
     </table>
@@ -163,7 +163,7 @@
               {% if request.path == '/pesanan/tertunda/' %}
               <th>Terima Pesanan</th>
               {% endif %}
-              <th>Hapus</th>
+              <th>Tolak</th>
           </tr>
       </thead>
       <tbody>
@@ -187,7 +187,7 @@
                 </button>
               </td>
               {% endif %}
-              <td><button onclick="confirmPopupBtn('delete')"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+              <td><button onclick="confirmPopupBtn('cancel')"><i class="fa-solid fa-x text-2xl text-red-500"></i></button></td>
           </tr>
       </tbody>
     </table>
@@ -239,10 +239,10 @@
     const confirmMessage = document.getElementById("confirmMessage");
     const confirmButton = document.getElementById("confirmAction");
 
-    if (actionType === "delete") {
-        confirmTitle.innerText = "Konfirmasi Hapus";
-        confirmMessage.innerText = "Apakah Anda yakin ingin menghapus pesanan ini?";
-        confirmButton.innerText = "Hapus";
+    if (actionType === "cancel") {
+        confirmTitle.innerText = "Konfirmasi Batal";
+        confirmMessage.innerText = "Apakah Anda yakin ingin membatalkan pesanan ini?";
+        confirmButton.innerText = "Batal";
         confirmButton.classList.replace("bg-green-500", "bg-red-500");
         confirmButton.classList.replace("hover:bg-green-600", "hover:bg-red-600");
     } else if (actionType === "accept") {
@@ -273,7 +273,7 @@ function closeModalConfirm() {
 
 function confirmPopupBtn(action) {
   showModalConfirm(action, function () {
-      if (action === "delete") {
+      if (action === "cancel") {
           console.log("Pesanan dihapus!");
       } else if (action === "accept") {
           console.log("Pesanan diterima!");

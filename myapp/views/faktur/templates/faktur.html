@@ -51,7 +51,6 @@
                 <th>Status</th>
                 <th>Terakhir Edit</th>
                 <th>Edit</th>
-                <th>Hapus</th>
                 {% endif %}
             </tr>
         </thead>
@@ -69,33 +68,9 @@
                 <td>Belum Bayar</td>
                 <td>03/04/2025</td>
                 <td><a href="{% url 'tambah_pesanan' %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></button></td>
-                <td><button onclick="confirmPopupBtn()"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
                 {% endif %}
             </tr>
         </tbody>
     </table>
 </div>
-{% endblock %}
-
-{% block script %}
-<script>
-    function confirmPopupBtn() {
-        const modal = document.getElementById("popupModalConfirm");
-        modal.classList.remove("hidden"); // Tampilkan modal
-        modal.style.display = "flex"; // Pastikan tampil dengan flexbox
-    
-        const confirmButton = document.getElementById("confirmAction");
-    
-        confirmButton.onclick = function () {
-            console.log("Pesanan dihapus!");
-            closeModalConfirm();
-        };
-    }
-    
-    function closeModalConfirm() {
-        const modal = document.getElementById("popupModalConfirm");
-        modal.classList.add("hidden"); // Sembunyikan modal
-        modal.style.display = "none"; // Pastikan modal benar-benar hilang
-    }
-</script>
 {% endblock %}

@@ -5,13 +5,13 @@
 {% block page_title %}Penjualan{% endblock %} 
 
 {% block content %}
-<!-- Overlay & Modal Customer -->
-<div id="popupModalCust" class="fixed inset-0 hidden items-center justify-center z-50 bg-gray-500/50">
+<!-- Overlay & Modal Sales -->
+<div id="popupModalSales" class="fixed inset-0 hidden items-center justify-center z-50 bg-gray-500/50">
   <div class="bg-white w-full p-6 rounded-lg shadow-lg flex flex-col md:w-1/2">
     <div
     class="flex flex-col p-2 h-auto mb-4 rounded border-2 border-gray-200 bg-gray-50"
   >    
-      <button onclick="closeModalCust()" class="flex justify-end"><i class="fa-solid fa-x m-2 text-gray-500"></i></button>
+      <button onclick="closeModalSales()" class="flex justify-end"><i class="fa-solid fa-x m-2 text-gray-500"></i></button>
       <div class="mt-5 flex flex-row justify-between">
           <div class="justify-start ml-3">
               <input type="text" id="customerSearch" class="form-control rounded-lg border-gray-200 border-2 max-w-40 focus:border-customBlue lg:max-w-full" placeholder="Cari Customer disini...">
@@ -30,7 +30,7 @@
           <thead>
               <tr>
                   <th>No</th>
-                  <th>Nama Customer</th>
+                  <th>Nama Sales</th>
                   <th>No. HP</th>
                   <th>Lokasi Customer</th>
                   <th>Alamat Lengkap</th>
@@ -126,20 +126,16 @@
             class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
         </div>
         
-        <!-- Customer -->
+        <!-- Sales -->
         <div>
-          <label for="customer" class="block text-sm font-medium text-gray-700">Customer</label>
-          <div class="relative mt-1">
-            <input type="text" id="customer" placeholder="Tambah/Pilih Customer" disabled
-              class="block w-full border border-gray-300 rounded-md py-2 px-3 text-gray-700">
-            <button type="button" onclick="openModalCust()"
-              class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none">
-              <i class="fas fa-ellipsis-h"></i>
-            </button>
-          </div>
+          <label for="sales" class="block text-sm font-medium text-gray-700">Kurir</label>
+          <select id="sales"
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 bg-white focus:outline-none focus:ring-customBlue focus:border-customBlue">
+            <option value="">-- Pilih Sales --</option>
+          </select>
         </div>
-        <div class="hidden md:block lg:hidden"></div>
 
+        <div class="hidden md:block lg:hidden"></div>
                 
         <!-- Total Faktur -->
         <div>
@@ -172,7 +168,7 @@
             <tr>
                 <th>No</th>
                 <th>No Faktur</th>
-                <th>No Referensi</th>
+                <th>Nama Customer</th>
                 <th>Nilai Faktur</th>
                 <th>Potongan</th>
                 <th>Nilai Bayar</th>
@@ -209,15 +205,30 @@
 
 {% block script %}
 <script>
+  const salesSelect = document.getElementById("sales");
+
+  const salesList = [
+    { id: "S1", name: "Budi" },
+    { id: "S2", name: "Joko" },
+    { id: "S3", name: "Adi" }
+  ];
+
+  salesList.forEach(sales => {
+    const option = document.createElement("option");
+    option.value = sales.id;
+    option.textContent = sales.name;
+    salesSelect.appendChild(option);
+  });
+
 //PopupModal Customer
-  function openModalCust() {
-    let modal = document.getElementById("popupModalCust");
+  function openModalSales() {
+    let modal = document.getElementById("popupModalSales");
     modal.classList.remove("hidden");
     modal.classList.add("flex");
 }
 
-function closeModalCust() {
-    let modal = document.getElementById("popupModalCust");
+function closeModalSales() {
+    let modal = document.getElementById("popupModalSales");
     modal.classList.remove("flex");
     modal.classList.add("hidden");
 }
@@ -235,7 +246,7 @@ $(document).ready(function () {
   $('.dt-search').remove();
   $('.dt-info').remove();
 
-  $('#customerSearch').on('keyup', function () { //search
+  $('#customerSearch').on('keyup', function () {
     let searchValue = $(this).val();
     table.search(searchValue).draw();
   });
@@ -260,78 +271,78 @@ let table = $('#modalFaktur').DataTable({
     lengthChange: false, // Hilangkan "Show entries"
     ordering: false,
     scrollX: true,
-    "columnDefs": [
-  { className: "text-center", targets: [-1, -2] } // kolom 8 dan 9 di tengah
-],
-});
-$('.dt-search').remove();
-$('.dt-info').remove();
+      "columnDefs": [
+    { className: "text-center", targets: [-1, -2] } // 2 kolom terakhir di tengah
+  ],
+  });
+  $('.dt-search').remove();
+  $('.dt-info').remove();
 
-$('#fakturSearch').on('keyup', function () { //search
-  let searchValue = $(this).val();
-  table.search(searchValue).draw();
-});
-});
+  $('#fakturSearch').on('keyup', function () { //search
+    let searchValue = $(this).val();
+    table.search(searchValue).draw();
+  });
+  });
 
-    const kodeBarang = ["0001273", "0001274", "0001275", "0001276", "0001277", "0001278"];
-    const searchKode = document.getElementById("searchKode");
-    const dropdownList = document.getElementById("dropdownList");
+      const kodeBarang = ["0001273", "0001274", "0001275", "0001276", "0001277", "0001278"];
+      const searchKode = document.getElementById("searchKode");
+      const dropdownList = document.getElementById("dropdownList");
 
-    function updateDropdown(filterText = "") {
-        let filteredItems = kodeBarang.filter(kode => kode.toLowerCase().includes(filterText.toLowerCase())).slice(0, 3);
-        let displayedItems = filteredItems.slice(0, filterText ? filteredItems.length : 3); // Default 3 item, cari semua saat input
-        
-        dropdownList.innerHTML = displayedItems
-            .map(kode => `<li class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectKode(this)">${kode}</li>`)
-            .join("");
+      function updateDropdown(filterText = "") {
+          let filteredItems = kodeBarang.filter(kode => kode.toLowerCase().includes(filterText.toLowerCase())).slice(0, 3);
+          let displayedItems = filteredItems.slice(0, filterText ? filteredItems.length : 3); // Default 3 item, cari semua saat input
+          
+          dropdownList.innerHTML = displayedItems
+              .map(kode => `<li class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectKode(this)">${kode}</li>`)
+              .join("");
 
-        dropdownList.classList.toggle("hidden", displayedItems.length === 0);
-    }
+          dropdownList.classList.toggle("hidden", displayedItems.length === 0);
+      }
 
-    // Tampilkan 3 item default saat pertama kali input diklik
-    searchKode.addEventListener("focus", () => {
-        updateDropdown();
-    });
+      // Tampilkan 3 item default saat pertama kali input diklik
+      searchKode.addEventListener("focus", () => {
+          updateDropdown();
+      });
 
-    // Update dropdown berdasarkan pencarian
-    searchKode.addEventListener("input", () => {
-        updateDropdown(searchKode.value);
-    });
+      // Update dropdown berdasarkan pencarian
+      searchKode.addEventListener("input", () => {
+          updateDropdown(searchKode.value);
+      });
 
-    // Sembunyikan dropdown jika klik di luar
-    document.addEventListener("click", (event) => {
-        if (!searchKode.contains(event.target) && !dropdownList.contains(event.target)) {
-            dropdownList.classList.add("hidden");
-        }
-    });
+      // Sembunyikan dropdown jika klik di luar
+      document.addEventListener("click", (event) => {
+          if (!searchKode.contains(event.target) && !dropdownList.contains(event.target)) {
+              dropdownList.classList.add("hidden");
+          }
+      });
 
-    // Pilih item dan isi input
-    function selectKode(element) {
-        searchKode.value = element.textContent;
-        dropdownList.classList.add("hidden");
-    }
+      // Pilih item dan isi input
+      function selectKode(element) {
+          searchKode.value = element.textContent;
+          dropdownList.classList.add("hidden");
+      }
 
-    document.getElementById("toggleCheck").addEventListener("click", function () {
-        document.getElementById("checkIcon").classList.toggle("hidden");
-    });
+      document.getElementById("toggleCheck").addEventListener("click", function () {
+          document.getElementById("checkIcon").classList.toggle("hidden");
+      });
 
-    function confirmPopupBtn() {
-      const modal = document.getElementById("popupModalConfirm");
-      modal.classList.remove("hidden"); // Tampilkan modal
-      modal.style.display = "flex"; // Pastikan tampil dengan flexbox
-  
-      const confirmButton = document.getElementById("confirmAction");
-  
-      confirmButton.onclick = function () {
-          console.log("Pesanan dihapus!");
-          closeModalConfirm();
-      };
-    }
-  
-    function closeModalConfirm() {
+      function confirmPopupBtn() {
         const modal = document.getElementById("popupModalConfirm");
-        modal.classList.add("hidden"); // Sembunyikan modal
-        modal.style.display = "none"; // Pastikan modal benar-benar hilang
-    }
+        modal.classList.remove("hidden"); // Tampilkan modal
+        modal.style.display = "flex"; // Pastikan tampil dengan flexbox
+    
+        const confirmButton = document.getElementById("confirmAction");
+    
+        confirmButton.onclick = function () {
+            console.log("Pesanan dihapus!");
+            closeModalConfirm();
+        };
+      }
+    
+      function closeModalConfirm() {
+          const modal = document.getElementById("popupModalConfirm");
+          modal.classList.add("hidden"); // Sembunyikan modal
+          modal.style.display = "none"; // Pastikan modal benar-benar hilang
+      }
 </script>
 {% endblock %}
