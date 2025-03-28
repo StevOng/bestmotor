@@ -1,5 +1,10 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
+from .api import KatalogViewSet
 from . import render
+
+router = DefaultRouter()
+router.register(r'katalog', KatalogViewSet)
 
 urlpatterns = [
     path('rem/', render.katalogbrg, name='katalogbrg'),

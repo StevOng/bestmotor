@@ -1,5 +1,11 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
+from .api import *
 from . import render
+
+router = DefaultRouter()
+router.register(r'returjual', ReturJualViewSet)
+router.register(r'returbeli', ReturBeliViewSet)
 
 urlpatterns = [
     path('penjualan/', render.retur_jual, name='retur_jual'),

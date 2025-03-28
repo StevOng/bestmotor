@@ -1,5 +1,11 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
+from .api import *
 from . import render
+
+router = DefaultRouter()
+router.register(r'barang', BarangViewSet)
+router.register(r'detailbarang', DetailBarangViewSet)
 
 urlpatterns = [
     path('', render.barang, name='barang'),

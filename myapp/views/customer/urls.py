@@ -1,5 +1,10 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
+from .api import CustomerViewSet
 from . import render
+
+router = DefaultRouter()
+router.register(r'customer', CustomerViewSet)
 
 urlpatterns = [
     path('', render.customer, name='customer'),
