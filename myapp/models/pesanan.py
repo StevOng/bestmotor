@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import timedelta
-from customer import Customer
-from barang import Barang
+from .customer import Customer
+from .barang import Barang
 
 class Pesanan(models.Model):
     id = models.AutoField(primary_key=True)

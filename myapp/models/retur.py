@@ -1,7 +1,7 @@
 from django.db import models
-from invoice import Invoice
-from barang import Barang
-from faktur import Faktur
+from .invoice import Invoice
+from .barang import Barang
+from .faktur import Faktur
 
 class ReturBeli(models.Model):
     id = models.AutoField(primary_key=True)

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
-from barang import Barang, DetailBarang
+from .barang import Barang
 
 class Katalog(models.Model):
     id = models.AutoField(primary_key=True)

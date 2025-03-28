@@ -1,5 +1,5 @@
 from django.db import models
-from barang import Barang
+from .barang import Barang
 
 class TransaksiMasuk(models.Model):
     id = models.AutoField(primary_key=True)

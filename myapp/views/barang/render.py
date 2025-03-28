@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from decorators import *
+from ...decorators import *
 
 @both_required
 def barang(request):

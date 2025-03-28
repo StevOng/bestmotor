@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from decorators import admin_required
+from ...decorators import admin_required
 
 @admin_required
 def supplier(request):

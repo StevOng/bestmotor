@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from decorators import *
+from ...decorators import *
 
 @admin_required
 def admin_katalog(request):

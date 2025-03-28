@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from decorators import both_required
+from ...decorators import both_required
 
 @both_required
 def pesanan(request):

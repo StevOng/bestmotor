@@ -1,6 +1,6 @@
 from django.urls import path, re_path, include
-from views.katalog.render import katalog
-from views.user.render import login
+from .views.katalog.render import katalog
+from .views.user.render import login
 from . import render
 
 urlpatterns = [

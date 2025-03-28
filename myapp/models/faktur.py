@@ -1,6 +1,6 @@
 from django.db import models
-from pesanan import Pesanan
-from piutang import Piutang
+from .pesanan import Pesanan
+from .piutang import Piutang
 
 class Faktur(models.Model):
     id = models.AutoField(primary_key=True)

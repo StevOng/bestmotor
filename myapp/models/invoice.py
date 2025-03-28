@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import timedelta
-from hutang import Hutang
-from barang import Barang
+from .hutang import Hutang
+from .barang import Barang
 
 class Invoice(models.Model):
     id = models.AutoField(primary_key=True)

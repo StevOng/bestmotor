@@ -1,5 +1,5 @@
 from django.db import models
-from customer import Customer
+from .customer import Customer
 
 class Piutang(models.Model):
     id = models.AutoField(primary_key=True)

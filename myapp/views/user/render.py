@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from ...models.user import Admin, Sales
-from decorators import admin_required
+from ...models.user import *
+from ...decorators import admin_required
 
 def login(request):
     if request.method == 'POST':
