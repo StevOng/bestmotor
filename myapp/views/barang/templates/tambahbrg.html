@@ -11,19 +11,20 @@
     <button onclick="window.history.back()"><i class="fa-solid fa-x w-8 text-gray-500"></i></button>
   </div>
     <hr class="border-gray-300 pb-3">
-    <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="tambahbrgform">
+      <input type="hidden" id="barangId" value="{{ detail_barang.id|default:"" }}">
         <!-- Nama Barang -->
         <div>
           <label for="nama-brg" class="block text-sm font-medium text-gray-700">Nama Barang</label>
           <input type="text" id="nama-brg" placeholder="Masukkan nama barang"
-            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700">
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700" value="{{ detail_barang.barang.nama_barang|default:""}}">
         </div>
         
         <!-- Kode Barang -->
         <div>
           <label for="kode-brg" class="block text-sm font-medium text-gray-700">Kode Barang</label>
           <input type="text" id="kode-brg" placeholder="Masukkan kode barang"
-            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700">
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700" value="{{ detail_barang.barang.kode_barang|default:""}}">
         </div>
         
         <!-- Kategori -->
@@ -32,9 +33,6 @@
           <select id="kategori"
             class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm bg-white focus:outline-none focus:ring-customBlue focus:border-customBlue">
             <option disabled selected>Masukkan kategori barang</option>
-            <option>Rem</option>
-            <option>Data</option>
-            <option>Data</option>
           </select>
         </div>
         
@@ -44,17 +42,14 @@
           <select id="merk"
             class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm bg-white focus:outline-none focus:ring-customBlue focus:border-customBlue">
             <option disabled selected>Masukkan merek barang</option>
-            <option>Mio</option>
-            <option>Vario</option>
-            <option>Beat</option>
           </select>
         </div>
         
         <!-- Harga Barang -->
         <div class="md:col-span-2">
-          <label for="input-hrgbrg" class="block text-sm font-medium text-gray-700">Harga Barang</label>
+          <label for="input-hrgbrg" class="block text-sm font-medium text-gray-700">Harga Jual</label>
             <input type="text" id="input-hrgbrg" placeholder="Masukkan harga barang"
-                class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700">
+                class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700" value="{{ detail_barang.harga_jual|default:""}}">
         </div>
         
         <!-- Stok Minimum -->
@@ -62,7 +57,7 @@
           <label for="stok-minimum" class="block text-sm font-medium text-gray-700">Stok Minimum</label>
           <div class="flex items-center">
             <input type="text" id="stok-minimum" placeholder="Masukkan stok minimum barang"
-              class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm focus:outline-none focus:ring-customBlue focus:border-customBlue">
+              class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm focus:outline-none focus:ring-customBlue focus:border-customBlue" value="{{ detail_barang.stok_minimum|default:""}}">
           </div>
         </div>
 
@@ -78,18 +73,18 @@
               class="mt-1 mr-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400"> Harga Grosir 1:
             </div>
             <input type="number" value="12" 
-              class="mt-1 mx-2 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" />
+              class="mt-1 mx-2 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" id="min-beli1" value="{{ detail_barang.min_qty_grosir1|default:""}}"/>
             <input type="number" value="50.000"
-              class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" />
+              class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" id="harga1" value="{{ detail_barang.harga_satuan1|default:""}}"/>
           </div>
           <div class="flex">
             <div
-              class="mt-1 mr-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400"> Harga Grosir 1:
+              class="mt-1 mr-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400"> Harga Grosir 2:
             </div>
             <input type="number" value="12" 
-              class="mt-1 mx-2 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" />
+              class="mt-1 mx-2 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" id="min-beli2" value="{{ detail_barang.min_qty_grosir2|default:""}}"/>
             <input type="number" value="50.000"
-              class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" />
+              class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" id="harga2" value="{{ detail_barang.harga_satuan2|default:""}}"/>
           </div>
         </div>
         <div class="hidden md:block"></div>
@@ -107,7 +102,7 @@
                     <path d="M5 16L5 17C5 18.1046 5.89543 19 7 19L17 19C18.1046 19 19 18.1046 19 17V16" stroke="#222222"/>
                     </svg>
                 </label>
-                <input type="file" id="upload_gambar" multiple class="hidden">
+                <input type="file" id="upload_gambar" multiple class="hidden" value="{{ detail_barang.gambar|default:""}}">
             </div>
         </div>
         
@@ -115,24 +110,16 @@
         <div class="md:col-span-2">
           <label for="keterangan" class="block text-sm font-medium text-gray-700">Keterangan</label>
           <textarea id="keterangan" rows="3" placeholder="Masukkan keterangan"
-            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue"></textarea>
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" value="{{ detail_barang.keterangan|default:""}}"></textarea>
         </div>
+        <button type="submit" class="mt-5 ml-auto text-center">
+          <p class="text-sm font-medium text-gray-700">Simpan</p>
+          <i class="mt-1 fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
+        </button>
       </form>
-      <button class="mt-5 ml-auto text-center">
-        <p class="text-sm font-medium text-gray-700">Simpan</p>
-        <i class="mt-1 fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
-      </button>
 </div>
 {% endblock %}
 
 {% block script %}
-<script>
-  const uploadInput = document.getElementById('upload_gambar');
-  const placeholder = document.getElementById('placeholder');
-
-  uploadInput.addEventListener('change', () => {
-    const fileCount = uploadInput.files.length;
-    placeholder.textContent = `Upload Gambar (${fileCount}/5)`;
-  });
-</script>
+<script src="{% static "js/tambahbrg.js" %}">
 {% endblock %}

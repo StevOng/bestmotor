@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}Barang{% endblock %} 
 
@@ -21,51 +22,67 @@
     <a href="{% url 'barang' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/barang/' %} text-white bg-customBlue border-customBlue {% endif %}">
         Semua Barang
     </a>
-    <a href="{% url 'barang_rendah' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/barang/rendah/' %} text-white bg-customBlue border-customBlue {% endif %}">
+    <a href="{% url 'barang' %}?filter=rendah" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/barang/rendah/' %} text-white bg-customBlue border-customBlue {% endif %}">
         Barang dibawah Minimum Stok
     </a>
-    <a href="{% url 'barang_laku' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/barang/laku/' %} text-white bg-customBlue border-customBlue {% endif %}">
+    <a href="{% url 'barang' %}?filter=laku" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/barang/laku/' %} text-white bg-customBlue border-customBlue {% endif %}">
         Barang Paling Laku
     </a>
 </div>
 <div
   class="flex flex-col p-2 h-auto mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800"
 >    
-    <div class="mt-5 flex flex-row justify-between {% if request.path == '/barang/laku/' %} flex-col {% endif %}">
-        <div class="justify-start ml-3">
-            <input type="text" id="tableSearch" class="form-control rounded-lg border-gray-200 border-2 max-w-40 focus:border-customBlue lg:max-w-full" placeholder="Cari Barang disini...">
-            <button class="bg-customBlue border-customBlue hover:bg-[#243F6B] p-2 rounded-lg text-white w-12" type="button">
-                <i class="fas fa-search"></i>
-            </button>
-        </div>
-        {% if request.path == '/barang/' %}
-        <div class="inline-flex gap-2">
-            <a href="{% url 'tambah_barang' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
-                <div class="flex flex-row justify-center items-center">
-                    <p class="hidden lg:block p-1 lg:text-gray-400">Tambah Barang</p>
-                    <i class="fas fa-plus p-1 text-customBlue"></i>
-                </div>
-            </a>
-            <a href="{% url 'tambah_barang' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
-                <div class="flex flex-row justify-center items-center">
-                    <p class="hidden lg:block p-1 lg:text-gray-400">Export</p>
-                    <i class="fa-solid fa-arrow-up-from-bracket p-1 text-customBlue"></i>
-                </div>
-            </a>
-        </div>
-        {% elif request.path == '/barang/laku/' %}
-        <div class="mt-5 flex flex-col md:flex-row">
-            <div class="mx-3">
-                <label for="dari_tgl" class="block text-sm font-medium text-gray-700">Dari Tanggal</label>
-                <input type="date" id="dari_tgl"
-                class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue">
+    <div class="mt-5 flex flex-row justify-between {% if filter == 'laku' %} flex-col {% endif %}">
+        {% if filter == 'rendah' %}
+            <div class="justify-start ml-3">
+                <input type="text" id="tableSearch" class="form-control rounded-lg border-gray-200 border-2 max-w-40 focus:border-customBlue lg:max-w-full" placeholder="Cari Barang disini...">
+                <button class="bg-customBlue border-customBlue hover:bg-[#243F6B] p-2 rounded-lg text-white w-12" type="button">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
-            <div class="mx-3 mt-3 md:mt-0">
-                <label for="smpe_tgl" class="block text-sm font-medium text-gray-700">s/d Tanggal</label>
-                <input type="date" id="smpe_tgl"
-                  class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue">
+        {% elif filter == 'laku' %}
+            <div class="justify-start ml-3">
+                <input type="text" id="tableSearch" class="form-control rounded-lg border-gray-200 border-2 max-w-40 focus:border-customBlue lg:max-w-full" placeholder="Cari Barang disini...">
+                <button class="bg-customBlue border-customBlue hover:bg-[#243F6B] p-2 rounded-lg text-white w-12" type="button">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
-        </div>
+            <div class="mt-5 flex flex-col md:flex-row">
+                <form action="{% url 'barang' %}" method="GET"></form>
+                    <div class="mx-3">
+                        <label for="dari_tgl" class="block text-sm font-medium text-gray-700">Dari Tanggal</label>
+                        <input type="date" id="dari_tgl"
+                        class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" value="{{ request.GET.dari_tgl }}">
+                    </div>
+                    <div class="mx-3 mt-3 md:mt-0">
+                        <label for="smpe_tgl" class="block text-sm font-medium text-gray-700">s/d Tanggal</label>
+                        <input type="date" id="smpe_tgl"
+                          class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" value="{{ request.GET.smpe_tgl }}">
+                    </div>
+                    <button type="submit" class="p-2 bg-customBlue text-white rounded-md text-sm">Filter</button>
+                </form>
+            </div>
+        {% else %}
+            <div class="justify-start ml-3">
+                <input type="text" id="tableSearch" class="form-control rounded-lg border-gray-200 border-2 max-w-40 focus:border-customBlue lg:max-w-full" placeholder="Cari Barang disini...">
+                <button class="bg-customBlue border-customBlue hover:bg-[#243F6B] p-2 rounded-lg text-white w-12" type="button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="inline-flex gap-2">
+                <a href="{% url 'tambah_barang' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
+                    <div class="flex flex-row justify-center items-center">
+                        <p class="hidden lg:block p-1 lg:text-gray-400">Tambah Barang</p>
+                        <i class="fas fa-plus p-1 text-customBlue"></i>
+                    </div>
+                </a>
+                <a href="{% url 'tambah_barang' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
+                    <div class="flex flex-row justify-center items-center">
+                        <p class="hidden lg:block p-1 lg:text-gray-400">Export</p>
+                        <i class="fa-solid fa-arrow-up-from-bracket p-1 text-customBlue"></i>
+                    </div>
+                </a>
+            </div>
         {% endif %}
     </div>
     <table id="tabel-brg" class="display cell-border">
@@ -77,92 +94,50 @@
                 <th>Kategori</th>
                 <th>Merk</th>
                 <th>Harga Jual</th>
-                {% if request.path == '/barang/laku/'%}
+                {% if filter == 'laku' %}
                 <th>Qty Terjual</th>
                 {% endif %}
                 <th>Stok</th>
                 <th>Qty Pesanan</th>
                 <th>Qty Siap Jual</th>
-                {% if request.path == '/barang/'%}
+                {% if request.path == '/barang/' %}
                 <th>Edit</th>
                 <th>Hapus</th>
-                {% elif request.path == '/barang/rendah/' %}
+                {% elif filter == 'rendah' %}
                 <th>Stok Minimum</th>
                 <th>Selisih</th>
                 {% endif %}
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td><img class="w-16 h-16" src="{% static 'images/logo.png' %}" alt="Gambar Barang"></td>
-                <td>BM.001.001</td>
-                <td>Rem Motor Vario</td>
-                <td>Rem</td>
-                <td>Vario</td>
-                <td>55.000,-</td>
-                {% if request.path == '/barang/laku/'%}
-                <td>50</td>
-                {% endif %}
-                <td>13</td>
-                <td>2</td>
-                <td>11</td>
-                {% if request.path == '/barang/'%}
-                <td><a href="{% url 'tambah_barang' %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
-                <td><button onclick="confirmPopupBtn()"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
-                {% elif request.path == '/barang/rendah/' %}
-                <td>15</td>
-                <td>2</td>
-                {% endif %}
-            </tr>
+            {% for brg in barang %}
+                <tr>
+                    <td><img class="w-16 h-16" src="{% static 'images/logo.png' %}" alt="Gambar Barang"></td>
+                    <td>{{ brg.barang.kode_barang }}</td>
+                    <td>{{ brg.barang.nama_barang }}</td>
+                    <td>{{ brg.kategori }}</td>
+                    <td>{{ brg.merk }}</td>
+                    <td>{{ brg.harga_jual|floatformat:2|intcomma }}</td>
+                    {% if filter == 'laku' %}
+                    <td>{{ brg.qty_terjual }}</td>
+                    {% endif %}
+                    <td>{{ brg.stok }}</td>
+                    <td>{{ brg.total_pesanan|default:"0" }}</td>
+                    <td>{{ brg.stok|add:-brg.total_pesanan }}</td>
+                    {% if request.path == '/barang/'%}
+                    <td><a href="{% url 'tambah_barang' %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                    <td><button onclick="confirmPopupBtn()"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
+                    {% elif filter == 'rendah' %}
+                    <td>{{ brg.stok_minimum }}</td>
+                    <td>{{ brg.stok_minimum|add:-brg.stok }}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>
 {% endblock %}
 
 {% block script %}
-<script>
- {% comment %} tabel barang {% endcomment %}
- $(document).ready(function () {
-    let table = $('#tabel-brg').DataTable({
-        pageLength: 20,
-        lengthChange: false, // Hilangkan "Show entries"
-        autoWidth: false,
-        ordering: false,
-        scrollX: true,
-        responsive: true,
-        "columnDefs": [
-      { className: "text-center", targets: [-1, -2] } // isi field di tengah
-  ],
-  createdRow: function(row, data, dataIndex) { //menghapus padding field index 0
-    $('td:eq(0)', row).css({'padding': 'unset'});
-}
-    });
-    $('.dt-search').remove();
-    $('.dt-info').remove();
-
-    $('#tableSearch').on('keyup', function () { //search
-      let searchValue = $(this).val();
-      table.search(searchValue).draw();
-    });
-  });
-
-  function confirmPopupBtn() {
-    const modal = document.getElementById("popupModalConfirm");
-    modal.classList.remove("hidden"); // Tampilkan modal
-    modal.style.display = "flex"; // Pastikan tampil dengan flexbox
-
-    const confirmButton = document.getElementById("confirmAction");
-
-    confirmButton.onclick = function () {
-        console.log("Pesanan dihapus!");
-        closeModalConfirm();
-    };
-}
-
-function closeModalConfirm() {
-    const modal = document.getElementById("popupModalConfirm");
-    modal.classList.add("hidden"); // Sembunyikan modal
-    modal.style.display = "none"; // Pastikan modal benar-benar hilang
-}
-</script>
+<script src="{% static "js/barang.js" %}">
 {% endblock %}

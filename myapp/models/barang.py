@@ -34,7 +34,19 @@ class DetailBarang(models.Model):
         ('spion','Spion')
     ]
     kategori = models.CharField(max_length=50, choices=CHOICES, default=None)
-    merk = models.CharField(max_length=50)
+    MERK = [
+        ('toyota', 'Toyota'),
+        ('astra', 'Astra'),
+        ('denso', 'Denso'),
+        ('honda', 'Honda'),
+        ('yamaha', 'Yamaha'),
+        ('ngk', 'NGK'),
+        ('daytona', 'Daytona'),
+        ('aspira', 'Aspira'),
+        ('bosch', 'Bosch'),
+        ('isuzu', 'Isuzu')
+    ]
+    merk = models.CharField(max_length=50, choices=MERK, default=None)
     harga_jual = models.DecimalField(max_digits=19, decimal_places=2)
     stok_minimum = models.IntegerField()
     min_qty_grosir1 = models.IntegerField()
