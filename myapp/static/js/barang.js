@@ -30,8 +30,20 @@ function confirmPopupBtn() {
 
     const confirmButton = document.getElementById("confirmAction");
 
-    confirmButton.onclick = function () {
-        console.log("Pesanan dihapus!");
+    confirmButton.onclick = async function () {
+        try {
+            const response = await fetch(`/api/barang/${barangId}/`, {
+                method: "DELETE"
+            })
+            if (response.ok) {
+                console.log("Barang berhasil dihapus");
+                document.querySelector(`button[onclick="confirmPopupBtn(${barangId})"]`).closest("tr").remove()
+            } else {
+                console.error("Gagal menghapus barang");
+            }
+        } catch (error) {
+            console.error("Terjadi kesalahan: ", error);
+        }
         closeModalConfirm();
     };
 }

@@ -112,7 +112,7 @@
         <tbody>
             {% for brg in barang %}
                 <tr>
-                    <td><img class="w-16 h-16" src="{% static 'images/logo.png' %}" alt="Gambar Barang"></td>
+                    <td><img class="w-16 h-16" src="" alt="Gambar Barang"></td>
                     <td>{{ brg.barang.kode_barang }}</td>
                     <td>{{ brg.barang.nama_barang }}</td>
                     <td>{{ brg.kategori }}</td>
@@ -126,7 +126,7 @@
                     <td>{{ brg.stok|add:-brg.total_pesanan }}</td>
                     {% if request.path == '/barang/'%}
                     <td><a href="{% url 'tambah_barang' %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
-                    <td><button onclick="confirmPopupBtn()"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
+                    <td><button onclick="confirmPopupBtn({{ brg.id }})"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
                     {% elif filter == 'rendah' %}
                     <td>{{ brg.stok_minimum }}</td>
                     <td>{{ brg.stok_minimum|add:-brg.stok }}</td>

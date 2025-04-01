@@ -70,7 +70,7 @@ document.getElementById("tambahbrgform").addEventListener("submit", async(event)
 
 async function getKategori() {
     try{
-        const response = await fetch('api/detailbarang/kategori_choices/')
+        const response = await fetch('/api/detailbarang/kategori_choices/')
         const choices = await response.json()
 
         const select = document.getElementById("kategori")
@@ -92,7 +92,7 @@ async function getKategori() {
 
 async function getMerk() {
     try{
-        const response = await fetch('api/detailbarang/merk_choices/')
+        const response = await fetch('/api/detailbarang/merk_choices/')
         const choices = await response.json()
 
         const select = document.getElementById("merk")
