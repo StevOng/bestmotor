@@ -28,7 +28,7 @@ document.getElementById("tambahbrgform").addEventListener("submit", async(event)
     const gambar = document.getElementById("upload_gambar").files[0]
     const ket = document.getElementById("keterangan").value
 
-    const method = id ? "PUT" : "POST" // jika ada id edit, tidak? tambah
+    const method = id ? "PATCH" : "POST" // jika ada id edit, tidak? tambah
     const apiBarang = id ? `/api/barang/${id}/` : `/api/barang/`
     const apiDetail = id ? `/api/detailbarang/${id}/` : `/api/detailbarang/`
 

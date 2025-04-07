@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import timedelta
+from decimal import Decimal
 from .customer import Customer
 from .barang import Barang
 
@@ -9,7 +10,11 @@ class Pesanan(models.Model):
     barang = models.ManyToManyField(Barang, through='DetailPesanan')
     no_pesanan = models.CharField(max_length=20, unique=True)
     no_referensi = models.CharField(max_length=50)
-    total = models.DecimalField(max_digits=19, decimal_places=2)
+    bruto = models.DecimalField(max_digits=10, decimal_places=2)
+    ppn = models.DecimalField(max_digits=5, decimal_places=2)
+    ongkir = models.DecimalField(max_digits=19, decimal_places=2)
+    diskon_pesanan = models.DecimalField(max_digits=19, decimal_places=2)
+    netto = models.DecimalField(max_digits=10, decimal_places=2)
     CHOICES = [
         ('pending','Pending'),
         ('ready','Ready'),
@@ -41,11 +46,24 @@ class Pesanan(models.Model):
             else:
                 self.no_referensi = "REFBM0001" # kode pertama
         return self.no_referensi
+    
+    def hitung_total_bruto(self):
+        total = Decimal(0)
+        for detail in self.detailpesanan_set.all():
+            total += detail.hitung_bruto()
+        self.bruto = total
+        return total
+
+    def hitung_total_netto(self):
+        self.netto = self.bruto + (self.bruto * self.ppn) + self.ongkir - self.diskon_pesanan
+        return self.netto
 
     def save(self, *args, **kwargs):
-        if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum
-            self.generate_no_pesanan() # jika belum berarti baru maka generate
+        if not self.pk:# cek jika id sudah ada atau belum
+            self.generate_no_pesanan() # jika belum maka generate
             self.generate_no_referensi()
+        self.hitung_total_bruto()
+        self.hitung_total_netto()
         super().save(*args, **kwargs)
 
 class DetailPesanan(models.Model):
@@ -64,11 +82,6 @@ class DetailPesanan(models.Model):
     jatuh_tempo = models.DateTimeField()
     alamat_kirim = models.CharField(max_length=255)
     keterangan = models.TextField(null=True, blank=True)
-    bruto = models.DecimalField(max_digits=10, decimal_places=2)
-    ppn = models.DecimalField(max_digits=5, decimal_places=2)
-    ongkir = models.DecimalField(max_digits=19, decimal_places=2)
-    diskon_pesanan = models.DecimalField(max_digits=19, decimal_places=2)
-    netto = models.DecimalField(max_digits=10, decimal_places=2)
     qty_pesan = models.IntegerField()
     diskon_barang = models.DecimalField(max_digits=19, decimal_places=2)
     updated_at = models.DateTimeField(auto_now=True)
@@ -76,6 +89,19 @@ class DetailPesanan(models.Model):
     def __str__(self):
         return f"{self.id}"
     
+    def total_diskon_barang(self):
+        return self.qty_pesan * self.diskon_barang
+    
+    def total_harga_barang(self):
+        return (self.barang_id.harga_jual * self.qty_pesan) - self.total_diskon_barang()
+    
+    def nilai_ppn(self):
+        return self.total_harga_barang() * self.pesanan_id.ppn
+    
+    def hitung_bruto(self):
+        harga = self.barang_id.get_harga_berdasarkan_qty(self.qty_pesan)
+        return (harga - self.diskon_barang) * self.qty_pesan
+
     def set_jatuh_tempo(self):
         self.jatuh_tempo = self.tanggal_pesanan + timedelta(days=self.top)
         return self.jatuh_tempo

@@ -67,3 +67,13 @@ class DetailBarang(models.Model):
 
     def __str__(self):
         return f'{self.barang_id.nama_barang}, stok: {self.stok}'
+    
+    def get_harga_berdasarkan_qty(self, qty):
+        if qty >= self.min_qty_grosir2:
+            self.harga_jual = self.harga_satuan2
+            return self.harga_jual
+        elif qty >= self.min_qty_grosir1:
+            self.harga_jual = self.harga_satuan1
+            return self.harga_satuan1
+        else:
+            return self.harga_jual

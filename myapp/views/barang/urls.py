@@ -10,4 +10,5 @@ router.register(r'detailbarang', DetailBarangViewSet)
 urlpatterns = [
     path('', render.barang, name='barang'),
     path('tambah/', render.tambah_barang, name='tambah_barang'),
+    path('tambah/<int:id>', render.tambah_barang, name='tambah_barang')
 ]

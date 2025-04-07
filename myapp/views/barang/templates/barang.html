@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load humanize %}
 
 {% block title %}Barang{% endblock %} 
 
@@ -95,17 +94,17 @@
                 <th>Merk</th>
                 <th>Harga Jual</th>
                 {% if filter == 'laku' %}
-                <th>Qty Terjual</th>
+                    <th>Qty Terjual</th>
                 {% endif %}
                 <th>Stok</th>
                 <th>Qty Pesanan</th>
                 <th>Qty Siap Jual</th>
-                {% if request.path == '/barang/' %}
-                <th>Edit</th>
-                <th>Hapus</th>
-                {% elif filter == 'rendah' %}
-                <th>Stok Minimum</th>
-                <th>Selisih</th>
+                {% if filter == 'rendah' %}
+                    <th>Stok Minimum</th>
+                    <th>Selisih</th>
+                {% elif not filter %}
+                    <th>Edit</th>
+                    <th>Hapus</th>
                 {% endif %}
             </tr>
         </thead>
@@ -119,17 +118,17 @@
                     <td>{{ brg.merk }}</td>
                     <td>{{ brg.harga_jual|floatformat:2|intcomma }}</td>
                     {% if filter == 'laku' %}
-                    <td>{{ brg.qty_terjual }}</td>
+                        <td>{{ brg.qty_terjual }}</td>
                     {% endif %}
                     <td>{{ brg.stok }}</td>
                     <td>{{ brg.total_pesanan|default:"0" }}</td>
                     <td>{{ brg.stok|add:-brg.total_pesanan }}</td>
-                    {% if request.path == '/barang/'%}
-                    <td><a href="{% url 'tambah_barang' %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
-                    <td><button onclick="confirmPopupBtn({{ brg.id }})"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
-                    {% elif filter == 'rendah' %}
-                    <td>{{ brg.stok_minimum }}</td>
-                    <td>{{ brg.stok_minimum|add:-brg.stok }}</td>
+                    {% if filter == 'rendah' %}
+                        <td>{{ brg.stok_minimum }}</td>
+                        <td>{{ brg.stok_minimum|add:-brg.stok }}</td>
+                    {% elif not filter %}
+                        <td><a href="{% url 'tambah_barang' id=brg.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                        <td><button onclick="confirmPopupBtn({{ brg.id }})"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
                     {% endif %}
                 </tr>
             {% endfor %}

@@ -10,4 +10,5 @@ router.register(r'detailpesanan', DetailPesananViewSet)
 urlpatterns = [
     path('', render.pesanan, name='pesanan'),
     path('tambah/', render.tambah_pesanan, name='tambah_pesanan'),
+    path('tambah/<int:id>/', render.tambah_pesanan, name='tambah_pesanan')
 ]

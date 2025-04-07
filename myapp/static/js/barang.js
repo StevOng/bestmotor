@@ -23,7 +23,7 @@ $(document).ready(function () {
     });
 });
 
-function confirmPopupBtn() {
+function confirmPopupBtn(barangId) {
     const modal = document.getElementById("popupModalConfirm");
     modal.classList.remove("hidden"); // Tampilkan modal
     modal.style.display = "flex"; // Pastikan tampil dengan flexbox

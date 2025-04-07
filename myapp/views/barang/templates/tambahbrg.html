@@ -12,19 +12,19 @@
   </div>
     <hr class="border-gray-300 pb-3">
     <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="tambahbrgform">
-      <input type="hidden" id="barangId" value="{{ detail_barang.id|default:"" }}">
+      <input type="hidden" id="barangId" value="{{ detail_barang.barang_id|default:"" }}">
         <!-- Nama Barang -->
         <div>
           <label for="nama-brg" class="block text-sm font-medium text-gray-700">Nama Barang</label>
           <input type="text" id="nama-brg" placeholder="Masukkan nama barang"
-            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700" value="{{ detail_barang.barang.nama_barang|default:""}}">
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700" value="{{ detail_barang.barang_id.nama_barang|default:""}}">
         </div>
         
         <!-- Kode Barang -->
         <div>
           <label for="kode-brg" class="block text-sm font-medium text-gray-700">Kode Barang</label>
           <input type="text" id="kode-brg" placeholder="Masukkan kode barang"
-            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700" value="{{ detail_barang.barang.kode_barang|default:""}}">
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700" value="{{ detail_barang.barang_id.kode_barang|default:""}}">
         </div>
         
         <!-- Kategori -->
