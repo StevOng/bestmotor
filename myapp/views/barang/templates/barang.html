@@ -111,7 +111,7 @@
         <tbody>
             {% for brg in barang %}
                 <tr>
-                    <td><img class="w-16 h-16" src="" alt="Gambar Barang"></td>
+                    <td data-brg-id="{{ brg.id }}" class="gambarContainer"></td>
                     <td>{{ brg.barang.kode_barang }}</td>
                     <td>{{ brg.barang.nama_barang }}</td>
                     <td>{{ brg.kategori }}</td>
