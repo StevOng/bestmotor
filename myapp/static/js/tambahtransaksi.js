@@ -1,0 +1,161 @@
+document.addEventListener('DOMContentLoaded', () => {
+    getOptionBrg()
+})
+
+document.addEventListener("change", function (e) {
+    if (e.target.classList.contains("kodebrg-dropdown")) {
+      const lastRow = document.querySelector("tbody tr:last-child");
+      const selectedValue = e.target.value;
+  
+      // Cek apakah dropdown dipilih dan belum pernah nambah baris baru
+      if (selectedValue && !lastRow.classList.contains("new-row-added")) {
+        addNewRow();
+      }
+    }
+});
+
+function confirmPopupBtn(id) {
+    const modal = document.getElementById("popupModalConfirm");
+    modal.classList.remove("hidden"); // Tampilkan modal
+    modal.style.display = "flex"; // Pastikan tampil dengan flexbox
+    const jenis = document.getElementById("jenis").value
+  
+    const confirmButton = document.getElementById("confirmAction");
+  
+    confirmButton.onclick = async function () {
+        try {
+            const response = await fetch(`/api/transaksi${jenis}/${id}`, {
+                method: "DELETE"
+            })
+            if (response.ok) {
+                console.log("Barang dihapus!");
+                const row = document.querySelector(`tr[data-id="${id}"]`)
+                row.classList.add("fade-out")
+                setTimeout(() => row.remove(), 400)
+            } else {
+                console.error("Gagal menghapus Barang");
+            }
+        } catch (error) {
+            console.error("Terjadi kesalahan: ",error);
+        }
+        closeModalConfirm();
+    };
+  }
+  
+  function closeModalConfirm() {
+      const modal = document.getElementById("popupModalConfirm");
+      modal.classList.add("hidden"); // Sembunyikan modal
+      modal.style.display = "none"; // Pastikan modal benar-benar hilang
+  }
+
+  async function loadBarangOptions(selectId, selectedId = null) {
+    let response = await fetch("/api/barang/")
+    let data = await response.json()
+    let select = document.getElementById(selectId)
+    select.innerHTML = "<option disabled selected>Pilih Barang</option>"
+
+    data.forEach(barang => {
+        let option = document.createElement("option")
+        option.value = barang.id
+        option.text = barang.kode_barang
+        if (barang.id == selectedId) {
+            option.selected = true
+        }
+        select.appendChild(option)
+    })
+}
+
+async function getOptionBrg() {
+    const selects = document.querySelectorAll("[id^='kodebrg-dropdown-']")
+    selects.forEach(select => {
+        const selectedId = select.dataset.selectedId
+        const namaBrgId = select.dataset.namaBarangId
+        loadBarangOptions(select.id, selectedId)
+
+        select.addEventListener("change", async() => {
+            const barangId = select.value
+
+            const response = await fetch(`/api/barang/${barangId}`)
+            const data = await response.json()
+
+            const namaBrgEl = document.getElementById(namaBrgId)
+            if (namaBrgEl && data.nama_barang) {
+                namaBrgEl.textContent = data.nama_barang
+            }
+        })
+    })
+}
+
+function addNewRow() {
+    const tbody = document.querySelector("tbody");
+    const newRow = document.createElement("tr");
+  
+    const rowCount = tbody.querySelectorAll("tr").length + 1;
+  
+    newRow.classList.add("new-row-added"); // untuk mencegah nambah berkali-kali
+    newRow.innerHTML = `
+      <td>${rowCount}</td>
+      <td>
+        <input type="hidden" id="barangId-${rowCount}" value="">
+        <select id="kodebrg-dropdown-${rowCount}" class="kodebrg-dropdown" data-barang-id="">
+          <option value="">Pilih Barang</option>
+        </select>
+      </td>
+      <td id="namaBrg-${rowCount}"></td>
+      <td><input type="number" id="input_qtybrg-${rowCount}" class="input_qtybrg w-20 rounded-md border-gray-300"/></td>
+      <td><button type="submit"><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+      <td><button onclick="hapusRow(this)"><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+    `
+  
+    tbody.appendChild(newRow);
+
+    loadBarangOptions(`kodebrg-dropdown-${rowCount}`);
+}
+
+function hapusRow(btn) {
+    btn.closest("tr").remove()
+}
+
+document.querySelectorAll(".btn-submit").forEach((btn) => {
+    btn.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const row = btn.closest("tr");
+        const id = btn.dataset.id;
+        const jenis = document.getElementById("jenis").value
+        const barangId = row.querySelector(".barang-id").value
+        const qty = row.querySelector(".input-qtybrg").value
+        const ket = row.getElementById("keterangan").value
+
+        if (!barangId) {
+            alert("Barang harus dipilih");
+            return;
+        }
+
+        const transaksi = new FormData();
+        transaksi.append("keterangan", ket);
+        if (jenis === "masuk") {
+            transaksi.append("qty_masuk", qty);
+        } else {
+            transaksi.append("qty_keluar", qty);
+        }
+
+        const method = id ? "PATCH" : "POST";
+        const apiUrl = id
+            ? `/api/transaksi${jenis}/${id}/`
+            : `/api/transaksi${jenis}/`;
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: method,
+                body: transaksi,
+            });
+            const result = await response.json();
+            console.log(result);
+        } catch (error) {
+            console.error("Terjadi kesalahan:", error);
+        }
+    });
+});
+
+  

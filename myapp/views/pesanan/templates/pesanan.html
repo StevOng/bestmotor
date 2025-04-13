@@ -141,7 +141,7 @@
       </thead>
       <tbody>
         {% for pesanan in pesanan_list %}
-          <tr>
+          <tr data-id="{{ pesanan.id }}">
             <td>{{ forloop.counter }}</td>
             <td>{{ pesanan.no_pesanan }}</td>
             <td>{{ pesanan.created_at }}</td>
@@ -178,7 +178,7 @@
       </thead>
       <tbody>
         {% for pesanan in pesanan_list %}
-          <tr>
+          <tr data-id="{{ pesanan.id }}">
             <td><input type="checkbox" class="checkbox-pesanan" value="{{ pesanan.id }}"></td>
             <td>{{ forloop.counter }}</td>
             <td>{{ pesanan.no_pesanan }}</td>

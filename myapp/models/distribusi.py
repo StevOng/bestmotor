@@ -33,7 +33,7 @@ class TransaksiKeluar(models.Model):
     barang = models.ManyToManyField(Barang)
     no_bukti = models.CharField(max_length=10, unique=True)
     keterangan = models.TextField(null=True, blank=True)
-    qty_masuk = models.IntegerField()
+    qty_keluar = models.IntegerField()
     tanggal_pembuatan = models.DateTimeField(auto_now_add=True)
     terakhir_edit = models.DateTimeField(auto_now=True)
 

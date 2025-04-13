@@ -318,8 +318,10 @@ function addNewRow() {
     `
   
     tbody.appendChild(newRow);
-  
-    // Call fungsi load opsi barang (misalnya via fetch)
+
     loadBarangOptions(`kodebrg-dropdown-${rowCount}`);
 }
-  
+
+function hapusRow(btn) {
+    btn.closest("tr").remove()
+}

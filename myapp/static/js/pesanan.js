@@ -26,7 +26,7 @@ $(document).ready(function () {
     });
 });
 
-function confirmPopupBtn() {
+function confirmPopupBtn(id) {
     const modal = document.getElementById("popupModalConfirm");
     modal.classList.remove("hidden"); // Tampilkan modal
     modal.style.display = "flex"; // Pastikan tampil dengan flexbox
@@ -40,7 +40,9 @@ function confirmPopupBtn() {
             })
             if (response.ok) {
                 console.log("Pesanan berhasil dihapus");
-                document.querySelector(`button[onclick="confirmPopupBtn(${id})"]`).closest("tr").remove()
+                const row = document.querySelector(`tr[data-id="${id}]`)
+                row.classList.add("fade-out")
+                setTimeout(() => row.remove(), 400)
             } else {
                 console.error("Gagal menghapus pesanan");
             }
