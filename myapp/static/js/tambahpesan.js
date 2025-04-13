@@ -195,62 +195,64 @@ function pilihCustomer(id, nama, toko) {
     closeModal()
 }
 
-document.getElementById("tambahpesanform").addEventListener("submit", async(event) => {
-    event.preventDefault()
+document.querySelectorAll(".btn-submit").forEach((btn) => {
+    btn.addEventListener("submit", async (event) => {
+        event.preventDefault()
 
-    let id = document.getElementById("pesananId").value
-    let kurir = document.getElementById("kurir").value
-    let customer = document.getElementById("customerId").value
-    let top = document.getElementById("top").value
-    let alamat = document.getElementById("alamat_kirim").value
-    let keterangan = document.getElementById("keterangan").value
-    let ppn = document.getElementById("ppn").value
-    let ongkir = document.getElementById("ongkir").value
-    let diskon = document.getElementById("discount").value
-    let barang = document.getElementById("barangId").value
-    let qty = document.getElementById("input_qtybrg").value
-    let diskonBarang = document.getElementById("disc").value
-    
-    const method = id ? "PATCH" : "POST" // jika ada id edit, tidak? tambah
-    const apiPesanan = id ? `/api/pesanan/${id}/` : `/api/pesanan/`
-    const apiDetail = id ? `/api/detailpesanan/${id}/` : `/api/detailpesanan/`
+        const row = btn.closest("tr")
+        const id = btn.dataset.id
+        const qty = row.querySelector(".input_qtybrg").value
+        const diskonBarang = row.querySelector(".disc").value
+        const barangId = row.querySelector(".barangId").value
+        const kurir = document.getElementById("kurir").value
+        const customer = document.getElementById("customerId").value
+        const top = document.getElementById("top").value
+        const alamat = document.getElementById("alamat_kirim").value
+        const keterangan = document.getElementById("keterangan").value
+        const ppn = document.getElementById("ppn").value
+        const ongkir = document.getElementById("ongkir").value
+        const diskon = document.getElementById("discount").value
 
-    if (!customer || !barang) {
-        alert("Customer dan barang harus dipilih!")
-        return
-    }
+        if (!customer || !barangId) {
+            alert("Customer dan Barang harus dipilih")
+            return
+        }
+        const pesanan = new FormData()
+        pesanan.append("customer_id", customer)
+        pesanan.append("ppn", ppn)
+        pesanan.append("ongkir", ongkir)
+        pesanan.append("diskon_pesanan", diskon)
 
-    const pesanan = new FormData()
-    pesanan.append("customer_id", customer)
-    pesanan.append("ppn", ppn)
-    pesanan.append("ongkir", ongkir)
-    pesanan.append("diskon_pesanan", diskon)
+        const method = id ? "PATCH" : "POST" // jika ada id edit, tidak? tambah
+        const apiPesanan = id ? `/api/pesanan/${id}/` : `/api/pesanan/`
+        const apiDetail = id ? `/api/detailpesanan/${id}/` : `/api/detailpesanan/`
 
-    let response = await fetch(apiPesanan, {
-        method: method,
-        body: pesanan
-    })
-    let pesananData = await response.json()
-    console.log(pesananData);
-
-    if (pesananData.id) {
-        const detailPesanan = new FormData()
-        detailPesanan.append("pesanan_id", pesananData.id)
-        detailPesanan.append("barang_id", barang)
-        detailPesanan.append("kurir", kurir)
-        detailPesanan.append("top", top)
-        detailPesanan.append("alamat_kirim", alamat)
-        detailPesanan.append("keterangan", keterangan)
-        detailPesanan.append("qty_pesan", qty)
-        detailPesanan.append("diskon_barang", diskonBarang)
-
-        let detailResponse = await fetch(apiDetail, {
+        const response = await fetch(apiPesanan, {
             method: method,
-            body: detailPesanan
+            body: pesanan
         })
-        let detailData = await detailResponse.json()
-        console.log(detailData);
-    }
+        const pesananData = await response.json()
+        console.log(pesananData);
+
+        if (pesananData.id) {
+            const detailPesanan = new FormData()
+            detailPesanan.append("pesanan_id", pesananData.id)
+            detailPesanan.append("barang_id", barangId)
+            detailPesanan.append("kurir", kurir)
+            detailPesanan.append("top", top)
+            detailPesanan.append("alamat_kirim", alamat)
+            detailPesanan.append("keterangan", keterangan)
+            detailPesanan.append("qty_pesan", qty)
+            detailPesanan.append("diskon_barang", diskonBarang)
+    
+            let detailResponse = await fetch(apiDetail, {
+                method: method,
+                body: detailPesanan
+            })
+            let detailData = await detailResponse.json()
+            console.log(detailData);
+        }
+    })
 })
 
 async function loadBarangOptions(selectId, selectedId = null) {
