@@ -104,9 +104,14 @@ function confirmPopupBtn(detailId) {
             })
             if (response.ok) {
                 console.log("Pesanan dihapus!");
-                const row = document.querySelector(`tr[data-id="${detailId}"]`)
-                row.classList.add("fade-out")
-                setTimeout(() => row.remove(), 400)
+                const row = document.querySelector(`tr[data-id="${detailId}"]`);
+                row.querySelectorAll("input, select, textarea").forEach((el) => {
+                    el.value = ""
+                    if (el.tagName == "select") {
+                        el.selectedIndex = 0
+                    }
+                })
+                row.removeAttribute("data-id")
             } else {
                 console.error("Gagal menghapus pesanan");
             }
@@ -325,5 +330,7 @@ function addNewRow() {
 }
 
 function hapusRow(btn) {
-    btn.closest("tr").remove()
+    const row = btn.closest("tr")
+    row.classList.add("fade-out")
+    setTimeout(() => row.remove(), 400)
 }

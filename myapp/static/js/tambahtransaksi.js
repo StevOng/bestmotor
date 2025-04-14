@@ -29,9 +29,14 @@ function confirmPopupBtn(id) {
             })
             if (response.ok) {
                 console.log("Barang dihapus!");
-                const row = document.querySelector(`tr[data-id="${id}"]`)
-                row.classList.add("fade-out")
-                setTimeout(() => row.remove(), 400)
+                const row = document.querySelector(`tr[data-id="${id}"]`);
+                row.querySelectorAll("input, select, textarea").forEach((el) => {
+                    el.value = ""
+                    if (el.tagName == "select") {
+                        el.selectedIndex = 0
+                    }
+                })
+                row.removeAttribute("data-id")
             } else {
                 console.error("Gagal menghapus Barang");
             }
@@ -113,7 +118,9 @@ function addNewRow() {
 }
 
 function hapusRow(btn) {
-    btn.closest("tr").remove()
+    const row = btn.closest("tr")
+    row.classList.add("fade-out")
+    setTimeout(() => row.remove(), 400)
 }
 
 document.querySelectorAll(".btn-submit").forEach((btn) => {
