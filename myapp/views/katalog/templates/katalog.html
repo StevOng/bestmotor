@@ -40,468 +40,87 @@
   </div>
 </div>
 <div class="px-6 py-2 md:px-12">
-  <div class="py-2">
-    <div class="flex flex-row justify-between items-center">
-      <p class="font-semibold">Rekomendasi Oli Motor</p>
-      <div class="flex gap-4">
-        <button
-          id="scrollLeft1"
-          class="bg-white text-customBlue p-2 px-3 rounded-full shadow border border-gray-300"
-        >
-          <i class="fa-solid fa-arrow-left"></i>
-        </button>
-        <button
-          id="scrollRight1"
-          class="bg-white text-customBlue p-2 px-3 rounded-full shadow border border-gray-300"
-        >
-          <i class="fa-solid fa-arrow-right"></i>
-        </button>
+  {% for kategori, items in kategori_katalog.items %}
+    <div class="py-2">
+      <div class="flex flex-row justify-between items-center">
+        <p class="font-semibold">Rekomendasi {{ kategori|title }}r</p>
+        <div class="flex gap-4">
+          <button
+            id="scrollLeft{{ forloop.counter }}"
+            class="bg-white text-customBlue p-2 px-3 rounded-full shadow border border-gray-300"
+          >
+            <i class="fa-solid fa-arrow-left"></i>
+          </button>
+          <button
+            id="scrollRight{{ forloop.counter }}"
+            class="bg-white text-customBlue p-2 px-3 rounded-full shadow border border-gray-300"
+          >
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
       </div>
-    </div>
-    <div
-      id="scrollContainer1"
-      class="flex flex-row py-2 overflow-x-auto gap-4 scroll-smooth no-scrollbar"
-    >
-      <div class="flex flex-col p-2 min-w-44">
-        <img
-          src="{% static 'images/logo.png' %}"
-          class="w-auto h-28 md:h-32 items-center"
-        />
-        <p class="text-gray-500">Oil Motor</p>
-        <p>Yamalube XP-50</p>
-        <p class="py-2 font-semibold text-orange-400">Rp 45.000</p>
-        <a
-          href="{% url 'deskripsi' %}"
-          class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-        >
-          Deskripsi
-        </a>
-      </div>
-      <div class="flex flex-col p-2 min-w-44">
-        <img
-          src="{% static 'images/logo.png' %}"
-          class="w-auto h-28 md:h-32 items-center"
-        />
-        <p class="text-gray-500">Oil Motor</p>
-        <p>Yamalube XP-50</p>
-        <p class="py-2 font-semibold text-orange-400">Rp 45.000</p>
-        <a
-          href="{% url 'deskripsi' %}"
-          class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-        >
-          Deskripsi
-        </a>
-      </div>
-      <div class="flex flex-col p-2 min-w-44">
-        <img
-          src="{% static 'images/logo.png' %}"
-          class="w-auto h-28 md:h-32 items-center"
-        />
-        <p class="text-gray-500">Oil Motor</p>
-        <p>Yamalube XP-50</p>
-        <p class="py-2 font-semibold text-orange-400">Rp 45.000</p>
-        <a
-          href="{% url 'deskripsi' %}"
-          class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-        >
-          Deskripsi
-        </a>
-      </div>
-      <div class="flex flex-col p-2 min-w-44">
-        <img
-          src="{% static 'images/logo.png' %}"
-          class="w-auto h-28 md:h-32 items-center"
-        />
-        <span>
-          <p class="text-gray-500">Oil Motor</p>
-          <p>Yamalube XP-50</p>
-          <p class="py-2 font-semibold text-orange-400">Rp 45.000</p>
-        </span>
-        <a
-          href="{% url 'deskripsi' %}"
-          class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-        >
-          Deskripsi
-        </a>
-      </div>
-      <div class="flex flex-col p-2 min-w-44">
-        <img
-          src="{% static 'images/logo.png' %}"
-          class="w-auto h-28 md:h-32 items-center"
-        />
-        <span>
-          <p class="text-gray-500">Oil Motor</p>
-          <p>Yamalube XP-50</p>
-          <p class="py-2 font-semibold text-orange-400">Rp 45.000</p>
-        </span>
-        <a
-          href="{% url 'deskripsi' %}"
-          class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-        >
-          Deskripsi
-        </a>
-      </div>
-    </div>
-  </div>
-  <div class="py-2">
-    <div class="flex flex-row justify-between items-center">
-      <p class="font-semibold">Rekomendasi Oli Motor</p>
-      <div class="flex gap-4">
-        <button
-          id="scrollLeft2"
-          class="bg-white text-customBlue p-2 px-3 rounded-full shadow border border-gray-300"
-        >
-          <i class="fa-solid fa-arrow-left"></i>
-        </button>
-        <button
-          id="scrollRight2"
-          class="bg-white text-customBlue p-2 px-3 rounded-full shadow border border-gray-300"
-        >
-          <i class="fa-solid fa-arrow-right"></i>
-        </button>
-      </div>
-    </div>
-    <div
-      id="scrollContainer2"
-      class="flex flex-row py-2 overflow-x-auto gap-4 scroll-smooth no-scrollbar"
-    >
-      <div class="flex flex-col p-2 min-w-44">
-        <img
-          src="{% static 'images/logo.png' %}"
-          class="w-auto h-28 md:h-32 items-center"
-        />
-        <p class="text-gray-500">Oil Motor</p>
-        <p>Yamalube XP-50</p>
-        <p class="py-2 font-semibold text-orange-400">Rp 45.000</p>
-        <a
-          href="{% url 'deskripsi' %}"
-          class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-        >
-          Deskripsi
-        </a>
-      </div>
-      <div class="flex flex-col p-2 min-w-44">
-        <img
-          src="{% static 'images/logo.png' %}"
-          class="w-auto h-28 md:h-32 items-center"
-        />
-        <p class="text-gray-500">Oil Motor</p>
-        <p>Yamalube XP-50</p>
-        <p class="py-2 font-semibold text-orange-400">Rp 45.000</p>
-        <a
-          href="{% url 'deskripsi' %}"
-          class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-        >
-          Deskripsi
-        </a>
-      </div>
-      <div class="flex flex-col p-2 min-w-44">
-        <img
-          src="{% static 'images/logo.png' %}"
-          class="w-auto h-28 md:h-32 items-center"
-        />
-        <p class="text-gray-500">Oil Motor</p>
-        <p>Yamalube XP-50</p>
-        <p class="py-2 font-semibold text-orange-400">Rp 45.000</p>
-        <a
-          href="{% url 'deskripsi' %}"
-          class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-        >
-          Deskripsi
-        </a>
-      </div>
-      <div class="flex flex-col p-2 min-w-44">
-        <img
-          src="{% static 'images/logo.png' %}"
-          class="w-auto h-28 md:h-32 items-center"
-        />
-        <span>
-          <p class="text-gray-500">Oil Motor</p>
-          <p>Yamalube XP-50</p>
-          <p class="py-2 font-semibold text-orange-400">Rp 45.000</p>
-        </span>
-        <a
-          href="{% url 'deskripsi' %}"
-          class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-        >
-          Deskripsi
-        </a>
-      </div>
-      <div class="flex flex-col p-2 min-w-44">
-        <img
-          src="{% static 'images/logo.png' %}"
-          class="w-auto h-28 md:h-32 items-center"
-        />
-        <span>
-          <p class="text-gray-500">Oil Motor</p>
-          <p>Yamalube XP-50</p>
-          <p class="py-2 font-semibold text-orange-400">Rp 45.000</p>
-        </span>
-        <a
-          href="{% url 'deskripsi' %}"
-          class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-        >
-          Deskripsi
-        </a>
-      </div>
-    </div>
-  </div>
-  <div class="py-4">
-    <div class="flex flex-row justify-between items-center">
-      <p class="font-semibold">Rekomendasi Oli Motor</p>
-      <div class="flex gap-4">
-        <button
-          id="scrollLeft3"
-          class="bg-white text-customBlue p-2 px-3 rounded-full shadow border border-gray-300"
-        >
-          <i class="fa-solid fa-arrow-left"></i>
-        </button>
-        <button
-          id="scrollRight3"
-          class="bg-white text-customBlue p-2 px-3 rounded-full shadow border border-gray-300"
-        >
-          <i class="fa-solid fa-arrow-right"></i>
-        </button>
-      </div>
-    </div>
-    <div
-      id="scrollContainer3"
-      class="flex flex-row py-2 overflow-x-auto gap-4 scroll-smooth no-scrollbar"
-    >
-      <div class="flex flex-col p-2 min-w-44">
-        <img
-          src="{% static 'images/logo.png' %}"
-          class="w-auto h-28 md:h-32 items-center"
-        />
-        <p class="text-gray-500">Oil Motor</p>
-        <p>Yamalube XP-50</p>
-        <p class="py-2 font-semibold text-orange-400">Rp 45.000</p>
-        <a
-          href="{% url 'deskripsi' %}"
-          class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-        >
-          Deskripsi
-        </a>
-      </div>
-      <div class="flex flex-col p-2 min-w-44">
-        <img
-          src="{% static 'images/logo.png' %}"
-          class="w-auto h-28 md:h-32 items-center"
-        />
-        <p class="text-gray-500">Oil Motor</p>
-        <p>Yamalube XP-50</p>
-        <p class="py-2 font-semibold text-orange-400">Rp 45.000</p>
-        <a
-          href="{% url 'deskripsi' %}"
-          class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-        >
-          Deskripsi
-        </a>
-      </div>
-      <div class="flex flex-col p-2 min-w-44">
-        <img
-          src="{% static 'images/logo.png' %}"
-          class="w-auto h-28 md:h-32 items-center"
-        />
-        <p class="text-gray-500">Oil Motor</p>
-        <p>Yamalube XP-50</p>
-        <p class="py-2 font-semibold text-orange-400">Rp 45.000</p>
-        <a
-          href="{% url 'deskripsi' %}"
-          class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-        >
-          Deskripsi
-        </a>
-      </div>
-      <div class="flex flex-col p-2 min-w-44">
-        <img
-          src="{% static 'images/logo.png' %}"
-          class="w-auto h-28 md:h-32 items-center"
-        />
-        <span>
-          <p class="text-gray-500">Oil Motor</p>
-          <p>Yamalube XP-50</p>
-          <p class="py-2 font-semibold text-orange-400">Rp 45.000</p>
-        </span>
-        <a
-          href="{% url 'deskripsi' %}"
-          class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-        >
-          Deskripsi
-        </a>
-      </div>
-      <div class="flex flex-col p-2 min-w-44">
-        <img
-          src="{% static 'images/logo.png' %}"
-          class="w-auto h-28 md:h-32 items-center"
-        />
-        <span>
-          <p class="text-gray-500">Oil Motor</p>
-          <p>Yamalube XP-50</p>
-          <p class="py-2 font-semibold text-orange-400">Rp 45.000</p>
-        </span>
-        <a
-          href="{% url 'deskripsi' %}"
-          class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-        >
-          Deskripsi
-        </a>
-      </div>
-    </div>
-  </div>
-  <hr />
-  <div class="py-6">
-    <p class="text-lg font-semibold">Lihat Katalog Lainnya</p>
-    <div class="my-4 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div class="flex flex-row justify-between border shadow rounded-md">
-        <div class="flex flex-col justify-between p-4 w-[45%]">
-          <span>
-            <p>Katalog Ban</p>
-            <p class="pb-2 text-gray-500 text-sm">Tersedia 50+ produk</p>
-          </span>
-          <a href="#">
-            <button
-              class="p-2 w-full border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-            >
-              Lihat Sekarang
-            </button>
+      <div
+        id="scrollContainer{{ forloop.counter }}"
+        class="flex flex-row py-2 overflow-x-auto gap-4 scroll-smooth no-scrollbar"
+      >
+      {% for item in items %}
+        <div class="flex flex-col p-2 min-w-44">
+          {% if item.gambar %}
+            <img
+            src="{{ item.gambar }}"
+            class="w-auto h-28 md:h-32 items-center"
+            />
+          {% else %}
+            <img
+            src="{% static 'images/logo.png' %}"
+            class="w-auto h-28 md:h-32 items-center"
+            />
+          {% endif %}
+          <p class="text-gray-500">{{ item.barang.nama_barang }}</p>
+          <p>{{ item.barang.merk }}</p>
+          <p class="py-2 font-semibold text-orange-400">{{ item.katalog.harga_diskon }}</p>
+          <a
+            href="{% url 'deskripsi' kategori item.barang.id %}"
+            class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
+          >
+            Deskripsi
           </a>
         </div>
-        <img src="{% static 'images/ban.png' %}" class="w-[55%] h-auto" />
-      </div>
-      <div class="flex flex-row justify-between border shadow rounded-md">
-        <div class="flex flex-col justify-between p-4 w-[45%]">
-          <span>
-            <p>Katalog Velg</p>
-            <p class="pb-2 text-gray-500 text-sm">Tersedia 50+ produk</p>
-          </span>
-          <a href="#">
-            <button
-              class="p-2 w-full border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-            >
-              Lihat Sekarang
-            </button>
-          </a>
-        </div>
-        <img src="{% static 'images/velg.png' %}" class="w-[55%] h-auto" />
-      </div>
-      <div class="flex flex-row justify-between border shadow rounded-md">
-        <div class="flex flex-col justify-between p-4 w-[45%]">
-          <span>
-            <p>Katalog Rem</p>
-            <p class="pb-2 text-gray-500 text-sm">Tersedia 50+ produk</p>
-          </span>
-          <a href="{% url 'katalogbrg' %}">
-            <button
-              class="p-2 w-full border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-            >
-              Lihat Sekarang
-            </button>
-          </a>
-        </div>
-        <img src="{% static 'images/rem.png' %}" class="w-[55%] h-auto" />
-      </div>
-      <div class="flex flex-row justify-between border shadow rounded-md">
-        <div class="flex flex-col justify-between p-4 w-[45%]">
-          <span>
-            <p>Katalog Knalpot</p>
-            <p class="pb-2 text-gray-500 text-sm">Tersedia 50+ produk</p>
-          </span>
-          <a href="#">
-            <button
-              class="p-2 w-full border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-            >
-              Lihat Sekarang
-            </button>
-          </a>
-        </div>
-        <img src="{% static 'images/knalpot.png' %}" class="w-[55%] h-auto" />
-      </div>
-      <div class="flex flex-row justify-between border shadow rounded-md">
-        <div class="flex flex-col justify-between p-4 w-[45%]">
-          <span>
-            <p>Katalog Spion</p>
-            <p class="pb-2 text-gray-500 text-sm">Tersedia 50+ produk</p>
-          </span>
-          <a href="#">
-            <button
-              class="p-2 w-full border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-            >
-              Lihat Sekarang
-            </button>
-          </a>
-        </div>
-        <img src="{% static 'images/spion.png' %}" class="w-[55%] h-auto" />
-      </div>
-      <div class="flex flex-row justify-between border shadow rounded-md">
-        <div class="flex flex-col justify-between p-4 w-[45%]">
-          <span>
-            <p>Katalog Lampu</p>
-            <p class="pb-2 text-gray-500 text-sm">Tersedia 50+ produk</p>
-          </span>
-          <a href="#">
-            <button
-              class="p-2 w-full border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-            >
-              Lihat Sekarang
-            </button>
-          </a>
-        </div>
-        <img src="{% static 'images/lampu.png' %}" class="w-[55%] h-auto" />
+      {% endfor %}
       </div>
     </div>
-  </div>
+    <hr />
+    <div class="py-6">
+      <p class="text-lg font-semibold">Lihat Katalog Lainnya</p>
+      <div class="my-4 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="flex flex-row justify-between border shadow rounded-md">
+          <div class="flex flex-col justify-between p-4 w-[45%]">
+            <span>
+              <p>Katalog {{ kategori|title }}</p>
+              <p class="pb-2 text-gray-500 text-sm">Tersedia {{ items|length }}+ produk</p>
+            </span>
+            <a href="{% url 'katalogbrg' kategori %}">
+              <button
+                class="p-2 w-full border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
+              >
+                Lihat Sekarang
+              </button>
+            </a>
+          </div>
+          {% with items.0 as first_item %}
+            {% if first_item.gambar %}
+              <img src="{{ first_item.gambar }}" class="w-[55%] h-auto" />
+            {% else %}
+              <img src="{% static 'images/logo.png' %}" class="w-[55%] h-auto" />
+            {% endif %}
+          {% endwith %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
 </div>
 {% endblock %}
 
 {% block script %}
-<script>
-  document
-    .getElementById("scrollLeft1")
-    .addEventListener("click", function () {
-      document
-        .getElementById("scrollContainer1")
-        .scrollBy({ left: -200, behavior: "smooth" });
-    });
-
-  document
-    .getElementById("scrollRight1")
-    .addEventListener("click", function () {
-      document
-        .getElementById("scrollContainer1")
-        .scrollBy({ left: 200, behavior: "smooth" });
-    });
-
-    document
-    .getElementById("scrollLeft2")
-    .addEventListener("click", function () {
-      document
-        .getElementById("scrollContainer2")
-        .scrollBy({ left: -200, behavior: "smooth" });
-    });
-
-  document
-    .getElementById("scrollRight2")
-    .addEventListener("click", function () {
-      document
-        .getElementById("scrollContainer2")
-        .scrollBy({ left: 200, behavior: "smooth" });
-    });
-
-    document
-    .getElementById("scrollLeft3")
-    .addEventListener("click", function () {
-      document
-        .getElementById("scrollContainer3")
-        .scrollBy({ left: -200, behavior: "smooth" });
-    });
-
-  document
-    .getElementById("scrollRight3")
-    .addEventListener("click", function () {
-      document
-        .getElementById("scrollContainer3")
-        .scrollBy({ left: 200, behavior: "smooth" });
-    });
-</script>
+<script src="{% static 'js/katalog.js' %}"></script>
 {% endblock %}

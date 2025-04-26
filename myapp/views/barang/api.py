@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -8,6 +8,8 @@ from .serializer import *
 class BarangViewSet(viewsets.ModelViewSet):
     queryset = Barang.objects.all()
     serializer_class = BarangSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['kode_barang', 'nama_barang']
 
 class DetailBarangViewSet(viewsets.ModelViewSet):
     queryset = DetailBarang.objects.all()

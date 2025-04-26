@@ -64,7 +64,6 @@ async function fetchGambar() {
         const data = await response.json()
 
         const containers = document.querySelectorAll(".gambarContainer")
-        containers.innerHTML = ""
 
         containers.forEach(container => {
             const brgId = container.dataset.brgId

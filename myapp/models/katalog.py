@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.text import slugify
 from .barang import Barang
 
 class Katalog(models.Model):

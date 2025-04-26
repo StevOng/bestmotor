@@ -7,8 +7,8 @@ router = DefaultRouter()
 router.register(r'katalog', KatalogViewSet)
 
 urlpatterns = [
-    path('rem/', render.katalogbrg, name='katalogbrg'),
-    path('rem/deskripsi/', render.deskripsi, name='deskripsi'),
+    path('<str:kategori>/', render.katalogbrg, name='katalogbrg'),
+    path('<str:kategori>/<int:barang_id>/deskripsi/', render.deskripsi, name='deskripsi'),
     path('admin/', render.admin_katalog, name='admin_katalog'),
     path('tambah/', render.tambah_brgkatalog, name='tambah_brgkatalog'),
 ]
