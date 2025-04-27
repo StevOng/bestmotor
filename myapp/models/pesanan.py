@@ -18,7 +18,8 @@ class Pesanan(models.Model):
     CHOICES = [
         ('pending','Pending'),
         ('ready','Ready'),
-        ('shipped','Shipped')
+        ('shipped','Shipped'),
+        ('cancelled', 'Cancelled')
     ]
     status = models.CharField(max_length=30, choices=CHOICES, default='pending')
     terakhir_edit = models.DateTimeField(auto_now=True)

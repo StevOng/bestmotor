@@ -92,6 +92,9 @@
                 <th>Nama Barang</th>
                 <th>Kategori</th>
                 <th>Merk</th>
+                {% if request.session.role == "admin" %}
+                    <th>Harga Modal</th>
+                {% endif %}
                 <th>Harga Jual</th>
                 {% if filter == 'laku' %}
                     <th>Qty Terjual</th>
@@ -116,6 +119,9 @@
                     <td>{{ brg.barang.nama_barang }}</td>
                     <td>{{ brg.kategori }}</td>
                     <td>{{ brg.merk }}</td>
+                    {% if request.session.role == "admin" %}
+                        <td>{{ brg.harga_modal|floatformat:2|intcomma }}</td>
+                    {% endif %}
                     <td>{{ brg.harga_jual|floatformat:2|intcomma }}</td>
                     {% if filter == 'laku' %}
                         <td>{{ brg.qty_terjual }}</td>

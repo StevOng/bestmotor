@@ -23,16 +23,6 @@ class Invoice(models.Model):
     def __str__(self):
         return self.no_invoice
     
-    def generate_no_invoice(self):
-        if not self.no_invoice:
-            last_inv = Invoice.objects.order_by("-id").first() # berdasarkan id terbesar
-            if last_inv:
-                last_num = int(last_inv.no_invoice[2:]) # mengambil angka stelah 2 karakter PB
-                self.no_invoice = f"PB{last_num+1:04d}" # tambah 1 ke angka 4 digit terakhir
-            else:
-                self.no_invoice = "PB0001" # kode pertama
-        return self.no_invoice
-    
     def generate_no_referensi(self):
         if not self.no_referensi:
             last_ref = Invoice.objects.order_by("-id").first() # berdasarkan id terbesar

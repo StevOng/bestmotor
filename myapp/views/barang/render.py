@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from django.utils.dateparse import parse_date
 from django.db.models import Sum, Q
+from collections import defaultdict
 from ...decorators import *
 from ...models.barang import *
+from ...models.invoice import DetailInvoice
 
 @both_required
 def barang(request):
@@ -17,8 +19,19 @@ def barang(request):
     else:
         detailBrg = DetailBarang.objects.select_related('barang_id').prefetch_related('barang_id__detailpesanan_set').all()
 
+    # Ambil semua DetailInvoice dulu
+    invoices = DetailInvoice.objects.select_related('barang_id').order_by('barang_id', '-created_at')
+
+    # Bikin dict barang_id -> harga_beli
+    harga_modal_map = {}
+    for inv in invoices:
+        if inv.barang_id not in harga_modal_map:
+            harga_modal_map[inv.barang_id] = inv.harga_beli
+
+    # Loop detailBrg dan pasangkan harga_modal
     for brg in detailBrg:
         brg.total_pesanan = sum(d.qty_pesan for d in brg.barang.detailpesanan_set.all())
+        brg.harga_modal = harga_modal_map.get(brg.barang_id, 0)
 
     return render(request, 'barang.html', {'barang': detailBrg,'filter': filter})
 

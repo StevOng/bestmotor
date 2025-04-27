@@ -36,15 +36,22 @@ function confirmPopupBtn(id) {
     confirmButton.onclick = async function () {
         try {
             const response = await fetch(`/api/pesanan/${id}/`, {
-                method: "DELETE"
+                method: "PATCH",
+                body: JSON.stringify({
+                    status: "Batal"
+                })
             })
             if (response.ok) {
-                console.log("Pesanan berhasil dihapus");
-                const row = document.querySelector(`tr[data-id="${id}]`)
-                row.classList.add("fade-out")
-                setTimeout(() => row.remove(), 400)
+                console.log("Pesanan berhasil dibatalkan");
+                const row = document.querySelector(`tr[data-id="${id}"]`)
+                if (row) {
+                    const statusCell = row.querySelector("td:nth-child(8)")
+                    if (statusCell) {
+                        statusCell.textContent = "Cancelled"
+                    }
+                }
             } else {
-                console.error("Gagal menghapus pesanan");
+                console.error("Gagal membatalkan pesanan");
             }
         } catch (error) {
             console.error("Terjadi kesalahan: ", error);
