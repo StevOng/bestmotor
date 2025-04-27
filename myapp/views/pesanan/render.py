@@ -8,12 +8,18 @@ import json
 @both_required
 def pesanan(request):
     status = request.GET.get('status', None)
-    pesanan_list = Pesanan.objects.prefetch_related('detailpesanan_set').all()
-    total_pending = Pesanan.objects.filter(status='pending').count()
-    total_ready = Pesanan.objects.filter(status='ready').count()
+    role = request.session.get('role')
+    user_id = request.session.get('user_id')
+    pesanan_list = Pesanan.objects.prefetch_related('detailpesanan_set')
+
+    if role == 'sales':
+        pesanan_list = pesanan_list.filter(customer_id__sales_id=user_id)
 
     if status:
         pesanan_list = pesanan_list.filter(status=status)
+
+    total_pending = Pesanan.objects.filter(status='pending').count()
+    total_ready = Pesanan.objects.filter(status='ready').count()
 
     return render(request, 'pesanan.html', {'pesanan_list':pesanan_list, 'total_pending':total_pending, 'total_ready':total_ready})
 
