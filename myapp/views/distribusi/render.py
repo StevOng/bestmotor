@@ -18,12 +18,14 @@ def tambah_transaksi(request, jenis):
         return render(request, '404.html')
     
     transaksi = None
-    if jenis == 'masuk':
-        transaksi_id = request.GET.get('id')
-        if transaksi_id:
+    transaksi_id = request.GET.get('id')
+
+    if transaksi_id:
+        if jenis == 'masuk':
             transaksi = get_object_or_404(TransaksiMasuk, pk=transaksi_id)
-    else:
-        transaksi_id = request.GET.get('id')
-        if transaksi_id:
+        else:
             transaksi = get_object_or_404(TransaksiKeluar, pk=transaksi_id)
-    return render(request, 'tambahtransaksi.html', {'jenis': jenis, 'data_transaksi':transaksi, 'qty_barang': transaksi.qty_masuk if jenis == 'masuk' else transaksi.qty_keluar})
+
+    qty = getattr(transaksi, 'qty_masuk' if jenis == 'masuk' else 'qty_keluar', 0) if transaksi else 0
+    
+    return render(request, 'tambahtransaksi.html', {'jenis': jenis, 'data_transaksi':transaksi, 'qty_barang': qty})

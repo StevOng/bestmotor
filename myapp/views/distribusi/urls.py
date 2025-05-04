@@ -10,6 +10,5 @@ router.register(r'transaksikeluar', TransaksiKeluarViewSet)
 urlpatterns = [
     path('masuk/', render.transaksi_masuk, name='transaksi_masuk'),
     path('keluar/', render.transaksi_keluar, name='transaksi_keluar'),
-    path('<str:jenis>/tambah/', render.tambah_transaksi, name='tambah_masuk'),
-    path('<str:jenis>/tambah/', render.tambah_transaksi, name='tambah_keluar'),
+    path('<str:jenis>/tambah/', render.tambah_transaksi, name='tambah_transaksi'),
 ]
