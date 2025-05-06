@@ -3,8 +3,8 @@ from ...decorators import admin_required
 
 @admin_required
 def invoice(request):
-    return render(request, 'invoice.html')
+    return render(request, 'invoice/invoice.html')
 
 @admin_required
 def tambah_invoice(request):
-    return render(request, 'tambahinvoice.html')
+    return render(request, 'invoice/tambahinvoice.html')

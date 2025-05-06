@@ -8,7 +8,7 @@ from ...models.barang import *
 @admin_required
 def admin_katalog(request):
     data = Katalog.objects.prefetch_related("barang_set").all()
-    return render(request, 'adminkatalog.html', {"data_katalog": data})
+    return render(request, 'katalog/adminkatalog.html', {"data_katalog": data})
 
 def katalog(request):
     data_katalog = Katalog.objects.prefetch_related("barang_set__detailbarang_set").all()
@@ -26,7 +26,7 @@ def katalog(request):
                 'barang': barang,
                 "gambar": gambar_base64
             })
-    return render(request, "katalog.html", {'kategori_katalog': dict(kategori_katalog)})
+    return render(request, "katalog/katalog.html", {'kategori_katalog': dict(kategori_katalog)})
 
 def katalogbrg(request, kategori):
     data = []
@@ -50,7 +50,7 @@ def katalogbrg(request, kategori):
             "id": barang.id,
             "kategori": barang.kategori,
         })
-    return render(request, "katalogbrg.html", {"kategori": kategori, "items": data, "title": title})
+    return render(request, "katalog/katalogbrg.html", {"kategori": kategori, "items": data, "title": title})
 
 @admin_required
 def tambah_brgkatalog(request, id=None):
@@ -59,7 +59,7 @@ def tambah_brgkatalog(request, id=None):
     if id:
         barang = Barang.objects.get(id=id)
         katalog = barang.katalog_set.first() if barang else None
-    return render(request, 'tambahkatalog.html', {"katalog": katalog})
+    return render(request, 'katalog/tambahkatalog.html', {"katalog": katalog})
 
 def deskripsi(request, kategori, barang_id):
     barang = get_object_or_404(Barang, id=barang_id, kategori=kategori)
@@ -69,4 +69,4 @@ def deskripsi(request, kategori, barang_id):
     deskripsi = detail.keterangan if detail and detail.keterangan else "Deskripsi belum tersedia"
     harga_tertera = katalog.harga_tertera
     harga_diskon = katalog.harga_diskon
-    return render(request, "deskripsi.html", {"barang": barang, "detail": detail, "deskripsi": deskripsi, "harga_tertera": harga_tertera, "harga_diskon": harga_diskon})
+    return render(request, "katalog/deskripsi.html", {"barang": barang, "detail": detail, "deskripsi": deskripsi, "harga_tertera": harga_tertera, "harga_diskon": harga_diskon})

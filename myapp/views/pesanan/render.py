@@ -21,7 +21,7 @@ def pesanan(request):
     total_pending = Pesanan.objects.filter(status='pending').count()
     total_ready = Pesanan.objects.filter(status='ready').count()
 
-    return render(request, 'pesanan.html', {'pesanan_list':pesanan_list, 'total_pending':total_pending, 'total_ready':total_ready})
+    return render(request, 'pesanan/pesanan.html', {'pesanan_list':pesanan_list, 'total_pending':total_pending, 'total_ready':total_ready})
 
 @both_required
 def tambah_pesanan(request, id=None):
@@ -46,7 +46,7 @@ def tambah_pesanan(request, id=None):
 
     barang_data_json = json.dumps(barang_data_dict, cls=DjangoJSONEncoder)
     return render(
-        request, 'tambahpesan.html', 
+        request, 'pesanan/tambahpesan.html', 
         {
             'detail_pesanan':detail_pesanan, 
             'customers':customers, 

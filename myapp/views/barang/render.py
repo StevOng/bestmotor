@@ -33,7 +33,7 @@ def barang(request):
         brg.total_pesanan = sum(d.qty_pesan for d in brg.barang.detailpesanan_set.all())
         brg.harga_modal = harga_modal_map.get(brg.barang_id, 0)
 
-    return render(request, 'barang.html', {'barang': detailBrg,'filter': filter})
+    return render(request, 'barang/barang.html', {'barang': detailBrg,'filter': filter})
 
 @admin_required
 def tambah_barang(request, id=None):
@@ -42,7 +42,7 @@ def tambah_barang(request, id=None):
     if id:
         barang = Barang.objects.get(id=id)
         detail_barang = barang.detailbarang__set.first() if barang else None
-    return render(request, 'tambahbrg.html', {'detail_barang': detail_barang})
+    return render(request, 'barang/tambahbrg.html', {'detail_barang': detail_barang})
 
 def get_barang_laku(dari, sampe):
     dari = parse_date(dari)

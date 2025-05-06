@@ -3,8 +3,8 @@ from ...decorators import *
 
 @both_required
 def piutang(request):
-    return render(request, 'piutang.html')
+    return render(request, 'piutang/piutang.html')
 
 @admin_required
 def tambah_bayarpiutang(request):
-    return render(request, 'tambahpiutang.html')
+    return render(request, 'piutang/tambahpiutang.html')

@@ -3,4 +3,4 @@ from ...decorators import *
 
 @both_required
 def faktur(request):
-    return render(request, 'faktur.html')
+    return render(request, 'faktur/faktur.html')

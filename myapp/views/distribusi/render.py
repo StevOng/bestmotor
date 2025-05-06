@@ -5,12 +5,12 @@ from ...models.distribusi import *
 @admin_required
 def transaksi_masuk(request):
     barang_masuk = TransaksiMasuk.objects.all().order_by('-tanggal_pembuatan')
-    return render(request, 'transaksi.html', {'jenis':'masuk', 'data_transaksi':barang_masuk})
+    return render(request, 'distribusi/transaksi.html', {'jenis':'masuk', 'data_transaksi':barang_masuk})
 
 @admin_required
 def transaksi_keluar(request):
     barang_keluar = TransaksiKeluar.objects.all().order_by('-tanggal_pembuatan')
-    return render(request, 'transaksi.html', {'jenis':'keluar', 'data_transaksi':barang_keluar})
+    return render(request, 'distribusi/transaksi.html', {'jenis':'keluar', 'data_transaksi':barang_keluar})
 
 @admin_required
 def tambah_transaksi(request, jenis):
@@ -28,4 +28,4 @@ def tambah_transaksi(request, jenis):
 
     qty = getattr(transaksi, 'qty_masuk' if jenis == 'masuk' else 'qty_keluar', 0) if transaksi else 0
     
-    return render(request, 'tambahtransaksi.html', {'jenis': jenis, 'data_transaksi':transaksi, 'qty_barang': qty})
+    return render(request, 'distribusi/tambahtransaksi.html', {'jenis': jenis, 'data_transaksi':transaksi, 'qty_barang': qty})

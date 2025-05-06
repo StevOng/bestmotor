@@ -1,0 +1,78 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Tambah Supplier{% endblock %}
+
+{% block page_title %}Supplier{% endblock %} 
+
+{% block content %}
+<div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
+  <div class="flex flex-row justify-between mb-3">
+    <h2 class="text-lg font-semibold">Detail Supplier</h2>
+    <button onclick="window.history.back()"><i class="fa-solid fa-x w-8 text-gray-500"></i></button>
+  </div>
+    <hr class="border-gray-300 pb-3">
+    <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Nama Perusahaan -->
+        <div>
+          <label for="nama-supp" class="block text-sm font-medium text-gray-700">Nama Perusahaan</label>
+          <input type="text" id="nama-supp" placeholder="Masukkan nama supplier"
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700">
+        </div>
+        
+        <!-- Nama Sales / Supplier -->
+        <div>
+          <label for="nama-sales" class="block text-sm font-medium text-gray-700">Nama Sales / Supplier</label>
+          <input type="text" id="nama-sales" placeholder="Masukkan nama sales / supplier"
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700">
+        </div>
+        
+        <!-- No. HP -->
+        <div>
+            <label for="nohp-supp" class="block text-sm font-medium text-gray-700">No. HP</label>
+            <input type="text" id="nohp-supp" placeholder="Masukkan no. hp sales / supplier"
+              class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700">
+        </div>
+        
+        <!-- Lokasi Supplier -->
+        <div>
+            <label for="lokasi-supp" class="block text-sm font-medium text-gray-700">Lokasi Supplier</label>
+            <input type="text" id="lokasi-supp" placeholder="Masukkan lokasi supplier"
+              class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700">
+        </div>
+        
+        <!-- Jenis Barang / Kategori Barang -->
+        <div class="md:col-span-2">
+          <label for="jenis-brg" class="block text-sm font-medium text-gray-700">Jenis Barang / Kategori Barang</label>
+            <input type="text" id="jenis-brg" placeholder="Masukkan jenis barang yang dibeli dari supplier"
+                class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700">
+        </div>
+        
+        <!-- Merk -->
+        <div class="md:col-span-2">
+          <label for="merk-supp" class="block text-sm font-medium text-gray-700">Merk</label>
+          <div class="flex items-center">
+            <input type="text" id="merk-supp" placeholder="Masukkan merk yang dibeli"
+              class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm focus:outline-none focus:ring-customBlue focus:border-customBlue">
+          </div>
+        </div>
+        
+        <!-- Catatan -->
+        <div class="md:col-span-2">
+            <label for="catatan-supp" class="block text-sm font-medium text-gray-700">Catatan</label>
+          <textarea id="catatan-supp" rows="3" placeholder="Masukkan catatan (jika perlu)"
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue"></textarea>
+        </div>
+        
+        <!-- Alamat Lengkap -->
+        <div class="md:col-span-2">
+          <label for="alamat-supp" class="block text-sm font-medium text-gray-700">Alamat Lengkap</label>
+          <textarea id="alamat-supp" rows="3" placeholder="Masukkan alamat lengkap supplier"
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue"></textarea>
+        </div>
+      </form>
+      <button class="mt-5 ml-auto text-center">
+        <p class="text-sm font-medium text-gray-700">Simpan</p>
+        <i class="mt-1 fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
+      </button>
+</div>
+{% endblock %}

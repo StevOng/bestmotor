@@ -31,8 +31,8 @@ def login(request):
                 messages.error(request, "Username tidak ditemukan")
                 return redirect('login')
 
-    return render(request, 'login.html')
+    return render(request, 'base/login.html')
 
 @admin_required
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    return render(request, 'user/dashboard.html')

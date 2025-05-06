@@ -15,7 +15,6 @@ class Invoice(models.Model):
     diskon_invoice = models.DecimalField(max_digits=19, decimal_places=2)
     netto = models.DecimalField(max_digits=10, decimal_places=2)
     sisa_bayar = models.DecimalField(max_digits=19, decimal_places=2)
-    total = models.DecimalField(max_digits=19, decimal_places=2)
     CHOICES = [
         ('lunas','Lunas'),
         ('belum lunas','Belum Lunas'),

@@ -1,10 +1,8 @@
 from functools import wraps
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 
 def admin_required(view_func):
     @wraps(view_func)
-    @login_required
     def wrapper(request, *args, **kwargs):
         if 'role' not in request.session:
             return redirect('login')
@@ -18,7 +16,6 @@ def admin_required(view_func):
 
 def both_required(view_func):
     @wraps(view_func)
-    @login_required
     def wrapper(request, *args, **kwargs):
         if 'role' not in request.session:
             return redirect('login')
