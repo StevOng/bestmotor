@@ -1,10 +1,24 @@
 from django.shortcuts import render
 from ...decorators import admin_required
+from ...models.invoice import *
+from ...models.supplier import Supplier
 
 @admin_required
 def invoice(request):
-    return render(request, 'invoice/invoice.html')
+    status = request.GET.get("status", None)
+    invoice_list = Invoice.objects.prefetch_related("detailinvoice_set")
+
+    if status:
+        invoice_list = invoice_list.filter(status=status)
+    return render(request, 'invoice/invoice.html', {'invoice_list': invoice_list})
 
 @admin_required
-def tambah_invoice(request):
-    return render(request, 'invoice/tambahinvoice.html')
+def tambah_invoice(request, id=None):
+    invoice = None
+    supplier = Supplier.objects.all()
+
+    if id:
+        invoice = Invoice.objects.get(id=id)
+        detailinvoice = invoice.detailinvoice_set.all()
+
+    return render(request, 'invoice/tambahinvoice.html', {'suppliers': supplier, 'detailinvoice': detailinvoice})

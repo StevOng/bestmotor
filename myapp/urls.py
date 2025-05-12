@@ -1,4 +1,4 @@
-from django.urls import path, re_path, include
+from django.urls import path, include
 from .views.katalog.render import katalog
 from .views.user.render import login
 from . import render
@@ -20,5 +20,4 @@ urlpatterns = [
     path('dashboard/', include('myapp.views.user.urls')),
     path('bantuan/', render.bantuan, name='bantuan'),
     path('not-allowed/', render.halaman403, name='403'),
-    re_path(r'^.*$', render.halaman404, name='404'),
 ]

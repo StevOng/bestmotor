@@ -4,6 +4,15 @@
 
 {% block page_title %}Barang{% endblock %} 
 
+{% block style %}
+  <style>
+    .fade-out {
+      opacity: 0;
+      transition: opacity 0.4s ease-out;
+    }
+  </style>
+{% endblock style %}
+
 {% block content %}
 <!-- Overlay & Modal Konfirmasi -->
 <div id="popupModalConfirm" class="fixed inset-0 hidden items-center justify-center z-50 bg-gray-500/50">

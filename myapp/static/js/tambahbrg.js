@@ -21,10 +21,8 @@ document.getElementById("tambahbrgform").addEventListener("submit", async(event)
     const kategori = document.getElementById("kategori").value
     const merk = document.getElementById("merk").value
     const minStok = document.getElementById("stok-minimum").value
-    const grosir1 = document.getElementById("min-beli1").value
-    const jual1 = document.getElementById("harga1").value
-    const grosir2 = document.getElementById("min-beli2").value
-    const jual2 = document.getElementById("harga2").value
+    const grosir = document.getElementById("min-beli").value
+    const jual = document.getElementById("harga").value
     const gambar = document.getElementById("upload_gambar").files[0]
     const ket = document.getElementById("keterangan").value
 
@@ -50,10 +48,8 @@ document.getElementById("tambahbrgform").addEventListener("submit", async(event)
         detailBrg.append("kategori", kategori)
         detailBrg.append("merk", merk)
         detailBrg.append("stok_minimum", minStok)
-        detailBrg.append("min_qty_grosir1", grosir1)
-        detailBrg.append("harga_satuan1", jual1)
-        detailBrg.append("min_qty_grosir2", grosir2)
-        detailBrg.append("harga_satuan2", jual2)
+        detailBrg.append("min_qty_grosir", grosir)
+        detailBrg.append("harga_satuan", jual)
         if (gambar) {
             detailBrg.append("gambar", gambar)
         }
@@ -65,6 +61,24 @@ document.getElementById("tambahbrgform").addEventListener("submit", async(event)
         })
         let detailData = await detailResponse.json()
         console.log(detailData);
+
+        const tierDivs = document.querySelectorAll("#harga-tiers-container .harga-tier")
+        for (const div of tierDivs) {
+            const minQty = div.querySelector(".min-qty").value
+            const hargaSatuan = div.querySelector(".harga-satuan").value
+
+            if (minQty && hargaSatuan) {
+                const tierData = new FormData()
+                tierData.append("barang", barangData.id)
+                tierData.append("min_qty_grosir", minQty)
+                tierData.append("harga_satuan", hargaSatuan)
+
+                await fetch(apiDetail, {
+                    method: method,
+                    body: tierData
+                })
+            }
+        }
     }
 })
 
@@ -109,5 +123,36 @@ async function getMerk() {
         }
     } catch(err) {
         console.error(err);
+    }
+}
+
+function addTier(input) {
+    const tierContainer = document.getElementById("harga-tiers-container")
+    const allTiers = tierContainer.querySelectorAll(".harga-tier")
+    const lastTier = allTiers[allTiers.length - 1]
+
+    const minQty = lastTier.querySelector(".min-qty").value
+    const hargaSatuan = lastTier.querySelector(".harga-satuan").value
+
+    if (minQty && hargaSatuan) {
+        const isEmptyTierExist = Array.from(allTiers).some(tier => {
+            const qty = tier.querySelector(".min-qty").value
+            const harga = tier.querySelector(".harga-satuan").value
+            return qty === "" || harga === ""
+        })
+        if (!isEmptyTierExist) {
+            const newTier = document.createElement("div")
+            newTier.className = "harga-tier flex"
+            newTier.innerHTML = `
+                <div
+                    class="mt-1 mr-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400"> Harga Grosir
+                </div>
+                <input type="number" 
+                    class="min-qty mt-1 mx-2 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" id="min-beli" oninput="addTier(this)" value="{{ detail_barang.min_qty_grosir|default:""}}"/>
+                <input type="number"
+                    class="harga-satuan mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" id="harga" oninput="addTier(this)" value="{{ detail_barang.harga_satuan|default:""}}" />
+            `
+            tierContainer.appendChild(newTier)
+        }
     }
 }

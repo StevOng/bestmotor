@@ -31,17 +31,15 @@ def tambah_pesanan(request, id=None):
 
     if id:
         pesanan = Pesanan.objects.get(id=id)
-        detail_pesanan = pesanan.detailpesanan__set.all()
+        detail_pesanan = pesanan.detailpesanan_set.all()
 
     barang_data_dict = {
-        detail.barang.id: {
+        detail.barang_id: {
             "harga_jual": float(detail.barang.harga_jual),
-            "harga_satuan1": float(detail.barang.harga_satuan1),
-            "harga_satuan2": float(detail.barang.harga_satuan2),
-            "min_qty_grosir1": detail.barang.min_qty_grosir1,
-            "min_qty_grosir2": detail.barang.min_qty_grosir2,
+            "harga_satuan": float(detail.barang.harga_satuan),
+            "min_qty_grosir": detail.barang.min_qty_grosir,
         }
-        for detail in detail_pesanan if detail.barang
+        for detail in detail_pesanan if detail.barang_id
     }
 
     barang_data_json = json.dumps(barang_data_dict, cls=DjangoJSONEncoder)

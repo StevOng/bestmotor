@@ -49,11 +49,10 @@ class DetailBarang(models.Model):
     merk = models.CharField(max_length=50, choices=MERK, default=None)
     harga_jual = models.DecimalField(max_digits=19, decimal_places=2)
     stok_minimum = models.IntegerField()
-    min_qty_grosir1 = models.IntegerField()
-    min_qty_grosir2 = models.IntegerField()
-    harga_satuan1 = models.DecimalField(max_digits=19, decimal_places=2)
-    harga_satuan2 = models.DecimalField(max_digits=19, decimal_places=2)
-    stok = models.IntegerField()
+    min_qty_grosir = models.IntegerField()
+    harga_satuan = models.DecimalField(max_digits=19, decimal_places=2)
+    harga_modal = models.DecimalField(max_digits=19, decimal_places=2)
+    stok = models.IntegerField(default=0)
     qty_terjual = models.IntegerField()
     gambar = models.BinaryField()
     keterangan = models.TextField(null=True, blank=True)
@@ -69,11 +68,23 @@ class DetailBarang(models.Model):
         return f'{self.barang_id.nama_barang}, stok: {self.stok}'
     
     def get_harga_berdasarkan_qty(self, qty):
-        if qty >= self.min_qty_grosir2:
-            self.harga_jual = self.harga_satuan2
-            return self.harga_jual
-        elif qty >= self.min_qty_grosir1:
-            self.harga_jual = self.harga_satuan1
-            return self.harga_satuan1
-        else:
-            return self.harga_jual
+        tier = self.barang_id.detailbarang_set.filter(min_qty_grosir__lte=qty).order_by('-min_qty_grosir').first()
+        if tier:
+            return tier.harga_satuan
+        return self.harga_jual
+        
+    def update_modal(self, qty_baru, harga_baru, diskon):
+        total_stok_lama = self.stok
+        total_harga_lama = self.harga_modal * total_stok_lama
+
+        total_stok_baru = qty_baru
+        total_harga_baru = (harga_baru * qty_baru) - diskon
+
+        total_unit = total_stok_lama + total_stok_baru
+        if total_unit == 0:
+            return
+        
+        harga_modal_baru = (total_harga_lama + total_harga_baru) / total_unit
+        self.harga_modal = harga_modal_baru
+        self.stok = total_unit
+        self.save()

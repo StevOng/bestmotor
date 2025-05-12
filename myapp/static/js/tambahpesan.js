@@ -1,6 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
     getKurir()
     getOptionBrg()
+
+    const tanggal = document.getElementById("tanggal")
+    const today = new Date()
+    const year = String(today.getFullYear())
+    const month = String(today.getMonth()+1).padStart(2, "0")
+    const day = String(today.getDate()).padStart(2, "0")
+    const formatDate = `${day}/${month}/${year}`
+
+    tanggal.value = formatDate
 })
 
 document.addEventListener("change", function (e) {
@@ -48,30 +57,8 @@ $(document).ready(function () {
     });
 });
 
-// const kodeBarang = ["0001273", "0001274", "0001275", "0001276", "0001277", "0001278"];
 const searchKode = document.getElementById("searchKode");
 const dropdownList = document.getElementById("dropdownList");
-
-// function updateDropdown(filterText = "") {
-//     let filteredItems = kodeBarang.filter(kode => kode.toLowerCase().includes(filterText.toLowerCase())).slice(0, 3);
-//     let displayedItems = filteredItems.slice(0, filterText ? filteredItems.length : 3); // Default 3 item, cari semua saat input
-
-//     dropdownList.innerHTML = displayedItems
-//         .map(kode => `<li class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectKode(this)">${kode}</li>`)
-//         .join("");
-
-//     dropdownList.classList.toggle("hidden", displayedItems.length === 0);
-// }
-
-// Tampilkan 3 item default saat pertama kali input diklik
-// searchKode.addEventListener("focus", () => {
-//     updateDropdown();
-// });
-
-// Update dropdown berdasarkan pencarian
-// searchKode.addEventListener("input", () => {
-//     updateDropdown(searchKode.value);
-// });
 
 // Sembunyikan dropdown jika klik di luar
 document.addEventListener("click", (event) => {
@@ -128,6 +115,7 @@ function closeModalConfirm() {
     modal.style.display = "none"; // Pastikan modal benar-benar hilang
 }
 
+// update harga secara dinamis
 document.querySelectorAll("tr").forEach(row => {
     const inputQty = row.querySelector(".input_qtybrg");
     const inputHarga = row.querySelector(".input_hrgbrg");
@@ -147,10 +135,10 @@ document.querySelectorAll("tr").forEach(row => {
       if (!barang) return;
   
       let harga = barang.harga_jual;
-      if (qty >= barang.min_qty_grosir2) {
-        harga = barang.harga_satuan2;
-      } else if (qty >= barang.min_qty_grosir1) {
-        harga = barang.harga_satuan1;
+      if (qty >= barang.min_qty_grosir) {
+        harga = barang.harga_satuan;
+      } else {
+        harga = barang.harga_jual;
       }
   
       inputHarga.value = harga;
@@ -269,7 +257,7 @@ async function loadBarangOptions(selectId, selectedId = null) {
     data.forEach(barang => {
         let option = document.createElement("option")
         option.value = barang.id
-        option.text = barang.kode_barang
+        option.text = `${barang.kode_barang} - ${barang.nama_barang}`
         if (barang.id == selectedId) {
             option.selected = true
         }
@@ -308,25 +296,30 @@ function addNewRow() {
     newRow.innerHTML = `
       <td>${rowCount}</td>
       <td>
-        <input type="hidden" id="barangId-${rowCount}" value="">
-        <select id="kodebrg-dropdown-${rowCount}" class="kodebrg-dropdown" data-barang-id="">
+        <input type="hidden" name="barangId-${rowCount}" class="barangId" value="${detail?.barang_id || ""}">
+        <select id="kodebrg-dropdown-${rowCount}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-${rowCount}" data-barang-id="${detail?.barang_id || ""}">
           <option value="">Pilih Barang</option>
         </select>
       </td>
       <td class="kode-terpilih"></td>
-      <td id="namaBrg-${rowCount}"></td>
-      <td><input type="number" id="input_hrgbrg-${rowCount}" class="input_hrgbrg w-full rounded-md border-gray-300"/></td>
-      <td><input type="number" id="input_qtybrg-${rowCount}" class="input_qtybrg w-20 rounded-md border-gray-300"/></td>
-      <td><input type="number" id="disc-${rowCount}" class="disc w-20 rounded-md border-gray-300"/></td>
-      <td id="totalDisc-${rowCount}" class="totalDisc"></td>
-      <td id="totalHarga-${rowCount}" class="totalHarga"></td>
-      <td><button type="submit"><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+      <td id="namaBrg-${rowCount}">${detail?.barang_id.nama_barang || ""}</td>
+      <td><input type="number" id="input_hrgbrg-${rowCount}" value="${detail?.barang_id.harga_jual || ""}" class="input_hrgbrg w-full rounded-md border-gray-300"/></td>
+      <td><input type="number" id="input_qtybrg-${rowCount}" value="${detail?.qty_pesan || ""}" class="input_qtybrg w-20 rounded-md border-gray-300"/>${detail?.qty_pesan || ""}</td>
+      <td><input type="number" id="disc-${rowCount}" value="${detail?.diskon_barang || ""}" class="disc w-20 rounded-md border-gray-300"/></td>
+      <td id="totalDisc-${rowCount}" class="totalDisc">${detail?.total_diskon_barang || ""}</td>
+      <td id="totalHarga-${rowCount}" class="totalHarga">${detail?.total_harga_barang || ""}</td>
+      <td><button type="submit" class="btn-submit" data-id=""><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
       <td><button onclick="hapusRow(this)"><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
   
     tbody.appendChild(newRow);
 
-    loadBarangOptions(`kodebrg-dropdown-${rowCount}`);
+    const btnSubmit = newRow.querySelector(".btn-submit")
+    if (detail?.id) {
+        btnSubmit.setAttribute("data-id", detail.id)
+    }
+
+    loadBarangOptions(`kodebrg-dropdown-${rowCount}`, detail?.barang_id || null);
 }
 
 function hapusRow(btn) {

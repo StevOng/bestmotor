@@ -1,5 +1,5 @@
 {% extends 'base/base.html' %}
-
+{% load humanize %}
 {% block title %}Pesanan{% endblock %} 
 
 {% block page_title %}Pesanan{% endblock %} 
@@ -25,6 +25,10 @@
     }
     [type=checkbox]:checked, [type=radio]:checked {
       background-color: #3D5A80; /* Ubah warna latar belakang */
+  }
+  .fade-out {
+    opacity: 0;
+    transition: opacity 0.4s ease-out;
   }
 </style>
 {% endblock %}

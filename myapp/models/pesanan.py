@@ -51,9 +51,9 @@ class Pesanan(models.Model):
     def hitung_total_bruto(self):
         total = Decimal(0)
         for detail in self.detailpesanan_set.all():
-            total += detail.hitung_bruto()
+            total += detail.total_harga_barang()
         self.bruto = total
-        return total
+        return self.bruto
 
     def hitung_total_netto(self):
         self.netto = self.bruto + (self.bruto * self.ppn) + self.ongkir - self.diskon_pesanan
@@ -94,14 +94,11 @@ class DetailPesanan(models.Model):
         return self.qty_pesan * self.diskon_barang
     
     def total_harga_barang(self):
-        return (self.barang_id.harga_jual * self.qty_pesan) - self.total_diskon_barang()
+        harga = self.barang_id.get_harga_berdasarkan_qty(self.qty_pesan)
+        return (harga - self.total_diskon_barang()) * self.qty_pesan
     
     def nilai_ppn(self):
         return self.total_harga_barang() * self.pesanan_id.ppn
-    
-    def hitung_bruto(self):
-        harga = self.barang_id.get_harga_berdasarkan_qty(self.qty_pesan)
-        return (harga - self.diskon_barang) * self.qty_pesan
 
     def set_jatuh_tempo(self):
         self.jatuh_tempo = self.tanggal_pesanan + timedelta(days=self.top)
