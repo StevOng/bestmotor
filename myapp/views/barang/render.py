@@ -1,3 +1,6 @@
+import openpyxl
+from openpyxl.utils import get_column_letter
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils.dateparse import parse_date
 from django.db.models import Sum, Q
@@ -51,3 +54,52 @@ def get_barang_laku(dari, sampe):
         'detailpesanan_qty_pesan',
         filter=Q(detailpesanan__tanggal_pesanan__range=[dari,sampe])
     )).filter(total_terjual__gt=0)
+
+def export_excel(request):
+    work_book = openpyxl.Workbook()
+    work_sheet = work_book.active
+    work_sheet.title = "List Barang"
+
+    col_heads = [
+        'No',
+        'Kode Barang',
+        'Nama Barang',
+        'Kategori',
+        'Merk',
+        'Harga Jual',
+        'Stok Minimum',
+        'Min Qty Grosir',
+        'Harga Satuan',
+        'Harga Modal',
+        'Stok',
+        'Qty Terjual',
+        'Keterangan'
+    ]
+    work_sheet.append(col_heads)
+
+    for idx, detail in enumerate(DetailBarang.objects.select_related('barang_id').all(), start=1):
+        work_sheet.append([
+            idx,
+            detail.barang_id.kode_barang,
+            detail.barang_id.nama_barang,
+            detail.kategori,
+            detail.merk,
+            detail.harga_jual,
+            detail.stok_minimum,
+            detail.min_qty_grosir,
+            detail.harga_satuan,
+            detail.harga_modal,
+            detail.stok,
+            detail.qty_terjual,
+            detail.keterangan
+        ])
+
+    for col in work_sheet.columns: # atur lebar kolom di excel
+        max_length = max(len(str(cell.value)) for cell in col)
+        work_sheet.column_dimensions[get_column_letter(col[0].column)].width = max_length + 2
+
+    response = HttpResponse(
+        content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=barang.xlsx'
+    return response
