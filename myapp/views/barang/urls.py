@@ -10,5 +10,6 @@ router.register(r'detailbarang', DetailBarangViewSet)
 urlpatterns = [
     path('', render.barang, name='barang'),
     path('tambah/', render.tambah_barang, name='tambah_barang'),
-    path('tambah/<int:id>', render.tambah_barang, name='tambah_barang')
+    path('tambah/<int:id>/', render.tambah_barang, name='tambah_barang'),
+    path('export_xlsx/', render.export_excel, name='export_xlsx')
 ]
