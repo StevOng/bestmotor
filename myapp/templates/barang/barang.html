@@ -48,15 +48,15 @@
                 </button>
             </div>
             <div class="mt-5 flex flex-col md:flex-row">
-                <form action="{% url 'barang' %}" method="GET"></form>
+                <form action="{% url 'barang' %}" method="GET">
                     <div class="mx-3">
                         <label for="dari_tgl" class="block text-sm font-medium text-gray-700">Dari Tanggal</label>
-                        <input type="date" id="dari_tgl"
+                        <input type="date" id="dari_tgl" name="dari_tgl"
                         class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" value="{{ request.GET.dari_tgl }}">
                     </div>
                     <div class="mx-3 mt-3 md:mt-0">
                         <label for="smpe_tgl" class="block text-sm font-medium text-gray-700">s/d Tanggal</label>
-                        <input type="date" id="smpe_tgl"
+                        <input type="date" id="smpe_tgl" name="smpe_tgl"
                           class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" value="{{ request.GET.smpe_tgl }}">
                     </div>
                     <button type="submit" class="p-2 bg-customBlue text-white rounded-md text-sm">Filter</button>

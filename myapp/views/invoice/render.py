@@ -6,7 +6,13 @@ from ...models.supplier import Supplier
 @admin_required
 def invoice(request):
     status = request.GET.get("status", None)
+    per_tgl = request.GET.get("per_tgl")
     invoice_list = Invoice.objects.prefetch_related("detailinvoice_set")
+
+    if per_tgl:
+        invoice_list = invoice_list.filter(
+            detailinvoice__jatuh_tempo = per_tgl
+        ).distinct()
 
     if status:
         invoice_list = invoice_list.filter(status=status)

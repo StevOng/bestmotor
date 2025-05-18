@@ -28,7 +28,7 @@
   <div
   class="flex flex-col p-2 h-auto mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800"
 >
-    <div class="mt-5 ml-3 flex flex-row justify-between {% if request.path == '/pembelian/invoice/jatuhtempo/' %} flex-col {% endif %}">
+    <div class="mt-5 ml-3 flex flex-row justify-between {% if request.GET.status == 'jatuh_tempo' %} flex-col {% endif %}">
         <div class="justify-start">
             <input type="text" id="searchInvoice" class="form-control rounded-lg border-gray-200 border-2 max-w-40 focus:border-customBlue lg:max-w-full" placeholder="Cari No Invoice disini...">
             <button class="bg-customBlue border-customBlue hover:bg-[#243F6B] p-2 rounded-lg text-white w-12" type="button">
@@ -36,13 +36,15 @@
             </button>
         </div>
         {% if request.GET.status == 'jatuh_tempo' %}
-            <div class="mt-5 flex">
-                <div class="mx-1">
-                    <label for="per_tgl" class="block text-sm font-medium text-gray-700">Per Tanggal</label>
-                    <input type="date" id="per_tgl"
-                    class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue">
+            <form action="{% url 'invoice' %}" method="GET">
+                <div class="mt-5 flex">
+                    <div class="mx-1">
+                        <label for="per_tgl" class="block text-sm font-medium text-gray-700">Per Tanggal</label>
+                        <input type="date" id="per_tgl" name="per_tgl"
+                        class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" value="{{ request.GET.per_tgl }}">
+                    </div>
                 </div>
-            </div>
+            </form>
         {% else %}
             <a href="{% url 'tambah_invoice' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
                 <div class="flex flex-row justify-center items-center">

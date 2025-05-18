@@ -12,6 +12,7 @@ class Faktur(models.Model):
     total = models.DecimalField(max_digits=19, decimal_places=2)
     CHOICES = [
         ('belum lunas','Belum Lunas'),
+        ('jatuh_tempo', 'Jatuh Tempo'),
         ('lunas','Lunas')
     ]
     status = models.CharField(max_length=30, choices=CHOICES, default='belum lunas')
@@ -20,7 +21,7 @@ class Faktur(models.Model):
     def __str__(self):
         return self.no_faktur
     
-    def generate_no_bukti(self):
+    def generate_no_faktur(self):
         if not self.no_bukti:
             last_bukti = Faktur.objects.order_by("-id").first() # berdasarkan id terbesar
             if last_bukti:
@@ -32,5 +33,5 @@ class Faktur(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum
-            self.generate_no_bukti() # jika belum berarti baru maka generate
+            self.generate_no_faktur() # jika belum berarti baru maka generate
         super().save(*args, **kwargs)

@@ -3,6 +3,7 @@ from datetime import timedelta
 from decimal import Decimal
 from .customer import Customer
 from .barang import Barang
+from .faktur import Faktur
 
 class Pesanan(models.Model):
     id = models.AutoField(primary_key=True)
@@ -66,6 +67,18 @@ class Pesanan(models.Model):
         self.hitung_total_bruto()
         self.hitung_total_netto()
         super().save(*args, **kwargs)
+
+        if self.status == 'shipped':
+            if not hasattr(self, 'faktur'):
+                Faktur.objects.create(
+                    pesanan_id = self.id,
+                    sisa_bayar = self.netto,
+                    total = self.netto
+                )
+
+        elif self.status == 'cancelled':
+            if hasattr(self, 'faktur'):
+                self.faktur.delete()
 
 class DetailPesanan(models.Model):
     id = models.AutoField(primary_key=True)
