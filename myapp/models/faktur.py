@@ -1,4 +1,5 @@
 from django.db import models
+from decimal import Decimal
 from .pesanan import Pesanan
 from .piutang import Piutang
 
@@ -11,7 +12,7 @@ class Faktur(models.Model):
     tanggal_faktur = models.DateTimeField(auto_now_add=True)
     total = models.DecimalField(max_digits=19, decimal_places=2)
     CHOICES = [
-        ('belum lunas','Belum Lunas'),
+        ('belum_lunas','Belum Lunas'),
         ('jatuh_tempo', 'Jatuh Tempo'),
         ('lunas','Lunas')
     ]
@@ -30,6 +31,17 @@ class Faktur(models.Model):
             else:
                 self.no_bukti = "BJ20001" # kode pertama
         return self.no_bukti
+    
+    def update_status(self):
+        total_nilai_bayar = self.piutang.aggregate(total=models.Sum('nilai_bayar'))['total'] or Decimal('0')
+        sisa = self.total - total_nilai_bayar
+        self.sisa_bayar = sisa
+
+        if sisa == 0:
+            self.status = 'lunas'
+        elif sisa > 0:
+            self.status = 'belum_lunas'
+        self.save()
     
     def save(self, *args, **kwargs):
         if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum
