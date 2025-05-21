@@ -9,27 +9,20 @@ def login(request):
         password = request.POST['password']
 
         try:
-            admin = Admin.objects.get(username=username)
-            if admin.password == password:
-                request.session['role'] = 'admin'
-                request.session['user_id'] = admin.id
-                return redirect('dashboard')
+            user = User.objects.get(username=username)
+            if user.password == password:
+                request.session['role'] = user.role
+                request.session['user_id'] = user.id
+                if user.role == 'admin':
+                    return redirect('dashboard')
+                elif user.role == 'sales':
+                    return redirect('katalog')
             else:
                 messages.error(request, "Password salah")
                 return redirect('login')
-        except Admin.DoesNotExist:
-            try:
-                sales = Sales.objects.get(username=username)
-                if sales.password == password:
-                    request.session['role'] = 'sales'
-                    request.session['user_id'] = sales.id
-                    return redirect('katalog')
-                else:
-                    messages.error(request, "Password salah")
-                    return redirect('login')
-            except Sales.DoesNotExist:
-                messages.error(request, "Username tidak ditemukan")
-                return redirect('login')
+        except User.DoesNotExist:
+            messages.error(request, 'Username tidak ditemukan')
+            return redirect('login')
 
     return render(request, 'base/login.html')
 
