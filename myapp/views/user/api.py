@@ -1,11 +1,7 @@
 from rest_framework import viewsets
-from ...models.user import *
-from .serializer import *
+from ...models.user import User
+from .serializer import UserSerializer
 
-class AdminViewSet(viewsets.ModelViewSet):
-    queryset = Admin.objects.all()
-    serializer_class = AdminSerializer
-
-class SalesViewSet(viewsets.ModelViewSet):
-    queryset = Sales.objects.all()
-    serializer_class = SalesSerializer
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

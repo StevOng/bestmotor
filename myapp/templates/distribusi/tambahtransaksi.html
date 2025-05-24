@@ -53,8 +53,8 @@
               <tr data-id="{{ data.id }}">
                 <td>{{ forloop.counter }}</td>
                 <td>
-                  <input type="hidden" class="barang-id" value="{{ data.barang_id }}">
-                  <select id="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ data.barang.id }}"></select>
+                  <input type="hidden" class="barang-id" value="{{ data.barang.id }}">
+                  <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ data.barang.id }}"></select>
                       <option value="{{ data.barang.id|default:"" }}" selected>{{ data.barang.kode_barang|default:"" }}</option>
                 </td>
                 <td id="namaBrg-{{ forloop.counter }}">

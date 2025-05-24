@@ -10,4 +10,5 @@ router.register(r'detailinvoice', DetailInvoiceViewSet)
 urlpatterns = [
     path('invoice/', render.invoice, name='invoice'),
     path('invoice/tambah/', render.tambah_invoice, name='tambah_invoice'),
+    path('invoice/tambah/<int:id>/', render.tambah_invoice, name='tambah_invoice')
 ]

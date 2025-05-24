@@ -1,4 +1,5 @@
 {% extends 'base/base.html' %}
+{% load humanize %}
 
 {% block title %}Tambah Pembayaran Piutang{% endblock %}
 
@@ -14,7 +15,7 @@
       <button onclick="closeModalSales()" class="flex justify-end"><i class="fa-solid fa-x m-2 text-gray-500"></i></button>
       <div class="mt-5 flex flex-row justify-between">
           <div class="justify-start ml-3">
-              <input type="text" id="customerSearch" class="form-control rounded-lg border-gray-200 border-2 max-w-40 focus:border-customBlue lg:max-w-full" placeholder="Cari Customer disini...">
+              <input type="text" id="salesSearch" class="form-control rounded-lg border-gray-200 border-2 max-w-40 focus:border-customBlue lg:max-w-full" placeholder="Cari Sales disini...">
               <button class="bg-customBlue border-customBlue hover:bg-[#243F6B] p-2 rounded-lg text-white w-12" type="button">
                   <i class="fas fa-search"></i>
               </button>
@@ -26,32 +27,32 @@
             </div>
           </a>
       </div>
-      <table id="modalCustomer" class="display cell-border">
+      <table id="modalSales" class="display cell-border">
           <thead>
               <tr>
                   <th>No</th>
                   <th>Nama Sales</th>
-                  <th>No. HP</th>
-                  <th>Lokasi Customer</th>
-                  <th>Alamat Lengkap</th>
+                  <th>Role</th>
+                  <th>Rute</th>
                   <th>Pilih</th>
               </tr>
           </thead>
           <tbody>
-              <tr>
-                  <td>1</td>
-                  <td>Toko Makmur - Ko Budi</td>
-                  <td>0812 34567890</td>
-                  <td>NIAS</td>
-                  <td>Jalan Tembaga No. 18, Nias Utara</td>
+            {% for faktur in data_faktur %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ faktur.pesanan_id.customer_id.user_id.nama }}</td>
+                  <td>{{ faktur.pesanan_id.customer_id.user_id.role }}</td>
+                  <td>{{ faktur.pesanan_id.customer_id.user_id.rute }}</td>
                   <td>
-                    <button>
+                    <button onclick="pilihSales('{{ faktur.pesanan_id.customer_id.user_id }}','{{ faktur.pesanan_id.customer_id.user_id.nama }}')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
                       <path d="M9.72217 11L12.7222 14L22.7222 4M16.7222 3H8.52217C6.84201 3 6.00193 3 5.3602 3.32698C4.79571 3.6146 4.33677 4.07354 4.04915 4.63803C3.72217 5.27976 3.72217 6.11984 3.72217 7.8V16.2C3.72217 17.8802 3.72217 18.7202 4.04915 19.362C4.33677 19.9265 4.79571 20.3854 5.3602 20.673C6.00193 21 6.84201 21 8.52217 21H16.9222C18.6023 21 19.4424 21 20.0841 20.673C20.6486 20.3854 21.1076 19.9265 21.3952 19.362C21.7222 18.7202 21.7222 17.8802 21.7222 16.2V12" stroke="#3D5A80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                       </svg>
                     </button>
                   </td>
               </tr>
+            {% endfor %}
           </tbody>
       </table>
     </div>
@@ -85,264 +86,136 @@
           </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>BJ20001</td>
-                <td>01/02/2025</td>
-                <td>BM0001</td> 
-                <td>Ko Andi</td>
-                <td>1.050.000,-</td>
+          {% for faktur in data_faktur %}
+              <tr>
+                <td>{{ faktur.no_faktur }}</td>
+                <td>{{ faktur.tanggal_faktur }}</td>
+                <td>{{ faktur.pesanan_id.no_referensi }}</td> 
+                <td>{{ faktur.pesanan_id.customer_id.nama }}</td>
+                <td>{{ faktur.total|floatformat:2|intcomma }}</td>
                 <td>
-                  <button>
+                  <button onclick="pilihFaktur('{{ faktur.id }}','{{ faktur.no_faktur }}')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
                       <path d="M9.72217 11L12.7222 14L22.7222 4M16.7222 3H8.52217C6.84201 3 6.00193 3 5.3602 3.32698C4.79571 3.6146 4.33677 4.07354 4.04915 4.63803C3.72217 5.27976 3.72217 6.11984 3.72217 7.8V16.2C3.72217 17.8802 3.72217 18.7202 4.04915 19.362C4.33677 19.9265 4.79571 20.3854 5.3602 20.673C6.00193 21 6.84201 21 8.52217 21H16.9222C18.6023 21 19.4424 21 20.0841 20.673C20.6486 20.3854 21.1076 19.9265 21.3952 19.362C21.7222 18.7202 21.7222 17.8802 21.7222 16.2V12" stroke="#3D5A80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                   </button>
                 </td>
             </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
 </div>
 
-<div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
-  <div class="flex flex-row justify-between mb-3">
-    <h2 class="text-lg font-semibold">Detail Pembayaran Piutang</h2>
-    <button onclick="window.history.back()"><i class="fa-solid fa-x w-8 text-gray-500"></i></button>
+<form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="tambahPiutangForm">
+  <div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
+    <div class="flex flex-row justify-between mb-3">
+      <h2 class="text-lg font-semibold">Detail Pembayaran Piutang</h2>
+      <button onclick="window.history.back()"><i class="fa-solid fa-x w-8 text-gray-500"></i></button>
+    </div>
+      <hr class="border-gray-300 pb-3">
+          <!-- No Bukti -->
+          <div>
+            <input type="hidden" name="piutangId" id="piutangId" value="{{ data_piutang.id|default:"" }}">
+            <label for="no_bukti" class="block text-sm font-medium text-gray-700">No Bukti</label>
+            <input type="text" id="no_bukti" value="{{ data_piutang.no_bukti|default:"" }}" disabled
+              class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
+          </div>
+
+          <!-- Tanggal -->
+          <div>
+            <label for="tgl_byrhutang" class="block text-sm font-medium text-gray-700">Tanggal</label>
+            <input type="date" id="tgl_byrhutang" value="{{ data_piutang.tanggal|default:"" }}" disabled
+              class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
+          </div>
+
+          <!-- Sales -->
+          <div>
+            <label for="sales" class="block text-sm font-medium text-gray-700">Sales</label>
+            <div class="relative mt-1">
+              <input type="hidden" name="salesId" id="salesId" value="{{ data_piutang.customer_id.user_id|default:"" }}">
+              <input type="text" id="sales" placeholder="Pilih Sales" value="{{ data_piutang.customer_id.user_id.nama|default:"" }}" disabled
+                class="block w-full border border-gray-300 rounded-md py-2 px-3 text-gray-700">
+              <button type="button" onclick="openModalSales()"
+                class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none">
+                <i class="fas fa-ellipsis-h"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="hidden md:block lg:hidden"></div>
+
+          <!-- Total Faktur -->
+          <div>
+              <label for="tot_faktur" class="block text-sm font-medium text-gray-700">Total Faktur</label>
+              <input type="text" id="tot_faktur" placeholder="" value="{{ data_piutang.total_faktur|default:"" }}" disabled
+                class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
+          </div>
+          <div class="hidden md:block md:col-span-2"></div>
+
+          <!-- Total Potongan -->
+          <div>
+              <label for="tot_pot" class="block text-sm font-medium text-gray-700">Total Potongan</label>
+              <input type="text" id="tot_pot" placeholder="" value="{{ data_piutang.total_potongan|default:"" }}" disabled
+                class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
+          </div>
+          <div class="hidden md:block md:col-span-2"></div>
+
+          <!-- Total Pelunasan -->
+          <div>
+              <label for="tot_lunas" class="block text-sm font-medium text-gray-700">Total Pelunasan</label>
+              <input type="text" id="tot_lunas" placeholder="" value="{{ data_piutang.total_pelunasan|default:"" }}" disabled
+                class="mt-1 block w-full border border-gray-300 bg-gray-200 rounded-md py-2 px-3 text-gray-400">
+          </div>
   </div>
-    <hr class="border-gray-300 pb-3">
-    <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- No Bukti -->
-        <div>
-          <label for="no_bukti" class="block text-sm font-medium text-gray-700">No Bukti</label>
-          <input type="text" id="no_bukti" value="AUTO" disabled
-            class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
-        </div>
-        
-        <!-- Tanggal -->
-        <div>
-          <label for="tgl_byrhutang" class="block text-sm font-medium text-gray-700">Tanggal</label>
-          <input type="date" id="tgl_byrhutang" disabled
-            class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
-        </div>
-        
-        <!-- Sales -->
-        <div>
-          <label for="sales" class="block text-sm font-medium text-gray-700">Kurir</label>
-          <select id="sales"
-            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 bg-white focus:outline-none focus:ring-customBlue focus:border-customBlue">
-            <option value="">-- Pilih Sales --</option>
-          </select>
-        </div>
-
-        <div class="hidden md:block lg:hidden"></div>
-                
-        <!-- Total Faktur -->
-        <div>
-            <label for="tot_faktur" class="block text-sm font-medium text-gray-700">Total Faktur</label>
-            <input type="text" id="tot_faktur" placeholder="" value="" disabled
-              class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
-        </div>
-        <div class="hidden md:block md:col-span-2"></div>
-        
-        <!-- Total Potongan -->
-        <div>
-            <label for="tot_pot" class="block text-sm font-medium text-gray-700">Total Potongan</label>
-            <input type="text" id="tot_pot" placeholder="" value="" disabled
-              class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
-        </div>
-        <div class="hidden md:block md:col-span-2"></div>
-
-        <!-- Total Pelunasan -->
-        <div>
-            <label for="tot_lunas" class="block text-sm font-medium text-gray-700">Total Pelunasan</label>
-            <input type="text" id="tot_lunas" placeholder="" value="" disabled
-              class="mt-1 block w-full border border-gray-300 bg-gray-200 rounded-md py-2 px-3 text-gray-400">
-        </div>
-      </form>
-</div>
-<div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
-    <hr class="border-gray-300">
-    <table id="allpesanan" class="display cell-border">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>No Faktur</th>
-                <th>Nama Customer</th>
-                <th>Nilai Faktur</th>
-                <th>Potongan</th>
-                <th>Nilai Bayar</th>
-                <th>Simpan</th>
-                <th>Hapus</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>
-                  <div class="relative mt-1">
-                    <input type="text" id="no_faktur" placeholder="Pilih Faktur" value="" disabled
-                      class="mt-1 block w-36 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue">
-                      <button type="button" onclick="openModalFaktur()"
-                      class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none">
-                      <i class="fas fa-ellipsis-h"></i>
-                    </button>
-                  </div>
-                </td>
-                <td>
-                  -
-                </td>
-                <td>-</td>
-                <td><input type="number" value="0" id="potongan" class="w-full rounded-md border-gray-300" /></td>
-                <td><input type="number" value="0" id="nilaiByr" class="w-full rounded-md border-gray-300" /></td>
-                <td><button><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-                <td><button onclick="confirmPopupBtn()"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+  <div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
+      <hr class="border-gray-300">
+      <table id="allpesanan" class="display cell-border">
+          <thead>
+              <tr>
+                  <th>No</th>
+                  <th>No Faktur</th>
+                  <th>Nama Customer</th>
+                  <th>Nilai Faktur</th>
+                  <th>Potongan</th>
+                  <th>Nilai Bayar</th>
+                  <th>Simpan</th>
+                  <th>Hapus</th>
+              </tr>
+          </thead>
+          <tbody>
+            {% for piutang in data_piutang %}
+                <tr data-id="{{ piutang.id }}">
+                  <td>{{ forloop.counter }}</td>
+                  <td>
+                    <div class="relative mt-1">
+                      <input type="hidden" name="fakturId" class="fakturId" value="{{ data_faktur.id|default:"" }}">
+                      <input type="text" id="noFaktur-{{ forloop.counter }}" placeholder="Pilih Faktur" value="{{ data_faktur.no_faktur|default:"" }}" disabled
+                        class="noFaktur mt-1 block w-36 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" data-nama-cust="namaCust-{{ forloop.counter }}" data-nilai-faktur="nilaiFaktur-{{ forloop.counter }}">
+                        <button type="button" onclick="openModalFaktur()"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none">
+                        <i class="fas fa-ellipsis-h"></i>
+                      </button>
+                    </div>
+                  </td>
+                  <td id="namaCust-{{ forloop.counter }}">
+                    <input type="hidden" name="custId" class="custId" value="{{ piutang.customer_id|default:"" }}">
+                    {{ piutang.customer_id.nama|default:"" }}
+                  </td>
+                  <td id="nilaiFaktur-{{ forloop.counter }}">{{ piutang.total_faktur|default:"" }}</td>
+                  <td><input type="number" value="{{ piutang.potongan|default:"" }}" id="potongan" class="potongan w-full rounded-md border-gray-300" /></td>
+                  <td><input type="number" value="{{ piutang.nilai_bayar|default:"" }}" id="nilaiByr" class="nilaiByr w-full rounded-md border-gray-300" /></td>
+                  <td><button type="submit" class="btn-submit" data-id="{{ piutang.id }}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+                  <td><button onclick="confirmPopupBtn({{ piutang.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+      </table>
+  </div>
+</form>
 {% endblock %}
 
 {% block script %}
-<script>
-  const salesSelect = document.getElementById("sales");
-
-  const salesList = [
-    { id: "S1", name: "Budi" },
-    { id: "S2", name: "Joko" },
-    { id: "S3", name: "Adi" }
-  ];
-
-  salesList.forEach(sales => {
-    const option = document.createElement("option");
-    option.value = sales.id;
-    option.textContent = sales.name;
-    salesSelect.appendChild(option);
-  });
-
-//PopupModal Customer
-  function openModalSales() {
-    let modal = document.getElementById("popupModalSales");
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
-}
-
-function closeModalSales() {
-    let modal = document.getElementById("popupModalSales");
-    modal.classList.remove("flex");
-    modal.classList.add("hidden");
-}
-
-$(document).ready(function () {
-  let table = $('#modalCustomer').DataTable({
-      pageLength: 20,
-      lengthChange: false, // Hilangkan "Show entries"
-      ordering: false,
-      scrollX: true,
-      "columnDefs": [
-    { className: "text-center", targets: [-1, -2] } // kolom 8 dan 9 di tengah
-],
-  });
-  $('.dt-search').remove();
-  $('.dt-info').remove();
-
-  $('#customerSearch').on('keyup', function () {
-    let searchValue = $(this).val();
-    table.search(searchValue).draw();
-  });
-});
-
-//PopupModal Customer
-function openModalFaktur() {
-  let modal = document.getElementById("popupModalFaktur");
-  modal.classList.remove("hidden");
-  modal.classList.add("flex");
-}
-
-function closeModalFaktur() {
-  let modal = document.getElementById("popupModalFaktur");
-  modal.classList.remove("flex");
-  modal.classList.add("hidden");
-}
-
-$(document).ready(function () {
-let table = $('#modalFaktur').DataTable({
-    pageLength: 20,
-    lengthChange: false, // Hilangkan "Show entries"
-    ordering: false,
-    scrollX: true,
-      "columnDefs": [
-    { className: "text-center", targets: [-1, -2] } // 2 kolom terakhir di tengah
-  ],
-  });
-  $('.dt-search').remove();
-  $('.dt-info').remove();
-
-  $('#fakturSearch').on('keyup', function () { //search
-    let searchValue = $(this).val();
-    table.search(searchValue).draw();
-  });
-  });
-
-      const kodeBarang = ["0001273", "0001274", "0001275", "0001276", "0001277", "0001278"];
-      const searchKode = document.getElementById("searchKode");
-      const dropdownList = document.getElementById("dropdownList");
-
-      function updateDropdown(filterText = "") {
-          let filteredItems = kodeBarang.filter(kode => kode.toLowerCase().includes(filterText.toLowerCase())).slice(0, 3);
-          let displayedItems = filteredItems.slice(0, filterText ? filteredItems.length : 3); // Default 3 item, cari semua saat input
-          
-          dropdownList.innerHTML = displayedItems
-              .map(kode => `<li class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectKode(this)">${kode}</li>`)
-              .join("");
-
-          dropdownList.classList.toggle("hidden", displayedItems.length === 0);
-      }
-
-      // Tampilkan 3 item default saat pertama kali input diklik
-      searchKode.addEventListener("focus", () => {
-          updateDropdown();
-      });
-
-      // Update dropdown berdasarkan pencarian
-      searchKode.addEventListener("input", () => {
-          updateDropdown(searchKode.value);
-      });
-
-      // Sembunyikan dropdown jika klik di luar
-      document.addEventListener("click", (event) => {
-          if (!searchKode.contains(event.target) && !dropdownList.contains(event.target)) {
-              dropdownList.classList.add("hidden");
-          }
-      });
-
-      // Pilih item dan isi input
-      function selectKode(element) {
-          searchKode.value = element.textContent;
-          dropdownList.classList.add("hidden");
-      }
-
-      document.getElementById("toggleCheck").addEventListener("click", function () {
-          document.getElementById("checkIcon").classList.toggle("hidden");
-      });
-
-      function confirmPopupBtn() {
-        const modal = document.getElementById("popupModalConfirm");
-        modal.classList.remove("hidden"); // Tampilkan modal
-        modal.style.display = "flex"; // Pastikan tampil dengan flexbox
-    
-        const confirmButton = document.getElementById("confirmAction");
-    
-        confirmButton.onclick = function () {
-            console.log("Pesanan dihapus!");
-            closeModalConfirm();
-        };
-      }
-    
-      function closeModalConfirm() {
-          const modal = document.getElementById("popupModalConfirm");
-          modal.classList.add("hidden"); // Sembunyikan modal
-          modal.style.display = "none"; // Pastikan modal benar-benar hilang
-      }
-</script>
+<script src="{% static 'js/tambahpiutang.js' %}"></script>
 {% endblock %}

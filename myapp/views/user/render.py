@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from ...models.user import *
+from ...models.user import User
 from ...decorators import admin_required
 
 def login(request):

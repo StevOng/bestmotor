@@ -14,6 +14,18 @@ document.addEventListener("change", function (e) {
     }
 });
 
+document.addEventListener("change", function (e) {
+    if (e.target.classList.contains("kodebrg-dropdown")) {
+      const lastRow = document.querySelector("tbody tr:last-child");
+      const selectedValue = e.target.value;
+  
+      // Cek apakah dropdown dipilih dan belum pernah nambah baris baru
+      if (selectedValue && !lastRow.classList.contains("new-row-added")) {
+        addNewRow();
+      }
+    }
+});
+
 function confirmPopupBtn(id) {
     const modal = document.getElementById("popupModalConfirm");
     modal.classList.remove("hidden"); // Tampilkan modal
@@ -101,20 +113,25 @@ function addNewRow() {
     newRow.innerHTML = `
       <td>${rowCount}</td>
       <td>
-        <input type="hidden" id="barangId-${rowCount}" value="">
-        <select id="kodebrg-dropdown-${rowCount}" class="kodebrg-dropdown" data-barang-id="">
+        <input type="hidden" id="barangId-${rowCount}" value="${data?.barang.id || ""}">
+        <select id="kodebrg-dropdown-${rowCount}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-${rowCount}" data-selected-id="${data?.barang.id || ""}">
           <option value="">Pilih Barang</option>
         </select>
       </td>
-      <td id="namaBrg-${rowCount}"></td>
-      <td><input type="number" id="input_qtybrg-${rowCount}" class="input_qtybrg w-20 rounded-md border-gray-300"/></td>
-      <td><button type="submit"><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+      <td id="namaBrg-${rowCount}">${data?.barang.nama_barang || ""}</td>
+      <td><input type="number" id="input_qtybrg-${rowCount}" value="${data?.qty_barang || ""}" class="input_qtybrg w-20 rounded-md border-gray-300"/></td>
+      <td><button type="submit" class="btn-submit" data-id=""><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
       <td><button onclick="hapusRow(this)"><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
   
     tbody.appendChild(newRow);
 
-    loadBarangOptions(`kodebrg-dropdown-${rowCount}`);
+    const btnSubmit = newRow.querySelector(".btn-submit")
+    if (data?.id) {
+        btnSubmit.setAttribute("data-id", data.id)
+    }
+
+    loadBarangOptions(`kodebrg-dropdown-${rowCount}`, data?.barang_id || null);
 }
 
 function hapusRow(btn) {

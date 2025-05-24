@@ -11,6 +11,18 @@ document.addEventListener('DOMContentLoaded', () => {
     tanggal.value = formatDate
 })
 
+document.addEventListener("change", function (e) {
+    if (e.target.classList.contains("kodebrg-dropdown")) {
+      const lastRow = document.querySelector("tbody tr:last-child");
+      const selectedValue = e.target.value;
+  
+      // Cek apakah dropdown dipilih dan belum pernah nambah baris baru
+      if (selectedValue && !lastRow.classList.contains("new-row-added")) {
+        addNewRow();
+      }
+    }
+});
+
 //PopupModal
 function openModal() {
     let modal = document.getElementById("popupModal");
@@ -43,17 +55,36 @@ $(document).ready(function () {
   });
 });
 
-function confirmPopupBtn() {
-  const modal = document.getElementById("popupModalConfirm");
-  modal.classList.remove("hidden"); // Tampilkan modal
-  modal.style.display = "flex"; // Pastikan tampil dengan flexbox
+function confirmPopupBtn(detailId) {
+    const modal = document.getElementById("popupModalConfirm");
+    modal.classList.remove("hidden"); // Tampilkan modal
+    modal.style.display = "flex"; // Pastikan tampil dengan flexbox
 
-  const confirmButton = document.getElementById("confirmAction");
+    const confirmButton = document.getElementById("confirmAction");
 
-  confirmButton.onclick = function () {
-      console.log("Pesanan dihapus!");
-      closeModalConfirm();
-  };
+    confirmButton.onclick = async function () {
+        try {
+            const response = await fetch(`/api/detailinvoice/${detailId}`, {
+                method: "DELETE"
+            })
+            if (response.ok) {
+                console.log("Barang Invoice dihapus!");
+                const row = document.querySelector(`tr[data-id="${detailId}"]`);
+                row.querySelectorAll("input, select, textarea").forEach((el) => {
+                    el.value = ""
+                    if (el.tagName == "select") {
+                        el.selectedIndex = 0
+                    }
+                })
+                row.removeAttribute("data-id")
+            } else {
+                console.error("Gagal menghapus invoice");
+            }
+        } catch (error) {
+            console.error("Terjadi kesalahan: ",error);
+        }
+        closeModalConfirm();
+    };
 }
 
 function closeModalConfirm() {
@@ -146,7 +177,7 @@ function pilihSupplier(id, nama, perusahaan) {
 
     document.getElementById("supplier").value = displayText
 
-    let hiddenInput = document.getElementById("supplier_id")
+    let hiddenInput = document.getElementById("supplierId")
     if (hiddenInput) {
         hiddenInput.value = id
     }

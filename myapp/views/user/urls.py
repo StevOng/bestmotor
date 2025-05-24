@@ -4,8 +4,7 @@ from .api import *
 from . import render
 
 router = DefaultRouter()
-router.register(r'admin', AdminViewSet)
-router.register(r'sales', SalesViewSet)
+router.register(r'user', UserViewSet)
 
 urlpatterns = [
     path('', render.dashboard, name='dashboard'),
