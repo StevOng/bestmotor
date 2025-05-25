@@ -1,10 +1,15 @@
 from django.shortcuts import render
 from ...decorators import admin_required
+from ...models.supplier import Supplier
 
 @admin_required
 def supplier(request):
-    return render(request, 'supplier/supplier.html')
+    supplier = Supplier.objects.all()
+    return render(request, 'supplier/supplier.html', {'supplier': supplier})
 
 @admin_required
-def tambah_supplier(request):
-    return render(request, 'supplier/tambahsupplier.html')
+def tambah_supplier(request, id=None):
+    supplier = None
+    if id:
+        supplier = Supplier.objects.get(id=id)
+    return render(request, 'supplier/tambahsupplier.html', {'supplier': supplier})

@@ -43,42 +43,25 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>1</td>
-                <td>PT Maju Jaya</td>
-                <td>Ko Andi</td>
-                <td>081234567890</td>
-                <td>Jakarta</td>
-                <td>Rem, Oil</td>
-                <td>Vario</td>
-                <td>Aktif</td>
-                <td><a href="{% url 'tambah_supplier' %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
-                <td><button onclick="confirmPopupBtn()"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
-            </tr>
+            {% for sup in supplier %}
+                <tr data-id="{{ sup.id }}">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ sup.perusahaan }}</td>
+                    <td>{{ sup.nama_sales }}</td>
+                    <td>{{ sup.no_hp }}</td>
+                    <td>{{ sup.lokasi }}</td>
+                    <td>{{ sup.jenis_barang }}</td>
+                    <td>{{ sup.merk_barang }}</td>
+                    <td>{{ sup.status }}</td>
+                    <td><a href="{% url 'tambah_supplier' id=sup.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                    <td><button onclick="confirmPopupBtn({{ sup.id }})"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>
 {% endblock %}
 
 {% block script %}
-<script>
-    function confirmPopupBtn() {
-        const modal = document.getElementById("popupModalConfirm");
-        modal.classList.remove("hidden"); // Tampilkan modal
-        modal.style.display = "flex"; // Pastikan tampil dengan flexbox
-    
-        const confirmButton = document.getElementById("confirmAction");
-    
-        confirmButton.onclick = function () {
-            console.log("Pesanan dihapus!");
-            closeModalConfirm();
-        };
-    }
-    
-    function closeModalConfirm() {
-        const modal = document.getElementById("popupModalConfirm");
-        modal.classList.add("hidden"); // Sembunyikan modal
-        modal.style.display = "none"; // Pastikan modal benar-benar hilang
-    }
-</script>
+<script src="{% static 'js/supplier.js' %}"></script>
 {% endblock %}
