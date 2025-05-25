@@ -10,6 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
     tanggal.value = formatDate
 })
 
+document.querySelectorAll(".potongan").forEach(input => {
+    input.addEventListener("input", totalPotongan)
+})
+
+document.querySelectorAll(".nilaiByr").forEach(input => {
+    input.addEventListener("input", totalPelunasan)
+})
+
 document.addEventListener("change", function (e) {
     if (e.target.classList.contains("noFaktur")) {
       const lastRow = document.querySelector("tbody tr:last-child");
@@ -205,6 +213,28 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
         console.log(result);
     })
 })
+
+function totalPotongan() {
+    const potongan = document.querySelectorAll('.potongan')
+    let total = 0
+
+    potongan.forEach(p => {
+        total += parseFloat(p.value) || 0
+    })
+
+    document.getElementById("tot_pot").value = total
+}
+
+function totalPelunasan() {
+    const bayar = document.querySelectorAll(".nilaiByr")
+    let total = 0
+
+    bayar.forEach(b => {
+        total += parseFloat(b.value) || 0
+    })
+
+    document.getElementById("tot_lunas").value = total
+}
 
 function addNewRow() {
     const tbody = document.querySelector("tbody");

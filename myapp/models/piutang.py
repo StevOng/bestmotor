@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum, F
 from .customer import Customer
 
 class Piutang(models.Model):
@@ -24,8 +25,22 @@ class Piutang(models.Model):
             else:
                 self.no_bukti = "PP0001" # kode pertama
         return self.no_bukti
+
+    def potongan_total(self):
+        total_potongan = self.faktur_set.aggregate(
+            potongan=Sum('potongan')
+        )['potongan'] or 0
+        return total_potongan or 0
+    
+    def pelunasan_total(self):
+        total_pelunasan = self.faktur_set.aggregate(
+            pelunasan=Sum(F('total')-F('sisa_bayar'))
+        )['total_pelunasan']
+        return total_pelunasan or 0
     
     def save(self, *args, **kwargs):
         if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum
             self.generate_no_bukti() # jika belum berarti baru maka generate
+        self.potongan_total()
+        self.pelunasan_total()
         super().save(*args, **kwargs)
