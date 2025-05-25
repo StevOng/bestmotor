@@ -9,4 +9,5 @@ router.register(r'customer', CustomerViewSet)
 urlpatterns = [
     path('', render.customer, name='customer'),
     path('tambah/', render.tambah_customer, name='tambah_customer'),
+    path('tambah/<int:id>/', render.tambah_customer, name='tambah_customer')
 ]
