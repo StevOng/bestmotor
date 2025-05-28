@@ -155,7 +155,7 @@ function pilihFaktur(id, nomor) {
         const row = faktur.closest('tr')
         const noFaktur = row.querySelector("[id^='noFaktur-']")
         noFaktur.value = displayText
-        const hiddenInput = row.querySelector("fakturId")
+        const hiddenInput = row.querySelector(".fakturId")
         if (hiddenInput) {
             hiddenInput.value = id
         }
