@@ -17,6 +17,7 @@ class Invoice(models.Model):
     ongkir = models.DecimalField(max_digits=19, decimal_places=2)
     diskon_invoice = models.DecimalField(max_digits=19, decimal_places=2)
     netto = models.DecimalField(max_digits=10, decimal_places=2)
+    potongan = models.DecimalField(max_digits=19, decimal_places=2)
     sisa_bayar = models.DecimalField(max_digits=19, decimal_places=2)
     CHOICES = [
         ('lunas','Lunas'),
@@ -50,6 +51,17 @@ class Invoice(models.Model):
     def hitung_total_netto(self):
         self.netto = self.bruto + (self.bruto * self.ppn) + self.ongkir - self.diskon_invoice
         return self.netto
+    
+    def update_status(self):
+        total_nilai_bayar = self.hutang.aggregate(total=models.Sum('nilai_bayar'))['total'] or Decimal('0')
+        sisa = self.netto - total_nilai_bayar
+        self.sisa_bayar = sisa
+
+        if sisa == 0:
+            self.status = 'lunas'
+        elif sisa > 0:
+            self.status = 'belum_lunas'
+        self.save()
     
     def set_sisa_bayar(self):
         self.sisa_bayar = self.netto

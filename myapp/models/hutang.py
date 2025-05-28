@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum, F
 from .supplier import Supplier
 
 class Hutang(models.Model):
@@ -6,7 +7,6 @@ class Hutang(models.Model):
     supplier_id = models.ForeignKey(Supplier, on_delete=models.PROTECT)
     no_bukti = models.CharField(max_length=10, unique=True)
     tanggal = models.DateTimeField(auto_now_add=True)
-    potongan = models.DecimalField(max_digits=19, decimal_places=2)
     nilai_bayar = models.DecimalField(max_digits=19, decimal_places=2)
     total_potongan = models.DecimalField(max_digits=19, decimal_places=2)
     total_pelunasan = models.DecimalField(max_digits=19, decimal_places=2)
@@ -24,6 +24,18 @@ class Hutang(models.Model):
             else:
                 self.no_bukti = "PH0001" # kode pertama
         return self.no_bukti
+    
+    def potongan_total(self):
+        total_potongan = self.invoice_set.aggregate(
+            potongan=Sum('potongan')
+        )['potongan'] or 0
+        return total_potongan or 0
+    
+    def pelunasan_total(self):
+        total_pelunasan = self.invoice_set.aggregate(
+            pelunasan=Sum(F('netto')-F('sisa_bayar'))
+        )['pelunasan']
+        return total_pelunasan or 0
     
     def save(self, *args, **kwargs):
         if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum

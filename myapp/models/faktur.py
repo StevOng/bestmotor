@@ -10,6 +10,7 @@ class Faktur(models.Model):
     no_faktur = models.CharField(max_length=50, unique=True)
     sisa_bayar = models.DecimalField(max_digits=19, decimal_places=2)
     tanggal_faktur = models.DateTimeField(auto_now_add=True)
+    potongan = models.DecimalField(max_digits=19, decimal_places=2)
     total = models.DecimalField(max_digits=19, decimal_places=2)
     CHOICES = [
         ('belum_lunas','Belum Lunas'),
@@ -42,8 +43,13 @@ class Faktur(models.Model):
         elif sisa > 0:
             self.status = 'belum_lunas'
         self.save()
+
+    def set_sisa_bayar(self):
+        self.sisa_bayar = self.total
+        return self.sisa_bayar
     
     def save(self, *args, **kwargs):
         if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum
             self.generate_no_faktur() # jika belum berarti baru maka generate
+            self.set_sisa_bayar()
         super().save(*args, **kwargs)

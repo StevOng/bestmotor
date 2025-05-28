@@ -7,7 +7,6 @@ class Piutang(models.Model):
     customer_id = models.ForeignKey(Customer, on_delete=models.PROTECT)
     no_bukti = models.CharField(max_length=10, unique=True)
     tanggal = models.DateTimeField(auto_now_add=True)
-    potongan = models.DecimalField(max_digits=19, decimal_places=2)
     nilai_bayar = models.DecimalField(max_digits=19, decimal_places=2)
     total_potongan = models.DecimalField(max_digits=19, decimal_places=2)
     total_pelunasan = models.DecimalField(max_digits=19, decimal_places=2)
@@ -35,7 +34,7 @@ class Piutang(models.Model):
     def pelunasan_total(self):
         total_pelunasan = self.faktur_set.aggregate(
             pelunasan=Sum(F('total')-F('sisa_bayar'))
-        )['total_pelunasan']
+        )['pelunasan']
         return total_pelunasan or 0
     
     def save(self, *args, **kwargs):

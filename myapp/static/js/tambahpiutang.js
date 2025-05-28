@@ -165,7 +165,7 @@ function pilihFaktur(id, nomor) {
         faktur.addEventListener('change', async () => {
             const fakturId = faktur.value
 
-            const response = await fetch(`/api/faktur/${fakturId}`)
+            const response = await fetch(`/api/faktur/${fakturId}/`)
             const data = await response.json()
 
             const namaCustEl = document.getElementById(namaCust)
@@ -199,8 +199,19 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
         }
         const piutang = new FormData()
         piutang.append("customer_id", custId)
-        piutang.append("potongan", potongan)
         piutang.append("nilai_bayar", nilaiByr)
+
+        if (potongan > 0) {
+            const response = await fetch(`/api/faktur/${fakturId}/`, {
+                method:"PATCH",
+                body: JSON.stringify({
+                    potongan: potongan
+                })
+            })
+            if (response.ok) {
+                console.log(`Update nilai potongan pada faktur: ${fakturId}, sebesar ${potongan}`)
+            }
+        }
 
         const method = id ? "PATCH" : "POST" // jika ada id edit, tidak? tambah
         const apiInvoice = id ? `/api/piutang/${id}/` : `/api/piutang/`
