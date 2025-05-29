@@ -97,6 +97,7 @@ class DetailPesanan(models.Model):
     alamat_kirim = models.CharField(max_length=255)
     keterangan = models.TextField(null=True, blank=True)
     qty_pesan = models.IntegerField()
+    qty_retur = models.IntegerField()
     diskon_barang = models.DecimalField(max_digits=19, decimal_places=2)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -97,19 +97,19 @@ function addNewRow() {
     newRow.innerHTML = `
         <td>${rowCount}</td>
         <td>
-          <input type="hidden" name="barangId" class="barangId" value="${re?.barang_id||""}">
-          <select id="kodebrg-dropdown-${rowCount}" class="kodebrg-dropdown" data-namaBrg="namaBrg-${rowCount}" data-selected-id="${re?.barang_id||""}">
-            <option value="${re?.barang_id||""}" selected>${re?.barang_id.kode_barang||""} - ${re?.barang_id.nama_barang||""}</option>
+          <input type="hidden" name="barangId" class="barangId" value="${inv?.barang_id||""}">
+          <select id="kodebrg-dropdown-${rowCount}" class="kodebrg-dropdown" data-namaBrg="namaBrg-${rowCount}" data-selected-id="${inv?.barang_id||""}">
+            <option value="${inv?.barang_id||""}" selected>${inv?.barang_id.kode_barang||""} - ${inv?.barang_id.nama_barang||""}</option>
           </select>
         </td>
         <td id="namaBrg-${rowCount}">
-          ${re?.barang_id.nama_barang||""}
+          ${inv?.barang_id.nama_barang||""}
         </td>
-        <td><input type="number" value="${re?.harga_beli||""}" id="input_hrgbrg-${rowCount}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
-        <td><input type="number" value="${re?.qty_retur||""}" id="input_qtybrg-${rowCount}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
-        <td><input type="number" value="${re?.diskon_barang||""}" id="disc-${rowCount}" class="disc w-20 rounded-md border-gray-300" /></td>
-        <td class="totalDisc">${re?.total_diskon_barang||""}</td>
-        <td class="total">${re?.total_harga_barang||""}</td>
+        <td><input type="number" value="${inv?.harga_beli||""}" id="input_hrgbrg-${rowCount}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
+        <td><input type="number" value="${inv?.qty_retur||""}" id="input_qtybrg-${rowCount}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
+        <td><input type="number" value="${inv?.diskon_barang||""}" id="disc-${rowCount}" class="disc w-20 rounded-md border-gray-300" /></td>
+        <td class="totalDisc">${inv?.total_diskon_barang||""}</td>
+        <td class="total">${inv?.total_harga_barang||""}</td>
         <td><button type="submit" data-id=""><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
         <td><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
@@ -117,11 +117,11 @@ function addNewRow() {
     tbody.appendChild(newRow);
 
     const btnSubmit = newRow.querySelector(".btn-submit")
-    if (re?.id) {
-        btnSubmit.setAttribute("data-id", re.id)
+    if (inv?.id) {
+        btnSubmit.setAttribute("data-id", inv.id)
     }
 
-    loadBarangOptions(`kodebrg-dropdown-${rowCount}`, re?.barang_id || null);
+    loadBarangOptions(`kodebrg-dropdown-${rowCount}`, inv?.barang_id || null);
 }
 
 function hapusRow(btn) {
@@ -130,15 +130,15 @@ function hapusRow(btn) {
     setTimeout(() => row.remove(), 400)
 }
 
-function pilihInv(id, nomor, cust) {
+function pilihInv(id, nomor, supplier) {
     let displayTextNomor = `${nomor}`
-    let displayTextSupplier = `${cust}`
+    let displayTextSupplier = `${supplier}`
 
-    let hiddenInput = document.getElementById("fakturId")
+    let hiddenInput = document.getElementById("invId")
     if (hiddenInput) {
         hiddenInput.value = id
-        document.getElementById("no_faktur").value = displayTextNomor
-        document.getElementById("customer").value = displayTextSupplier
+        document.getElementById("no_invoice").value = displayTextNomor
+        document.getElementById("supplier").value = displayTextSupplier
     }
     closeModalConfirm()
 }
@@ -153,39 +153,38 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
         const hrgBrg = row.querySelector("[id^='input_hrgbrg-']").value
         const disc = row.querySelector("[id^='disc-']").value
         const id = document.getElementById("hiddenId").value
-        const fakturId = document.getElementById("fakturId").value
-        const pesananId = document.getElementById("pesananId").value
+        const invId = document.getElementById("invId").value
         const bruto = document.getElementById("bruto").value
         const ongkir = document.getElementById("ongkir").value
         const ppn = document.getElementById("ppn").value
         const discount = document.getElementById("discount").value
         const nilaiPpn = ppn * ((qtyRetur * hrgBrg) - disc)
-        const check = await fetch(`/api/detailpesanan/${pesananId}/`)
+        const check = await fetch(`/api/detailinvoice/${invId}/`)
         const data = await check.json()
 
-        if (!barangId || !pesananId) {
-            alert("Barang dan faktur harus dipilih");
+        if (!barangId || !invId) {
+            alert("Barang dan invoice harus dipilih");
             return;
         }
 
         if (qtyRetur > data.qty_beli) {
-            alert("Kuantiti retur melebihi stok pesanan")
+            alert("Kuantiti retur melebihi stok beli")
             return
         }
 
         const retur = new FormData()
-        retur.append("faktur_id", fakturId)
+        retur.append("invoice_id", invId)
         retur.append("subtotal", bruto)
 
         const method = id ? "PATCH" : "POST";
-        const apiUrl = id ? `/api/returjual/${id}/`:`/api/returjual/`
+        const apiUrl = id ? `/api/returbeli/${id}/`:`/api/returbeli/`
         try {
             const response = await fetch(apiUrl, {
             method: method,
             body: retur
             })
             if (response.ok) {
-                const patchInv = await fetch(`/api/pesanan/${pesananId}/`, {
+                const patchInv = await fetch(`/api/invoice/${invId}/`, {
                     method: "PATCH",
                     body: JSON.stringify({
                         bruto: (qtyRetur * hrgBrg),
@@ -193,7 +192,7 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
                         netto: bruto + nilaiPpn + ongkir - discount,
                     })
                 }) 
-                const patchDetail = await fetch(`/api/detailpesanan/${pesananId}/`, {
+                const patchDetail = await fetch(`/api/detailinvoice/${invId}/`, {
                     method: "PATCH",
                     body: JSON.stringify({
                         qty_retur: qtyRetur
@@ -204,7 +203,7 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
                     const response2 = await patchDetail.json()
                     console.log(response1, response2);
                 } else {
-                    console.log("Terjadi kesalahan saat PATCH pesanan detailpesanan")
+                    console.log("Terjadi kesalahan saat PATCH invoice detailinvoice")
                 }
             } else {
                 console.log(`Gagal ${method} ke ${apiUrl}`)

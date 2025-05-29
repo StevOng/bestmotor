@@ -1,28 +1,25 @@
 document.addEventListener('DOMContentLoaded', () => {
     getOptionBrg()
+
+    const tanggal = document.getElementById("tanggal")
+    const today = new Date()
+    const year = String(today.getFullYear())
+    const month = String(today.getMonth() + 1).padStart(2, "0")
+    const day = String(today.getDate()).padStart(2, "0")
+    const formatDate = `${day}/${month}/${year}`
+
+    tanggal.value = formatDate
 })
 
 document.addEventListener("change", function (e) {
     if (e.target.classList.contains("kodebrg-dropdown")) {
-      const lastRow = document.querySelector("tbody tr:last-child");
-      const selectedValue = e.target.value;
-  
-      // Cek apakah dropdown dipilih dan belum pernah nambah baris baru
-      if (selectedValue && !lastRow.classList.contains("new-row-added")) {
-        addNewRow();
-      }
-    }
-});
+        const lastRow = document.querySelector("tbody tr:last-child");
+        const selectedValue = e.target.value;
 
-document.addEventListener("change", function (e) {
-    if (e.target.classList.contains("kodebrg-dropdown")) {
-      const lastRow = document.querySelector("tbody tr:last-child");
-      const selectedValue = e.target.value;
-  
-      // Cek apakah dropdown dipilih dan belum pernah nambah baris baru
-      if (selectedValue && !lastRow.classList.contains("new-row-added")) {
-        addNewRow();
-      }
+        // Cek apakah dropdown dipilih dan belum pernah nambah baris baru
+        if (selectedValue && !lastRow.classList.contains("new-row-added")) {
+            addNewRow();
+        }
     }
 });
 
@@ -31,9 +28,9 @@ function confirmPopupBtn(id) {
     modal.classList.remove("hidden"); // Tampilkan modal
     modal.style.display = "flex"; // Pastikan tampil dengan flexbox
     const jenis = document.getElementById("jenis").value
-  
+
     const confirmButton = document.getElementById("confirmAction");
-  
+
     confirmButton.onclick = async function () {
         try {
             const response = await fetch(`/api/transaksi${jenis}/${id}`, {
@@ -53,19 +50,19 @@ function confirmPopupBtn(id) {
                 console.error("Gagal menghapus Barang");
             }
         } catch (error) {
-            console.error("Terjadi kesalahan: ",error);
+            console.error("Terjadi kesalahan: ", error);
         }
         closeModalConfirm();
     };
-  }
-  
-  function closeModalConfirm() {
-      const modal = document.getElementById("popupModalConfirm");
-      modal.classList.add("hidden"); // Sembunyikan modal
-      modal.style.display = "none"; // Pastikan modal benar-benar hilang
-  }
+}
 
-  async function loadBarangOptions(selectId, selectedId = null) {
+function closeModalConfirm() {
+    const modal = document.getElementById("popupModalConfirm");
+    modal.classList.add("hidden"); // Sembunyikan modal
+    modal.style.display = "none"; // Pastikan modal benar-benar hilang
+}
+
+async function loadBarangOptions(selectId, selectedId = null) {
     let response = await fetch("/api/barang/")
     let data = await response.json()
     let select = document.getElementById(selectId)
@@ -89,7 +86,7 @@ async function getOptionBrg() {
         const namaBrgId = select.dataset.namaBarangId
         loadBarangOptions(select.id, selectedId)
 
-        select.addEventListener("change", async() => {
+        select.addEventListener("change", async () => {
             const barangId = select.value
 
             const response = await fetch(`/api/barang/${barangId}`)
@@ -106,9 +103,9 @@ async function getOptionBrg() {
 function addNewRow() {
     const tbody = document.querySelector("tbody");
     const newRow = document.createElement("tr");
-  
+
     const rowCount = tbody.querySelectorAll("tr").length + 1;
-  
+
     newRow.classList.add("new-row-added"); // untuk mencegah nambah berkali-kali
     newRow.innerHTML = `
       <td>${rowCount}</td>
@@ -123,7 +120,7 @@ function addNewRow() {
       <td><button type="submit" class="btn-submit" data-id=""><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
       <td><button onclick="hapusRow(this)"><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
-  
+
     tbody.appendChild(newRow);
 
     const btnSubmit = newRow.querySelector(".btn-submit")
@@ -181,5 +178,3 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
         }
     });
 });
-
-  

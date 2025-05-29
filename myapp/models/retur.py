@@ -10,7 +10,6 @@ class ReturBeli(models.Model):
     no_bukti = models.CharField(max_length=10, unique=True)
     tanggal = models.DateTimeField(auto_now_add=True)
     terakhir_edit = models.DateTimeField(auto_now=True)
-    qty_retur = models.IntegerField()
     subtotal = models.DecimalField(max_digits=19, decimal_places=2)
 
     def __str__(self):
@@ -38,7 +37,6 @@ class ReturJual(models.Model):
     no_bukti = models.CharField(max_length=10, unique=True)
     tanggal = models.DateTimeField(auto_now_add=True)
     terakhir_edit = models.DateTimeField(auto_now=True)
-    qty_retur = models.IntegerField()
     subtotal = models.DecimalField(max_digits=19, decimal_places=2)
 
     def __str__(self):

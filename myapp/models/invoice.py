@@ -83,6 +83,7 @@ class DetailInvoice(models.Model):
     top = models.IntegerField()
     jatuh_tempo = models.DateTimeField()
     qty_beli = models.IntegerField()
+    qty_retur = models.IntegerField()
     harga_beli = models.DecimalField(max_digits=19, decimal_places=2)
     diskon_barang = models.DecimalField(max_digits=19, decimal_places=2)
     updated_at = models.DateTimeField(auto_now=True)

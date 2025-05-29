@@ -35,9 +35,9 @@ def tambah_pesanan(request, id=None):
 
     barang_data_dict = {
         detail.barang_id: {
-            "harga_jual": float(detail.barang.harga_jual),
-            "harga_satuan": float(detail.barang.harga_satuan),
-            "min_qty_grosir": detail.barang.min_qty_grosir,
+            "harga_jual": float(detail.barang_id.harga_jual),
+            "harga_satuan": float(detail.barang_id.harga_satuan),
+            "min_qty_grosir": detail.barang_id.min_qty_grosir,
         }
         for detail in detail_pesanan if detail.barang_id
     }
