@@ -10,10 +10,6 @@ class BarangViewSet(viewsets.ModelViewSet):
     serializer_class = BarangSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['kode_barang', 'nama_barang']
-
-class DetailBarangViewSet(viewsets.ModelViewSet):
-    queryset = DetailBarang.objects.all()
-    serializer_class = DetailBarangSerializer
     parser = (MultiPartParser, FormParser) # Memproses file upload
 
     def create(self, request, *args, **kwargs):
@@ -24,10 +20,14 @@ class DetailBarangViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def kategori_choices(self, request):
-        choices = [{'value': value, 'label': label} for value, label in DetailBarang.CHOICES]
+        choices = [{'value': value, 'label': label} for value, label in Barang.CHOICES]
         return Response(choices)
     
     @action(detail=False, methods=['get'])
     def merk_choices(self, request):
-        choices = [{'value': value, 'label': label} for value, label in DetailBarang.MERK]
+        choices = [{'value': value, 'label': label} for value, label in Barang.MERK]
         return Response(choices)
+
+class TierHargaViewSet(viewsets.ModelViewSet):
+    queryset = TierHarga.objects.all()
+    serializer_class = TierHargaSerializer

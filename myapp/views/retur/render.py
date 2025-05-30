@@ -24,8 +24,13 @@ def tambah_returjual(request, id=None):
     barang_data_dict = {
         detail.barang_id: {
             "harga_jual": float(detail.barang.harga_jual),
-            "harga_satuan": float(detail.barang.harga_satuan),
-            "min_qty_grosir": detail.barang.min_qty_grosir,
+            "tier_harga": [
+                {
+                    "harga_satuan": float(tier.harga_satuan),
+                    "min_qty_grosir": tier.min_qty_grosir,
+                }
+                for tier in detail.barang.tierharga_set.all().order_by('min_qty_grosir')
+            ]
         }
         for detail in returan.barang.all()
     }
@@ -51,8 +56,13 @@ def tambah_returbeli(request, id=None):
     barang_data_dict = {
         detail.barang_id: {
             "harga_jual": float(detail.barang.harga_jual),
-            "harga_satuan": float(detail.barang.harga_satuan),
-            "min_qty_grosir": detail.barang.min_qty_grosir,
+            "tier_harga": [
+                {
+                    "harga_satuan": float(tier.harga_satuan),
+                    "min_qty_grosir": tier.min_qty_grosir,
+                }
+                for tier in detail.barang.tierharga_set.all().order_by('min_qty_grosir')
+            ]
         }
         for detail in returan.barang.all()
     }

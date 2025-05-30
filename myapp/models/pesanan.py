@@ -122,3 +122,7 @@ class DetailPesanan(models.Model):
         if not self.jatuh_tempo: # periksa jatuh tempo sudah/belum diatur
             self.set_jatuh_tempo()
         super().save(*args, **kwargs)
+
+        barang = Barang.objects.get(barang_id=self.barang_id)
+        if barang:
+            barang.update_qty_terjual(self.qty_pesan)

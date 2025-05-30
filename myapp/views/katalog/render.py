@@ -11,7 +11,7 @@ def admin_katalog(request):
     return render(request, 'katalog/adminkatalog.html', {"data_katalog": data})
 
 def katalog(request):
-    data_katalog = Katalog.objects.prefetch_related("barang_set__detailbarang_set").all()
+    data_katalog = Katalog.objects.prefetch_related("barang_set__tierharga_set").all()
 
     kategori_katalog = defaultdict(list)
     for katalog in data_katalog:
@@ -31,9 +31,9 @@ def katalog(request):
 def katalogbrg(request, kategori):
     data = []
     title = kategori
-    barang_list = Barang.objects.filter(kategori=kategori).prefetch_related("detailbarang_set", "katalog_set")
+    barang_list = Barang.objects.filter(kategori=kategori).prefetch_related("katalog_set")
     for barang in barang_list:
-        detail = barang.detailbarang_set.first()
+        detail = barang.first()
         katalog = barang.katalog_set.first()
 
         gambar = None
@@ -63,7 +63,7 @@ def tambah_brgkatalog(request, id=None):
 
 def deskripsi(request, kategori, barang_id):
     barang = get_object_or_404(Barang, id=barang_id, kategori=kategori)
-    detail = barang.detailbarang_set.first()
+    detail = barang.first()
     katalog = Katalog.objects.filter(barang=barang).first()
 
     deskripsi = detail.keterangan if detail and detail.keterangan else "Deskripsi belum tersedia"

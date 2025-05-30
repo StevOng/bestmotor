@@ -17,14 +17,14 @@
         <div>
           <label for="nama-brg" class="block text-sm font-medium text-gray-700">Nama Barang</label>
           <input type="text" id="nama-brg" placeholder="Masukkan nama barang"
-            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700" value="{{ detail_barang.barang_id.nama_barang|default:""}}">
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700" value="{{ detail_barang.nama_barang|default:""}}">
         </div>
         
         <!-- Kode Barang -->
         <div>
           <label for="kode-brg" class="block text-sm font-medium text-gray-700">Kode Barang</label>
           <input type="text" id="kode-brg" placeholder="Masukkan kode barang"
-            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700" value="{{ detail_barang.barang_id.kode_barang|default:""}}">
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700" value="{{ detail_barang.kode_barang|default:""}}">
         </div>
         
         <!-- Kategori -->
@@ -74,9 +74,9 @@
                 class="mt-1 mr-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400"> Harga Grosir
               </div>
               <input type="number" 
-                class="min-qty mt-1 mx-2 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" id="min-beli" oninput="addTier(this)" value="{{ detail_barang.min_qty_grosir|default:""}}"/>
+                class="min-qty mt-1 mx-2 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ detail_barang.min_qty_grosir|default:""}}"/>
               <input type="number"
-                class="harga-satuan mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" id="harga" oninput="addTier(this)" value="{{ detail_barang.harga_satuan|default:""}}" />
+                class="harga-satuan mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ detail_barang.harga_satuan|default:""}}" />
             </div>
           </div>
         </div>

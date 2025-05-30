@@ -7,13 +7,6 @@ class BarangSerializer(serializers.ModelSerializer):
         model = Barang
         fields = '__all__'
 
-class DetailBarangSerializer(serializers.ModelSerializer):
-    gambar = serializers.SerializerMethodField()
-    
-    class Meta:
-        model = DetailBarang
-        fields = '__all__'
-
     def get_gambar(self,obj):
         if obj.gambar:
             return "data:image/jpeg;base64," + base64.b64encode(obj.gambar).decode("utf-8")
@@ -24,3 +17,10 @@ class DetailBarangSerializer(serializers.ModelSerializer):
         if gambar:
             validated_data["gambar"] = gambar.read() # baca data biner
         return super().create(validated_data)
+
+class TierHargaSerializer(serializers.ModelSerializer):
+    gambar = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = TierHarga
+        fields = '__all__'

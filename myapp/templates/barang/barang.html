@@ -116,8 +116,8 @@
             {% for brg in barang %}
                 <tr>
                     <td data-brg-id="{{ brg.id }}" class="gambarContainer"></td>
-                    <td>{{ brg.barang.kode_barang }}</td>
-                    <td>{{ brg.barang.nama_barang }}</td>
+                    <td>{{ brg.kode_barang }}</td>
+                    <td>{{ brg.nama_barang }}</td>
                     <td>{{ brg.kategori }}</td>
                     <td>{{ brg.merk }}</td>
                     {% if request.session.role == "admin" %}

@@ -109,6 +109,6 @@ class DetailInvoice(models.Model):
             self.set_jatuh_tempo()
         super().save(*args, **kwargs)
 
-        detailbarang = DetailBarang.objects.get(barang_id=self.barang_id)
-        if detailbarang:
-            detailbarang.update_modal(self.qty_beli, self.harga_beli, self.diskon_barang if self.diskon_barang else 0)
+        barang = Barang.objects.get(barang_id=self.barang_id)
+        if barang:
+            barang.update_modal(self.qty_beli, self.harga_beli, self.diskon_barang if self.diskon_barang else 0)

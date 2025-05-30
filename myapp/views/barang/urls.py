@@ -5,7 +5,7 @@ from . import render
 
 router = DefaultRouter()
 router.register(r'barang', BarangViewSet)
-router.register(r'detailbarang', DetailBarangViewSet)
+router.register(r'tierharga', TierHargaViewSet)
 
 urlpatterns = [
     path('', render.barang, name='barang'),

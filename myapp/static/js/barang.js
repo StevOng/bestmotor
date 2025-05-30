@@ -60,7 +60,7 @@ function closeModalConfirm() {
 
 async function fetchGambar() {
     try {
-        const response = await fetch("/api/detailbarang/")
+        const response = await fetch("/api/barang/")
         const data = await response.json()
 
         const containers = document.querySelectorAll(".gambarContainer")

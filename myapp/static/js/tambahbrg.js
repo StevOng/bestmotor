@@ -21,62 +21,53 @@ document.getElementById("tambahbrgform").addEventListener("submit", async(event)
     const kategori = document.getElementById("kategori").value
     const merk = document.getElementById("merk").value
     const minStok = document.getElementById("stok-minimum").value
-    const grosir = document.getElementById("min-beli").value
-    const jual = document.getElementById("harga").value
     const gambar = document.getElementById("upload_gambar").files[0]
     const ket = document.getElementById("keterangan").value
 
     const method = id ? "PATCH" : "POST" // jika ada id edit, tidak? tambah
     const apiBarang = id ? `/api/barang/${id}/` : `/api/barang/`
-    const apiDetail = id ? `/api/detailbarang/${id}/` : `/api/detailbarang/`
 
     const barang  = new FormData()
     barang.append("nama_barang", nama)
     barang.append("kode_barang", kode)
+    barang.append("harga_jual", harga)
+    barang.append("kategori", kategori)
+    barang.append("merk", merk)
+    barang.append("stok_minimum", minStok)
+    if (gambar) {
+        barang.append("gambar", gambar)
+    }
+    barang.append("keterangan", ket)
 
-    let response = await fetch(apiBarang, {
+    const response = await fetch(apiBarang, {
         method: method,
         body: barang
     })
-    let barangData = await response.json()
+    const barangData = await response.json()
     console.log(barangData);
     
     if (barangData.id) {
-        const detailBrg = new FormData()
-        detailBrg.append("barang_id", barangData.id)
-        detailBrg.append("harga_jual", harga)
-        detailBrg.append("kategori", kategori)
-        detailBrg.append("merk", merk)
-        detailBrg.append("stok_minimum", minStok)
-        detailBrg.append("min_qty_grosir", grosir)
-        detailBrg.append("harga_satuan", jual)
-        if (gambar) {
-            detailBrg.append("gambar", gambar)
-        }
-        detailBrg.append("keterangan", ket)
-
-        let detailResponse = await fetch(apiDetail, {
-            method: method,
-            body: detailBrg
-        })
-        let detailData = await detailResponse.json()
-        console.log(detailData);
-
         const tierDivs = document.querySelectorAll("#harga-tiers-container .harga-tier")
+
         for (const div of tierDivs) {
             const minQty = div.querySelector(".min-qty").value
             const hargaSatuan = div.querySelector(".harga-satuan").value
 
             if (minQty && hargaSatuan) {
                 const tierData = new FormData()
-                tierData.append("barang", barangData.id)
+                tierData.append("barang_id", barangData.id)
                 tierData.append("min_qty_grosir", minQty)
                 tierData.append("harga_satuan", hargaSatuan)
 
-                await fetch(apiDetail, {
-                    method: method,
+                const tierResp = await fetch(`/api/tierharga/`, {
+                    method: "POST",
                     body: tierData
                 })
+
+                if (!tierResp.ok) {
+                    const err = await tierResp.json()
+                    console.error("Gagal simpan tier harga: ", err)
+                }
             }
         }
     }
@@ -84,7 +75,7 @@ document.getElementById("tambahbrgform").addEventListener("submit", async(event)
 
 async function getKategori() {
     try{
-        const response = await fetch('/api/detailbarang/kategori_choices/')
+        const response = await fetch('/api/barang/kategori_choices/')
         const choices = await response.json()
 
         const select = document.getElementById("kategori")
@@ -106,7 +97,7 @@ async function getKategori() {
 
 async function getMerk() {
     try{
-        const response = await fetch('/api/detailbarang/merk_choices/')
+        const response = await fetch('/api/barang/merk_choices/')
         const choices = await response.json()
 
         const select = document.getElementById("merk")
