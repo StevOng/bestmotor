@@ -41,7 +41,7 @@ class Barang(models.Model):
     harga_jual = models.DecimalField(max_digits=19, decimal_places=2)
     stok_minimum = models.IntegerField()
     harga_modal = models.DecimalField(max_digits=19, decimal_places=2)
-    stok = models.IntegerField(default=0)
+    stok = models.IntegerField()
     qty_terjual = models.IntegerField()
     gambar = models.BinaryField()
     keterangan = models.TextField(null=True, blank=True)

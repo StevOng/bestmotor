@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from ...models.user import User
 from ...decorators import admin_required
+from ...models.pesanan import *
+from ...models.invoice import *
 
 def login(request):
     if request.method == 'POST':
@@ -28,4 +30,7 @@ def login(request):
 
 @admin_required
 def dashboard(request):
-    return render(request, 'user/dashboard.html')
+    pesanan = Pesanan.objects.select_related("detailpesanan_set__customer_id").prefetch_related("barang")
+    invoice = Invoice.objects.select_related("detailinvoice_set").prefetch_related("barang")
+    customer = pesanan
+    return render(request, 'user/dashboard.html', {'pesanan': pesanan, 'invoice': invoice})

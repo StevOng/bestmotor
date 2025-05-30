@@ -3,7 +3,6 @@ from datetime import timedelta
 from decimal import Decimal
 from .customer import Customer
 from .barang import Barang
-from .faktur import Faktur
 
 class Pesanan(models.Model):
     id = models.AutoField(primary_key=True)
@@ -69,6 +68,7 @@ class Pesanan(models.Model):
         super().save(*args, **kwargs)
 
         if self.status == 'shipped':
+            from .faktur import Faktur
             if not hasattr(self, 'faktur'):
                 Faktur.objects.create(
                     pesanan_id = self.id,

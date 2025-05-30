@@ -14,9 +14,8 @@ from .models.user import *
 
 # Register your models here.
 admin.site.register(Barang)
-admin.site.register(DetailBarang)
-admin.site.register(Admin)
-admin.site.register(Sales)
+admin.site.register(TierHarga)
+admin.site.register(User)
 admin.site.register(Customer)
 admin.site.register(TransaksiMasuk)
 admin.site.register(TransaksiKeluar)
