@@ -5,13 +5,14 @@ from ...decorators import admin_required
 from ...models.pesanan import *
 from ...models.invoice import *
 
-def login(request):
+def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
 
         try:
             user = User.objects.get(username=username)
+            
             if user.password == password:
                 request.session['role'] = user.role
                 request.session['user_id'] = user.id

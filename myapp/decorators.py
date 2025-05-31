@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 def admin_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
+        print("role:", request.session.get('role'))
         role = request.session.get('role')
         if role == 'admin':
             return view_func(request, *args, **kwargs)
