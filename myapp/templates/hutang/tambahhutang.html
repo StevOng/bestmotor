@@ -199,7 +199,7 @@
         >Tanggal</label
       >
       <input
-        type="date"
+        type="text"
         id="tgl_byrhutang"
         value="{{ hutang.tanggal|default:"" }}"
         disabled
@@ -298,8 +298,9 @@
         </thead>
         <tbody>
           {% for invoice in invoices %}
+          {% empty %}
             <tr data-id={{ invoice.hutang.id }}>
-              <td>{{ forloop.counter }}</td>
+              <td>{{ forloop.counter|default:"1" }}</td>
               <td>
                 <div class="relative">
                   <input type="hidden" name="invoiceId" class="invoiceId" value="{{ invoice.id|default:"" }}">
@@ -339,7 +340,7 @@
                 />
               </td>
               <td>
-                <button type="submit" data-id={{ invoice.hutang.id }} class="btn-submit">
+                <button type="button" onclick="submit()" data-id={{ invoice.hutang.id }} class="btn-submit">
                   <i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
                 </button>
               </td>
@@ -354,6 +355,7 @@
       </table>
    </form>
 </div>
-{% endblock %} {% block script %}
+{% endblock %} 
+{% block script %}
 <script src="{% static 'js/tambahhutang.js' %}"></script>
 {% endblock %}

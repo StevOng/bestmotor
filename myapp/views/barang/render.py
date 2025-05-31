@@ -13,7 +13,9 @@ def barang(request):
     dari = request.GET.get('dari_tgl')
     sampe = request.GET.get('smpe_tgl')
 
-    if filter == "laku":
+    barang = Barang.objects.none()
+
+    if filter == "laku" and dari and sampe:
         barang = get_barang_laku(dari, sampe)
     elif filter == "rendah":
         barang = Barang.objects.filter(stok__lt=models.F('stok_minimum'))

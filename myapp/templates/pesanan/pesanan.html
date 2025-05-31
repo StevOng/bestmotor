@@ -7,26 +7,6 @@
 
 {% block style %} 
 <style>
-    #dt-length-0{
-        width:55px
-    }
-    #dt-search-0{
-        width: 200px
-    }
-    /* Hapus efek warna biru pada row yang dipilih */
-    table.dataTable tbody tr.selected > * {
-        background-color: transparent !important;
-        box-shadow: none !important;
-        color: inherit !important;
-    }
-    table.dataTable.hover > tbody > tr.selected:hover > *, 
-    table.dataTable.display > tbody > tr.selected:hover > * {
-        background-color: transparent !important;
-        box-shadow: none !important;
-    }
-    [type=checkbox]:checked, [type=radio]:checked {
-      background-color: #3D5A80; /* Ubah warna latar belakang */
-  }
   .fade-out {
     opacity: 0;
     transition: opacity 0.4s ease-out;
@@ -72,13 +52,13 @@
     </div>
   </div>
   <div class="flex flex-row gap-3 justify-start mb-3">
-    <a href="{% url 'pesanan' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue text-white bg-customBlue border-customBlue">
+    <a href="{% url 'pesanan' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if not request.GET.status %} text-white bg-customBlue border-customBlue {% endif %}">
         Semua Pesanan
     </a>
-    <a href="{% url 'pesanan' %}?status=pending" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue text-white bg-customBlue border-customBlue">
+    <a href="{% url 'pesanan' %}?status=pending" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.GET.status == "pending" %} text-white bg-customBlue border-customBlue {% endif %}">
         Pesanan Tertunda
     </a>
-    <a href="{% url 'pesanan' %}?status=ready" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue text-white bg-customBlue border-customBlue">
+    <a href="{% url 'pesanan' %}?status=ready" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.GET.status == "ready" %} text-white bg-customBlue border-customBlue {% endif %}">
         Pesanan Siap Kirim
     </a>
   </div>

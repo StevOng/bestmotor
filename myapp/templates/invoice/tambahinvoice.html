@@ -6,6 +6,36 @@
 
 {% block page_title %}Pembelian{% endblock %} 
 
+{% block style %}
+<style>
+  .fade-out {
+    opacity: 0;
+    transition: opacity 0.4s ease-out;
+  }
+  #detailBrg {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  #detailBrg th,
+  #detailBrg td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 8px;
+    border: 1px solid #ddd;
+    white-space: nowrap;
+  }
+
+  #detailBrg input,
+  #detailBrg select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px;
+  }
+</style>
+{% endblock style %}
+
 {% block content %}
   <!-- Overlay & Modal -->
   <div id="popupModal" class="fixed inset-0 hidden items-center justify-center z-50 bg-gray-500/50">
@@ -63,24 +93,25 @@
       </div>
     </div>
   </div>
-  <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="tambahInvoiceForm">
+  <form id="tambahInvoiceForm">
     <div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
       <div class="flex flex-row justify-between mb-3">
         <h2 class="text-lg font-semibold">Detail Invoice</h2>
         <button onclick="window.history.back()"><i class="fa-solid fa-x w-8 text-gray-500"></i></button>
       </div>
         <hr class="border-gray-300 pb-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <!-- No Invoice -->
           <div>
             <input type="hidden" name="invoiceId" id="invoiceId" value="{{ detailinvoice.invoice_id|default:"" }}">
             <label for="no_invoice" class="block text-sm font-medium text-gray-700">No Invoice</label>
-            <input type="text" id="no_invoice" value="{{ detailinvoice.invoice_id.no_invoice }}"
+            <input type="text" id="no_invoice" value="{{ detailinvoice.invoice_id.no_invoice|default:"" }}"
               class="no_invoice mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
           </div>
           <!-- Tanggal -->
           <div>
             <label for="tanggal_inv" class="block text-sm font-medium text-gray-700">Tanggal</label>
-            <input type="date" id="tanggal_inv" value="{{ detailinvoice.tanggal|default:"" }}" disabled
+            <input type="text" id="tanggal_inv" value="{{ detailinvoice.tanggal|date:"Y-m-d"|default:""}}" disabled
               class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
           </div>
           <!-- No Referensi -->
@@ -114,13 +145,15 @@
           <!-- Tanggal Jatuh Tempo -->
           <div>
             <label for="jatuh_tempo" class="block text-sm font-medium text-gray-700">Tanggal Jatuh Tempo</label>
-            <input type="date" id="jatuh_tempo" value="{{ detailinvoice.jatuh_tempo|default:"" }}" disabled
+            <input type="text" id="jatuh_tempo" value="{{ detailinvoice.jatuh_tempo|date:"Y-m-d"|default:"" }}" disabled
               class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
           </div>
+        </div>
     </div>
     <div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
         <h2 class="text-lg font-semibold pb-3">Detail Biaya</h2>
         <hr class="border-gray-300 pb-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <!-- Bruto -->
           <div>
             <label for="bruto" class="block text-sm font-medium text-gray-700">Bruto</label>
@@ -159,10 +192,11 @@
           
           <!-- Netto -->
           <div>
-              <label for="netto" class="block text-sm font-medium text-gray-700">Netto</label>
-              <input type="number" id="netto" placeholder="0,00" value="{{ detailinvoice.invoice_id.netto|default:"" }}" disabled
+            <label for="netto" class="block text-sm font-medium text-gray-700">Netto</label>
+            <input type="number" id="netto" placeholder="0,00" value="{{ detailinvoice.invoice_id.netto|default:"" }}" disabled
                 class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-700">
-            </div>
+          </div>
+        </div>
     </div>  
     <div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
         <h2 class="text-lg font-semibold pb-3">Detail Barang</h2>
@@ -184,10 +218,11 @@
             </thead>
             <tbody>
               {% for detail in detailinvoice %}
-                <tr data-id="{{ detail.id }}">
-                  <td>{{ forloop.counter }}</td>
+              {% empty %}
+                <tr data-id="{{ detail.id|default:"" }}">
+                  <td>{{ forloop.counter|default:"1" }}</td>
                   <td>
-                    <input type="hidden" name="barangId" class="barangId" value="{{ detail.barang_id }}">
+                    <input type="hidden" name="barangId" class="barangId" value="{{ detail.barang_id|default:"" }}">
                     <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ detail.barang_id }}">
                       <option value="{{ detail.barang_id|default:"" }}" selected>{{ detail.barang_id.kode_barang|default:"" }} - {{ detail.barang_id.nama_barang|default:"" }}</option>
                     </select>
@@ -200,8 +235,8 @@
                   <td><input type="number" value="{{ detail.diskon_barang|default:"" }}" id="disc" class="disc w-20 rounded-md border-gray-300" /></td>
                   <td id="totalDisc">{{ detail.total_diskon_barang|default:"" }}</td>
                   <td id="totalHarga">{{ detail.total_harga_barang|default:"" }}</td>
-                  <td><button type="submit" class="btn-submit" data-id="{{ detail.id }}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-                  <td><button onclick="confirmPopupBtn({{ detail.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+                  <td><button type="button" class="btn-submit" data-id="{{ detail.id }}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+                  <td><button type="button" onclick="confirmPopupBtn({{ detail.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
                 </tr>
               {% endfor %}
             </tbody>

@@ -1,25 +1,47 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function (e) {
+    e.preventDefault()
     getOptionBrg()
 
     const tanggal = document.getElementById("tanggal_inv")
     const today = new Date()
     const year = String(today.getFullYear())
-    const month = String(today.getMonth()+1).padStart(2, "0")
+    const month = String(today.getMonth() + 1).padStart(2, "0")
     const day = String(today.getDate()).padStart(2, "0")
     const formatDate = `${day}/${month}/${year}`
 
     tanggal.value = formatDate
+    console.log(formatDate);
 })
+
+document.getElementById("top_inv").addEventListener("input", tanggalTop)
+
+function tanggalTop() {
+    const topInput = document.getElementById("top_inv")
+    const jtoInput = document.getElementById("jatuh_tempo")
+
+    const top = parseInt(topInput.value)
+    let today = new Date()
+    let jatuhTempo = new Date(today);
+    jatuhTempo.setDate(today.getDate() + top);
+
+    const yjto = jatuhTempo.getFullYear();
+    const mjto = String(jatuhTempo.getMonth() + 1).padStart(2, "0");
+    const djto = String(jatuhTempo.getDate()).padStart(2, "0");
+
+    let formattedDate = `${djto}/${mjto}/${yjto}`;
+
+    jtoInput.value = formattedDate || ""
+}
 
 document.addEventListener("change", function (e) {
     if (e.target.classList.contains("kodebrg-dropdown")) {
-      const lastRow = document.querySelector("tbody tr:last-child");
-      const selectedValue = e.target.value;
-  
-      // Cek apakah dropdown dipilih dan belum pernah nambah baris baru
-      if (selectedValue && !lastRow.classList.contains("new-row-added")) {
-        addNewRow();
-      }
+        const lastRow = document.querySelector("tbody tr:last-child");
+        const selectedValue = e.target.value;
+
+        // Cek apakah dropdown dipilih dan belum pernah nambah baris baru
+        if (selectedValue && !lastRow.classList.contains("new-row-added")) {
+            addNewRow();
+        }
     }
 });
 
@@ -37,22 +59,22 @@ function closeModal() {
 }
 
 $(document).ready(function () {
-  let table = $('#modalSupplier').DataTable({
-      pageLength: 20,
-      lengthChange: false, // Hilangkan "Show entries"
-      ordering: false,
-      scrollX: true,
-      "columnDefs": [
-    { className: "text-center", targets: [-1, -2] } // kolom 8 dan 9 di tengah
-],
-  });
-  $('.dt-search').remove();
-  $('.dt-info').remove();
+    let table = $('#modalSupplier').DataTable({
+        pageLength: 20,
+        lengthChange: false, // Hilangkan "Show entries"
+        ordering: false,
+        scrollX: true,
+        "columnDefs": [
+            { className: "text-center", targets: [-1, -2] } // kolom 8 dan 9 di tengah
+        ],
+    });
+    $('.dt-search').remove();
+    $('.dt-info').remove();
 
-  $('#supplierSearch').on('keyup', function () { //search
-    let searchValue = $(this).val();
-    table.search(searchValue).draw();
-  });
+    $('#supplierSearch').on('keyup', function () { //search
+        let searchValue = $(this).val();
+        table.search(searchValue).draw();
+    });
 });
 
 function confirmPopupBtn(detailId) {
@@ -62,27 +84,15 @@ function confirmPopupBtn(detailId) {
 
     const confirmButton = document.getElementById("confirmAction");
 
-    confirmButton.onclick = async function () {
-        try {
-            const response = await fetch(`/api/detailinvoice/${detailId}`, {
-                method: "DELETE"
-            })
-            if (response.ok) {
-                console.log("Barang Invoice dihapus!");
-                const row = document.querySelector(`tr[data-id="${detailId}"]`);
-                row.querySelectorAll("input, select, textarea").forEach((el) => {
-                    el.value = ""
-                    if (el.tagName == "select") {
-                        el.selectedIndex = 0
-                    }
-                })
-                row.removeAttribute("data-id")
-            } else {
-                console.error("Gagal menghapus invoice");
+    confirmButton.onclick = function () {
+        const row = document.querySelector(`tr[data-id="${detailId}"]`);
+        row.querySelectorAll("input, select, textarea").forEach((el) => {
+            el.value = ""
+            if (el.tagName == "select") {
+                el.selectedIndex = 0
             }
-        } catch (error) {
-            console.error("Terjadi kesalahan: ",error);
-        }
+        })
+        row.removeAttribute("data-id")
         closeModalConfirm();
     };
 }
@@ -97,7 +107,7 @@ async function loadBarangOptions(selectId, selectedId = null) {
     let response = await fetch("/api/barang/")
     let data = await response.json()
     let select = document.getElementById(selectId)
-    select.innerHTML = "<option disabled selected>Pilih Barang</option>"
+    select.innerHTML = "<option disabled selected>Kode</option>"
 
     data.forEach(barang => {
         let option = document.createElement("option")
@@ -117,7 +127,7 @@ async function getOptionBrg() {
         const namaBrgId = select.dataset.namaBarangId
         loadBarangOptions(select.id, selectedId)
 
-        select.addEventListener("change", async() => {
+        select.addEventListener("change", async () => {
             const barangId = select.value
 
             const response = await fetch(`/api/barang/${barangId}`)
@@ -134,9 +144,9 @@ async function getOptionBrg() {
 function addNewRow() {
     const tbody = document.querySelector("tbody");
     const newRow = document.createElement("tr");
-  
+
     const rowCount = tbody.querySelectorAll("tr").length + 1;
-  
+
     newRow.classList.add("new-row-added"); // untuk mencegah nambah berkali-kali
     newRow.innerHTML = `
         <td>${rowCount}</td>
@@ -155,7 +165,7 @@ function addNewRow() {
         <td><button type="submit" class="btn-submit" data-id=""><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
         <td><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
-  
+
     tbody.appendChild(newRow);
 
     const btnSubmit = newRow.querySelector(".btn-submit")
@@ -184,8 +194,10 @@ function pilihSupplier(id, nama, perusahaan) {
     closeModal()
 }
 
-document.querySelectorAll(".btn-submit").forEach((btn) => {
-    btn.addEventListener("submit", async (event) => {
+
+
+document.querySelectorAll("").forEach((btn) => {
+    btn.addEventListener("click", async (event) => {
         event.preventDefault()
 
         const row = btn.closest("tr")
@@ -201,7 +213,7 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
         const ongkir = document.getElementById("ongkir").value
         const diskon = document.getElementById("discount").value
 
-        if (!supplier || !barangId) {
+        if (supplier == "" || barangId == "") {
             alert("Supplier dan Barang harus dipilih")
             return
         }
@@ -231,7 +243,7 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
             detailInvoice.append("harga_beli", hargaBeli)
             detailInvoice.append("qty_pesan", qty)
             detailInvoice.append("diskon_barang", diskonBarang)
-    
+
             let detailResponse = await fetch(apiDetail, {
                 method: method,
                 body: detailInvoice

@@ -4,11 +4,40 @@
 
 {% block title %}Tambah Retur Pembelian{% endblock %}
 
-{% block page_title %}Pembelian{% endblock %} 
+{% block page_title %}Pembelian{% endblock %}
+{% block style %}
+<style>
+  .fade-out {
+    opacity: 0;
+    transition: opacity 0.4s ease-out;
+  }
+  #detailBrg {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  #detailBrg th,
+  #detailBrg td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 8px;
+    border: 1px solid #ddd;
+    white-space: nowrap;
+  }
+
+  #detailBrg input,
+  #detailBrg select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px;
+  }
+</style>
+{% endblock style %}
 
 {% block content %}
 <!-- Overlay & Modal -->
-<div id="popupModalInv" class="fixed inset-0 hidden items-center justify-center z-50 bg-gray-500/50">
+<div id="popupModalInv" class="hidden fixed inset-0 items-center justify-center z-50 bg-gray-500/50">
   <div class="bg-white w-full p-6 rounded-lg shadow-lg flex flex-col md:w-1/2">
     <div
     class="flex flex-col p-2 h-auto mb-4 rounded border-2 border-gray-200 bg-gray-50"
@@ -55,13 +84,14 @@
     </div>
   </div>
 </div>
-<form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="returForm">
+<form id="returForm">
   <div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
     <div class="flex flex-row justify-between mb-3">
       <h2 class="text-lg font-semibold">Detail Retur Pembelian</h2>
       <button onclick="window.history.back()"><i class="fa-solid fa-x w-8 text-gray-500"></i></button>
     </div>
     <hr class="border-gray-300 pb-3">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- No Bukti -->
       <div>
         <input type="hidden" name="hiddeId" id="hiddenId" value="{{ returan.id|default:"" }}">
@@ -73,7 +103,7 @@
       <!-- Tanggal -->
       <div>
         <label for="tanggal_inv" class="block text-sm font-medium text-gray-700">Tanggal</label>
-        <input type="date" id="tanggal_inv" disabled
+        <input type="text" id="tanggal_inv" disabled
           class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
       </div>
 
@@ -84,8 +114,7 @@
           <input type="hidden" name="invId" id="invId" value="{{ returan.invoice_id|default:"" }}">
           <input type="text" id="no_invoice" placeholder="-" disabled
             class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue">
-            <button type="button" onclick="openModal()"
-            class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none">
+            <button onclick="openModal()" type="button" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none">
             <i class="fas fa-ellipsis-h"></i>
           </button>
         </div>
@@ -99,54 +128,55 @@
             class="block w-full border border-gray-300 rounded-md py-2 px-3 bg-gray-200 text-gray-700">
         </div>
       </div>
+    </div>
   </div>
   <div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
     <h2 class="text-lg font-semibold pb-3">Detail Biaya</h2>
     <hr class="border-gray-300 pb-3">
-          <!-- Bruto -->
-          <div>
-            <label for="bruto" class="block text-sm font-medium text-gray-700">Bruto</label>
-            <input type="number" id="bruto" placeholder="0,00" value="{{ returan.subtotal|default:"" }}" disabled
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Bruto -->
+        <div>
+          <label for="bruto" class="block text-sm font-medium text-gray-700">Bruto</label>
+          <input type="number" id="bruto" placeholder="0,00" value="{{ returan.subtotal|default:"" }}" disabled
+            class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-400">
+        </div>
+        <!-- PPN -->
+        <div>
+            <label for="ppn" class="block text-sm font-medium text-gray-700">PPN</label>
+            <div class="flex items-center">
+              <input type="number" id="ppn" placeholder="0" value="{{ returan.invoice_id.ppn|default:"" }}" disabled
+                class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-400">
+              <span class="ml-2">%</span>
+            </div>
+          </div>
+        
+        <!-- Ongkir -->
+        <div>
+          <label for="ongkir" class="block text-sm font-medium text-gray-700">Ongkos Kirim <span class="text-gray-400">• Mata uang Rupiah (IDR)</span></label>
+          <input type="number" id="ongkir" placeholder="0,00" value="{{ returan.invoice_id.ongkir|default:"" }}" disabled
+            class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-400">
+        </div>
+        <!-- Discount -->
+        <div>
+            <label for="discount" class="block text-sm font-medium text-gray-700">Discount</label>
+            <input type="number" id="discount" placeholder="0,00" value="{{ returan.invoice_id.diskon_invoice|default:"" }}" disabled
               class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-400">
           </div>
-
-          <!-- PPN -->
-          <div>
-              <label for="ppn" class="block text-sm font-medium text-gray-700">PPN</label>
-              <div class="flex items-center">
-                <input type="number" id="ppn" placeholder="0" value="{{ returan.invoice_id.ppn|default:"" }}" disabled
-                  class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-400">
-                <span class="ml-2">%</span>
-              </div>
-            </div>
-          
-          <!-- Ongkir -->
-          <div>
-            <label for="ongkir" class="block text-sm font-medium text-gray-700">Ongkos Kirim <span class="text-gray-400">• Mata uang Rupiah (IDR)</span></label>
-            <input type="number" id="ongkir" placeholder="0,00" value="{{ returan.invoice_id.ongkir|default:"" }}" disabled
+        
+        <!-- Nilai PPN -->
+        <div>
+            <label for="nilai_ppn" class="block text-sm font-medium text-gray-700">Nilai PPN</label>
+            <input type="number" id="nilai_ppn" placeholder="0,00" value="{{ returan.invoice_id.detailinvoice_set.first.nilai_ppn|default:""}}" disabled
               class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-400">
           </div>
-
-          <!-- Discount -->
-          <div>
-              <label for="discount" class="block text-sm font-medium text-gray-700">Discount</label>
-              <input type="number" id="discount" placeholder="0,00" value="{{ returan.invoice_id.diskon_invoice|default:"" }}" disabled
-                class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-400">
-            </div>
-          
-          <!-- Nilai PPN -->
-          <div>
-              <label for="nilai_ppn" class="block text-sm font-medium text-gray-700">Nilai PPN</label>
-              <input type="number" id="nilai_ppn" placeholder="0,00" value="{{ returan.invoice_id.detailinvoice_set.first.nilai_ppn|default:""}}" disabled
-                class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-400">
-            </div>
-          
-          <!-- Netto -->
-          <div>
-              <label for="netto" class="block text-sm font-medium text-gray-700">Netto</label>
-              <input type="number" id="netto" placeholder="0,00" value="{{ returan.invoice_id.netto|default:"" }}" disabled
-                class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-400">
-            </div>
+        
+        <!-- Netto -->
+        <div>
+            <label for="netto" class="block text-sm font-medium text-gray-700">Netto</label>
+            <input type="number" id="netto" placeholder="0,00" value="{{ returan.invoice_id.netto|default:"" }}" disabled
+              class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-400">
+          </div>
+      </div>
   </div>  
   <div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
       <h2 class="text-lg font-semibold pb-3">Detail Barang</h2>
@@ -168,8 +198,9 @@
           </thead>
           <tbody>
             {% for inv in returan.invoice_id.detailinvoice_set.all %}
+            {% empty %}
               <tr data-id="{{ inv.id }}">
-                <td>{{ forloop.counter }}</td>
+                <td>{{ forloop.counter|default:"1" }}</td>
                 <td>
                   <input type="hidden" name="barangId" class="barangId" value="{{ inv.barang_id|default:"" }}">
                   <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-namaBrg="namaBrg-{{ forloop.counter }}" data-selected-id="{{ inv.barang_id|default:"" }}">
@@ -184,8 +215,8 @@
                 <td><input type="number" value="{{ inv.diskon_barang|default:"" }}" id="disc-{{ forloop.counter }}" class="disc w-20 rounded-md border-gray-300" /></td>
                 <td class="totalDisc">{{ inv.total_diskon_barang|default:"" }}</td>
                 <td class="total">{{ inv.total_harga_barang|default:"" }}</td>
-                <td><button type="submit" data-id="{{ inv.id }}" class="btn-submit"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-                <td><button onclick="confirmPopupBtn({{ inv.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+                <td><button type="button" data-id="{{ inv.id }}" class="btn-submit"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+                <td><button type="button" onclick="confirmPopupBtn({{ inv.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
               </tr>
             {% endfor %}
           </tbody>
@@ -195,8 +226,8 @@
 {% endblock %}
 
 {% block script %}
+<script src="{% static 'js/tambahreturbeli.js' %}"></script>
 <script>
   window.barangData = JSON.parse('{{ barang_data_json|escapejs }}')
 </script>
-<script src="{% static 'js/tambahreturbeli.js' %}"></script>
 {% endblock %}

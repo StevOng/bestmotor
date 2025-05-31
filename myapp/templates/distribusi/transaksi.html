@@ -44,7 +44,7 @@
     Transaksi Masuk
     </a>
     <a href="{% url 'transaksi_keluar' %}" 
-    class="p-2 border-2 rounded-md text-sm {% if jenis == 'masuk' %}text-white bg-customBlue border-customBlue{% else %}border-gray-200{% endif %}">
+    class="p-2 border-2 rounded-md text-sm {% if jenis == 'keluar' %}text-white bg-customBlue border-customBlue{% else %}border-gray-200{% endif %}">
     Transaksi Keluar
     </a>
 </div>
@@ -58,7 +58,7 @@
                 <i class="fas fa-search"></i>
             </button>
         </div>
-        <a href="{% if jenis == 'masuk' %}{% url 'tambah_masuk' %}{% else %}{% url 'tambah_keluar' %}{% endif %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
+        <a href="{% if jenis == 'masuk' %}{% url 'tambah_transaksi' jenis="masuk" %}{% else %}{% url 'tambah_transaksi' jenis="keluar" %}{% endif %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
             <div class="flex flex-row justify-center items-center">
                 <p class="hidden lg:block p-1 lg:text-gray-400">Tambah Baru</p>
                 <i class="fas fa-plus p-1 text-customBlue"></i>
@@ -87,9 +87,9 @@
                     <td>{{ transaksi.keterangan }}</td>
                     <td>
                         <a href="{% if jenis == 'masuk' %}
-                                    {% url 'tambah_masuk' %}?id={{ transaksi.id }}
+                                    {% url 'transaksi_masuk' %}?id={{ transaksi.id }}
                                 {% else %}
-                                    {% url 'tambah_keluar' %}?id={{ transaksi.id }}
+                                    {% url 'transaksi_keluar' %}?id={{ transaksi.id }}
                                 {% endif %}">
                             <i class="fa-regular fa-eye text-2xl text-customBlue"></i>
                         </a>

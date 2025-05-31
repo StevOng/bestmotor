@@ -31,27 +31,15 @@ function confirmPopupBtn(id) {
 
     const confirmButton = document.getElementById("confirmAction");
 
-    confirmButton.onclick = async function () {
-        try {
-            const response = await fetch(`/api/transaksi${jenis}/${id}`, {
-                method: "DELETE"
-            })
-            if (response.ok) {
-                console.log("Barang dihapus!");
-                const row = document.querySelector(`tr[data-id="${id}"]`);
-                row.querySelectorAll("input, select, textarea").forEach((el) => {
-                    el.value = ""
-                    if (el.tagName == "select") {
-                        el.selectedIndex = 0
-                    }
-                })
-                row.removeAttribute("data-id")
-            } else {
-                console.error("Gagal menghapus Barang");
+    confirmButton.onclick = function () {
+        const row = document.querySelector(`tr[data-id="${id}"]`);
+        row.querySelectorAll("input, select, textarea").forEach((el) => {
+            el.value = ""
+            if (el.tagName == "select") {
+                el.selectedIndex = 0
             }
-        } catch (error) {
-            console.error("Terjadi kesalahan: ", error);
-        }
+        })
+        row.removeAttribute("data-id")
         closeModalConfirm();
     };
 }
@@ -138,7 +126,7 @@ function hapusRow(btn) {
 }
 
 document.querySelectorAll(".btn-submit").forEach((btn) => {
-    btn.addEventListener("submit", async (event) => {
+    btn.addEventListener("click", async (event) => {
         event.preventDefault();
 
         const row = btn.closest("tr");

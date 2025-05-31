@@ -21,10 +21,11 @@ def invoice(request):
 @admin_required
 def tambah_invoice(request, id=None):
     invoice = None
+    detailinvoice = None
     supplier = Supplier.objects.all()
 
     if id:
         invoice = Invoice.objects.get(id=id)
-        detailinvoice = invoice.detailinvoice_set.all()
+        detailinvoice = invoice.detailinvoice_set.first()
 
-    return render(request, 'invoice/tambahinvoice.html', {'suppliers': supplier, 'detailinvoice': detailinvoice})
+    return render(request, 'invoice/tambahinvoice.html', {'suppliers': supplier, 'detailinvoice': detailinvoice })

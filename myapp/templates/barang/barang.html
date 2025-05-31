@@ -19,13 +19,13 @@
 
 {% block content %}
 <div class="flex flex-row gap-3 justify-start mb-3">
-    <a href="{% url 'barang' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/barang/' %} text-white bg-customBlue border-customBlue {% endif %}">
+    <a href="{% url 'barang' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if not filter %} text-white bg-customBlue border-customBlue {% endif %}">
         Semua Barang
     </a>
-    <a href="{% url 'barang' %}?filter=rendah" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/barang/rendah/' %} text-white bg-customBlue border-customBlue {% endif %}">
+    <a href="{% url 'barang' %}?filter=rendah" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if filter == "rendah" %} text-white bg-customBlue border-customBlue {% endif %}">
         Barang dibawah Minimum Stok
     </a>
-    <a href="{% url 'barang' %}?filter=laku" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/barang/laku/' %} text-white bg-customBlue border-customBlue {% endif %}">
+    <a href="{% url 'barang' %}?filter=laku" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if filter == "laku" %} text-white bg-customBlue border-customBlue {% endif %}">
         Barang Paling Laku
     </a>
 </div>

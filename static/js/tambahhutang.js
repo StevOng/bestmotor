@@ -98,48 +98,52 @@ $(document).ready(function () {
     });
 });
 
-document.querySelectorAll(".btn-submit").forEach((btn) => {
-    btn.addEventListener("submit", async (event) => {
-        event.preventDefault()
+function submit() {
+    alert("tes")
+}
 
-        const row = btn.closest("tr")
-        const id = btn.dataset.id
-        const supplierId = document.getElementById("supplierId").value
-        const potongan = row.querySelector(".potongan").value
-        const nilaiByr = row.querySelector(".nilaiByr").value
-        const invoiceId = row.querySelector(".invoiceId").value
+// document.querySelectorAll(".btn-submit").forEach((btn) => {
+//     btn.addEventListener("click", async (event) => {
+//         event.preventDefault()
 
-        if (!supplierId || !invoiceId) {
-            alert("Supplier dan Invoice harus dipilih")
-            return
-        }
-        const hutang = new FormData()
-        hutang.append("supplier_id", supplierId)
-        hutang.append("nilai_bayar", nilaiByr)
+//         const row = btn.closest("tr")
+//         const id = btn.dataset.id
+//         const supplierId = document.getElementById("supplierId").value
+//         const potongan = row.querySelector(".potongan").value
+//         const nilaiByr = row.querySelector(".nilaiByr").value
+//         const invoiceId = row.querySelector(".invoiceId").value
 
-        if (potongan > 0) {
-            const response = await fetch(`/api/invoice/${invoiceId}/`, {
-                method: "PATCH",
-                body: JSON.stringify({
-                    potongan: potongan
-                })
-            })
-            if (response.ok) {
-                console.log(`Update nilai potongan pada invoice: ${invoiceId}, sebesar ${potongan}`)
-            }
-        }
+//         if (!supplierId || !invoiceId) {
+//             alert("Supplier dan Invoice harus dipilih")
+//             return
+//         }
+//         const hutang = new FormData()
+//         hutang.append("supplier_id", supplierId)
+//         hutang.append("nilai_bayar", nilaiByr)
 
-        const method = id ? "PATCH" : "POST" // jika ada id edit, tidak? tambah
-        const apiInvoice = id ? `/api/hutang/${id}/` : `/api/hutang/`
+//         if (potongan > 0) {
+//             const response = await fetch(`/api/invoice/${invoiceId}/`, {
+//                 method: "PATCH",
+//                 body: JSON.stringify({
+//                     potongan: potongan
+//                 })
+//             })
+//             if (response.ok) {
+//                 console.log(`Update nilai potongan pada invoice: ${invoiceId}, sebesar ${potongan}`)
+//             }
+//         }
 
-        const response = await fetch(apiInvoice, {
-            method: method,
-            body: hutang
-        })
-        const result = await response.json()
-        console.log(result);
-    })
-})
+//         const method = id ? "PATCH" : "POST" // jika ada id edit, tidak? tambah
+//         const apiInvoice = id ? `/api/hutang/${id}/` : `/api/hutang/`
+
+//         const response = await fetch(apiInvoice, {
+//             method: method,
+//             body: hutang
+//         })
+//         const result = await response.json()
+//         console.log(result);
+//     })
+// })
 
 function confirmPopupBtn(hutangId) {
     const modal = document.getElementById("popupModalConfirm");
@@ -153,7 +157,7 @@ function confirmPopupBtn(hutangId) {
         row.querySelectorAll("input, select, textarea").forEach((el) => {
             el.value = ""
             if (el.tagName == "select") {
-                    el.selectedIndex = 0
+                el.selectedIndex = 0
             }
         })
         row.removeAttribute("data-id")

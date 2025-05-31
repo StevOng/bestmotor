@@ -8,7 +8,7 @@ def faktur(request):
     status = request.GET.get("status", None)
     per_tgl = request.GET.get("per_tgl")
 
-    list_faktur = Faktur.objects.select_related('pesanan').prefetch_related(
+    list_faktur = Faktur.objects.select_related('pesanan_id').prefetch_related(
         Prefetch('pesanan__detailpesanan_set')
     )
     

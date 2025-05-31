@@ -682,7 +682,7 @@
       <button onclick="closeModalConfirm()" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
         Batal
       </button>
-      <button id="confirmAction" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
+      <button type="button" id="confirmAction" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
         Hapus
       </button>
     </div>
@@ -1190,29 +1190,6 @@
           let barangData = {};
           let hargaData = {};
 
-          $.ajax({
-            url: '/pesanan/tambah/',
-            method: 'GET',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            success: function(data) {
-              let kodeDropdown = $('#kodebrg-dropdown');
-              let namaBrg = $('#namaBrg');
-
-              kodeDropdown.empty();
-              namaBrg.empty();
-              kodeDropdown.append('<option value=""></option>');
-              namaBrg.append('-');
-
-              $.each(data, function(index, item) {
-                  barangData[item.kode] = item.nama;
-                  hargaData[item.kode] = item.harga;
-                  kodeDropdown.append('<option value="' + item.kode + '" data-nama="' + item.nama + '">' + item.kode + ' - ' + item.nama + '</option>');
-              });
-            },
-            error: function() {
-                alert('Gagal mengambil data barang.');
-            }
-        });
         $('#kodebrg-dropdown').on('change', function() {
           let selectedKode = $(this).val();
           let namaBarang = barangData[selectedKode] || '';

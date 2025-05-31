@@ -6,13 +6,14 @@
 {% block page_title %}Barang{% endblock %} 
 
 {% block content %}
-<form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="tambahtransaksiform">
+<form id="tambahtransaksiform">
   <div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
     <div class="flex flex-row justify-between mb-3">
       <h2 class="text-lg font-semibold">{% if jenis == 'masuk' %}Detail Transaksi Masuk{% else %}Detail Transaksi Keluar{% endif %}</h2>
       <button onclick="window.history.back()"><i class="fa-solid fa-x w-8 text-gray-500"></i></button>
     </div>
       <hr class="border-gray-300 pb-3">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- No Bukti -->
         <div>
           <input type="hidden" name="jenis" id="jenis" value="{{ jenis }}">
@@ -34,6 +35,7 @@
           <textarea id="keterangan" rows="3" placeholder="Masukkan keterangan" value="{{ data_transaksi.keterangan|default:"" }}"
             class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue"></textarea>
         </div>
+      </div>
   </div>
   <div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
       <h2 class="text-lg font-semibold pb-3">Detail Barang</h2>
@@ -51,6 +53,7 @@
           </thead>
           <tbody>
             {% for data in data_transaksi %}
+            {% empty %}
               <tr data-id="{{ data.id }}">
                 <td>{{ forloop.counter }}</td>
                 <td>
@@ -62,8 +65,8 @@
                   {{ data.barang.nama_barang|default:"" }}
                 </td>
                 <td><input type="number" value="{{ qty_barang|default:"" }}" class="input_qtybrg w-full rounded-md border-gray-300" /></td>
-                <td><button type="submit" class="btn-submit" data-id="{{ data.id }}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-                <td><button onclick="confirmPopupBtn({{ data.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+                <td><button type="button" class="btn-submit" data-id="{{ data.id }}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+                <td><button type="button" onclick="confirmPopupBtn({{ data.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
               </tr>
             {% endfor %}
           </tbody>

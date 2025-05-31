@@ -8,13 +8,13 @@
 
 {% block content %}
 <div class="flex flex-row gap-3 justify-start mb-3">
-    <a href="{% url 'invoice' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pembelian/invoice/' %} text-white bg-customBlue border-customBlue {% endif %}">
+    <a href="{% url 'invoice' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if not request.GET.status %} text-white bg-customBlue border-customBlue {% endif %}">
         Invoice
     </a>
-    <a href="{% url 'invoice' %}?status=belum_lunas" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pembelian/invoice/belumlunas/' %} text-white bg-customBlue border-customBlue {% endif %}">
+    <a href="{% url 'invoice' %}?status=belum_lunas" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.GET.status == "belum_lunas" %} text-white bg-customBlue border-customBlue {% endif %}">
         Invoice Belum Lunas
     </a>
-    <a href="{% url 'invoice' %}?status=jatuh_tempo" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/pembelian/invoice/jatuhtempo/' %} text-white bg-customBlue border-customBlue {% endif %}">
+    <a href="{% url 'invoice' %}?status=jatuh_tempo" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.GET.status == "jatuh_tempo" %} text-white bg-customBlue border-customBlue {% endif %}">
         Invoice Jatuh Tempo
     </a>
   </div>

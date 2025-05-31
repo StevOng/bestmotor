@@ -8,13 +8,13 @@
 
 {% block content %}
 <div class="flex flex-row gap-3 justify-start mb-3">
-    <a href="{% url 'faktur' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/penjualan/faktur/' %} text-white bg-customBlue border-customBlue {% endif %}">
+    <a href="{% url 'faktur' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if not request.GET.status %} text-white bg-customBlue border-customBlue {% endif %}">
         Faktur
     </a>
-    <a href="{% url 'faktur' %}?status=belum_lunas" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/penjualan/faktur/belumlunas/' %} text-white bg-customBlue border-customBlue {% endif %}">
+    <a href="{% url 'faktur' %}?status=belum_lunas" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.GET.status == "belum_lunas" %} text-white bg-customBlue border-customBlue {% endif %}">
         Faktur Belum Lunas
     </a>
-    <a href="{% url 'faktur' %}?status=jatuh_tempo" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.path == '/penjualan/faktur/jatuhtempo/' %} text-white bg-customBlue border-customBlue {% endif %}">
+    <a href="{% url 'faktur' %}?status=jatuh_tempo" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.GET.status == "jatuh_tempo" %} text-white bg-customBlue border-customBlue {% endif %}">
         Faktur Jatuh Tempo
     </a>
   </div>
@@ -64,7 +64,7 @@
                     <td>{{ faktur.no_faktur }}</td>
                     <td>{{ faktur.tanggal_faktur }}</td>
                     {% if request.GET.status %}
-                        {% with detail=faktur.pesanan.detailpesanan_set.first %}
+                        {% with detail=faktur.pesanan_id.detailpesanan_set.first %}
                             <td>{{ detail.jatuh_tempo }}</td>
                         {% endwith %}
                     {% endif %}

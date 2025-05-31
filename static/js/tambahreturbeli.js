@@ -30,7 +30,7 @@ function confirmPopupBtn(returId) {
 
     const confirmButton = document.getElementById("confirmAction");
 
-    confirmButton.onclick = function () {
+    confirmButton.onclick = () => {
         const row = document.querySelector(`tr[data-id=${returId}]`)
         row.querySelectorAll("input, select, textarea").forEach((el) => {
             el.value = ""
@@ -49,11 +49,24 @@ function closeModalConfirm() {
     modal.style.display = "none"; // Pastikan modal benar-benar hilang
 }
 
+//PopupModal
+function openModal() {
+    let modal = document.getElementById("popupModalInv");
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+}
+
+function closeModal() {
+    const modal = document.getElementById("popupModalInv");
+    modal.classList.add("hidden"); // Sembunyikan modal
+    modal.style.display = "none"; // Pastikan modal benar-benar hilang
+}
+
 async function loadBarangOptions(selectId, selectedId = null) {
     let response = await fetch("/api/barang/")
     let data = await response.json()
     let select = document.getElementById(selectId)
-    select.innerHTML = "<option disabled selected>Pilih Barang</option>"
+    select.innerHTML = "<option disabled selected>Kode</option>"
 
     data.forEach(barang => {
         let option = document.createElement("option")
