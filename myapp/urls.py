@@ -1,11 +1,12 @@
 from django.urls import path, include
 from .views.katalog.render import katalog
-from .views.user.render import login_view
+from .views.user.render import login_view, logout_user
 from . import render
 
 urlpatterns = [
     path('', katalog, name='katalog'),
     path('login/', login_view , name='login'),
+    path('logout/', logout_user, name='logout'),
     path('barang/', include('myapp.views.barang.urls')),
     path('barang/transaksi/', include('myapp.views.distribusi.urls')),
     path('customer/', include('myapp.views.customer.urls')),

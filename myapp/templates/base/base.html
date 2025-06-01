@@ -69,15 +69,15 @@
           <div class="space-y-3 text-base md:text-lg">
             <div class="flex">
               <p class="font-semibold w-24 text-left">Username</p>
-              <p>: Admin Toko</p>
+              <p>: {{ username }}</p>
             </div>
             <div class="flex">
-              <p class="font-semibold w-24 text-left">E-mail</p>
-              <p>: bestmotor@gmail.com</p>
+              <p class="font-semibold w-24 text-left">Nama</p>
+              <p>: {{ nama }}</p>
             </div>
             <div class="flex">
-              <p class="font-semibold w-24 text-left">Password</p>
-              <p>: ********</p>
+              <p class="font-semibold w-24 text-left">Role</p>
+              <p>: {{ role }}</p>
             </div>
           </div>
           <p class="text-red-500 text-xs">
@@ -234,7 +234,7 @@
                     src="{% static 'images/logo.png' %}"
                     alt="user photo"
                   />
-                  User Admin
+                  {{ username }}
                   <svg
                     class="w-2.5 h-2.5 ms-3"
                     aria-hidden="true"
@@ -257,8 +257,9 @@
                 class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
               >
                 <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                  <div class="font-medium">User Admin</div>
-                  <div class="truncate">admin1@gmail.com</div>
+                  <div class="font-medium">{{ username }}</div>
+                  <div class="truncate">{{ nama }}</div>
+                  <div class="truncate">{{ role }}</div>
                 </div>
                 <ul
                   class="py-2 text-sm text-gray-700 dark:text-gray-200"
@@ -272,7 +273,7 @@
                       Account
                     </button>
                     <a
-                      href="{% url 'login' %}"
+                      href="{% url 'logout' %}"
                       class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                       >Sign out</a
                     >
@@ -415,7 +416,7 @@
           </li>
           <li>
             <a
-              href="{% url 'admin_katalog' %}"
+              href="{% if role == "admin" %}{% url 'admin_katalog' %}{% else %}{% url 'katalog' %}{% endif %}"
               class="flex items-center p-2 rounded-lg group text-gray-500 dark:text-gray-400 hover:text-white hover:bg-customBlue focus:text-white dark:hover:text-white dark:focus:text-white focus:bg-customBlue dark:hover:bg-customBlue {% if '/katalog' in request.path %}text-white bg-customBlue {% endif %}"
             >
               <svg

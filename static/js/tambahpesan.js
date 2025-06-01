@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tanggal = document.getElementById("tanggal")
     const today = new Date()
     const year = String(today.getFullYear())
-    const month = String(today.getMonth()+1).padStart(2, "0")
+    const month = String(today.getMonth() + 1).padStart(2, "0")
     const day = String(today.getDate()).padStart(2, "0")
     const formatDate = `${day}/${month}/${year}`
 
@@ -14,16 +14,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener("change", function (e) {
     if (e.target.classList.contains("kodebrg-dropdown")) {
-      const lastRow = document.querySelector("tbody tr:last-child");
-      const selectedValue = e.target.value;
-  
-      // Cek apakah dropdown dipilih dan belum pernah nambah baris baru
-      if (selectedValue && !lastRow.classList.contains("new-row-added")) {
-        addNewRow();
-      }
+        const lastRow = document.querySelector("tbody tr:last-child");
+        const selectedValue = e.target.value;
+
+        // Cek apakah dropdown dipilih dan belum pernah nambah baris baru
+        if (selectedValue && !lastRow.classList.contains("new-row-added")) {
+            addNewRow();
+        }
     }
 });
-  
+
 
 //PopupModal
 function openModal() {
@@ -85,26 +85,14 @@ function confirmPopupBtn(detailId) {
     const confirmButton = document.getElementById("confirmAction");
 
     confirmButton.onclick = async function () {
-        try {
-            const response = await fetch(`/api/detailpesanan/${detailId}`, {
-                method: "DELETE"
-            })
-            if (response.ok) {
-                console.log("Pesanan dihapus!");
-                const row = document.querySelector(`tr[data-id="${detailId}"]`);
-                row.querySelectorAll("input, select, textarea").forEach((el) => {
-                    el.value = ""
-                    if (el.tagName == "select") {
-                        el.selectedIndex = 0
-                    }
-                })
-                row.removeAttribute("data-id")
-            } else {
-                console.error("Gagal menghapus pesanan");
+        const row = document.querySelector(`tr[data-id="${detailId}"]`);
+        row.querySelectorAll("input, select, textarea").forEach((el) => {
+            el.value = ""
+            if (el.tagName == "select") {
+                el.selectedIndex = 0
             }
-        } catch (error) {
-            console.error("Terjadi kesalahan: ",error);
-        }
+        })
+        row.removeAttribute("data-id")
         closeModalConfirm();
     };
 }
@@ -124,36 +112,36 @@ document.querySelectorAll("tr").forEach(row => {
     const totalHargaEl = row.querySelector(".totalHarga");
     const barangId = row.querySelector("input[type='hidden']")?.value;
     const barangData = window.barangData
-  
+
     if (!barangId || !inputQty || !inputHarga) return;
-  
+
     const updateHarga = () => {
-      const qty = parseInt(inputQty.value) || 0;
-      const diskon = parseFloat(inputDiskon.value) || 0;
-      const barang = barangData[barangId];
-  
-      if (!barang) return;
-  
-      let harga = barang.harga_jual;
-      if (qty >= barang.min_qty_grosir) {
-        harga = barang.harga_satuan;
-      } else {
-        harga = barang.harga_jual;
-      }
-  
-      inputHarga.value = harga;
-  
-      const totalDiskon = harga * qty * (diskon / 100);
-      const totalHarga = harga * qty - totalDiskon;
-  
-      totalDiscEl.textContent = totalDiskon.toFixed(2);
-      totalHargaEl.textContent = totalHarga.toFixed(2);
+        const qty = parseInt(inputQty.value) || 0;
+        const diskon = parseFloat(inputDiskon.value) || 0;
+        const barang = barangData[barangId];
+
+        if (!barang) return;
+
+        let harga = barang.harga_jual;
+        if (qty >= barang.min_qty_grosir) {
+            harga = barang.harga_satuan;
+        } else {
+            harga = barang.harga_jual;
+        }
+
+        inputHarga.value = harga;
+
+        const totalDiskon = harga * qty * (diskon / 100);
+        const totalHarga = harga * qty - totalDiskon;
+
+        totalDiscEl.textContent = totalDiskon.toFixed(2);
+        totalHargaEl.textContent = totalHarga.toFixed(2);
     };
-  
+
     inputQty.addEventListener("input", updateHarga);
     inputDiskon.addEventListener("input", updateHarga);
 });
-  
+
 async function getKurir() {
     try {
         let response = await fetch('/api/detailpesanan/kurir_choices/')
@@ -237,7 +225,7 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
             detailPesanan.append("keterangan", keterangan)
             detailPesanan.append("qty_pesan", qty)
             detailPesanan.append("diskon_barang", diskonBarang)
-    
+
             let detailResponse = await fetch(apiDetail, {
                 method: method,
                 body: detailPesanan
@@ -272,7 +260,7 @@ async function getOptionBrg() {
         const namaBrgId = select.dataset.namaBarangId
         loadBarangOptions(select.id, selectedId)
 
-        select.addEventListener("change", async() => {
+        select.addEventListener("change", async () => {
             const barangId = select.value
 
             const response = await fetch(`/api/barang/${barangId}`)
@@ -289,9 +277,9 @@ async function getOptionBrg() {
 function addNewRow() {
     const tbody = document.querySelector("tbody");
     const newRow = document.createElement("tr");
-  
+
     const rowCount = tbody.querySelectorAll("tr").length + 1;
-  
+
     newRow.classList.add("new-row-added"); // untuk mencegah nambah berkali-kali
     newRow.innerHTML = `
       <td>${rowCount}</td>
@@ -311,7 +299,7 @@ function addNewRow() {
       <td><button type="submit" class="btn-submit" data-id=""><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
       <td><button onclick="hapusRow(this)"><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
-  
+
     tbody.appendChild(newRow);
 
     const btnSubmit = newRow.querySelector(".btn-submit")

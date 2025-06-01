@@ -93,7 +93,7 @@ function closeModalConfirm() {
 
 async function getKategori() {
     try{
-        const response = await fetch('/api/detailbarang/kategori_choices/')
+        const response = await fetch('/api/barang/kategori_choices/')
         const choices = await response.json()
 
         choices.forEach(choice => {
@@ -107,7 +107,7 @@ async function getKategori() {
                 dropdownMenu.classList.add("hidden")
             })
 
-            const selectedKategori = "{{ detail_barang.kategori|default:'' }}"
+            const selectedKategori = "{{ barang.kategori|default:'' }}"
             const selectedSpan = document.getElementById("selectedCategory")
             if (choice.value === selectedKategori) {
                 selectedSpan.textContent = choice.label

@@ -14,6 +14,8 @@ def login_view(request):
             user = User.objects.get(username=username)
             
             if user.password == password:
+                request.session['username'] = user.username
+                request.session['nama'] = user.nama
                 request.session['role'] = user.role
                 request.session['user_id'] = user.id
                 if user.role == 'admin':
@@ -29,9 +31,12 @@ def login_view(request):
 
     return render(request, 'base/login.html')
 
+def logout_user(request):
+    request.session.flush()
+    return redirect('login')
+
 @admin_required
 def dashboard(request):
     pesanan = Pesanan.objects.select_related("detailpesanan_set__customer_id").prefetch_related("barang")
     invoice = Invoice.objects.select_related("detailinvoice_set").prefetch_related("barang")
-    customer = pesanan
     return render(request, 'user/dashboard.html', {'pesanan': pesanan, 'invoice': invoice})
