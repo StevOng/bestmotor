@@ -55,7 +55,7 @@
             {% for data in data_transaksi %}
             {% empty %}
               <tr data-id="{{ data.id }}">
-                <td>{{ forloop.counter }}</td>
+                <td>{{ forloop.counter|default:"1" }}</td>
                 <td>
                   <input type="hidden" class="barang-id" value="{{ data.barang.id }}">
                   <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ data.barang.id }}"></select>

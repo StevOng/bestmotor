@@ -13,6 +13,24 @@ document.addEventListener('DOMContentLoaded', function (e) {
     console.log(formatDate);
 })
 
+document.querySelectorAll(".input_hrgbrg").forEach(input => {
+    input.addEventListener("input", updateDetailBiaya)
+})
+
+document.querySelectorAll(".input_qtybrg").forEach(input => {
+    input.addEventListener("input", updateDetailBiaya)
+})
+
+document.querySelectorAll(".disc").forEach(input => {
+    input.addEventListener("input", updateDetailBiaya)
+})
+
+document.getElementById("ppn").addEventListener("input", updateDetailBiaya)
+
+document.getElementById("ongkir").addEventListener("input", updateDetailBiaya)
+
+document.getElementById("discount").addEventListener("input", updateDetailBiaya)
+
 document.getElementById("top_inv").addEventListener("input", tanggalTop)
 
 function tanggalTop() {
@@ -30,7 +48,11 @@ function tanggalTop() {
 
     let formattedDate = `${djto}/${mjto}/${yjto}`;
 
-    jtoInput.value = formattedDate || ""
+    if (formattedDate) {
+        jtoInput.value = formattedDate
+    } else {
+        jtoInput.value = "dd/mm/yyyy"
+    }
 }
 
 document.addEventListener("change", function (e) {
@@ -160,8 +182,8 @@ function addNewRow() {
         <td><input type="number" value="${detail?.harga_beli || ""}" id="input_hrgbrg-${rowCount}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
         <td><input type="number" value="${detail?.qty_beli || ""}" id="input_qtybrg-${rowCount}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
         <td><input type="number" value="${detail?.diskon_barang || ""}" id="disc-${rowCount}" class="disc w-20 rounded-md border-gray-300" /></td>
-        <td id="totalDisc-${rowCount}">${detail?.total_diskon_barang || ""}</td>
-        <td id="totalHarga-${rowCount}">${detail?.total_harga_barang || ""}</td>
+        <td class="totalDisc">${detail?.total_diskon_barang || ""}</td>
+        <td class="totalHarga">${detail?.total_harga_barang || ""}</td>
         <td><button type="submit" class="btn-submit" data-id=""><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
         <td><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
@@ -196,7 +218,7 @@ function pilihSupplier(id, nama, perusahaan) {
 
 
 
-document.querySelectorAll("").forEach((btn) => {
+document.querySelectorAll(".btn-submit").forEach((btn) => {
     btn.addEventListener("click", async (event) => {
         event.preventDefault()
 
@@ -253,3 +275,41 @@ document.querySelectorAll("").forEach((btn) => {
         }
     })
 })
+
+function updateDetailBiaya() {
+    let bruto = 0
+    const brutoEl = document.getElementById("bruto")
+    const ppnInput = document.getElementById("ppn")
+    const ongkirInput = document.getElementById("ongkir")
+    const discInvInput = document.getElementById("discount")
+    const niliaPpnEl = document.getElementById("nilai_ppn")
+    const nettoEl = document.getElementById("netto")
+    document.querySelectorAll("tr").forEach(row => {
+        const hargaBrgInput = row.querySelector(".input_hrgbrg")
+        const qtyBrgInput = row.querySelector(".input_qtybrg")
+        const dicBrgInput = row.querySelector(".disc")
+        const totalDiscEl = row.querySelector(".totalDisc");
+        const totalHargaEl = row.querySelector(".totalHarga");
+
+        if (!hargaBrgInput || !qtyBrgInput || !dicBrgInput || !totalDiscEl || !totalHargaEl) {
+            return
+        }
+
+        const harga = parseFloat(hargaBrgInput.value) || 0
+        const qty = parseInt(qtyBrgInput.value) || 0
+        const disc = parseFloat(dicBrgInput.value) || 0
+
+        const totalDiscBrg = harga * qty * (disc/100)
+        const totalNilaiBrg = harga * qty - totalDiscBrg
+
+        totalDiscEl.textContent = totalDiscBrg
+        totalHargaEl.textContent = totalNilaiBrg
+        bruto += totalNilaiBrg
+    })
+    brutoEl.value = bruto
+    const nilaiPpn = bruto * (ppnInput.value / 100)
+    const netto = bruto + nilaiPpn + Number(ongkirInput.value) - discInvInput.value
+
+    niliaPpnEl.value = nilaiPpn
+    nettoEl.value = netto
+}
