@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %} 
 {% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
@@ -89,7 +89,7 @@
 
     {% comment %} Navigation Bar {% endcomment %}
     <nav
-      class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700 lg:left-60"
+      class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 lg:left-60"
     >
       <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
@@ -99,11 +99,11 @@
               data-drawer-toggle="logo-sidebar"
               aria-controls="logo-sidebar"
               type="button"
-              class="inline-flex items-center p-2 text-sm rounded-lg lg:hidden bg-customBlue hover:bg-customBlue focus:outline-none focus:ring-2 focus:ring-customBlue focus:bg-customBlue dark:text-gray-400 dark:hover:bg-customBlue dark:focus:ring-gray-600"
+              class="inline-flex items-center p-2 text-sm rounded-lg lg:hidden bg-customBlue hover:bg-customBlue focus:outline-none focus:ring-2 focus:ring-customBlue focus:bg-customBlue"
             >
               <span class="sr-only">Open sidebar</span>
               <svg
-                class="w-6 h-6 text-white dark:text-white"
+                class="w-6 h-6 text-white"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -126,7 +126,7 @@
                 <button
                   id="dropdownNotificationButton"
                   data-dropdown-toggle="dropdownNotification"
-                  class="m-1 mr-3 relative inline-flex items-center text-sm font-medium text-center text-gray-500 hover:text-gray-900 focus:outline-none dark:hover:text-white dark:text-gray-400"
+                  class="m-1 mr-3 relative inline-flex items-center text-sm font-medium text-center text-gray-500 hover:text-gray-900 focus:outline-none"
                   type="button"
                 >
                   <svg
@@ -142,31 +142,25 @@
                   </svg>
 
                   <div
-                    class="absolute block w-3 h-3 bg-red-500 border-2 border-white rounded-full -top-0.5 start-2.5 dark:border-gray-900"
+                    class="absolute block w-3 h-3 bg-red-500 border-2 border-white rounded-full -top-0.5 start-2.5"
                   ></div>
                 </button>
                 {% comment %} Dropdown notification menu {% endcomment %}
                 <div
                   id="dropdownNotification"
-                  class="z-20 hidden w-full max-w-72 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-800 dark:divide-gray-700"
+                  class="z-20 hidden w-full max-w-72 bg-white divide-y divide-gray-100 rounded-lg shadow"
                   aria-labelledby="dropdownNotificationButton"
                 >
                   <div
-                    class="block px-4 py-2 font-medium text-center text-customBlue rounded-t-lg bg-gray-50 dark:bg-gray-800 dark:text-white"
+                    class="block px-4 py-2 font-medium text-center text-customBlue rounded-t-lg bg-gray-50"
                   >
                     Notifications
                   </div>
-                  <div class="divide-y divide-gray-100 dark:divide-gray-700">
-                    <div
-                      class="flex px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
+                  <div class="divide-y divide-gray-100">
+                    <div class="flex px-4 py-3 hover:bg-gray-100">
                       <div class="w-full ps-3">
-                        <div
-                          class="text-gray-500 text-sm mb-1.5 dark:text-gray-400"
-                        >
-                          <p
-                            class="font-semibold text-gray-900 dark:text-white"
-                          >
+                        <div class="text-gray-500 text-sm mb-1.5">
+                          <p class="font-semibold text-gray-900">
                             New Alert from Barang
                           </p>
                           Stok Barang "Kampas Rem Vario 3X" hampir habis
@@ -178,16 +172,10 @@
                         ></i>
                       </button>
                     </div>
-                    <div
-                      class="flex px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
+                    <div class="flex px-4 py-3 hover:bg-gray-100">
                       <div class="w-full ps-3">
-                        <div
-                          class="text-gray-500 text-sm mb-1.5 dark:text-gray-400"
-                        >
-                          <p
-                            class="font-semibold text-gray-900 dark:text-white"
-                          >
+                        <div class="text-gray-500 text-sm mb-1.5">
+                          <p class="font-semibold text-gray-900">
                             New Alert from Barang
                           </p>
                           Stok Barang "Kampas Rem Vario 3X" hampir habis
@@ -202,11 +190,11 @@
                   </div>
                   <a
                     href="#"
-                    class="block py-2 text-sm font-medium text-center text-gray-900 rounded-b-lg bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white"
+                    class="block py-2 text-sm font-medium text-center text-gray-900 rounded-b-lg bg-gray-50 hover:bg-gray-100"
                   >
                     <div class="inline-flex items-center">
                       <svg
-                        class="w-4 h-4 me-2 text-gray-500 dark:text-gray-400"
+                        class="w-4 h-4 me-2 text-gray-500"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"
@@ -225,7 +213,7 @@
                 <button
                   id="dropdownAvatarNameButton"
                   data-dropdown-toggle="dropdownAvatarName"
-                  class="flex items-center text-sm pe-1 font-medium text-gray-900 rounded-full hover:text-customBlue dark:hover:text-white md:me-0 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-white"
+                  class="flex items-center text-sm pe-1 font-medium text-gray-900 rounded-full hover:text-customBlue md:me-0 focus:ring-4 focus:ring-gray-100"
                   type="button"
                 >
                   <span class="sr-only">Open user menu</span>
@@ -254,7 +242,7 @@
               </div>
               <div
                 id="dropdownAvatarName"
-                class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+                class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44"
               >
                 <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
                   <div class="font-medium">{{ username }}</div>
@@ -262,13 +250,13 @@
                   <div class="truncate">{{ role }}</div>
                 </div>
                 <ul
-                  class="py-2 text-sm text-gray-700 dark:text-gray-200"
+                  class="py-2 text-sm text-gray-700"
                   aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton"
                 >
                   <li>
                     <button
                       onclick="openModalAkun()"
-                      class="flex w-full items-start px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      class="flex w-full items-start px-4 py-2 hover:bg-gray-100"
                     >
                       Account
                     </button>
@@ -288,10 +276,10 @@
     {% comment %} Sidebar {% endcomment %}
     <aside
       id="logo-sidebar"
-      class="fixed top-16 left-0 z-40 w-60 h-full transition-transform -translate-x-full bg-white border-r border-gray-200 lg:translate-x-0 dark:bg-gray-800 dark:border-gray-700 lg:top-0"
+      class="fixed top-16 left-0 z-40 w-60 h-full transition-transform -translate-x-full bg-white border-r border-gray-200 lg:translate-x-0 lg:top-0"
       aria-label="Sidebar"
     >
-      <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
+      <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
         <a href="/" class="flex justify-center my-2">
           <img
             src="{% static 'images/logo.png' %}"
@@ -303,10 +291,10 @@
           <li>
             <a
               href="{% url 'dashboard' %}"
-              class="flex items-center p-2 rounded-lg group text-gray-500 dark:text-gray-400 hover:text-white hover:bg-customBlue focus:text-white dark:hover:text-white dark:focus:text-white focus:bg-customBlue dark:hover:bg-customBlue {% if request.path == '/dashboard/' %}text-white bg-customBlue {% endif %}"
+              class="flex items-center p-2 rounded-lg group text-gray-500 hover:text-white hover:bg-customBlue focus:text-white focus:bg-customBlue {% if request.path == '/dashboard/' %}text-white bg-customBlue {% endif %}"
             >
               <svg
-                class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-white group-focus:text-white dark:group-hover:text-white {% if request.path == '/dashboard/' %}text-white{% endif %}"
+                class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-white group-focus:text-white {% if request.path == '/dashboard/' %}text-white{% endif %}"
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="21"
@@ -327,10 +315,10 @@
           <li>
             <a
               href="{% url 'pesanan' %}"
-              class="flex items-center p-2 rounded-lg group text-gray-500 dark:text-gray-400 hover:text-white hover:bg-customBlue focus:text-white dark:hover:text-white dark:focus:text-white focus:bg-customBlue dark:hover:bg-customBlue {% if '/pesanan/' in request.path %}text-white bg-customBlue {% endif %}"
+              class="flex items-center p-2 rounded-lg group text-gray-500 hover:text-white hover:bg-customBlue focus:text-white focus:bg-customBlue {% if '/pesanan/' in request.path %}text-white bg-customBlue {% endif %}"
             >
               <svg
-                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-white group-focus:text-white dark:group-hover:text-white {% if '/pesanan/' in request.path %}text-white{% endif %}"
+                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-white group-focus:text-white {% if '/pesanan/' in request.path %}text-white{% endif %}"
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="21"
@@ -351,12 +339,12 @@
           <li>
             <button
               type="button"
-              class="flex items-center w-full p-2 text-base transition duration-75 rounded-lg group text-gray-500 dark:text-gray-400 hover:text-white hover:bg-customBlue focus:text-white dark:hover:text-white dark:focus:text-white focus:bg-customBlue dark:hover:bg-customBlue {% if '/barang' in request.path %}text-white bg-customBlue {% endif %}"
+              class="flex items-center w-full p-2 text-base transition duration-75 rounded-lg group text-gray-500 hover:text-white hover:bg-customBlue focus:text-white focus:bg-customBlue {% if '/barang' in request.path %}text-white bg-customBlue {% endif %}"
               aria-controls="dropdown-barang"
               data-collapse-toggle="dropdown-barang"
             >
               <svg
-                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-white group-focus:text-white dark:group-hover:text-white {% if '/barang' in request.path %}text-white{% endif %}"
+                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-white group-focus:text-white {% if '/barang' in request.path %}text-white{% endif %}"
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="21"
@@ -394,21 +382,21 @@
               <li>
                 <a
                   href="{% url 'barang' %}"
-                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white dark:text-gray-400 dark:hover:text-white dark:focus:text-white dark:hover:bg-customBlue"
+                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white"
                   >Barang</a
                 >
               </li>
               <li>
                 <a
                   href="{% url 'transaksi_masuk' %}"
-                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white dark:text-gray-400 dark:hover:text-white dark:focus:text-white dark:hover:bg-customBlue"
+                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white"
                   >Transaksi Masuk</a
                 >
               </li>
               <li>
                 <a
                   href="{% url 'transaksi_keluar' %}"
-                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white dark:text-gray-400 dark:hover:text-white dark:focus:text-white dark:hover:bg-customBlue"
+                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white"
                   >Transaksi Keluar</a
                 >
               </li>
@@ -420,7 +408,7 @@
               class="flex items-center p-2 rounded-lg group text-gray-500 dark:text-gray-400 hover:text-white hover:bg-customBlue focus:text-white dark:hover:text-white dark:focus:text-white focus:bg-customBlue dark:hover:bg-customBlue {% if '/katalog' in request.path %}text-white bg-customBlue {% endif %}"
             >
               <svg
-                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-white group-focus:text-white dark:group-hover:text-white {% if '/katalog' in request.path %}text-white{% endif %}"
+                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-white group-focus:text-white {% if '/katalog' in request.path %}text-white{% endif %}"
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="20"
@@ -458,10 +446,10 @@
           <li>
             <a
               href="{% url 'supplier' %}"
-              class="flex items-center p-2 rounded-lg group text-gray-500 dark:text-gray-400 hover:text-white hover:bg-customBlue focus:text-white dark:hover:text-white dark:focus:text-white focus:bg-customBlue dark:hover:bg-customBlue {% if '/supplier' in request.path %}text-white bg-customBlue {% endif %}"
+              class="flex items-center p-2 rounded-lg group text-gray-500 hover:text-white hover:bg-customBlue focus:text-white focus:bg-customBlue {% if '/supplier' in request.path %}text-white bg-customBlue {% endif %}"
             >
               <svg
-                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-white group-focus:text-white dark:group-hover:text-white {% if '/supplier' in request.path %}text-white{% endif %}"
+                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-white group-focus:text-white {% if '/supplier' in request.path %}text-white{% endif %}"
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="21"
@@ -482,10 +470,10 @@
           <li>
             <a
               href="{% url 'customer' %}"
-              class="flex items-center p-2 rounded-lg group text-gray-500 dark:text-gray-400 hover:text-white hover:bg-customBlue focus:text-white dark:hover:text-white dark:focus:text-white focus:bg-customBlue dark:hover:bg-customBlue {% if '/customer' in request.path %}text-white bg-customBlue {% endif %}"
+              class="flex items-center p-2 rounded-lg group text-gray-500 hover:text-white hover:bg-customBlue focus:text-white focus:bg-customBlue {% if '/customer' in request.path %}text-white bg-customBlue {% endif %}"
             >
               <svg
-                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-white group-focus:text-white dark:group-hover:text-white {% if '/customer' in request.path %}text-white {% endif %}"
+                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-white group-focus:text-white {% if '/customer' in request.path %}text-white {% endif %}"
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="17"
@@ -506,12 +494,12 @@
           <li>
             <button
               type="button"
-              class="flex items-center w-full p-2 text-base transition duration-75 rounded-lg group text-gray-500 dark:text-gray-400 hover:text-white hover:bg-customBlue focus:text-white dark:hover:text-white dark:focus:text-white focus:bg-customBlue dark:hover:bg-customBlue {% if '/pembelian' in request.path %}text-white bg-customBlue {% endif %}"
+              class="flex items-center w-full p-2 text-base transition duration-75 rounded-lg group text-gray-500 hover:text-white hover:bg-customBlue focus:text-white focus:bg-customBlue {% if '/pembelian' in request.path %}text-white bg-customBlue {% endif %}"
               aria-controls="dropdown-pembelian"
               data-collapse-toggle="dropdown-pembelian"
             >
               <svg
-                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-white group-focus:text-white dark:group-hover:text-white {% if '/pembelian' in request.path %}text-white {% endif %}"
+                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-white group-focus:text-white {% if '/pembelian' in request.path %}text-white {% endif %}"
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="21"
@@ -549,21 +537,21 @@
               <li>
                 <a
                   href="{% url 'invoice' %}"
-                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white dark:text-gray-400 dark:hover:text-white dark:focus:text-white dark:hover:bg-customBlue"
+                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white"
                   >Invoice</a
                 >
               </li>
               <li>
                 <a
                   href="{% url 'retur_beli' %}"
-                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white dark:text-gray-400 dark:hover:text-white dark:focus:text-white dark:hover:bg-customBlue"
+                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white"
                   >Retur</a
                 >
               </li>
               <li>
                 <a
                   href="{% url 'pembayaran_hutang' %}"
-                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white dark:text-gray-400 dark:hover:text-white dark:focus:text-white dark:hover:bg-customBlue"
+                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white"
                   >Pembayaran</a
                 >
               </li>
@@ -572,12 +560,12 @@
           <li>
             <button
               type="button"
-              class="flex items-center w-full p-2 text-base transition duration-75 rounded-lg group text-gray-500 dark:text-gray-400 hover:text-white hover:bg-customBlue focus:text-white dark:hover:text-white dark:focus:text-white focus:bg-customBlue dark:hover:bg-customBlue {% if '/penjualan' in request.path %}text-white bg-customBlue {% endif %}"
+              class="flex items-center w-full p-2 text-base transition duration-75 rounded-lg group text-gray-500 hover:text-white hover:bg-customBlue focus:text-white focus:bg-customBlue {% if '/penjualan' in request.path %}text-white bg-customBlue {% endif %}"
               aria-controls="dropdown-penjualan"
               data-collapse-toggle="dropdown-penjualan"
             >
               <svg
-                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-white group-focus:text-white dark:group-hover:text-white {% if '/penjualan' in request.path %}text-white {% endif %}"
+                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-white group-focus:text-white {% if '/penjualan' in request.path %}text-white {% endif %}"
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="21"
@@ -615,21 +603,21 @@
               <li>
                 <a
                   href="{% url 'faktur' %}"
-                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white dark:text-gray-400 dark:hover:text-white dark:focus:text-white dark:hover:bg-customBlue"
+                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white"
                   >Faktur</a
                 >
               </li>
               <li>
                 <a
                   href="{% url 'retur_jual' %}"
-                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white dark:text-gray-400 dark:hover:text-white dark:focus:text-white dark:hover:bg-customBlue"
+                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white"
                   >Retur</a
                 >
               </li>
               <li>
                 <a
                   href="{% url 'pembayaran_piutang' %}"
-                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white dark:text-gray-400 dark:hover:text-white dark:focus:text-white dark:hover:bg-customBlue"
+                  class="flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-customBlue hover:text-white focus:bg-customBlue focus:text-white"
                   >Pembayaran</a
                 >
               </li>
@@ -638,10 +626,10 @@
           <li>
             <a
               href="{% url 'bantuan' %}"
-              class="flex items-center p-2 rounded-lg group text-gray-500 dark:text-gray-400 hover:text-white hover:bg-customBlue focus:text-white dark:hover:text-white dark:focus:text-white focus:bg-customBlue dark:hover:bg-customBlue {% if '/bantuan' in request.path %}text-white bg-customBlue {% endif %}"
+              class="flex items-center p-2 rounded-lg group text-gray-500 hover:text-white hover:bg-customBlue focus:text-white focus:bg-customBlue {% if '/bantuan' in request.path %}text-white bg-customBlue {% endif %}"
             >
               <svg
-                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-white group-focus:text-white dark:group-hover:text-white {% if '/bantuan/' in request.path %}text-white{% endif %}"
+                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-white group-focus:text-white {% if '/bantuan/' in request.path %}text-white{% endif %}"
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="21"
@@ -662,33 +650,48 @@
         </ul>
       </div>
     </aside>
-    <div class="p-4 lg:ml-60 dark:bg-gray-800">
+    <div class="p-4 lg:ml-60">
       <h1 class="mt-14 font-semibold text-lg">
         {% block page_title %}{% endblock %}
       </h1>
       <div class="mt-3">
         <!-- Overlay & Modal Konfirmasi -->
-<div id="popupModalConfirm" class="fixed inset-0 hidden items-center justify-center z-50 bg-gray-500/50">
-  <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col">
-    <div class="flex justify-between items-center border-b pb-3">
-      <h3 class="text-lg font-semibold" id="confirmTitle">Konfirmasi Hapus</h3>
-      <button onclick="closeModalConfirm()" class="text-gray-500 hover:text-red-500">
-        <i class="fa-solid fa-x"></i>
-      </button>
-    </div>
-    <div class="py-4">
-      <p id="confirmMessage">Apakah Anda yakin ingin melanjutkan?</p>
-    </div>
-    <div class="flex justify-end gap-2 mt-4">
-      <button onclick="closeModalConfirm()" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
-        Batal
-      </button>
-      <button type="button" id="confirmAction" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
-        Hapus
-      </button>
-    </div>
-  </div>
-</div>
+        <div
+          id="popupModalConfirm"
+          class="fixed inset-0 hidden items-center justify-center z-50 bg-gray-500/50"
+        >
+          <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col">
+            <div class="flex justify-between items-center border-b pb-3">
+              <h3 class="text-lg font-semibold" id="confirmTitle">
+                Konfirmasi Hapus
+              </h3>
+              <button
+                onclick="closeModalConfirm()"
+                class="text-gray-500 hover:text-red-500"
+              >
+                <i class="fa-solid fa-x"></i>
+              </button>
+            </div>
+            <div class="py-4">
+              <p id="confirmMessage">Apakah Anda yakin ingin melanjutkan?</p>
+            </div>
+            <div class="flex justify-end gap-2 mt-4">
+              <button
+                onclick="closeModalConfirm()"
+                class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                id="confirmAction"
+                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
         {% block content %}{% endblock %}
       </div>
     </div>
@@ -725,7 +728,7 @@
             show: true,
             style: {
               fontFamily: "Inter, sans-serif",
-              cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+              cssClass: 'text-xs font-normal fill-gray-500'
             }
           },
           axisBorder: {
@@ -741,7 +744,7 @@
             show: true,
             style: {
               fontFamily: "Inter, sans-serif",
-              cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+              cssClass: 'text-xs font-normal fill-gray-500'
             },
             formatter: function (value) {
               return value + 'jt';
@@ -814,7 +817,7 @@
               show: true,
               style: {
                 fontFamily: "Inter, sans-serif",
-                cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+                cssClass: 'text-xs font-normal fill-gray-500'
               }
             },
             axisBorder: {
@@ -830,7 +833,7 @@
               show: true,
               style: {
                 fontFamily: "Inter, sans-serif",
-                cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+                cssClass: 'text-xs font-normal fill-gray-500'
               },
               formatter: function (value) {
                 return value + 'jt';

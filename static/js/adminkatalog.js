@@ -103,7 +103,7 @@ async function getKategori() {
             li.className = "cursor-pointer px-4 py-2 hover:bg-gray-300"
             
             li.addEventListener('click', () => {
-                document.getElementById("selectedKategori").textContent = choice.label
+                document.getElementById("selectedCategory").textContent = choice.label
                 dropdownMenu.classList.add("hidden")
             })
 
