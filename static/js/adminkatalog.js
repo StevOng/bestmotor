@@ -20,24 +20,6 @@ document.getElementById("copyButton").addEventListener("click", function () {
     });
 });
 
-//   {% comment %} dropdown kategori {% endcomment %}
-const dropdownButton = document.getElementById("dropdownButton");
-const dropdownMenu = document.getElementById("dropdownMenu");
-const dropdownIcon = document.getElementById("dropdownIcon");
-
-dropdownButton.addEventListener("click", function () {
-    dropdownMenu.classList.toggle("hidden");
-    dropdownIcon.classList.toggle("rotate-180");
-});
-
-// Menutup dropdown jika klik di luar
-document.addEventListener("click", function (event) {
-    if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
-        dropdownMenu.classList.add("hidden");
-        dropdownIcon.classList.remove("rotate-180");
-    }
-});
-
 //   {% comment %} tabel katalog {% endcomment %}
 $(document).ready(function () {
     let table = $('#tabelKatalog').DataTable({
@@ -96,24 +78,18 @@ async function getKategori() {
         const response = await fetch('/api/barang/kategori_choices/')
         const choices = await response.json()
 
+        const select = document.getElementById("kategori")
+        // select.innerHTML = '<option value="" disabled>Masukkan kategori barang</option>';
         choices.forEach(choice => {
-            let li = document.createElement("li")
-            li.value = choice.value
-            li.textContent = choice.label
-            li.className = "cursor-pointer px-4 py-2 hover:bg-gray-300"
-            
-            li.addEventListener('click', () => {
-                document.getElementById("selectedCategory").textContent = choice.label
-                dropdownMenu.classList.add("hidden")
-            })
-
-            const selectedKategori = "{{ barang.kategori|default:'' }}"
-            const selectedSpan = document.getElementById("selectedCategory")
-            if (choice.value === selectedKategori) {
-                selectedSpan.textContent = choice.label
-            }
-            dropdownMenu.appendChild(li)
+            let option = document.createElement("option")
+            option.value = choice.value
+            option.textContent = choice.label
+            select.appendChild(option)
         })
+        let selectedKategori = "{{ barang.kategori|default:'' }}"
+        if (selectedKategori) {
+            select.value = selectedKategori
+        }
     } catch(err) {
         console.error(err);
     }
