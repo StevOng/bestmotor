@@ -36,11 +36,12 @@
         Total Pesanan Bulanan
       </p>
       <div>
-        <p class="*:dark:text-gray-500 text-sm lg:text-xs">Bulan Oktober</p>
+        <p id="pesananBulanan" class="*:dark:text-gray-500 text-sm lg:text-xs">Bulan Januari</p>
         <p
+          id="countPesanan"
           class="*:dark:text-gray-500 text-customBlue text-lg font-bold lg:text-xl"
         >
-          63
+          0
         </p>
       </div>
     </div>
@@ -58,14 +59,14 @@
   >
     <div class="flex flex-col justify-between">
       <p class="*:dark:text-gray-500 text-base font-semibold lg:text-sm">
-        Produk Aktif
+        Semua Produk
       </p>
       <div>
         <p class="*:dark:text-gray-500 text-sm lg:text-xs">Total Produk</p>
         <p
           class="*:dark:text-gray-500 text-customBlue text-lg font-bold lg:text-xl"
         >
-          1.853
+          {{ total_produk|default:"0" }}
         </p>
       </div>
     </div>
@@ -89,11 +90,12 @@
         <div class="flex space-x-2">
           <!-- Dropdown untuk waktu -->
           <button
-            id="dropdownButton"
+            id="incomeDropdownButton"
+            data-week="1"
             data-dropdown-toggle="dropdownbtn"
             class="text-sm text-gray-700 flex items-center"
           >
-            Semua Minggu
+            Minggu ke-1
             <svg
               class="w-4 h-4 ml-1"
               fill="currentColor"
@@ -109,13 +111,23 @@
           >
             <ul class="text-sm text-gray-700">
               <li>
-                <a href="#" class="block px-4 py-2 hover:bg-gray-100"
-                  >Semua Minggu</a
+                <a href="#" data-week="1" class="block px-4 py-2 hover:bg-gray-100"
+                  >Minggu ke-1</a
                 >
               </li>
               <li>
-                <a href="#" class="block px-4 py-2 hover:bg-gray-100"
-                  >Per Hari</a
+                <a href="#" data-week="2" class="block px-4 py-2 hover:bg-gray-100"
+                  >Minggu ke-2</a
+                >
+              </li>
+              <li>
+                <a href="#" data-week="3" class="block px-4 py-2 hover:bg-gray-100"
+                  >Minggu ke-3</a
+                >
+              </li>
+              <li>
+                <a href="#" data-week="4" class="block px-4 py-2 hover:bg-gray-100"
+                  >Minggu ke-4</a
                 >
               </li>
             </ul>
@@ -123,11 +135,12 @@
 
           <!-- Dropdown untuk bulan -->
           <button
-            id="monthDropdownButton"
+            id="incomeMonthDropdownButton"
+            data-month="1"
             data-dropdown-toggle="monthDropdownbtn"
             class="text-sm text-gray-700 flex items-center"
           >
-            Oktober
+            Januari
             <svg
               class="w-4 h-4 ml-1"
               fill="currentColor"
@@ -143,13 +156,63 @@
           >
             <ul class="text-sm text-gray-700">
               <li>
-                <a href="#" class="block px-4 py-2 hover:bg-gray-100"
+                <a href="#" data-month="1" class="block px-4 py-2 hover:bg-gray-100"
+                  >Januari</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="2" class="block px-4 py-2 hover:bg-gray-100"
+                  >Februari</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="3" class="block px-4 py-2 hover:bg-gray-100"
+                  >Maret</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="4" class="block px-4 py-2 hover:bg-gray-100"
+                  >April</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="5" class="block px-4 py-2 hover:bg-gray-100"
+                  >Mei</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="6" class="block px-4 py-2 hover:bg-gray-100"
+                  >Juni</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="7" class="block px-4 py-2 hover:bg-gray-100"
+                  >Juli</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="8" class="block px-4 py-2 hover:bg-gray-100"
+                  >Agustus</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="9" class="block px-4 py-2 hover:bg-gray-100"
+                  >September</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="10" class="block px-4 py-2 hover:bg-gray-100"
                   >Oktober</a
                 >
               </li>
               <li>
-                <a href="#" class="block px-4 py-2 hover:bg-gray-100"
+                <a href="#" data-month="11" class="block px-4 py-2 hover:bg-gray-100"
                   >November</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="12" class="block px-4 py-2 hover:bg-gray-100"
+                  >Desember</a
                 >
               </li>
             </ul>
@@ -159,9 +222,9 @@
 
       <!-- Informasi pendapatan -->
       <div class="flex items-center space-x-4">
-        <div class="text-xl my-auto font-semibold text-customBlue">
-          Rp 57.000.000,00
-          <span class="text-gray-400 text-sm my-auto">• 63 Pesanan</span>
+        <div id="pendapatan-info" class="text-xl my-auto font-semibold text-customBlue">
+          Rp 0,00
+          <span class="text-gray-400 text-sm my-auto">• 0 Pesanan</span>
         </div>
       </div>
       <!-- Grafik -->
@@ -180,6 +243,7 @@
           <!-- Dropdown untuk waktu -->
           <button
             id="dropdownButton"
+            data-week="1"
             data-dropdown-toggle="dropdown"
             class="text-sm text-gray-700 flex items-center"
           >
@@ -199,13 +263,23 @@
           >
             <ul class="text-sm text-gray-700">
               <li>
-                <a href="#" class="block px-4 py-2 hover:bg-gray-100"
+                <a href="#" data-week="1" class="block px-4 py-2 hover:bg-gray-100"
                   >Minggu ke-1</a
                 >
               </li>
               <li>
-                <a href="#" class="block px-4 py-2 hover:bg-gray-100"
+                <a href="#" data-week="2" class="block px-4 py-2 hover:bg-gray-100"
                   >Minggu ke-2</a
+                >
+              </li>
+              <li>
+                <a href="#" data-week="3" class="block px-4 py-2 hover:bg-gray-100"
+                  >Minggu ke-3</a
+                >
+              </li>
+              <li>
+                <a href="#" data-week="4" class="block px-4 py-2 hover:bg-gray-100"
+                  >Minggu ke-4</a
                 >
               </li>
             </ul>
@@ -214,10 +288,11 @@
           <!-- Dropdown untuk bulan -->
           <button
             id="monthDropdownButton"
+            data-month="1"
             data-dropdown-toggle="monthDropdown"
             class="text-sm text-gray-700 flex items-center"
           >
-            Oktober
+            Januari
             <svg
               class="w-4 h-4 ml-1"
               fill="currentColor"
@@ -233,13 +308,63 @@
           >
             <ul class="text-sm text-gray-700">
               <li>
-                <a href="#" class="block px-4 py-2 hover:bg-gray-100"
+                <a href="#" data-month="1" class="block px-4 py-2 hover:bg-gray-100"
+                  >Januari</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="2" class="block px-4 py-2 hover:bg-gray-100"
+                  >Februari</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="3" class="block px-4 py-2 hover:bg-gray-100"
+                  >Maret</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="4" class="block px-4 py-2 hover:bg-gray-100"
+                  >April</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="5" class="block px-4 py-2 hover:bg-gray-100"
+                  >Mei</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="6" class="block px-4 py-2 hover:bg-gray-100"
+                  >Juni</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="7" class="block px-4 py-2 hover:bg-gray-100"
+                  >Juli</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="8" class="block px-4 py-2 hover:bg-gray-100"
+                  >Agustus</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="9" class="block px-4 py-2 hover:bg-gray-100"
+                  >September</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="10" class="block px-4 py-2 hover:bg-gray-100"
                   >Oktober</a
                 >
               </li>
               <li>
-                <a href="#" class="block px-4 py-2 hover:bg-gray-100"
+                <a href="#" data-month="11" class="block px-4 py-2 hover:bg-gray-100"
                   >November</a
+                >
+              </li>
+              <li>
+                <a href="#" data-month="12" class="block px-4 py-2 hover:bg-gray-100"
+                  >Desember</a
                 >
               </li>
             </ul>
@@ -249,9 +374,9 @@
 
       <!-- Informasi pendapatan -->
       <div class="flex items-center space-x-4">
-        <div class="text-xl my-auto font-semibold text-[#EE6C4D]">
-          Rp 12.000.000,00
-          <span class="text-gray-400 text-sm my-auto">• 27 Transaksi</span>
+        <div id="pengeluaran-info" class="text-xl my-auto font-semibold text-[#EE6C4D]">
+          Rp 0,00
+          <span class="text-gray-400 text-sm my-auto">• 0 Transaksi</span>
         </div>
       </div>
       <!-- Grafik -->
@@ -421,7 +546,7 @@
     </div>
   </div>
 </div>
-{% comment %}
+
 <div
   class="flex items-center justify-center h-48 mb-4 rounded bg-gray-50 dark:bg-gray-800"
 >
@@ -529,5 +654,7 @@
     </p>
   </div>
 </div>
-{% endcomment %} 
 {% endblock %}
+{% block script %}
+  <script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock script %}

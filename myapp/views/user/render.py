@@ -37,6 +37,5 @@ def logout_user(request):
 
 @admin_required
 def dashboard(request):
-    pesanan = Pesanan.objects.select_related("detailpesanan_set__customer_id").prefetch_related("barang")
-    invoice = Invoice.objects.select_related("detailinvoice_set").prefetch_related("barang")
-    return render(request, 'user/dashboard.html', {'pesanan': pesanan, 'invoice': invoice})
+    total_produk = Barang.objects.all().count()
+    return render(request, "user/dashboard.html", {"total_produk": total_produk})

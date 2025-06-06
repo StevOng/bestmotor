@@ -1,6 +1,10 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.db.models import Sum, Count
+from django.db.models.functions import ExtractWeekDay
+from datetime import date
+from calendar import monthrange
 from ...models.pesanan import *
 from .serializer import *
 
@@ -18,6 +22,72 @@ class PesananViewSet(viewsets.ModelViewSet):
         
         Pesanan.objects.filter(id__in=ids).update(status=new_status)
         return Response({"message":"Status pesanan berhasil diperbarui"})
+    
+    @action(detail=False, methods=['get'])
+    def top_customer(self, request):
+        data = (
+            Pesanan.objects
+            .values('customer_id', 'customer_id__nama')
+            .annotate(total_belanja=Sum('netto'))
+            .order_by('-total_belanja')[:3]
+        )
+
+        result = [
+            {
+                'customer': d['customer_id__nama'],
+                'total_belanja': d['total_belanja']
+            }
+            for d in data
+        ]
+        return Response(result)
+    
+    @action(detail=False, methods=['get'])
+    def income(self, request):
+        bulan = request.GET.get('bulan', 'Januari')
+        minggu = int(request.GET.get('minggu', 1))
+
+        bulan_map = {
+            'Januari': 1, 'Februari': 2, 'Maret': 3, 'April': 4,
+            'Mei': 5, 'Juni': 6, 'Juli': 7, 'Agustus': 8,
+            'September': 9, 'Oktober': 10, 'November': 11, 'Desember': 12
+        }
+
+        month_number = bulan_map.get(bulan, 1)
+
+        year = date.today().year
+        days_in_month = monthrange(year, month_number)[1]
+
+        start_day = (minggu - 1) * 7 + 1
+        end_day = min(start_day + 6, days_in_month)
+
+        filter_start = date(year, bulan, start_day)
+        filter_end = date(year, bulan, end_day)
+
+        queryset = Pesanan.objects.filter(
+            created_at__date__range=[filter_start, filter_end]
+        ).annotate(
+            weekday=ExtractWeekDay('created_at')
+        ).values('weekday').annotate(
+            total=Sum('netto'),
+            count=Count('id')
+        )
+
+        weekday_map = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']
+        data_dict = {day: 0 for day in weekday_map}
+
+        for item in queryset:
+            index = (item['weekday'] + 5) % 7  # 1=Sunday → index 6
+            data_dict[weekday_map[index]] = float(item['netto']) / 1_000_000  # juta
+
+        total_income = sum(item['netto'] for item in queryset)
+        total_orders = sum(item['count'] for item in queryset)
+
+        return Response({
+            "categories": weekday_map,
+            "values": [data_dict[day] for day in weekday_map],
+            "total_income": total_income,
+            "total_orders": total_orders
+        })
 
 class DetailPesananViewSet(viewsets.ModelViewSet):
     queryset = DetailPesanan.objects.all()
