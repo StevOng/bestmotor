@@ -1,42 +1,12 @@
 from django.db import models
+from ..views.barang.merk_choices import MERK
+from ..views.barang.categories_choices import CATEGORIES
 
 class Barang(models.Model):
     id = models.AutoField(primary_key=True)
     kode_barang = models.CharField(max_length=10, unique=True)
     nama_barang = models.CharField(max_length=255)
-    CHOICES = [
-        ('aki','Aki'),
-        ('filter udara','Filter Udara'),
-        ('kampas rem','Kampas Rem'),
-        ('oli dan pelumas','Oli dan Pelumas'),
-        ('karet dan seal','Karet dan Seal'),
-        ('busi dan tutup busi','Busi dan Tutup Busi'),
-        ('piston dan ring piston','Piston dan Ring Piston'),
-        ('karburator dan vacuum', 'Karburator dan Vacuum'),
-        ('camshaft','Camshaft'),
-        ('crankshaft','Crankshaft'),
-        ('katup','Katup'),
-        ('connecting rod','Connecting Rod'),
-        ('pompa oli','Pompa Oli'),
-        ('lampu','Lampu'),
-        ('ban','Ban'),
-        ('velg','Velg'),
-        ('rem','Rem'),
-        ('spion','Spion')
-    ]
-    kategori = models.CharField(max_length=50, choices=CHOICES, default=None)
-    MERK = [
-        ('toyota', 'Toyota'),
-        ('astra', 'Astra'),
-        ('denso', 'Denso'),
-        ('honda', 'Honda'),
-        ('yamaha', 'Yamaha'),
-        ('ngk', 'NGK'),
-        ('daytona', 'Daytona'),
-        ('aspira', 'Aspira'),
-        ('bosch', 'Bosch'),
-        ('isuzu', 'Isuzu')
-    ]
+    kategori = models.CharField(max_length=50, choices=CATEGORIES, default=None)
     merk = models.CharField(max_length=50, choices=MERK, default=None)
     harga_jual = models.DecimalField(max_digits=19, decimal_places=2)
     stok_minimum = models.IntegerField()

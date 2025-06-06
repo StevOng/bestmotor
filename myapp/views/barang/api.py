@@ -5,6 +5,8 @@ from rest_framework.decorators import action
 from django.db.models import F
 from ...models.barang import *
 from .serializer import *
+from .categories_choices import CATEGORIES
+from .merk_choices import MERK
 
 class BarangViewSet(viewsets.ModelViewSet):
     queryset = Barang.objects.all()
@@ -21,13 +23,15 @@ class BarangViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def kategori_choices(self, request):
-        choices = [{'value': value, 'label': label} for value, label in Barang.CHOICES]
-        return Response(choices)
+        choices = [{'value': value, 'label': label} for value, label in CATEGORIES]
+        sorted_choices = sorted(choices, key=lambda x: x['value'].lower())
+        return Response(sorted_choices)
     
     @action(detail=False, methods=['get'])
     def merk_choices(self, request):
-        choices = [{'value': value, 'label': label} for value, label in Barang.MERK]
-        return Response(choices)
+        choices = [{'value': value, 'label': label} for value, label in MERK]
+        sorted_choices = sorted(choices, key=lambda x: x['value'])
+        return Response(sorted_choices)
     
     @action(detail=False, methods=['get'])
     def low_stock(self, request):
