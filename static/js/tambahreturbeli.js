@@ -23,6 +23,18 @@ document.addEventListener("change", function (e) {
     }
 });
 
+document.querySelectorAll(".input_hrgbrg").forEach(input => {
+    input.addEventListener("input", updateDetailBiaya)
+})
+
+document.querySelectorAll(".input_qtybrg").forEach(input => {
+    input.addEventListener("input", updateDetailBiaya)
+})
+
+document.querySelectorAll(".disc").forEach(input => {
+    input.addEventListener("input", updateDetailBiaya)
+})
+
 document.getElementById("ppn").addEventListener("input", updateDetailBiaya)
 
 document.getElementById("ongkir").addEventListener("input", updateDetailBiaya)
@@ -41,7 +53,7 @@ function confirmPopupBtn(returId) {
         row.querySelectorAll("input, select, textarea").forEach((el) => {
             el.value = ""
             if (el.tagName == "select") {
-                    el.selectedIndex = 0
+                el.selectedIndex = 0
             }
         })
         row.removeAttribute("data-id")
@@ -116,19 +128,19 @@ function addNewRow() {
     newRow.innerHTML = `
         <td>${rowCount}</td>
         <td>
-          <input type="hidden" name="barangId" class="barangId" value="${inv?.barang_id||""}">
-          <select id="kodebrg-dropdown-${rowCount}" class="kodebrg-dropdown" data-namaBrg="namaBrg-${rowCount}" data-selected-id="${inv?.barang_id||""}">
-            <option value="${inv?.barang_id||""}" selected>${inv?.barang_id.kode_barang||""} - ${inv?.barang_id.nama_barang||""}</option>
+          <input type="hidden" name="barangId" class="barangId" value="${inv?.barang_id || ""}">
+          <select id="kodebrg-dropdown-${rowCount}" class="kodebrg-dropdown" data-namaBrg="namaBrg-${rowCount}" data-selected-id="${inv?.barang_id || ""}">
+            <option value="${inv?.barang_id || ""}" selected>${inv?.barang_id.kode_barang || ""} - ${inv?.barang_id.nama_barang || ""}</option>
           </select>
         </td>
         <td id="namaBrg-${rowCount}">
-          ${inv?.barang_id.nama_barang||""}
+          ${inv?.barang_id.nama_barang || ""}
         </td>
-        <td><input type="number" value="${inv?.harga_beli||""}" id="input_hrgbrg-${rowCount}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
-        <td><input type="number" value="${inv?.qty_retur||""}" id="input_qtybrg-${rowCount}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
-        <td><input type="number" value="${inv?.diskon_barang||""}" id="disc-${rowCount}" class="disc w-20 rounded-md border-gray-300" /></td>
-        <td class="totalDisc">${inv?.total_diskon_barang||""}</td>
-        <td class="total">${inv?.total_harga_barang||""}</td>
+        <td><input type="number" value="${inv?.harga_beli || ""}" id="input_hrgbrg-${rowCount}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
+        <td><input type="number" value="${inv?.qty_retur || ""}" id="input_qtybrg-${rowCount}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
+        <td><input type="number" value="${inv?.diskon_barang || ""}" id="disc-${rowCount}" class="disc w-20 rounded-md border-gray-300" /></td>
+        <td class="totalDisc">${inv?.total_diskon_barang || ""}</td>
+        <td class="total">${inv?.total_harga_barang || ""}</td>
         <td><button type="submit" data-id=""><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
         <td><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
@@ -196,11 +208,11 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
         retur.append("subtotal", bruto)
 
         const method = id ? "PATCH" : "POST";
-        const apiUrl = id ? `/api/returbeli/${id}/`:`/api/returbeli/`
+        const apiUrl = id ? `/api/returbeli/${id}/` : `/api/returbeli/`
         try {
             const response = await fetch(apiUrl, {
-            method: method,
-            body: retur
+                method: method,
+                body: retur
             })
             if (response.ok) {
                 const patchInv = await fetch(`/api/invoice/${invId}/`, {
@@ -210,7 +222,7 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
                         nilai_ppn: nilaiPpn,
                         netto: bruto + nilaiPpn + ongkir - discount,
                     })
-                }) 
+                })
                 const patchDetail = await fetch(`/api/detailinvoice/${invId}/`, {
                     method: "PATCH",
                     body: JSON.stringify({
@@ -252,32 +264,27 @@ function updateDetailBiaya() {
 
         if (!barangId || !inputQty || !inputHarga) return;
 
-        const updateHarga = () => {
-            const qty = parseInt(inputQty.value) || 0;
-            const diskon = parseFloat(inputDiskon.value) || 0;
-            const barang = barangData[barangId];
+        const qty = parseInt(inputQty.value) || 0;
+        const diskon = parseFloat(inputDiskon.value) || 0;
+        const barang = barangData[barangId];
 
-            if (!barang) return;
+        if (!barang) return;
 
-            let harga = barang.harga_jual;
-            if (qty >= barang.min_qty_grosir) {
-                harga = barang.harga_satuan;
-            } else {
-                harga = barang.harga_jual;
-            }
+        let harga = barang.harga_jual;
+        if (qty >= barang.min_qty_grosir) {
+            harga = barang.harga_satuan;
+        } else {
+            harga = barang.harga_jual;
+        }
 
-            inputHarga.value = harga;
+        inputHarga.value = harga;
 
-            const totalDiskon = harga * qty * (diskon / 100);
-            const totalHarga = harga * qty - totalDiskon;
+        const totalDiskon = harga * qty * (diskon / 100);
+        const totalHarga = harga * qty - totalDiskon;
 
-            totalDiscEl.textContent = totalDiskon.toFixed(2);
-            totalHargaEl.textContent = totalHarga.toFixed(2);
-            bruto += totalHarga
-        };
-
-        inputQty.addEventListener("input", updateHarga);
-        inputDiskon.addEventListener("input", updateHarga);
+        totalDiscEl.textContent = totalDiskon.toFixed(2);
+        totalHargaEl.textContent = totalHarga.toFixed(2);
+        bruto += totalHarga
     });
     brutoEl.value = bruto
     const nilaiPpn = bruto * (ppnInput.value / 100)

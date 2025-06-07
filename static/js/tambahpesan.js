@@ -24,6 +24,18 @@ document.addEventListener("change", function (e) {
     }
 });
 
+document.querySelectorAll(".input_hrgbrg").forEach(input => {
+    input.addEventListener("input", updateDetailBiaya)
+})
+
+document.querySelectorAll(".input_qtybrg").forEach(input => {
+    input.addEventListener("input", updateDetailBiaya)
+})
+
+document.querySelectorAll(".disc").forEach(input => {
+    input.addEventListener("input", updateDetailBiaya)
+})
+
 document.getElementById("ppn").addEventListener("input", updateDetailBiaya)
 
 document.getElementById("ongkir").addEventListener("input", updateDetailBiaya)
@@ -152,32 +164,27 @@ function updateDetailBiaya() {
 
         if (!barangId || !inputQty || !inputHarga) return;
 
-        const updateHarga = () => {
-            const qty = parseInt(inputQty.value) || 0;
-            const diskon = parseFloat(inputDiskon.value) || 0;
-            const barang = barangData[barangId];
+        const qty = parseInt(inputQty.value) || 0;
+        const diskon = parseFloat(inputDiskon.value) || 0;
+        const barang = barangData[barangId];
 
-            if (!barang) return;
+        if (!barang) return;
 
-            let harga = barang.harga_jual;
-            if (qty >= barang.min_qty_grosir) {
-                harga = barang.harga_satuan;
-            } else {
-                harga = barang.harga_jual;
-            }
+        let harga = barang.harga_jual;
+        if (qty >= barang.min_qty_grosir) {
+            harga = barang.harga_satuan;
+        } else {
+            harga = barang.harga_jual;
+        }
 
-            inputHarga.value = harga;
+        inputHarga.value = harga;
 
-            const totalDiskon = harga * qty * (diskon / 100);
-            const totalHarga = harga * qty - totalDiskon;
+        const totalDiskon = harga * qty * (diskon / 100);
+        const totalHarga = harga * qty - totalDiskon;
 
-            totalDiscEl.textContent = totalDiskon.toFixed(2);
-            totalHargaEl.textContent = totalHarga.toFixed(2);
-            bruto += totalHarga
-        };
-
-        inputQty.addEventListener("input", updateHarga);
-        inputDiskon.addEventListener("input", updateHarga);
+        totalDiscEl.textContent = totalDiskon.toFixed(2);
+        totalHargaEl.textContent = totalHarga.toFixed(2);
+        bruto += totalHarga
     });
     brutoEl.value = bruto
     const nilaiPpn = bruto * (ppnInput.value / 100)
