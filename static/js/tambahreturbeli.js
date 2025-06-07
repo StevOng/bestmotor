@@ -23,6 +23,12 @@ document.addEventListener("change", function (e) {
     }
 });
 
+document.getElementById("ppn").addEventListener("input", updateDetailBiaya)
+
+document.getElementById("ongkir").addEventListener("input", updateDetailBiaya)
+
+document.getElementById("discount").addEventListener("input", updateDetailBiaya)
+
 function confirmPopupBtn(returId) {
     const modal = document.getElementById("popupModalConfirm");
     modal.classList.remove("hidden"); // Tampilkan modal
@@ -227,40 +233,56 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
     });
 });
 
-document.querySelectorAll("tr").forEach(row => {
-    const inputQty = row.querySelector(".input_qtybrg");
-    const inputHarga = row.querySelector(".input_hrgbrg");
-    const inputDiskon = row.querySelector(".disc");
-    const totalDiscEl = row.querySelector(".totalDisc");
-    const totalHargaEl = row.querySelector(".total");
-    const barangId = row.querySelector(".barangId")?.value;
-    const barangData = window.barangData
-  
-    if (!barangId || !inputQty || !inputHarga) return;
-  
-    const updateHarga = () => {
-      const qty = parseInt(inputQty.value) || 0;
-      const diskon = parseFloat(inputDiskon.value) || 0;
-      const barang = barangData[barangId];
-  
-      if (!barang) return;
-  
-      let harga = barang.harga_jual;
-      if (qty >= barang.min_qty_grosir) {
-        harga = barang.harga_satuan;
-      } else {
-        harga = barang.harga_jual;
-      }
-  
-      inputHarga.value = harga;
-  
-      const totalDiskon = harga * qty * (diskon / 100);
-      const totalHarga = harga * qty - totalDiskon;
-  
-      totalDiscEl.textContent = totalDiskon.toFixed(2);
-      totalHargaEl.textContent = totalHarga.toFixed(2);
-    };
-  
-    inputQty.addEventListener("input", updateHarga);
-    inputDiskon.addEventListener("input", updateHarga);
-});
+function updateDetailBiaya() {
+    let bruto = 0
+    const brutoEl = document.getElementById("bruto")
+    const ppnInput = document.getElementById("ppn")
+    const ongkirInput = document.getElementById("ongkir")
+    const discInvInput = document.getElementById("discount")
+    const niliaPpnEl = document.getElementById("nilai_ppn")
+    const nettoEl = document.getElementById("netto")
+    document.querySelectorAll("tr").forEach(row => {
+        const inputQty = row.querySelector(".input_qtybrg");
+        const inputHarga = row.querySelector(".input_hrgbrg");
+        const inputDiskon = row.querySelector(".disc");
+        const totalDiscEl = row.querySelector(".totalDisc");
+        const totalHargaEl = row.querySelector(".total");
+        const barangId = row.querySelector(".barangId")?.value;
+        const barangData = window.barangData
+
+        if (!barangId || !inputQty || !inputHarga) return;
+
+        const updateHarga = () => {
+            const qty = parseInt(inputQty.value) || 0;
+            const diskon = parseFloat(inputDiskon.value) || 0;
+            const barang = barangData[barangId];
+
+            if (!barang) return;
+
+            let harga = barang.harga_jual;
+            if (qty >= barang.min_qty_grosir) {
+                harga = barang.harga_satuan;
+            } else {
+                harga = barang.harga_jual;
+            }
+
+            inputHarga.value = harga;
+
+            const totalDiskon = harga * qty * (diskon / 100);
+            const totalHarga = harga * qty - totalDiskon;
+
+            totalDiscEl.textContent = totalDiskon.toFixed(2);
+            totalHargaEl.textContent = totalHarga.toFixed(2);
+            bruto += totalHarga
+        };
+
+        inputQty.addEventListener("input", updateHarga);
+        inputDiskon.addEventListener("input", updateHarga);
+    });
+    brutoEl.value = bruto
+    const nilaiPpn = bruto * (ppnInput.value / 100)
+    const netto = bruto + nilaiPpn + Number(ongkirInput.value) - discInvInput.value
+
+    niliaPpnEl.value = nilaiPpn
+    nettoEl.value = netto
+}

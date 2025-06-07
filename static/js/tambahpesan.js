@@ -24,6 +24,35 @@ document.addEventListener("change", function (e) {
     }
 });
 
+document.getElementById("ppn").addEventListener("input", updateDetailBiaya)
+
+document.getElementById("ongkir").addEventListener("input", updateDetailBiaya)
+
+document.getElementById("discount").addEventListener("input", updateDetailBiaya)
+
+document.getElementById("top").addEventListener("input", tanggalTop)
+
+function tanggalTop() {
+    const topInput = document.getElementById("top_inv")
+    const jtoInput = document.getElementById("jatuh_tempo")
+
+    const top = parseInt(topInput.value)
+    let today = new Date()
+    let jatuhTempo = new Date(today);
+    jatuhTempo.setDate(today.getDate() + top);
+
+    const yjto = jatuhTempo.getFullYear();
+    const mjto = String(jatuhTempo.getMonth() + 1).padStart(2, "0");
+    const djto = String(jatuhTempo.getDate()).padStart(2, "0");
+
+    let formattedDate = `${djto}/${mjto}/${yjto}`;
+
+    if (formattedDate) {
+        jtoInput.value = formattedDate
+    } else {
+        jtoInput.value = "dd/mm/yyyy"
+    }
+}
 
 //PopupModal
 function openModal() {
@@ -104,43 +133,59 @@ function closeModalConfirm() {
 }
 
 // update harga secara dinamis
-document.querySelectorAll("tr").forEach(row => {
-    const inputQty = row.querySelector(".input_qtybrg");
-    const inputHarga = row.querySelector(".input_hrgbrg");
-    const inputDiskon = row.querySelector(".disc");
-    const totalDiscEl = row.querySelector(".totalDisc");
-    const totalHargaEl = row.querySelector(".totalHarga");
-    const barangId = row.querySelector("input[type='hidden']")?.value;
-    const barangData = window.barangData
+function updateDetailBiaya() {
+    let bruto = 0
+    const brutoEl = document.getElementById("bruto")
+    const ppnInput = document.getElementById("ppn")
+    const ongkirInput = document.getElementById("ongkir")
+    const discInvInput = document.getElementById("discount")
+    const niliaPpnEl = document.getElementById("nilai_ppn")
+    const nettoEl = document.getElementById("netto")
+    document.querySelectorAll("tr").forEach(row => {
+        const inputQty = row.querySelector(".input_qtybrg");
+        const inputHarga = row.querySelector(".input_hrgbrg");
+        const inputDiskon = row.querySelector(".disc");
+        const totalDiscEl = row.querySelector(".totalDisc");
+        const totalHargaEl = row.querySelector(".totalHarga");
+        const barangId = row.querySelector(".barangId")?.value;
+        const barangData = window.barangData
 
-    if (!barangId || !inputQty || !inputHarga) return;
+        if (!barangId || !inputQty || !inputHarga) return;
 
-    const updateHarga = () => {
-        const qty = parseInt(inputQty.value) || 0;
-        const diskon = parseFloat(inputDiskon.value) || 0;
-        const barang = barangData[barangId];
+        const updateHarga = () => {
+            const qty = parseInt(inputQty.value) || 0;
+            const diskon = parseFloat(inputDiskon.value) || 0;
+            const barang = barangData[barangId];
 
-        if (!barang) return;
+            if (!barang) return;
 
-        let harga = barang.harga_jual;
-        if (qty >= barang.min_qty_grosir) {
-            harga = barang.harga_satuan;
-        } else {
-            harga = barang.harga_jual;
-        }
+            let harga = barang.harga_jual;
+            if (qty >= barang.min_qty_grosir) {
+                harga = barang.harga_satuan;
+            } else {
+                harga = barang.harga_jual;
+            }
 
-        inputHarga.value = harga;
+            inputHarga.value = harga;
 
-        const totalDiskon = harga * qty * (diskon / 100);
-        const totalHarga = harga * qty - totalDiskon;
+            const totalDiskon = harga * qty * (diskon / 100);
+            const totalHarga = harga * qty - totalDiskon;
 
-        totalDiscEl.textContent = totalDiskon.toFixed(2);
-        totalHargaEl.textContent = totalHarga.toFixed(2);
-    };
+            totalDiscEl.textContent = totalDiskon.toFixed(2);
+            totalHargaEl.textContent = totalHarga.toFixed(2);
+            bruto += totalHarga
+        };
 
-    inputQty.addEventListener("input", updateHarga);
-    inputDiskon.addEventListener("input", updateHarga);
-});
+        inputQty.addEventListener("input", updateHarga);
+        inputDiskon.addEventListener("input", updateHarga);
+    });
+    brutoEl.value = bruto
+    const nilaiPpn = bruto * (ppnInput.value / 100)
+    const netto = bruto + nilaiPpn + Number(ongkirInput.value) - discInvInput.value
+
+    niliaPpnEl.value = nilaiPpn
+    nettoEl.value = netto
+}
 
 async function getKurir() {
     try {
