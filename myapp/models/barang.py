@@ -1,12 +1,12 @@
 from django.db import models
 from ..views.barang.merk_choices import MERK
-from ..views.barang.categories_choices import CATEGORIES
+from ..views.barang.tipe_choices import TIPE
 
 class Barang(models.Model):
     id = models.AutoField(primary_key=True)
     kode_barang = models.CharField(max_length=10, unique=True)
     nama_barang = models.CharField(max_length=255)
-    kategori = models.CharField(max_length=50, choices=CATEGORIES, default=None)
+    kategori = models.CharField(max_length=50, choices=TIPE, default=None)
     merk = models.CharField(max_length=50, choices=MERK, default=None)
     harga_jual = models.DecimalField(max_digits=19, decimal_places=2)
     stok_minimum = models.IntegerField()

@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from django.db.models import F
 from ...models.barang import *
 from .serializer import *
-from .categories_choices import CATEGORIES
+from .tipe_choices import TIPE
 from .merk_choices import MERK
 
 class BarangViewSet(viewsets.ModelViewSet):
@@ -22,8 +22,8 @@ class BarangViewSet(viewsets.ModelViewSet):
         return super().create(request, *args, **kwargs)
     
     @action(detail=False, methods=['get'])
-    def kategori_choices(self, request):
-        choices = [{'value': value, 'label': label} for value, label in CATEGORIES]
+    def tipe_choices(self, request):
+        choices = [{'value': value, 'label': label} for value, label in TIPE]
         sorted_choices = sorted(choices, key=lambda x: x['value'].lower())
         return Response(sorted_choices)
     
