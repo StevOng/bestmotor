@@ -130,9 +130,9 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
         event.preventDefault();
 
         const row = btn.closest("tr");
-        const id = btn.dataset.id;
+        const id = btn.dataset?.id || null
         const jenis = document.getElementById("jenis").value
-        const barangId = row.querySelector(".barang-id").value
+        const barangId = row.querySelector(".barang-id")?.value || null
         const qty = row.querySelector(".input-qtybrg").value
         const ket = row.getElementById("keterangan").value
 

@@ -9,7 +9,7 @@
 <div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
   <div class="flex flex-row justify-between mb-3">
     <h2 class="text-lg font-semibold">Detail Supplier</h2>
-    <button onclick="window.history.back()"><i class="fa-solid fa-x w-8 text-gray-500"></i></button>
+    <button type="button" onclick="window.history.back()"><i class="fa-solid fa-x w-8 text-gray-500"></i></button>
   </div>
     <hr class="border-gray-300 pb-3">
     <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="supplierForm">
@@ -42,9 +42,9 @@
               class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700">
         </div>
         
-        <!-- Jenis Barang / Kategori Barang -->
+        <!-- Tipe Motor / Tipe Barang -->
         <div class="md:col-span-2">
-          <label for="jenis-brg" class="block text-sm font-medium text-gray-700">Jenis Barang / Kategori Barang</label>
+          <label for="jenis-brg" class="block text-sm font-medium text-gray-700">Tipe Motor / Tipe Barang</label>
             <input type="text" id="jenis-brg" placeholder="Masukkan jenis barang yang dibeli dari supplier" value="{{ supplier.jenis_barang|default:"" }}"
                 class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700">
         </div>
@@ -71,8 +71,8 @@
           <textarea id="alamat-supp" rows="3" placeholder="Masukkan alamat lengkap supplier" value="{{ supplier.alamat_lengkap|default:"" }}"
             class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue"></textarea>
         </div>
-        <div class="md:col-span-2">
-          <button type="submit" id="btn-submit" class=" ml-auto text-center">
+        <div class="md:col-span-4 flex justify-end">
+          <button type="submit" id="btn-submit" class="text-center">
             <p class="text-sm font-medium text-gray-700">Simpan</p>
             <i class="mt-1 fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
           </button>

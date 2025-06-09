@@ -1,7 +1,7 @@
 document.getElementById("custForm").addEventListener("submit", async(event) =>{
     event.preventDefault()
 
-    const id = document.getElementById("custId").value
+    const id = document.getElementById("custId")?.value || null
     const nama = document.getElementById("nama-sucustpp").value
     const noHp = document.getElementById("nohp-cust").value
     const salesId = document.getElementById("salesId").value
@@ -24,7 +24,7 @@ document.getElementById("custForm").addEventListener("submit", async(event) =>{
 
     const response = await fetch(apiCustomer, {
         method: method,
-        body: barang
+        body: customer
     })
     const result = await response.json()
     console.log(result);

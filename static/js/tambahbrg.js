@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    getKategori()
+    getTipe()
     getMerk()
 })
 
@@ -14,11 +14,11 @@ uploadInput.addEventListener('change', () => {
 document.getElementById("tambahbrgform").addEventListener("submit", async(event) => {
     event.preventDefault()
 
-    const id = document.getElementById("barangId").value
+    const id = document.getElementById("barangId")?.value || null
     const nama = document.getElementById("nama-brg").value
     const kode = document.getElementById("kode-brg").value
     const harga = document.getElementById("input-hrgbrg").value
-    const kategori = document.getElementById("kategori").value
+    const tipe = document.getElementById("tipe-mtr").value
     const merk = document.getElementById("merk").value
     const minStok = document.getElementById("stok-minimum").value
     const gambar = document.getElementById("upload_gambar").files[0]
@@ -31,7 +31,7 @@ document.getElementById("tambahbrgform").addEventListener("submit", async(event)
     barang.append("nama_barang", nama)
     barang.append("kode_barang", kode)
     barang.append("harga_jual", harga)
-    barang.append("kategori", kategori)
+    barang.append("kategori", tipe)
     barang.append("merk", merk)
     barang.append("stok_minimum", minStok)
     if (gambar) {
@@ -73,22 +73,22 @@ document.getElementById("tambahbrgform").addEventListener("submit", async(event)
     }
 })
 
-async function getKategori() {
+async function getTipe() {
     try{
-        const response = await fetch('/api/barang/kategori_choices/')
+        const response = await fetch('/api/barang/tipe_choices/')
         const choices = await response.json()
 
-        const select = document.getElementById("kategori")
-        // select.innerHTML = '<option value="" disabled>Masukkan kategori barang</option>';
+        const select = document.getElementById("tipe-mtr")
+        // select.innerHTML = '<option value="" disabled>Masukkan tipe motor</option>';
         choices.forEach(choice => {
             let option = document.createElement("option")
             option.value = choice.value
             option.textContent = choice.label
             select.appendChild(option)
         })
-        let selectedKategori = "{{ detail_barang.kategori|default:'' }}"
-        if (selectedKategori) {
-            select.value = selectedKategori
+        let selectedTipe = "{{ detail_barang.kategori|default:'' }}"
+        if (selectedTipe) {
+            select.value = selectedTipe
         }
     } catch(err) {
         console.error(err);

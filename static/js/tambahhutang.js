@@ -102,48 +102,48 @@ function submit() {
     alert("tes")
 }
 
-// document.querySelectorAll(".btn-submit").forEach((btn) => {
-//     btn.addEventListener("click", async (event) => {
-//         event.preventDefault()
+document.querySelectorAll(".btn-submit").forEach((btn) => {
+    btn.addEventListener("click", async (event) => {
+        event.preventDefault()
 
-//         const row = btn.closest("tr")
-//         const id = btn.dataset.id
-//         const supplierId = document.getElementById("supplierId").value
-//         const potongan = row.querySelector(".potongan").value
-//         const nilaiByr = row.querySelector(".nilaiByr").value
-//         const invoiceId = row.querySelector(".invoiceId").value
+        const row = btn.closest("tr")
+        const id = btn.dataset?.id || null
+        const supplierId = document.getElementById("supplierId")?.value || null
+        const potongan = row.querySelector(".potongan").value
+        const nilaiByr = row.querySelector(".nilaiByr").value
+        const invoiceId = row.querySelector(".invoiceId").value
 
-//         if (!supplierId || !invoiceId) {
-//             alert("Supplier dan Invoice harus dipilih")
-//             return
-//         }
-//         const hutang = new FormData()
-//         hutang.append("supplier_id", supplierId)
-//         hutang.append("nilai_bayar", nilaiByr)
+        if (!supplierId || !invoiceId) {
+            alert("Supplier dan Invoice harus dipilih")
+            return
+        }
+        const hutang = new FormData()
+        hutang.append("supplier_id", supplierId)
+        hutang.append("nilai_bayar", nilaiByr)
 
-//         if (potongan > 0) {
-//             const response = await fetch(`/api/invoice/${invoiceId}/`, {
-//                 method: "PATCH",
-//                 body: JSON.stringify({
-//                     potongan: potongan
-//                 })
-//             })
-//             if (response.ok) {
-//                 console.log(`Update nilai potongan pada invoice: ${invoiceId}, sebesar ${potongan}`)
-//             }
-//         }
+        if (potongan > 0) {
+            const response = await fetch(`/api/invoice/${invoiceId}/`, {
+                method: "PATCH",
+                body: JSON.stringify({
+                    potongan: potongan
+                })
+            })
+            if (response.ok) {
+                console.log(`Update nilai potongan pada invoice: ${invoiceId}, sebesar ${potongan}`)
+            }
+        }
 
-//         const method = id ? "PATCH" : "POST" // jika ada id edit, tidak? tambah
-//         const apiInvoice = id ? `/api/hutang/${id}/` : `/api/hutang/`
+        const method = id ? "PATCH" : "POST" // jika ada id edit, tidak? tambah
+        const apiInvoice = id ? `/api/hutang/${id}/` : `/api/hutang/`
 
-//         const response = await fetch(apiInvoice, {
-//             method: method,
-//             body: hutang
-//         })
-//         const result = await response.json()
-//         console.log(result);
-//     })
-// })
+        const response = await fetch(apiInvoice, {
+            method: method,
+            body: hutang
+        })
+        const result = await response.json()
+        console.log(result);
+    })
+})
 
 function confirmPopupBtn(hutangId) {
     const modal = document.getElementById("popupModalConfirm");

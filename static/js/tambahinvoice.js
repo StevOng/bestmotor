@@ -223,13 +223,13 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
         event.preventDefault()
 
         const row = btn.closest("tr")
-        const id = btn.dataset.id
+        const id = btn.dataset?.id || null
         const noInv = document.getElementById("no_invoice").value
         const hargaBeli = row.querySelector(".input_hrgbrg").value
         const qty = row.querySelector(".input_qtybrg").value
         const diskonBarang = row.querySelector(".disc").value
-        const barangId = row.querySelector(".barangId").value
-        const supplier = document.getElementById("supplierId").value
+        const barangId = row.querySelector(".barangId")?.value || null
+        const supplier = document.getElementById("supplierId")?.value || null
         const top = document.getElementById("top_inv").value
         const ppn = document.getElementById("ppn").value
         const ongkir = document.getElementById("ongkir").value

@@ -65,7 +65,7 @@ searchKode.addEventListener("input", async () => {
 document.getElementById("formKatalog").addEventListener("submit", async(event) => {
     event.preventDefault()
 
-    const id = document.getElementById("katalogId").value
+    const id = document.getElementById("katalogId")?.value || null
     const hargaTertera = document.getElementById("hrgbrg").value
     const hargaDiskon = document.getElementById("hrgdsc").value
     const inKatalogUtama = isKatalogUtama.value === "true"

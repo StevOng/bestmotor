@@ -179,12 +179,12 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
         event.preventDefault();
 
         const row = btn.closest("tr")
-        const barangId = row.querySelector(".barangId").value
+        const barangId = row.querySelector(".barangId")?.value || null
         const qtyRetur = row.querySelector("[id^='input_qtybrg-']").value
         const hrgBrg = row.querySelector("[id^='input_hrgbrg-']").value
         const disc = row.querySelector("[id^='disc-']").value
-        const id = document.getElementById("hiddenId").value
-        const invId = document.getElementById("invId").value
+        const id = document.getElementById("hiddenId")?.value || null
+        const invId = document.getElementById("invId")?.value || null
         const bruto = document.getElementById("bruto").value
         const ongkir = document.getElementById("ongkir").value
         const ppn = document.getElementById("ppn").value

@@ -1,19 +1,19 @@
 from django.db import models
 from ..views.barang.merk_choices import MERK
-from ..views.barang.categories_choices import CATEGORIES
+from ..views.barang.tipe_choices import TIPE
 
 class Barang(models.Model):
     id = models.AutoField(primary_key=True)
     kode_barang = models.CharField(max_length=10, unique=True)
     nama_barang = models.CharField(max_length=255)
-    kategori = models.CharField(max_length=50, choices=CATEGORIES, default=None)
+    tipe = models.CharField(max_length=50, choices=TIPE, default=None)
     merk = models.CharField(max_length=50, choices=MERK, default=None)
     harga_jual = models.DecimalField(max_digits=19, decimal_places=2)
     stok_minimum = models.IntegerField()
-    harga_modal = models.DecimalField(max_digits=19, decimal_places=2)
-    stok = models.IntegerField()
-    qty_terjual = models.IntegerField()
-    gambar = models.BinaryField()
+    harga_modal = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    stok = models.IntegerField(default=0)
+    qty_terjual = models.IntegerField(default=0)
+    gambar = models.BinaryField(null=True, blank=True)
     keterangan = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -1,7 +1,7 @@
 document.getElementById("supplierForm").addEventListener("submit", async(event) => {
     event.preventDefault()
 
-    const id = document.getElementById("supId").value
+    const id = document.getElementById("supId")?.value || null
     const perusahaan = document.getElementById("nama-supp").value
     const namaSales = document.getElementById("nama-sales").value
     const noHp = document.getElementById("nohp-supp").value

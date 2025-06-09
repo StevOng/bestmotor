@@ -233,12 +233,12 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
         event.preventDefault()
 
         const row = btn.closest("tr")
-        const id = btn.dataset.id
+        const id = btn.dataset?.id || null
         const qty = row.querySelector(".input_qtybrg").value
         const diskonBarang = row.querySelector(".disc").value
-        const barangId = row.querySelector(".barangId").value
+        const barangId = row.querySelector(".barangId")?.value || null
         const kurir = document.getElementById("kurir").value
-        const customer = document.getElementById("customerId").value
+        const customer = document.getElementById("customerId")?.value || null
         const top = document.getElementById("top").value
         const alamat = document.getElementById("alamat_kirim").value
         const keterangan = document.getElementById("keterangan").value

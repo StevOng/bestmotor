@@ -109,13 +109,14 @@
   </div>
 </div>
 
-<form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="tambahPiutangForm">
+<form id="tambahPiutangForm">
   <div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
     <div class="flex flex-row justify-between mb-3">
       <h2 class="text-lg font-semibold">Detail Pembayaran Piutang</h2>
-      <button onclick="window.history.back()"><i class="fa-solid fa-x w-8 text-gray-500"></i></button>
+      <button type="button" onclick="window.history.back()"><i class="fa-solid fa-x w-8 text-gray-500"></i></button>
     </div>
       <hr class="border-gray-300 pb-3">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- No Bukti -->
           <div>
             <input type="hidden" name="piutangId" id="piutangId" value="{{ data_piutang.id|default:"" }}">
@@ -169,6 +170,7 @@
               <input type="text" id="tot_lunas" placeholder="" value="{{ data_piutang.total_pelunasan|default:"" }}" disabled
                 class="mt-1 block w-full border border-gray-300 bg-gray-200 rounded-md py-2 px-3 text-gray-400">
           </div>
+        </div>
   </div>
   <div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
       <hr class="border-gray-300">

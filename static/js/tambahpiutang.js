@@ -186,11 +186,11 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
         event.preventDefault()
 
         const row = btn.closest("tr")
-        const id = btn.dataset.id
-        const custId = row.querySelector(".custId").value
+        const id = btn.dataset?.id || null
+        const custId = row.querySelector(".custId")?.value || null
         const potongan = row.querySelector(".potongan").value
         const nilaiByr = row.querySelector(".nilaiByr").value
-        const fakturId = row.querySelector(".fakturId").value
+        const fakturId = row.querySelector(".fakturId")?.value || null
         const sales = document.getElementById("sales").value
 
         if (!sales || !fakturId) {
