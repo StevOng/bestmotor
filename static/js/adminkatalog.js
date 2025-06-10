@@ -1,24 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    getKategori()
+    getTipe()
 })
-
-document.getElementById("toggleCheck").addEventListener("click", function () {
-    document.getElementById("checkIcon").classList.toggle("hidden");
-});
-
-//   {% comment %} copy link {% endcomment %}
-document.getElementById("copyButton").addEventListener("click", function () {
-    const linkText = document.getElementById("linkText").textContent;
-    navigator.clipboard.writeText(linkText).then(() => {
-        const tooltip = document.getElementById("copyTooltip");
-        tooltip.classList.remove("opacity-0");
-        setTimeout(() => {
-            tooltip.classList.add("opacity-0");
-        }, 1500);
-    }).catch(err => {
-        console.error("Gagal menyalin teks: ", err);
-    });
-});
 
 //   {% comment %} tabel katalog {% endcomment %}
 $(document).ready(function () {
@@ -40,6 +22,24 @@ $(document).ready(function () {
         let searchValue = $(this).val();
         table.search(searchValue).draw();
     });
+});
+
+//   {% comment %} copy link {% endcomment %}
+document.getElementById("copyButton").addEventListener("click", function () {
+    const linkText = document.getElementById("linkText").textContent;
+    navigator.clipboard.writeText(linkText).then(() => {
+        const tooltip = document.getElementById("copyTooltip");
+        tooltip.classList.remove("opacity-0");
+        setTimeout(() => {
+            tooltip.classList.add("opacity-0");
+        }, 1500);
+    }).catch(err => {
+        console.error("Gagal menyalin teks: ", err);
+    });
+});
+
+document.getElementById("toggleCheck")?.addEventListener("click", function () {
+    document.getElementById("checkIcon").classList.toggle("hidden");
 });
 
 function confirmPopupBtn(id) {
@@ -73,22 +73,22 @@ function closeModalConfirm() {
     modal.style.display = "none"; // Pastikan modal benar-benar hilang
 }
 
-async function getKategori() {
+async function getTipe() {
     try{
-        const response = await fetch('/api/barang/kategori_choices/')
+        const response = await fetch('/api/barang/tipe_choices/')
         const choices = await response.json()
 
-        const select = document.getElementById("kategori")
-        // select.innerHTML = '<option value="" disabled>Masukkan kategori barang</option>';
+        const select = document.getElementById("tipe-mtr")
+        // select.innerHTML = '<option value="" disabled>Masukkan tipe motor</option>';
         choices.forEach(choice => {
             let option = document.createElement("option")
             option.value = choice.value
             option.textContent = choice.label
             select.appendChild(option)
         })
-        let selectedKategori = "{{ barang.kategori|default:'' }}"
-        if (selectedKategori) {
-            select.value = selectedKategori
+        let selectedTipe = "{{ barang.tipe|default:'' }}"
+        if (selectedTipe) {
+            select.value = selectedTipe
         }
     } catch(err) {
         console.error(err);

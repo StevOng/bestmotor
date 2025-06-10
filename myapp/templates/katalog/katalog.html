@@ -40,10 +40,10 @@
   </div>
 </div>
 <div class="px-6 py-2 md:px-12">
-  {% for kategori, items in kategori_katalog.items %}
+  {% for tipe, items in tipe_katalog.items %}
     <div class="py-2">
       <div class="flex flex-row justify-between items-center">
-        <p class="font-semibold">Rekomendasi {{ kategori|title }}r</p>
+        <p class="font-semibold">Rekomendasi {{ tipe|title }}r</p>
         <div class="flex gap-4">
           <button
             id="scrollLeft{{ forloop.counter }}"
@@ -80,7 +80,7 @@
           <p>{{ item.barang.merk }}</p>
           <p class="py-2 font-semibold text-orange-400">{{ item.katalog.harga_diskon }}</p>
           <a
-            href="{% url 'deskripsi' kategori item.barang.id %}"
+            href="{% url 'deskripsi' tipe item.barang.id %}"
             class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
           >
             Deskripsi
@@ -96,10 +96,10 @@
         <div class="flex flex-row justify-between border shadow rounded-md">
           <div class="flex flex-col justify-between p-4 w-[45%]">
             <span>
-              <p>Katalog {{ kategori|title }}</p>
+              <p>Katalog {{ tipe|title }}</p>
               <p class="pb-2 text-gray-500 text-sm">Tersedia {{ items|length }}+ produk</p>
             </span>
-            <a href="{% url 'katalogbrg' kategori %}">
+            <a href="{% url 'katalogbrg' tipe %}">
               <button
                 class="p-2 w-full border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
               >

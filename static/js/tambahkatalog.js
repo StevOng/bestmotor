@@ -1,7 +1,7 @@
 const searchKode = document.getElementById("searchKode");
 const dropdownList = document.getElementById("dropdownList");
 const nama_barang = document.getElementById("nama-brg")
-const kategori = document.getElementById("kategori")
+const tipe = document.getElementById("tipe-mtr")
 const toggleCheck = document.getElementById("toggleCheck")
 const checkIcon = document.getElementById("checkIcon")
 const isKatalogUtama = document.getElementById("isKatalogUtama")
@@ -42,7 +42,7 @@ searchKode.addEventListener("input", async () => {
                 li.addEventListener("click", () => {
                     searchKode.value = item.kode_barang
                     nama_barang.value = item.nama_barang
-                    kategori.value = item.detailbarang.kategori
+                    tipe.value = item.detailbarang.tipe
                     dropdownList.classList.add("hidden")
                 })
 

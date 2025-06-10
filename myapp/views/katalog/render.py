@@ -13,7 +13,7 @@ def admin_katalog(request):
 def katalog(request):
     data_katalog = Katalog.objects.prefetch_related("barang_set__tierharga_set").all()
 
-    kategori_katalog = defaultdict(list)
+    tipe_katalog = defaultdict(list)
     for katalog in data_katalog:
         for barang in katalog.barang_set.all():
             gambar_base64 = None
@@ -21,17 +21,17 @@ def katalog(request):
             if detail and detail.gambar:
                 gambar_base64 = base64.b64encode(detail.gambar).decode('utf-8')
                 gambar_base64 = f"data:image/jpeg;base64,{gambar_base64}"
-            kategori_katalog[barang.kategori].append({
+            tipe_katalog[barang.tipe].append({
                 'katalog': katalog,
                 'barang': barang,
                 "gambar": gambar_base64
             })
-    return render(request, "katalog/katalog.html", {'kategori_katalog': dict(kategori_katalog)})
+    return render(request, "katalog/katalog.html", {'tipe_katalog': dict(tipe_katalog)})
 
-def katalogbrg(request, kategori):
+def katalogbrg(request, tipe):
     data = []
-    title = kategori
-    barang_list = Barang.objects.filter(kategori=kategori).prefetch_related("katalog_set")
+    title = tipe
+    barang_list = Barang.objects.filter(tipe=tipe).prefetch_related("katalog_set")
     for barang in barang_list:
         detail = barang.first()
         katalog = barang.katalog_set.first()
@@ -48,9 +48,9 @@ def katalogbrg(request, kategori):
             "gambar": gambar,
             "harga_diskon": katalog.harga_diskon if katalog else "-",
             "id": barang.id,
-            "kategori": barang.kategori,
+            "tipe": barang.tipe,
         })
-    return render(request, "katalog/katalogbrg.html", {"kategori": kategori, "items": data, "title": title})
+    return render(request, "katalog/katalogbrg.html", {"tipe": tipe, "items": data, "title": title})
 
 @admin_required
 def tambah_brgkatalog(request, id=None):
@@ -61,8 +61,8 @@ def tambah_brgkatalog(request, id=None):
         katalog = barang.katalog_set.first() if barang else None
     return render(request, 'katalog/tambahkatalog.html', {"katalog": katalog})
 
-def deskripsi(request, kategori, barang_id):
-    barang = get_object_or_404(Barang, id=barang_id, kategori=kategori)
+def deskripsi(request, tipe, barang_id):
+    barang = get_object_or_404(Barang, id=barang_id, tipe=tipe)
     detail = barang.first()
     katalog = Katalog.objects.filter(barang=barang).first()
 

@@ -12,6 +12,25 @@ document.addEventListener('DOMContentLoaded', () => {
     tanggal.value = formatDate
 })
 
+$(document).ready(function () {
+    let table = $('#detailBrg').DataTable({
+        pageLength: 20,
+        lengthChange: false, // Hilangkan "Show entries"
+        ordering: false,
+        scrollX: true,
+        "columnDefs": [
+            { className: "text-center", targets: [-1, -2] } // kolom 8 dan 9 di tengah
+        ],
+    });
+    $('.dt-search').remove();
+    $('.dt-info').remove();
+
+    $('#tableSearch').on('keyup', function () { //search
+        let searchValue = $(this).val();
+        table.search(searchValue).draw();
+    });
+});
+
 document.addEventListener("change", function (e) {
     if (e.target.classList.contains("kodebrg-dropdown")) {
         const lastRow = document.querySelector("tbody tr:last-child");
@@ -98,23 +117,23 @@ $(document).ready(function () {
     });
 });
 
-const searchKode = document.getElementById("searchKode");
-const dropdownList = document.getElementById("dropdownList");
+// const searchKode = document.getElementById("searchKode");
+// const dropdownList = document.getElementById("dropdownList");
 
-// Sembunyikan dropdown jika klik di luar
-document.addEventListener("click", (event) => {
-    if (!searchKode.contains(event.target) && !dropdownList.contains(event.target)) {
-        dropdownList.classList.add("hidden");
-    }
-});
+// // Sembunyikan dropdown jika klik di luar
+// document.addEventListener("click", (event) => {
+//     if (!searchKode.contains(event.target) && !dropdownList.contains(event.target)) {
+//         dropdownList.classList.add("hidden");
+//     }
+// });
 
-// Pilih item dan isi input
-function selectKode(element) {
-    searchKode.value = element.textContent;
-    dropdownList.classList.add("hidden");
-}
+// // Pilih item dan isi input
+// function selectKode(element) {
+//     searchKode.value = element.textContent;
+//     dropdownList.classList.add("hidden");
+// }
 
-document.getElementById("toggleCheck").addEventListener("click", function () {
+document.getElementById("toggleCheck")?.addEventListener("click", function () {
     document.getElementById("checkIcon").classList.toggle("hidden");
 });
 

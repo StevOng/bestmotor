@@ -7,7 +7,7 @@
     <p class="text-2xl font-bold">Katalog {{ title|title }}</p>
     <span class="flex flex-row mt-4 text-sm">
         Beranda >
-        <p class="ml-1 text-gray-200">Kategori ></p>
+        <p class="ml-1 text-gray-200">Tipe Motor ></p>
         <p class="ml-1 text-gray-400">{{ title|title }}</p>
     </span>
 </div>
@@ -44,11 +44,11 @@
           {% else %}
             <img src="{% static 'images/logo.png' %}" class="w-auto h-28 md:h-32 items-center" />
           {% endif %}
-          <p class="text-gray-500">{{ item.kategori }}</p>
+          <p class="text-gray-500">{{ item.tipe }}</p>
           <p>{{ item.nama }}</p>
           <p class="py-2 font-semibold text-orange-400">{{ item.harga_diskon }}</p>
           <button
-            onclick="window.location.href='{% url 'deskripsi' item.kategori item.id %}'"
+            onclick="window.location.href='{% url 'deskripsi' item.tipe item.id %}'"
             class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
           >
             Deskripsi

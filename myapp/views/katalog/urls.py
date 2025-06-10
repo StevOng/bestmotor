@@ -9,6 +9,6 @@ router.register(r'katalog', KatalogViewSet)
 urlpatterns = [
     path('admin/', render.admin_katalog, name='admin_katalog'),
     path('tambah/', render.tambah_brgkatalog, name='tambah_brgkatalog'),
-    path('<str:kategori>/', render.katalogbrg, name='katalogbrg'),
-    path('<str:kategori>/<int:barang_id>/deskripsi/', render.deskripsi, name='deskripsi'),
+    path('<str:tipe>/', render.katalogbrg, name='katalogbrg'),
+    path('<str:tipe>/<int:barang_id>/deskripsi/', render.deskripsi, name='deskripsi'),
 ]

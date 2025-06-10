@@ -1,3 +1,25 @@
+//   {% comment %} tabel customer {% endcomment %}
+$(document).ready(function () {
+    let table = $('#tabelCustomer').DataTable({
+        pageLength: 20,
+        lengthChange: false, // Hilangkan "Show entries"
+        autoWidth: false,
+        ordering: false,
+        scrollX: true,
+        responsive: true,
+        "columnDefs": [
+            { className: "text-center", targets: [-1, -2, -3] } // isi field di tengah
+        ],
+    });
+    $('.dt-search').remove();
+    $('.dt-info').remove();
+
+    $('#tableSearch').on('keyup', function () { //search
+        let searchValue = $(this).val();
+        table.search(searchValue).draw();
+    });
+});
+
 function confirmPopupBtn(custId) {
     const modal = document.getElementById("popupModalConfirm");
     modal.classList.remove("hidden"); // Tampilkan modal

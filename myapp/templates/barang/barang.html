@@ -116,7 +116,7 @@
                     <td data-brg-id="{{ brg.id }}" class="gambarContainer"></td>
                     <td>{{ brg.kode_barang }}</td>
                     <td>{{ brg.nama_barang }}</td>
-                    <td>{{ brg.kategori }}</td>
+                    <td>{{ brg.tipe }}</td>
                     <td>{{ brg.merk }}</td>
                     {% if request.session.role == "admin" %}
                         <td>{{ brg.harga_modal|floatformat:2|intcomma }}</td>

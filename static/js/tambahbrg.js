@@ -31,7 +31,7 @@ document.getElementById("tambahbrgform").addEventListener("submit", async(event)
     barang.append("nama_barang", nama)
     barang.append("kode_barang", kode)
     barang.append("harga_jual", harga)
-    barang.append("kategori", tipe)
+    barang.append("tipe", tipe)
     barang.append("merk", merk)
     barang.append("stok_minimum", minStok)
     if (gambar) {
@@ -86,7 +86,7 @@ async function getTipe() {
             option.textContent = choice.label
             select.appendChild(option)
         })
-        let selectedTipe = "{{ detail_barang.kategori|default:'' }}"
+        let selectedTipe = "{{ detail_barang.tipe|default:'' }}"
         if (selectedTipe) {
             select.value = selectedTipe
         }
