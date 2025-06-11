@@ -24,14 +24,14 @@ class Faktur(models.Model):
         return self.no_faktur
     
     def generate_no_faktur(self):
-        if not self.no_bukti:
+        if not self.no_faktur:
             last_bukti = Faktur.objects.order_by("-id").first() # berdasarkan id terbesar
             if last_bukti:
                 last_num = int(last_bukti.no_bukti[3:]) # mengambil angka stelah 3 karakter BJ2
-                self.no_bukti = f"BJ2{last_num+1:04d}" # tambah 1 ke angka 4 digit terakhir
+                self.no_faktur = f"BJ2{last_num+1:04d}" # tambah 1 ke angka 4 digit terakhir
             else:
-                self.no_bukti = "BJ20001" # kode pertama
-        return self.no_bukti
+                self.no_faktur = "BJ20001" # kode pertama
+        return self.no_faktur
     
     def update_status(self):
         total_nilai_bayar = self.piutang.aggregate(total=models.Sum('nilai_bayar'))['total'] or Decimal('0')

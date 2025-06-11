@@ -13,6 +13,7 @@
   </div>
     <hr class="border-gray-300 pb-3">
     <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="supplierForm">
+      {% csrf_token %}
         <!-- Nama Perusahaan -->
         <div>
           <input type="hidden" name="supId" id="supId" value="{{ supplier.id|default:"" }}">

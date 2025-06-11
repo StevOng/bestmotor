@@ -178,6 +178,7 @@
   </div>
   <hr class="border-gray-300 pb-3" />
   <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="hutangForm">
+    {% csrf_token %}
     <!-- No Bukti -->
     <div>
       <input type="hidden" name="hutId" id="hutId" value="{{ hutang.id|default:"" }}">
