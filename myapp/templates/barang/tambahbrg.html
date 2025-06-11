@@ -32,8 +32,9 @@
         <div>
           <label for="tipe-mtr" class="block text-sm font-medium text-gray-700">Tipe Motor</label>
           <select id="tipe-mtr"
+            data-selected-tipe="{{ detail_barang.tipe|default:'' }}"
             class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm bg-white focus:outline-none focus:ring-customBlue focus:border-customBlue">
-            <option disabled selected>Masukkan tipe motor</option>
+            <option value="" disabled selected hidden>Masukkan tipe motor</option>
           </select>
         </div>
         
@@ -41,8 +42,9 @@
         <div>
           <label for="merk" class="block text-sm font-medium text-gray-700">Merk</label>
           <select id="merk"
+           data-selected-merk="{{ detail_barang.merk|default:'' }}"
             class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm bg-white focus:outline-none focus:ring-customBlue focus:border-customBlue">
-            <option disabled selected>Masukkan merek barang</option>
+            <option value="" disabled selected hidden>Masukkan merek barang</option>
           </select>
         </div>
         

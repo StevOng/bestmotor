@@ -4,16 +4,14 @@ import django
 import pandas as pd
 from decimal import Decimal
 import re
-from myapp.models import Barang
-
-from myapp.views.barang.tipe_choices import TIPE
-from myapp.views.barang.merk_choices import MERK
 
 # Tambah path dan set environment Django
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myproject.settings')
 
 django.setup()
+
+from myapp.models.barang import Barang
 
 df = pd.read_excel("import/Data Barang DESEMBER 2024.xlsx", skiprows=2, usecols=["Nama Barang", "Merek", "Harga Modal", "Harga Jual", "Stok Akhir"])
 
@@ -65,7 +63,7 @@ for _, row in df_clean.iterrows():
             kode_barang=row['Kode Barang'],
             defaults={
                 'nama_barang': row['Nama Barang'],
-                'tipe_motor': row['Tipe Motor'],
+                'tipe': row['Tipe Motor'],
                 'merk': row['Merek'],
                 'harga_jual': Decimal(row['Harga Jual']),
                 'stok_minimum': int(row['Stok Minimum']),

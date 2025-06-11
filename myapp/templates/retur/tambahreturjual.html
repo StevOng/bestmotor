@@ -97,7 +97,7 @@
         <div class="col-span-2">
           <input type="hidden" name="hiddenId" id="hiddenId" value="{{ returan.id|default:"" }}">
           <label for="no_bukti" class="block text-sm font-medium text-gray-700">No Bukti</label>
-          <input type="text" id="no_bukti" value="AUTO" disabled
+          <input type="text" id="no_bukti" value="{{ returan.no_bukti|default:"" }}" disabled
             class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
         </div>
         

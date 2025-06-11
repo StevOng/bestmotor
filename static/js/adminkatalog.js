@@ -79,17 +79,18 @@ async function getTipe() {
         const choices = await response.json()
 
         const select = document.getElementById("tipe-mtr")
-        // select.innerHTML = '<option value="" disabled>Masukkan tipe motor</option>';
+        let selectedTipe = select.dataset.selectedTipe
         choices.forEach(choice => {
             let option = document.createElement("option")
             option.value = choice.value
             option.textContent = choice.label
+            if (choice.value === selectedTipe.toLowerCase()) {
+                option.selected = true
+                const placeholder = select.querySelector('option[value=""]')
+                if (placeholder) placeholder.removeAttribute('selected')
+            }
             select.appendChild(option)
         })
-        let selectedTipe = "{{ barang.tipe|default:'' }}"
-        if (selectedTipe) {
-            select.value = selectedTipe
-        }
     } catch(err) {
         console.error(err);
     }

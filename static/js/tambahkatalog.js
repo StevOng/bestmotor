@@ -19,7 +19,7 @@ document.addEventListener("click", (event) => {
 });
 
 searchKode.addEventListener("input", async () => {
-    const query = this.value.trim()
+    const query = event.target.value.trim()
 
     if (query.length === 0) {
         dropdownList.classList.add("hidden")
@@ -42,7 +42,7 @@ searchKode.addEventListener("input", async () => {
                 li.addEventListener("click", () => {
                     searchKode.value = item.kode_barang
                     nama_barang.value = item.nama_barang
-                    tipe.value = item.detailbarang.tipe
+                    tipe.value = item.tipe
                     dropdownList.classList.add("hidden")
                 })
 

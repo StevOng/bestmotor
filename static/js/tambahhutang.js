@@ -10,6 +10,20 @@ document.addEventListener('DOMContentLoaded', () => {
     tanggal.value = formatDate
 })
 
+$(document).ready(function () {
+    $("#allpesanan").DataTable({
+        pageLength: 20,
+        lengthChange: false, // Hilangkan "Show entries"
+        ordering: false,
+        scrollX: true,
+        columnDefs: [
+            { className: "text-center", targets: [-1, -2] }, // kolom 8 dan 9 di tengah
+        ],
+    });
+    $(".dt-search").remove();
+    $(".dt-info").remove();
+});
+
 document.querySelectorAll(".potongan").forEach(input => {
     input.addEventListener("input", totalPotongan)
 })

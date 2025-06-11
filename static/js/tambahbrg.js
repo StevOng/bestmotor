@@ -74,48 +74,55 @@ document.getElementById("tambahbrgform").addEventListener("submit", async(event)
 })
 
 async function getTipe() {
-    try{
-        const response = await fetch('/api/barang/tipe_choices/')
-        const choices = await response.json()
+  try {
+    const response = await fetch('/api/barang/tipe_choices/')
+    const choices = await response.json()
 
-        const select = document.getElementById("tipe-mtr")
-        // select.innerHTML = '<option value="" disabled>Masukkan tipe motor</option>';
-        choices.forEach(choice => {
-            let option = document.createElement("option")
-            option.value = choice.value
-            option.textContent = choice.label
-            select.appendChild(option)
-        })
-        let selectedTipe = "{{ detail_barang.tipe|default:'' }}"
-        if (selectedTipe) {
-            select.value = selectedTipe
-        }
-    } catch(err) {
-        console.error(err);
+    const select = document.getElementById("tipe-mtr")
+
+    let selectedTipe = select.dataset.selectedTipe
+
+    choices.forEach(choice => {
+      let option = document.createElement("option")
+      option.value = choice.value
+      option.textContent = choice.label
+      if (choice.value === selectedTipe.toLowerCase()) {
+        option.selected = true
+        const placeholder = select.querySelector('option[value=""]')
+        if (placeholder) placeholder.removeAttribute('selected')
     }
+      select.appendChild(option)
+    })
+  } catch (err) {
+    console.error(err)
+  }
 }
 
 async function getMerk() {
-    try{
-        const response = await fetch('/api/barang/merk_choices/')
-        const choices = await response.json()
+  try {
+    const response = await fetch('/api/barang/merk_choices/')
+    const choices = await response.json()
 
-        const select = document.getElementById("merk")
-        // select.innerHTML = '<option value="" disabled>Masukkan merk barang</option>';
-        choices.forEach(choice => {
-            let option = document.createElement("option")
-            option.value = choice.value
-            option.textContent = choice.label
-            select.appendChild(option)
-        })
-        let selectedMerk = "{{ detail_barang.merk|default:'' }}"
-        if (selectedMerk) {
-            select.value = selectedMerk
-        }
-    } catch(err) {
-        console.error(err);
+    const select = document.getElementById("merk")
+
+    let selectedMerk = select.dataset.selectedMerk
+
+    choices.forEach(choice => {
+      let option = document.createElement("option")
+      option.value = choice.value
+      option.textContent = choice.label
+      if (choice.value === selectedMerk.toLowerCase()) {
+        option.selected = true
+        const placeholder = select.querySelector('option[value=""]')
+        if (placeholder) placeholder.removeAttribute('selected')
     }
+      select.appendChild(option)
+    })
+  } catch (err) {
+    console.error(err)
+  }
 }
+
 
 function addTier(input) {
     const tierContainer = document.getElementById("harga-tiers-container")
