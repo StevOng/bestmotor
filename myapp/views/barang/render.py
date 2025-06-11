@@ -1,5 +1,6 @@
 import openpyxl
 from openpyxl.utils import get_column_letter
+from openpyxl.styles import Font
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils.dateparse import parse_date
@@ -24,7 +25,6 @@ def barang(request):
 
     for brg in barang:
         brg.total_pesanan = sum(d.qty_pesan for d in brg.detailpesanan_set.all())
-        brg.selisih = brg.stok_minimum - brg.qty_siap_jual
 
     return render(request, 'barang/barang.html', {'barang': barang,'filter': filter})
 
@@ -47,10 +47,12 @@ def get_barang_laku(dari, sampe):
 
 def export_excel(request):
     work_book = openpyxl.Workbook()
-    work_sheet = work_book.active
-    work_sheet.title = "List Barang"
 
-    col_heads = [
+    # ===== SHEET 1: List Barang =====
+    sheet_barang = work_book.active
+    sheet_barang.title = "List Barang"
+
+    col_heads_barang = [
         'No',
         'Kode Barang',
         'Nama Barang',
@@ -58,38 +60,68 @@ def export_excel(request):
         'Merk',
         'Harga Jual',
         'Stok Minimum',
-        'Min Qty Grosir',
-        'Harga Satuan',
         'Harga Modal',
         'Stok',
         'Qty Terjual',
         'Keterangan'
     ]
-    work_sheet.append(col_heads)
+    sheet_barang.append(col_heads_barang)
 
-    for idx, detail in enumerate(Barang.objects.all(), start=1):
-        work_sheet.append([
+    header_font = Font(bold=True)
+    for col_num, column_title in enumerate(col_heads_barang, start=1):
+        sheet_barang.cell(row=1, column=col_num).font = header_font
+
+    for idx, barang in enumerate(Barang.objects.all(), start=1):
+        sheet_barang.append([
             idx,
-            detail.kode_barang,
-            detail.nama_barang,
-            detail.tipe,
-            detail.merk,
-            detail.harga_jual,
-            detail.stok_minimum,
-            detail.tierharga_set.min_qty_grosir,
-            detail.tierharga_set.harga_satuan,
-            detail.harga_modal,
-            detail.stok,
-            detail.qty_terjual,
-            detail.keterangan
+            barang.kode_barang,
+            barang.nama_barang,
+            barang.tipe,
+            barang.merk,
+            barang.harga_jual,
+            barang.stok_minimum,
+            barang.harga_modal,
+            barang.stok,
+            barang.qty_terjual,
+            barang.keterangan
         ])
 
-    for col in work_sheet.columns: # atur lebar kolom di excel
-        max_length = max(len(str(cell.value)) for cell in col)
-        work_sheet.column_dimensions[get_column_letter(col[0].column)].width = max_length + 2
+    for col in sheet_barang.columns:
+        max_length = max(len(str(cell.value)) if cell.value else 0 for cell in col)
+        sheet_barang.column_dimensions[get_column_letter(col[0].column)].width = max_length + 2
 
+    # ===== SHEET 2: Tier Harga =====
+    sheet_tier = work_book.create_sheet(title="Tier Harga")
+
+    col_heads_tier = [
+        'No',
+        'Kode Barang',
+        'Nama Barang',
+        'Min Qty Grosir',
+        'Harga Satuan'
+    ]
+    sheet_tier.append(col_heads_tier)
+    for col_num, column_title in enumerate(col_heads_tier, start=1):
+        sheet_tier.cell(row=1, column=col_num).font = header_font
+
+    for idx, tier in enumerate(TierHarga.objects.select_related('barang_id'), start=1):
+        sheet_tier.append([
+            idx,
+            tier.barang.kode_barang,
+            tier.barang.nama_barang,
+            tier.min_qty_grosir,
+            tier.harga_satuan
+        ])
+
+    for col in sheet_tier.columns:
+        max_length = max(len(str(cell.value)) if cell.value else 0 for cell in col)
+        sheet_tier.column_dimensions[get_column_letter(col[0].column)].width = max_length + 2
+
+    # ===== Simpan & Response =====
     response = HttpResponse(
-        content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
-    response['Content-Disposition'] = 'attachment; filename=barang.xlsx'
+    response['Content-Disposition'] = 'attachment; filename=barang_dan_tier.xlsx'
+    work_book.save(response)
+
     return response
