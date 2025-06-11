@@ -324,17 +324,19 @@ async function getOptionBrg() {
     selects.forEach(select => {
         const selectedId = select.dataset.selectedId
         const namaBrgId = select.dataset.namaBarangId
+        const hargaBrg = document.querySelector(".input_hrgbrg")
         loadBarangOptions(select.id, selectedId)
 
         select.addEventListener("change", async () => {
             const barangId = select.value
 
-            const response = await fetch(`/api/barang/${barangId}`)
+            const response = await fetch(`/api/barang/${barangId}/`)
             const data = await response.json()
 
             const namaBrgEl = document.getElementById(namaBrgId)
             if (namaBrgEl && data.nama_barang) {
                 namaBrgEl.textContent = data.nama_barang
+                hargaBrg.value = data.harga_jual
             }
         })
     })
