@@ -91,7 +91,7 @@ async function getOptionBrg() {
         select.addEventListener("change", async () => {
             const barangId = select.value
 
-            const response = await fetch(`/api/barang/${barangId}`)
+            const response = await fetch(`/api/barang/${barangId}/`)
             const data = await response.json()
 
             const namaBrgEl = document.getElementById(namaBrgId)
