@@ -100,8 +100,10 @@
                 {% endif %}
                 <th>Stok</th>
                 <th>Qty Pesanan</th>
+                <th>Qty Siap Jual</th>
                 {% if filter == 'rendah' %}
                     <th>Stok Minimum</th>
+                    <th>Selisih</th>
                 {% elif not filter %}
                     <th>Edit</th>
                     <th>Hapus</th>
@@ -125,8 +127,10 @@
                     {% endif %}
                     <td>{{ brg.stok }}</td>
                     <td>{{ brg.total_pesanan|default:"0" }}</td>
+                    <td>{{ brg.qty_siap_jual }}</td>
                     {% if filter == 'rendah' %}
                         <td>{{ brg.stok_minimum }}</td>
+                        <td>{{ brg.selisih }}</td>
                     {% elif not filter %}
                         <td><a href="{% url 'tambah_barang' id=brg.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
                         <td><button onclick="confirmPopupBtn({{ brg.id }})"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>

@@ -59,7 +59,7 @@ document.getElementById("discount").addEventListener("input", updateDetailBiaya)
 document.getElementById("top").addEventListener("input", tanggalTop)
 
 function tanggalTop() {
-    const topInput = document.getElementById("top_inv")
+    const topInput = document.getElementById("top")
     const jtoInput = document.getElementById("jatuh_tempo")
 
     const top = parseInt(topInput.value)

@@ -25,6 +25,8 @@ def barang(request):
 
     for brg in barang:
         brg.total_pesanan = sum(d.qty_pesan for d in brg.detailpesanan_set.all())
+        brg.qty_siap_jual = brg.stok - brg.total_pesanan
+        brg.selisih = brg.stok_minimum - brg.qty_siap_jual
 
     return render(request, 'barang/barang.html', {'barang': barang,'filter': filter})
 
