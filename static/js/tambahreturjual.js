@@ -104,29 +104,35 @@ function closeModalConfirm() {
     modal.style.display = "none"; // Pastikan modal benar-benar hilang
 }
 
-async function loadBarangOptions(selectId, selectedId = null) {
-    let response = await fetch("/api/barang/")
-    let data = await response.json()
-    let select = document.getElementById(selectId)
-    select.innerHTML = "<option disabled selected>Pilih Barang</option>"
+async function loadBarangOptions(selectId, selectedId = null, fakturId = null) {
+    let url = "/api/returjual/";
+    if (fakturId) {
+        url += `?fakturId=${fakturId}`;
+    }
+
+    let response = await fetch(url);
+    let data = await response.json();
+    let select = document.getElementById(selectId);
+    select.innerHTML = "<option disabled selected>Pilih Barang</option>";
 
     data.forEach(barang => {
-        let option = document.createElement("option")
-        option.value = barang.id
-        option.text = barang.kode_barang
+        let option = document.createElement("option");
+        option.value = barang.id;
+        option.text = barang.kode_barang;
         if (barang.id == selectedId) {
-            option.selected = true
+            option.selected = true;
         }
-        select.appendChild(option)
-    })
+        select.appendChild(option);
+    });
 }
 
 async function getOptionBrg() {
     const selects = document.querySelectorAll("[id^='kodebrg-dropdown-']")
+    const fakturId = document.getElementById("fakturId")?.value
     selects.forEach(select => {
         const selectedId = select.dataset.selectedId
         const namaBrgId = select.dataset.namaBarangId
-        loadBarangOptions(select.id, selectedId)
+        loadBarangOptions(select.id, selectedId, fakturId)
 
         select.addEventListener("change", async () => {
             const barangId = select.value
