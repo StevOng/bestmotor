@@ -1,6 +1,7 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
+<meta name="csrf-token" content="{{ csrf_token }}">
 {% block title %}Tambah Barang Katalog{% endblock %} 
 
 {% block page_title %}Katalog{% endblock %} 
@@ -13,7 +14,6 @@
       </div>
     <hr class="border-gray-300 pb-3">
     <form class="grid grid-cols-1 md:grid-cols-2 gap-6" id="formKatalog">
-      {% csrf_token %}
         <input type="hidden" id="katalogId" value="{{ katalog.id|default:"" }}">
         <!-- Kode Barang -->
         <div class="relative">

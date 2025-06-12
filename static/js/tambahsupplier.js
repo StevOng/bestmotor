@@ -1,3 +1,7 @@
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
 document.getElementById("supplierForm").addEventListener("submit", async(event) => {
     event.preventDefault()
 
@@ -13,6 +17,7 @@ document.getElementById("supplierForm").addEventListener("submit", async(event) 
 
     const method = id ? "PATCH" : "POST"
     const apiSupplier = id ? `/api/supplier/${id}/` : `/api/supplier/`
+    const csrfToken = getCSRFToken()
 
     const supplier = new FormData()
     supplier.append("perusahaan", perusahaan)
@@ -26,6 +31,9 @@ document.getElementById("supplierForm").addEventListener("submit", async(event) 
 
     const response = await fetch(apiSupplier, {
         method: method,
+        headers: {
+            'X-CSRFToken': csrfToken
+        },
         body: supplier
     })
     const result = await response.json()

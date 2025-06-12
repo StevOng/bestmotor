@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     tanggal.value = formatDate
 })
 
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
 $(document).ready(function () {
     $('#detailBrg').DataTable({
         pageLength: 20,
@@ -255,14 +259,21 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
 
         const method = id ? "PATCH" : "POST";
         const apiUrl = id ? `/api/returbeli/${id}/` : `/api/returbeli/`
+        const csrfToken = getCSRFToken()
         try {
             const response = await fetch(apiUrl, {
                 method: method,
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
                 body: retur
             })
             if (response.ok) {
                 const patchInv = await fetch(`/api/invoice/${invId}/`, {
                     method: "PATCH",
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    },
                     body: JSON.stringify({
                         bruto: (qtyRetur * hrgBrg),
                         nilai_ppn: nilaiPpn,
@@ -271,6 +282,9 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
                 })
                 const patchDetail = await fetch(`/api/detailinvoice/${invId}/`, {
                     method: "PATCH",
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    },
                     body: JSON.stringify({
                         qty_retur: qtyRetur
                     })

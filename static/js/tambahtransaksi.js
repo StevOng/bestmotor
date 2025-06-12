@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     tanggal.value = formatDate
 })
 
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
 $(document).ready(function () {
     $('#detailBrg').DataTable({
         pageLength: 20,
@@ -180,10 +184,14 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
         const apiUrl = id
             ? `/api/transaksi${jenis}/${id}/`
             : `/api/transaksi${jenis}/`;
+        const csrfToken = getCSRFToken()
 
         try {
             const response = await fetch(apiUrl, {
                 method: method,
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
                 body: transaksi,
             });
             const result = await response.json();

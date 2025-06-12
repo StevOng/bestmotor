@@ -1,6 +1,7 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
+<meta name="csrf-token" content="{{ csrf_token }}">
 {% block title %}{% if jenis == 'masuk'%}Transaksi Masuk{% else %}Transaksi Keluar{% endif %}{% endblock %}
 
 {% block page_title %}Barang{% endblock %} 
@@ -41,7 +42,6 @@
 
 {% block content %}
 <form id="tambahtransaksiform">
-  {% csrf_token %}
   <div class="flex flex-col p-3 mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800">
     <div class="flex flex-row justify-between mb-3">
       <h2 class="text-lg font-semibold">{% if jenis == 'masuk' %}Detail Transaksi Masuk{% else %}Detail Transaksi Keluar{% endif %}</h2>

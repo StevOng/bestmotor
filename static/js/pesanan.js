@@ -45,19 +45,27 @@ $(document).ready(function () {
     });
 });
 
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
 function confirmPopupBtn(id) {
     const modal = document.getElementById("popupModalConfirm");
     modal.classList.remove("hidden"); // Tampilkan modal
     modal.style.display = "flex"; // Pastikan tampil dengan flexbox
 
     const confirmButton = document.getElementById("confirmAction");
+    const csrfToken = getCSRFToken()
 
     confirmButton.onclick = async function () {
         try {
             const response = await fetch(`/api/pesanan/${id}/`, {
                 method: "PATCH",
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
                 body: JSON.stringify({
-                    status: "Batal"
+                    status: "cancelled"
                 })
             })
             if (response.ok) {

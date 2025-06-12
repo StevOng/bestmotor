@@ -1,3 +1,7 @@
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
 document.getElementById("custForm").addEventListener("submit", async(event) =>{
     event.preventDefault()
 
@@ -12,6 +16,7 @@ document.getElementById("custForm").addEventListener("submit", async(event) =>{
 
     const method = id ? "PATCH" : "POST" // jika ada id edit, tidak? tambah
     const apiCustomer = id ? `/api/customer/${id}/` : `/api/customer/`
+    const csrfToken = getCSRFToken()
 
     const customer  = new FormData()
     customer.append("user_id", salesId)
@@ -24,6 +29,9 @@ document.getElementById("custForm").addEventListener("submit", async(event) =>{
 
     const response = await fetch(apiCustomer, {
         method: method,
+        headers: {
+            'X-CSRFToken': csrfToken
+        },
         body: customer
     })
     const result = await response.json()

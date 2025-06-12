@@ -19,6 +19,10 @@ document.addEventListener("click", (event) => {
     }
 });
 
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
 searchKode.addEventListener("input", async (event) => {
     const query = event.target.value.trim()
 
@@ -74,6 +78,7 @@ document.getElementById("formKatalog").addEventListener("submit", async(event) =
     
     const method = id ? "PATCH":"POST"
     const apiKatalog = id ? `/api/katalog/${id}/`:`/api/katalog/`
+    const csrfToken = getCSRFToken()
 
     const katalog = new FormData()
     katalog.append("harga_tertera", hargaTertera)
@@ -83,6 +88,9 @@ document.getElementById("formKatalog").addEventListener("submit", async(event) =
     try {
         const response = await fetch(apiKatalog, {
             method: method,
+            headers: {
+                'X-CSRFToken': csrfToken
+            },
             body: katalog
         })
         if (response.ok) {

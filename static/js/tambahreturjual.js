@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     tanggal.value = formatDate
 })
 
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
 $(document).ready(function () {
     let table = $('#modalReturJual').DataTable({
         pageLength: 20,
@@ -243,14 +247,21 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
 
         const method = id ? "PATCH" : "POST";
         const apiUrl = id ? `/api/returjual/${id}/` : `/api/returjual/`
+        const csrfToken = getCSRFToken()
         try {
             const response = await fetch(apiUrl, {
                 method: method,
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
                 body: retur
             })
             if (response.ok) {
                 const patchInv = await fetch(`/api/pesanan/${pesananId}/`, {
                     method: "PATCH",
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    },
                     body: JSON.stringify({
                         bruto: (qtyRetur * hrgBrg),
                         nilai_ppn: nilaiPpn,
@@ -259,6 +270,9 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
                 })
                 const patchDetail = await fetch(`/api/detailpesanan/${pesananId}/`, {
                     method: "PATCH",
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    },
                     body: JSON.stringify({
                         qty_retur: qtyRetur
                     })

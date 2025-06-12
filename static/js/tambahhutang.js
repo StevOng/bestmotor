@@ -10,6 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
     tanggal.value = formatDate
 })
 
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
 $(document).ready(function () {
     $("#allpesanan").DataTable({
         pageLength: 20,
@@ -131,6 +135,7 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
             alert("Supplier dan Invoice harus dipilih")
             return
         }
+        const csrfToken = getCSRFToken()
         const hutang = new FormData()
         hutang.append("supplier_id", supplierId)
         hutang.append("nilai_bayar", nilaiByr)
@@ -138,6 +143,9 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
         if (potongan > 0) {
             const response = await fetch(`/api/invoice/${invoiceId}/`, {
                 method: "PATCH",
+                headers:{
+                    'X-CSRFToken': csrfToken
+                },
                 body: JSON.stringify({
                     potongan: potongan
                 })
@@ -152,6 +160,9 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
 
         const response = await fetch(apiInvoice, {
             method: method,
+            headers: {
+                'X-CSRFToken': csrfToken
+            },
             body: hutang
         })
         const result = await response.json()

@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 console.log("BarangData global:", window.barangData)
 
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
 $(document).ready(function () {
     $('#detailBrg').DataTable({
         pageLength: 20,
@@ -276,9 +280,13 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
         const method = id ? "PATCH" : "POST" // jika ada id edit, tidak? tambah
         const apiPesanan = id ? `/api/pesanan/${id}/` : `/api/pesanan/`
         const apiDetail = id ? `/api/detailpesanan/${id}/` : `/api/detailpesanan/`
+        const csrfToken = getCSRFToken()
 
         const response = await fetch(apiPesanan, {
             method: method,
+            headers: {
+                'X-CSRFToken': csrfToken
+            },
             body: pesanan
         })
         const pesananData = await response.json()
@@ -297,6 +305,9 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
 
             let detailResponse = await fetch(apiDetail, {
                 method: method,
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
                 body: detailPesanan
             })
             let detailData = await detailResponse.json()

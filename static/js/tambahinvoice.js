@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
     console.log(formatDate);
 })
 
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
 $(document).ready(function () {
     $('#detailBrg').DataTable({
         pageLength: 20,
@@ -235,8 +239,6 @@ function pilihSupplier(id, nama, perusahaan) {
     closeModal()
 }
 
-
-
 document.querySelectorAll(".btn-submit").forEach((btn) => {
     btn.addEventListener("click", async (event) => {
         event.preventDefault()
@@ -268,9 +270,13 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
         const method = id ? "PATCH" : "POST" // jika ada id edit, tidak? tambah
         const apiInvoice = id ? `/api/invoice/${id}/` : `/api/invoice/`
         const apiDetail = id ? `/api/detailinvoice/${id}/` : `/api/detailinvoice/`
+        const csrfToken = getCSRFToken()
 
         const response = await fetch(apiInvoice, {
             method: method,
+            headers: {
+                'X-CSRFToken': csrfToken
+            },
             body: invoice
         })
         const invoiceData = await response.json()
@@ -287,6 +293,9 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
 
             let detailResponse = await fetch(apiDetail, {
                 method: method,
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
                 body: detailInvoice
             })
             let detailData = await detailResponse.json()

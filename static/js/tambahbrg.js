@@ -3,6 +3,10 @@ document.addEventListener("DOMContentLoaded", () => {
     getMerk()
 })
 
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
 const uploadInput = document.getElementById('upload_gambar');
 const placeholder = document.getElementById('placeholder');
 
@@ -26,6 +30,7 @@ document.getElementById("tambahbrgform").addEventListener("submit", async(event)
 
     const method = id ? "PATCH" : "POST" // jika ada id edit, tidak? tambah
     const apiBarang = id ? `/api/barang/${id}/` : `/api/barang/`
+    const csrfToken = getCSRFToken()
 
     const barang  = new FormData()
     barang.append("nama_barang", nama)
@@ -41,6 +46,9 @@ document.getElementById("tambahbrgform").addEventListener("submit", async(event)
 
     const response = await fetch(apiBarang, {
         method: method,
+        headers: {
+          'X-CSRFToken': csrfToken
+        },
         body: barang
     })
     const barangData = await response.json()

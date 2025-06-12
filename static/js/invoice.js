@@ -20,17 +20,25 @@ $(document).ready(function () {
     });
 });
 
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
 function confirmPopupBtn(id) {
     const modal = document.getElementById("popupModalConfirm");
     modal.classList.remove("hidden"); // Tampilkan modal
     modal.style.display = "flex"; // Pastikan tampil dengan flexbox
 
     const confirmButton = document.getElementById("confirmAction");
+    const csrfToken = getCSRFToken()
 
     confirmButton.onclick = async function () {
         try {
             const response = await fetch(`/api/invoice/${id}/`, {
                 method: "DELETE",
+                headers: {
+                    'X-CSRFToken': csrfToken
+                }
             })
             if (response.ok) {
                 console.log("Invoice pembelian berhasil dihapus");

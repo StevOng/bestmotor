@@ -20,15 +20,37 @@ $(document).ready(function () {
     });
 });
 
-function confirmPopupBtn() {
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
+function confirmPopupBtn(id) {
     const modal = document.getElementById("popupModalConfirm");
     modal.classList.remove("hidden"); // Tampilkan modal
     modal.style.display = "flex"; // Pastikan tampil dengan flexbox
 
     const confirmButton = document.getElementById("confirmAction");
+    const csrfToken = getCSRFToken()
 
-    confirmButton.onclick = function () {
-        console.log("Pesanan dihapus!");
+    confirmButton.onclick = async function () {
+        try {
+            const response = await fetch(`/api/hutang/${id}/`, {
+                method: "DELETE",
+                headers: {
+                    'X-CSRFToken': csrfToken
+                }
+            })
+            if (response.ok) {
+                console.log("Hutang pembelian berhasil dihapus");
+                const row = document.querySelector(`tr[data-id="${id}"]`)
+                row.classList.add("fade-out")
+                setTimeout(() => row.remove(), 400)
+            } else {
+                console.error("Gagal menghapus hutang pembelian");
+            }
+        } catch (error) {
+            console.error("Terjadi kesalahan: ", error);
+        }
         closeModalConfirm();
     };
 }
