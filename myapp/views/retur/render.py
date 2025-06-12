@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.core.serializers.json import DjangoJSONEncoder
 from ...decorators import *
 from ...models.retur import *
@@ -22,19 +22,35 @@ def tambah_returjual(request, id=None):
             "pesanan_id__detailpesanan_set__barang_id"
         ).get(id=id)
 
-        barang_data_dict = {
-            detail.barang_id: {
-                "harga_jual": float(detail.barang.harga_jual),
-                "tier_harga": [
-                    {
-                        "harga_satuan": float(tier.harga_satuan),
-                        "min_qty_grosir": tier.min_qty_grosir,
-                    }
-                    for tier in detail.barang.tierharga_set.all().order_by('min_qty_grosir')
-                ]
-            }
-            for detail in returan.barang.all()
+        pesanan = returan.faktur_id.pesanan_id
+        barang_qs = Barang.objects.filter(
+            detailpesanan__pesanan_id=pesanan
+        ).distinct()
+    else:
+        faktur_id = request.POST.get("fakturId")
+        if faktur_id:
+            fakturObj = get_object_or_404(Faktur, id=faktur_id)
+            pesanan = fakturObj.pesanan_id
+            barang_qs = Barang.objects.filter(
+                detailpesanan__pesanan_id=pesanan
+            ).distinct()
+        else:
+            barang_qs = Barang.objects.none()
+
+    barang_data_dict = {
+        barang.id: {
+            "harga_jual": float(barang.harga_jual),
+            "tier_harga": [
+                {
+                    "harga_satuan": float(tier.harga_satuan),
+                    "min_qty_grosir": tier.min_qty_grosir,
+                }
+                for tier in barang.tierharga_set.all().order_by('min_qty_grosir')
+            ]
+
         }
+        for barang in barang_qs
+    }
 
     barang_data_json = json.dumps(barang_data_dict, cls=DjangoJSONEncoder)
     return render(request, 'retur/tambahreturjual.html', {'returan': returan, 'faktur': faktur, 'barang_data_json': barang_data_json})
@@ -54,20 +70,36 @@ def tambah_returbeli(request, id=None):
         returan = ReturBeli.objects.select_related("invoice_id__supplier_id").prefetch_related(
             "invoice_id__detailinvoice_set__barang_id"
         ).get(id=id)
+        
+        pembelian = returan.invoice_id
+        barang_qs = Barang.objects.filter(
+            detailinvoice__invoice_id=pembelian
+        ).distinct()
+    else:
+        invoice_id = request.POST.get("invId")
+        if invoice_id:
+            fakturObj = get_object_or_404(Faktur, id=invoice_id)
+            pembelian = fakturObj.pesanan_id
+            barang_qs = Barang.objects.filter(
+                detailinvoice__invoice_id=pembelian
+            ).distinct()
+        else:
+            barang_qs = Barang.objects.none()
 
-        barang_data_dict = {
-            detail.barang_id: {
-                "harga_jual": float(detail.barang.harga_jual),
-                "tier_harga": [
-                    {
-                        "harga_satuan": float(tier.harga_satuan),
-                        "min_qty_grosir": tier.min_qty_grosir,
-                    }
-                    for tier in detail.barang.tierharga_set.all().order_by('min_qty_grosir')
-                ]
-            }
-            for detail in returan.barang.all()
+    barang_data_dict = {
+        barang.id: {
+            "harga_jual": float(barang.harga_jual),
+            "tier_harga": [
+                {
+                    "harga_satuan": float(tier.harga_satuan),
+                    "min_qty_grosir": tier.min_qty_grosir,
+                }
+                for tier in barang.tierharga_set.all().order_by('min_qty_grosir')
+            ]
+
         }
+        for barang in barang_qs
+    }
 
     barang_data_json = json.dumps(barang_data_dict, cls=DjangoJSONEncoder)
     return render(request, 'retur/tambahreturbeli.html', {'returan': returan, 'invoice': invoice, 'barang_data_json': barang_data_json})

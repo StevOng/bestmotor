@@ -239,9 +239,9 @@
                   <td id="namaBrg-{{ forloop.counter }}">
                     {{ detail.barang_id.nama_barang|default:"" }}
                   </td>
-                  <td><input type="number" value="{{ detail.harga_beli|default:"" }}" id="input_hrgbrg" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
-                  <td><input type="number" value="{{ detail.qty_beli|default:"" }}" id="input_qtybrg" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
-                  <td><input type="number" value="{{ detail.diskon_barang|default:"" }}" id="disc" class="disc w-20 rounded-md border-gray-300" /></td>
+                  <td><input type="number" value="{{ detail.harga_beli|default:0 }}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
+                  <td><input type="number" value="{{ detail.qty_beli|default:0 }}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
+                  <td><input type="number" value="{{ detail.diskon_barang|default:0 }}" class="disc w-20 rounded-md border-gray-300" /></td>
                   <td class="totalDisc">{{ detail.total_diskon_barang|default:"" }}</td>
                   <td class="totalHarga">{{ detail.total_harga_barang|default:"" }}</td>
                   <td><button type="button" class="btn-submit" data-id="{{ detail.id }}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>

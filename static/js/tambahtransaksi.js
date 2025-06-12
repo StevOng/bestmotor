@@ -90,6 +90,11 @@ async function getOptionBrg() {
 
         select.addEventListener("change", async () => {
             const barangId = select.value
+            const row = select.closest('tr')
+            const hiddenInput = row.querySelector(".barangId")
+            if (hiddenInput) {
+                hiddenInput.value = barangId
+            }
 
             const response = await fetch(`/api/barang/${barangId}/`)
             const data = await response.json()
@@ -97,13 +102,18 @@ async function getOptionBrg() {
             const namaBrgEl = document.getElementById(namaBrgId)
             if (namaBrgEl && data.nama_barang) {
                 namaBrgEl.textContent = data.nama_barang
-
-                let table = $('#detailBrg').DataTable();
-                table.columns.adjust().draw();
             }
+            const hargaInput = row.querySelector(".input_hrgbrg")
+            if (hargaInput) {
+                hargaInput.value = data.harga_jual
+            }
+
+            const table = $('#detailBrg').DataTable();
+            table.columns.adjust().draw();
         })
     })
 }
+
 
 function addNewRow() {
     const tbody = document.querySelector("tbody");

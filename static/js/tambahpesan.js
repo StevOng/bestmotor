@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     tanggal.value = formatDate
 })
+console.log("BarangData global:", window.barangData)
 
 $(document).ready(function () {
     $('#detailBrg').DataTable({
@@ -28,11 +29,12 @@ $(document).ready(function () {
 
 document.addEventListener("change", function (e) {
     if (e.target.classList.contains("kodebrg-dropdown")) {
-        const lastRow = document.querySelector("tbody tr:last-child");
+        const allRows = document.querySelector("tbody tr");
         const selectedValue = e.target.value;
+        const lastSelect = allRows[allRows.length - 1]?.querySelector(".kodebrg-dropdown")
 
-        // Cek apakah dropdown dipilih dan belum pernah nambah baris baru
-        if (selectedValue && !lastRow.classList.contains("new-row-added")) {
+        // Cek apakah dropdown dipilih
+        if (selectedValue && lastSelect && lastSelect.value) {
             addNewRow();
         }
     }
@@ -175,6 +177,7 @@ function updateDetailBiaya() {
         const totalHargaEl = row.querySelector(".totalHarga");
         const barangId = row.querySelector(".barangId")?.value;
         const barangData = window.barangData
+        console.log("BarangId:", barangId, "BarangData:", barangData[barangId]);
 
         if (!barangId || !inputQty || !inputHarga) return;
 
@@ -324,11 +327,15 @@ async function getOptionBrg() {
     selects.forEach(select => {
         const selectedId = select.dataset.selectedId
         const namaBrgId = select.dataset.namaBarangId
-        const hargaBrg = document.querySelector(".input_hrgbrg")
         loadBarangOptions(select.id, selectedId)
 
         select.addEventListener("change", async () => {
             const barangId = select.value
+            const row = select.closest('tr')
+            const hiddenInput = row.querySelector(".barangId")
+            if (hiddenInput) {
+                hiddenInput.value = barangId
+            }
 
             const response = await fetch(`/api/barang/${barangId}/`)
             const data = await response.json()
@@ -336,22 +343,26 @@ async function getOptionBrg() {
             const namaBrgEl = document.getElementById(namaBrgId)
             if (namaBrgEl && data.nama_barang) {
                 namaBrgEl.textContent = data.nama_barang
-                hargaBrg.value = data.harga_jual
-
-                let table = $('#detailBrg').DataTable();
-                table.columns.adjust().draw();
             }
+            const hargaInput = row.querySelector(".input_hrgbrg")
+            if (hargaInput) {
+                hargaInput.value = data.harga_jual
+            }
+            updateDetailBiaya()
+
+            const table = $('#detailBrg').DataTable();
+            table.columns.adjust().draw();
         })
     })
 }
 
-function addNewRow() {
+function addNewRow(detail = null) {
     const tbody = document.querySelector("tbody");
     const newRow = document.createElement("tr");
 
     const rowCount = tbody.querySelectorAll("tr").length + 1;
 
-    newRow.classList.add("new-row-added"); // untuk mencegah nambah berkali-kali
+    newRow.classList.add("new-row-added");
     newRow.innerHTML = `
       <td>${rowCount}</td>
       <td>
@@ -361,25 +372,31 @@ function addNewRow() {
         </select>
       </td>
       <td class="kode-terpilih"></td>
-      <td id="namaBrg-${rowCount}">${detail?.barang_id.nama_barang || ""}</td>
-      <td><input type="number" id="input_hrgbrg-${rowCount}" value="${detail?.barang_id.harga_jual || ""}" class="input_hrgbrg w-full rounded-md border-gray-300"/></td>
-      <td><input type="number" id="input_qtybrg-${rowCount}" value="${detail?.qty_pesan || ""}" class="input_qtybrg w-20 rounded-md border-gray-300"/>${detail?.qty_pesan || ""}</td>
-      <td><input type="number" id="disc-${rowCount}" value="${detail?.diskon_barang || ""}" class="disc w-20 rounded-md border-gray-300"/></td>
-      <td id="totalDisc-${rowCount}" class="totalDisc">${detail?.total_diskon_barang || ""}</td>
-      <td id="totalHarga-${rowCount}" class="totalHarga">${detail?.total_harga_barang || ""}</td>
+      <td id="namaBrg-${rowCount}">${detail?.barang_id?.nama_barang || ""}</td>
+      <td><input type="number" value="${detail?.barang_id?.harga_jual || 0}" class="input_hrgbrg w-full rounded-md border-gray-300"/></td>
+      <td><input type="number" value="${detail?.qty_pesan || 0}" class="input_qtybrg w-20 rounded-md border-gray-300"/></td>
+      <td><input type="number" value="${detail?.diskon_barang || 0}" class="disc w-20 rounded-md border-gray-300"/></td>
+      <td class="totalDisc">${detail?.total_diskon_barang || ""}</td>
+      <td class="totalHarga">${detail?.total_harga_barang || ""}</td>
       <td><button type="submit" class="btn-submit" data-id=""><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
       <td><button onclick="hapusRow(this)"><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
 
     tbody.appendChild(newRow);
 
-    const btnSubmit = newRow.querySelector(".btn-submit")
+    const btnSubmit = newRow.querySelector(".btn-submit");
     if (detail?.id) {
-        btnSubmit.setAttribute("data-id", detail.id)
+        btnSubmit.setAttribute("data-id", detail.id);
     }
 
     loadBarangOptions(`kodebrg-dropdown-${rowCount}`, detail?.barang_id || null);
+
+    // 👉 Tambahkan listener baru agar updateDetailBiaya bekerja untuk baris ini
+    newRow.querySelector(".input_hrgbrg")?.addEventListener("input", updateDetailBiaya);
+    newRow.querySelector(".input_qtybrg")?.addEventListener("input", updateDetailBiaya);
+    newRow.querySelector(".disc")?.addEventListener("input", updateDetailBiaya);
 }
+
 
 function hapusRow(btn) {
     const row = btn.closest("tr")

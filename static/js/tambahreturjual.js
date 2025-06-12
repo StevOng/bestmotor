@@ -121,12 +121,16 @@ async function getOptionBrg() {
     const selects = document.querySelectorAll("[id^='kodebrg-dropdown-']")
     selects.forEach(select => {
         const selectedId = select.dataset.selectedId
-        const namaBrgId = select.dataset.namaBrg
-        const hargaBrg = document.querySelector(".input_hrgbrg")
+        const namaBrgId = select.dataset.namaBarangId
         loadBarangOptions(select.id, selectedId)
 
         select.addEventListener("change", async () => {
             const barangId = select.value
+            const row = select.closest('tr')
+            const hiddenInput = row.querySelector(".barangId")
+            if (hiddenInput) {
+                hiddenInput.value = barangId
+            }
 
             const response = await fetch(`/api/barang/${barangId}/`)
             const data = await response.json()
@@ -134,12 +138,15 @@ async function getOptionBrg() {
             const namaBrgEl = document.getElementById(namaBrgId)
             if (namaBrgEl && data.nama_barang) {
                 namaBrgEl.textContent = data.nama_barang
-                hargaBrg.value = data.harga_modal
-
-                let table = $('#detailBrg').DataTable();
-                table.columns.adjust().draw();
-
             }
+            const hargaInput = row.querySelector(".input_hrgbrg")
+            if (hargaInput) {
+                hargaInput.value = data.harga_jual
+            }
+            updateDetailBiaya()
+
+            const table = $('#detailBrg').DataTable();
+            table.columns.adjust().draw();
         })
     })
 }
@@ -288,6 +295,7 @@ function updateDetailBiaya() {
         const totalHargaEl = row.querySelector(".total");
         const barangId = row.querySelector(".barangId")?.value;
         const barangData = window.barangData
+        console.log("BarangId:", barangId, "BarangData:", barangData[barangId]);
 
         if (!barangId || !inputQty || !inputHarga) return;
 

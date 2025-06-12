@@ -197,7 +197,7 @@ function addNewRow() {
             <option value="Pilih Barang"></option>
           </select>
         </td>
-        <td id="namaBrg-${rowCount}">${detail?.barang_id.nama_barang || ""}</td>
+        <td id="namaBrg-${rowCount}">${detail?.barang_id?.nama_barang || ""}</td>
         <td><input type="number" value="${detail?.harga_beli || ""}" id="input_hrgbrg-${rowCount}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
         <td><input type="number" value="${detail?.qty_beli || ""}" id="input_qtybrg-${rowCount}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
         <td><input type="number" value="${detail?.diskon_barang || ""}" id="disc-${rowCount}" class="disc w-20 rounded-md border-gray-300" /></td>

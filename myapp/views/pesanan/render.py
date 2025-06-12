@@ -34,18 +34,18 @@ def tambah_pesanan(request, id=None):
         detail_pesanan = pesanan.detailpesanan_set.all()
 
     barang_data_dict = {
-        detail.barang_id: {
-            "harga_jual": float(detail.barang_id.harga_jual),
+        barang.id: {
+            "harga_jual": float(barang.harga_jual),
             "tier_harga": [
                 {
                     "harga_satuan": float(tier.harga_satuan),
                     "min_qty_grosir": tier.min_qty_grosir,
                 }
-                for tier in detail.barang_id.tierharga_set.all().order_by('min_qty_grosir')
+                for tier in barang.tierharga_set.all().order_by('min_qty_grosir')
             ]
 
         }
-        for detail in detail_pesanan if detail.barang_id
+        for barang in Barang.objects.all()
     }
 
     barang_data_json = json.dumps(barang_data_dict, cls=DjangoJSONEncoder)

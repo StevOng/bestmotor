@@ -102,7 +102,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- No Bukti -->
       <div>
-        <input type="hidden" name="hiddeId" id="hiddenId" value="{{ returan.id|default:"" }}">
+        <input type="hidden" name="hiddenId" id="hiddenId" value="{{ returan.id|default:"" }}">
         <label for="no_bukti" class="block text-sm font-medium text-gray-700">No Bukti</label>
         <input type="text" id="no_bukti" value="{{ returan.no_bukti|default:"" }}" disabled
           class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
@@ -207,20 +207,20 @@
           <tbody>
             {% for inv in returan.invoice_id.detailinvoice_set.all %}
             {% empty %}
-              <tr data-id="{{ inv.id }}">
+              <tr data-id="{{ inv.id|default:"" }}">
                 <td>{{ forloop.counter|default:"1" }}</td>
                 <td>
                   <input type="hidden" name="barangId" class="barangId" value="{{ inv.barang_id|default:"" }}">
-                  <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-namaBrg="namaBrg-{{ forloop.counter }}" data-selected-id="{{ inv.barang_id|default:"" }}">
+                  <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ inv.barang_id|default:"" }}">
                     <option value="{{ inv.barang_id|default:"" }}" selected>{{ inv.barang_id.kode_barang|default:"" }} - {{ inv.barang_id.nama_barang|default:"" }}</option>
                   </select>
                 </td>
                 <td id="namaBrg-{{ forloop.counter }}">
                   {{ inv.barang_id.nama_barang|default:"" }}
                 </td>
-                <td><input type="number" value="{{ inv.harga_beli|default:"" }}" id="input_hrgbrg-{{ forloop.counter }}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
-                <td><input type="number" value="{{ inv.qty_retur|default:"" }}" id="input_qtybrg-{{ forloop.counter }}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
-                <td><input type="number" value="{{ inv.diskon_barang|default:"" }}" id="disc-{{ forloop.counter }}" class="disc w-20 rounded-md border-gray-300" /></td>
+                <td><input type="number" value="{{ inv.harga_beli|default:0 }}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
+                <td><input type="number" value="{{ inv.qty_retur|default:0 }}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
+                <td><input type="number" value="{{ inv.diskon_barang|default:0 }}" class="disc w-20 rounded-md border-gray-300" /></td>
                 <td class="totalDisc">{{ inv.total_diskon_barang|default:"" }}</td>
                 <td class="total">{{ inv.total_harga_barang|default:"" }}</td>
                 <td><button type="submit" data-id="{{ inv.id }}" class="btn-submit"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
