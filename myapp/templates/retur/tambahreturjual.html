@@ -11,22 +11,29 @@
     opacity: 0;
     transition: opacity 0.4s ease-out;
   }
+
   #detailBrg {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
+    table-layout: auto !important;
   }
 
-  #detailBrg th,
+  #detailBrg th{
+    white-space: nowrap;
+    width: auto;
+  }
+
   #detailBrg td {
     text-align: center;
     vertical-align: middle;
     padding: 8px;
     border: 1px solid #ddd;
-    white-space: nowrap;
+    overflow: visible;
+    text-overflow: initial;
   }
 
-  #detailBrg input,
+  #input_hrgbrg-{
+    width: auto !important;
+  }
+  
   #detailBrg select {
     width: 100%;
     box-sizing: border-box;
@@ -105,7 +112,7 @@
         <!-- Tanggal -->
         <div class="col-span-2">
           <label for="tanggal_inv" class="block text-sm font-medium text-gray-700">Tanggal</label>
-          <input type="date" id="tanggal_inv" disabled
+          <input type="text" id="tanggal_inv" disabled
             class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
         </div>
 
@@ -210,7 +217,7 @@
           <tbody>
             {% for re in returan.pesanan_id.detailpesanan_set.all %}{% endfor %}
             <tr data-id="{{ re.id }}">
-              <td>{{ forloop.counter }}</td>
+              <td>{{ forloop.counter|default:"1" }}</td>
               <td>
                 <input type="hidden" name="barangId" class="barangId" value="{{ re.barang_id|default:"" }}">
                 <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown"data-namaBrg="namaBrg-{{ forloop.counter }}" data-selected-id="{{ re.barang_id|default:"" }}">

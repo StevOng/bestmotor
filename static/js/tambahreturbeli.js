@@ -135,6 +135,7 @@ async function getOptionBrg() {
     selects.forEach(select => {
         const selectedId = select.dataset.selectedId
         const namaBrgId = select.dataset.namaBrg
+        const hargaBrg = document.querySelector(".input_hrgbrg")
         loadBarangOptions(select.id, selectedId)
 
         select.addEventListener("change", async () => {
@@ -146,6 +147,11 @@ async function getOptionBrg() {
             const namaBrgEl = document.getElementById(namaBrgId)
             if (namaBrgEl && data.nama_barang) {
                 namaBrgEl.textContent = data.nama_barang
+                hargaBrg.value = data.harga_modal
+
+                let table = $('#detailBrg').DataTable();
+                table.columns.adjust().draw();
+
             }
         })
     })

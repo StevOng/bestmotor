@@ -174,6 +174,9 @@ async function getOptionBrg() {
             if (namaBrgEl && data.nama_barang) {
                 namaBrgEl.textContent = data.nama_barang
                 hargaBrg.value = data.harga_modal
+
+                let table = $('#detailBrg').DataTable();
+                table.columns.adjust().draw();
             }
         })
     })

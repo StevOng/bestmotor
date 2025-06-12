@@ -1,6 +1,7 @@
 const searchKode = document.getElementById("searchKode");
 const dropdownList = document.getElementById("dropdownList");
 const nama_barang = document.getElementById("nama-brg")
+const harga_barang = document.getElementById("hrgbrg")
 const tipe = document.getElementById("tipe-mtr")
 const toggleCheck = document.getElementById("toggleCheck")
 const checkIcon = document.getElementById("checkIcon")
@@ -18,7 +19,7 @@ document.addEventListener("click", (event) => {
     }
 });
 
-searchKode.addEventListener("input", async () => {
+searchKode.addEventListener("input", async (event) => {
     const query = event.target.value.trim()
 
     if (query.length === 0) {
@@ -42,6 +43,7 @@ searchKode.addEventListener("input", async () => {
                 li.addEventListener("click", () => {
                     searchKode.value = item.kode_barang
                     nama_barang.value = item.nama_barang
+                    harga_barang.value = item.harga_jual
                     tipe.value = item.tipe
                     dropdownList.classList.add("hidden")
                 })

@@ -30,6 +30,20 @@ $(document).ready(function () {
     });
 });
 
+$(document).ready(function () {
+    $('#detailBrg').DataTable({
+        pageLength: 20,
+        lengthChange: false, // Hilangkan "Show entries"
+        ordering: false,
+        scrollX: true,
+        "columnDefs": [
+            { className: "text-center", targets: [-1, -2] } // kolom 8 dan 9 di tengah
+        ],
+    });
+    $('.dt-search').remove();
+    $('.dt-info').remove();
+});
+
 document.addEventListener("change", function (e) {
     if (e.target.classList.contains("kodebrg-dropdown")) {
         const lastRow = document.querySelector("tbody tr:last-child");
@@ -108,6 +122,7 @@ async function getOptionBrg() {
     selects.forEach(select => {
         const selectedId = select.dataset.selectedId
         const namaBrgId = select.dataset.namaBrg
+        const hargaBrg = document.querySelector(".input_hrgbrg")
         loadBarangOptions(select.id, selectedId)
 
         select.addEventListener("change", async () => {
@@ -119,6 +134,11 @@ async function getOptionBrg() {
             const namaBrgEl = document.getElementById(namaBrgId)
             if (namaBrgEl && data.nama_barang) {
                 namaBrgEl.textContent = data.nama_barang
+                hargaBrg.value = data.harga_modal
+
+                let table = $('#detailBrg').DataTable();
+                table.columns.adjust().draw();
+
             }
         })
     })

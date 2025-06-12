@@ -85,7 +85,7 @@ function closeModalConfirm() {
     modal.style.display = "none"; // Pastikan modal benar-benar hilang
 }
 
-document.getElementById('select-all-checkbox').addEventListener('change', () => {
+document.getElementById('select-all-checkbox')?.addEventListener('change', () => {
     const isChecked = this.checked
     document.querySelectorAll('.checkbox-pesanan').forEach(cb => {
         cb.checked = isChecked

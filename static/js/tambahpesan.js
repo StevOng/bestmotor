@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 $(document).ready(function () {
     $('#detailBrg').DataTable({
         pageLength: 20,
-        lengthChange: false, // Hilangkan "Show entries"
+        lengthChange: false,
         ordering: false,
         scrollX: true,
         "columnDefs": [
@@ -214,6 +214,7 @@ async function getKurir() {
         let choices = await response.json()
 
         let select = document.getElementById("kurir")
+        let selectedKurir = select.dataset.selectedKurir
 
         choices.forEach(choice => {
             let option = document.createElement("option")
@@ -221,7 +222,6 @@ async function getKurir() {
             option.textContent = choice.label
             select.appendChild(option)
         })
-        let selectedKurir = "{{ detail_pesanan.merk|default:'' }}"
         if (selectedKurir) {
             select.value = selectedKurir
         }
@@ -337,6 +337,9 @@ async function getOptionBrg() {
             if (namaBrgEl && data.nama_barang) {
                 namaBrgEl.textContent = data.nama_barang
                 hargaBrg.value = data.harga_jual
+
+                let table = $('#detailBrg').DataTable();
+                table.columns.adjust().draw();
             }
         })
     })

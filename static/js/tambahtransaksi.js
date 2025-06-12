@@ -97,6 +97,9 @@ async function getOptionBrg() {
             const namaBrgEl = document.getElementById(namaBrgId)
             if (namaBrgEl && data.nama_barang) {
                 namaBrgEl.textContent = data.nama_barang
+
+                let table = $('#detailBrg').DataTable();
+                table.columns.adjust().draw();
             }
         })
     })

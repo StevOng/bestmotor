@@ -11,22 +11,29 @@
     opacity: 0;
     transition: opacity 0.4s ease-out;
   }
+
   #detailBrg {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
+    table-layout: auto !important;
   }
 
-  #detailBrg th,
+  #detailBrg th{
+    white-space: nowrap;
+    width: auto;
+  }
+
   #detailBrg td {
     text-align: center;
     vertical-align: middle;
     padding: 8px;
     border: 1px solid #ddd;
-    white-space: nowrap;
+    overflow: visible;
+    text-overflow: initial;
   }
 
-  #detailBrg input,
+  #input_hrgbrg-{
+    width: auto !important;
+  }
+  
   #detailBrg select {
     width: 100%;
     box-sizing: border-box;

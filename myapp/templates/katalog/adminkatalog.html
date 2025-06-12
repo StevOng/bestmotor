@@ -30,24 +30,11 @@
 >    
     <p class="ml-3 mt-2 font-semibold text-base">Data Katalog Barang</p>
     <div class="mt-4 flex flex-row justify-between">
-        <div class="flex flex-col md:flex-row">
-            <div class="justify-start ml-3">
-                <input type="text" id="tableSearch" class="form-control rounded-lg border-gray-200 border-2 max-w-40 focus:border-customBlue lg:max-w-full" placeholder="Cari Katalog disini...">
-                <button class="mr-5 bg-customBlue border-customBlue hover:bg-[#243F6B] p-2 rounded-lg text-white w-12" type="button">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-            <div class="relative">
-                <!-- Button Dropdown -->
-                <div id="dropdownButton" class="border border-gray-300 rounded-lg p-1 items-center hidden md:flex">
-                    <span class="m-1 text-gray-400">Tipe Motor : <span id="selectedTipe" class="text-customBlue font-semibold"></span></span>
-                    <select id="tipe-mtr"
-                        data-selected-tipe = "{{ barang.tipe|default:'' }}"
-                        class="block border border-gray-300 rounded-md py-2 px-3 text-sm bg-white focus:outline-none focus:ring-customBlue focus:border-customBlue">
-                        <option value="" disabled selected hidden>Pilih tipe motor</option>
-                    </select>
-                </div>
-            </div>
+        <div class="justify-start ml-3">
+            <input type="text" id="tableSearch" class="form-control rounded-lg border-gray-200 border-2 max-w-40 focus:border-customBlue lg:max-w-full" placeholder="Cari Katalog disini...">
+            <button class="mr-5 bg-customBlue border-customBlue hover:bg-[#243F6B] p-2 rounded-lg text-white w-12" type="button">
+                <i class="fas fa-search"></i>
+            </button>
         </div>
         <a href="{% url 'tambah_brgkatalog' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
             <div class="flex flex-row justify-center items-center">
@@ -56,6 +43,17 @@
             </div>
         </a>
     </div>
+    <div class="flex justify-start ml-3 mt-3">
+                <!-- Button Dropdown -->
+                <div id="dropdownButton" class="border border-gray-300 rounded-lg p-1 flex">
+                    <span class="m-1 text-gray-400">Tipe : <span id="selectedTipe" class="text-customBlue font-semibold"></span></span>
+                    <select id="tipe-mtr"
+                        data-selected-tipe = "{{ barang.tipe|default:'' }}"
+                        class="block border border-gray-300 rounded-md py-2 px-3 text-sm bg-white focus:outline-none focus:ring-customBlue focus:border-customBlue">
+                        <option value="" disabled selected hidden>Pilih tipe motor</option>
+                    </select>
+                </div>
+            </div>
 
     <table id="tabelKatalog" class="display cell-border">
         <thead>
