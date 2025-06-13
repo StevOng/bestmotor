@@ -1,7 +1,10 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-<meta name="csrf-token" content="{{ csrf_token }}">
+{% block csrf %}
+  <meta name="csrf-token" content="{{ csrf_token }}">
+{% endblock %}
+
 {% block title %}Supplier{% endblock %}
 
 {% block page_title %}Supplier{% endblock %} 

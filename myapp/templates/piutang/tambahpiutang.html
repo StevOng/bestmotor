@@ -2,7 +2,10 @@
 {% load static %}
 {% load humanize %}
 
-<meta name="csrf-token" content="{{ csrf_token }}">
+{% block csrf %}
+  <meta name="csrf-token" content="{{ csrf_token }}">
+{% endblock %}
+
 {% block title %}Tambah Pembayaran Piutang{% endblock %}
 
 {% block page_title %}Penjualan{% endblock %} 
@@ -51,7 +54,6 @@
     <div
     class="flex flex-col p-2 h-auto mb-4 rounded border-2 border-gray-200 bg-gray-50"
   >    
-      <button onclick="closeModalSales()" class="flex justify-end"><i class="fa-solid fa-x m-2 text-gray-500"></i></button>
       <div class="mt-5 flex flex-row justify-between">
           <div class="justify-start ml-3">
               <input type="text" id="salesSearch" class="form-control rounded-lg border-gray-200 border-2 max-w-40 focus:border-customBlue lg:max-w-full" placeholder="Cari Sales disini...">
@@ -59,12 +61,7 @@
                   <i class="fas fa-search"></i>
               </button>
           </div>
-          <a href="{% url 'tambah_customer' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
-            <div class="flex flex-row justify-center items-center">
-                <p class="hidden lg:block p-1 lg:text-gray-400">Tambah Customer</p>
-                <i class="fas fa-plus p-1 text-customBlue"></i>
-            </div>
-          </a>
+          <button onclick="closeModalSales()" class="flex justify-end"><i class="fa-solid fa-x m-2 text-gray-500"></i></button>
       </div>
       <table id="modalSales" class="display cell-border">
           <thead>

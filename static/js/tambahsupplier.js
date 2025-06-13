@@ -29,13 +29,25 @@ document.getElementById("supplierForm").addEventListener("submit", async(event) 
     supplier.append("catatan", catatan)
     supplier.append("alamat_lengkap", alamat)
 
-    const response = await fetch(apiSupplier, {
+    try{
+        const response = await fetch(apiSupplier, {
         method: method,
         headers: {
             'X-CSRFToken': csrfToken
         },
         body: supplier
-    })
-    const result = await response.json()
-    console.log(result);
+        });
+
+        const result = await response.json()
+        console.log(result);
+
+        if(response.ok){
+            setTimeout(() => {
+                window.location.replace("/supplier/");
+            }, 1000);
+        }
+    } catch (error){
+        console.error("Error:", error);
+        alert("Terjadi kesalahan saat menyimpan data.");
+    }
 })

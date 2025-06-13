@@ -2,7 +2,10 @@
 {% load static %}
 {% load humanize %}
 
-<meta name="csrf-token" content="{{ csrf_token }}">
+{% block csrf %}
+  <meta name="csrf-token" content="{{ csrf_token }}">
+{% endblock %}
+
 {% block title %}Tambah Retur Pembelian{% endblock %}
 
 {% block page_title %}Pembelian{% endblock %}
@@ -132,7 +135,7 @@
       <div>
         <label for="supplier" class="block text-sm font-medium text-gray-700">Supplier</label>
         <div class="relative mt-1">
-          <input type="text" id="supplier" placeholder="Tambah/Pilih Supplier" disabled
+          <input type="text" id="supplier" placeholder="-" disabled
             class="block w-full border border-gray-300 rounded-md py-2 px-3 bg-gray-200 text-gray-700">
         </div>
       </div>

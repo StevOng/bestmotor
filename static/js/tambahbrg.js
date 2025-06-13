@@ -53,6 +53,11 @@ document.getElementById("tambahbrgform").addEventListener("submit", async(event)
     })
     const barangData = await response.json()
     console.log(barangData);
+    if(response.ok){
+      setTimeout(() => {
+          window.location.replace("/barang/");
+      }, 1000);
+    }
     
     if (barangData.id) {
         const tierDivs = document.querySelectorAll("#harga-tiers-container .harga-tier")

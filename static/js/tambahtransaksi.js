@@ -164,8 +164,10 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
         const id = btn.dataset?.id || null
         const jenis = document.getElementById("jenis").value
         const barangId = row.querySelector(".barang-id")?.value || null
-        const qty = row.querySelector(".input-qtybrg").value
-        const ket = row.getElementById("keterangan").value
+        const qty = row.querySelector(".input_qtybrg").value
+        const ket = document.getElementById("keterangan").value
+        console.log(ket);
+        console.log(barangId);
 
         if (!barangId) {
             alert("Barang harus dipilih");

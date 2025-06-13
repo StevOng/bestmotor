@@ -2,7 +2,10 @@
 {% load static %}
 {% load humanize %}
 
-<meta name="csrf-token" content="{{ csrf_token }}">
+{% block csrf %}
+  <meta name="csrf-token" content="{{ csrf_token }}">
+{% endblock %}
+
 {% block title %}Pembayaran Putang{% endblock %} 
 
 {% block page_title %}Penjualan{% endblock %} 

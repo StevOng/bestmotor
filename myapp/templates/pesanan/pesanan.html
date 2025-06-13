@@ -2,7 +2,10 @@
 {% load static %}
 {% load humanize %}
 
-<meta name="csrf-token" content="{{ csrf_token }}">
+{% block csrf %}
+  <meta name="csrf-token" content="{{ csrf_token }}">
+{% endblock %}
+
 {% block title %}Pesanan{% endblock %} 
 
 {% block page_title %}Pesanan{% endblock %} 

@@ -9,4 +9,5 @@ router.register(r'supplier', SupplierViewSet)
 urlpatterns = [
     path('', render.supplier, name='supplier'),
     path('tambah/', render.tambah_supplier, name='tambah_supplier'),
+    path('tambah/<int:id>/', render.tambah_supplier, name='tambah_supplier'),
 ]

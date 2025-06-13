@@ -78,6 +78,19 @@ document.getElementById("ongkir").addEventListener("input", updateDetailBiaya)
 
 document.getElementById("discount").addEventListener("input", updateDetailBiaya)
 
+//PopupModal
+  function openModal() {
+    let modal = document.getElementById("popupModal");
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+}
+
+function closeModal() {
+    let modal = document.getElementById("popupModal");
+    modal.classList.remove("flex");
+    modal.classList.add("hidden");
+}
+
 function confirmPopupBtn(returId) {
     const modal = document.getElementById("popupModalConfirm");
     modal.classList.remove("hidden"); // Tampilkan modal

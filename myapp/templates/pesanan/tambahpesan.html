@@ -1,7 +1,10 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-<meta name="csrf-token" content="{{ csrf_token }}">
+{% block csrf %}
+  <meta name="csrf-token" content="{{ csrf_token }}">
+{% endblock %}
+
 {% block title %}Tambah Pesanan{% endblock %}
 
 {% block page_title %}Pesanan{% endblock %}
@@ -258,7 +261,7 @@
                       <td id="namaBrg-{{ forloop.counter }}">
                         {{ detail.barang_id.nama_barang|default:"" }}
                       </td>
-                      <td><input type="number" value="{{ detail.barang_id.harga_jual|default:0 }}" class="input_hrgbrg w-full rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
+                      <td><input type="number" value="{{ detail.barang_id.harga_jual|default:0 }}" class="input_hrgbrg rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
                       <td><input type="number" value="{{ detail.qty_pesan|default:0 }}" class="input_qtybrg w-20 rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
                       <td><input type="number" value="{{ detail.diskon_barang|default:0 }}%" class="disc w-20 rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
                       <td class="totalDisc">{{ detail.total_diskon_barang|default:"" }}</td>
