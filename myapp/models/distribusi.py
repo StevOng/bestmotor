@@ -3,10 +3,9 @@ from .barang import Barang
 
 class TransaksiMasuk(models.Model):
     id = models.AutoField(primary_key=True)
-    barang = models.ManyToManyField(Barang)
+    barang = models.ManyToManyField(Barang, through='TransaksiMasukBarang')
     no_bukti = models.CharField(max_length=10, unique=True)
     keterangan = models.TextField(null=True, blank=True)
-    qty_masuk = models.IntegerField()
     tanggal_pembuatan = models.DateTimeField(auto_now_add=True)
     terakhir_edit = models.DateTimeField(auto_now=True)
 
@@ -28,12 +27,16 @@ class TransaksiMasuk(models.Model):
             self.generate_no_bukti() # jika belum berarti baru maka generate
         super().save(*args, **kwargs)
 
+class TransaksiMasukBarang(models.Model):
+    transaksi = models.ForeignKey(TransaksiMasuk, on_delete=models.CASCADE)
+    barang = models.ForeignKey(Barang, on_delete=models.CASCADE)
+    qty = models.IntegerField()
+
 class TransaksiKeluar(models.Model):
     id = models.AutoField(primary_key=True)
-    barang = models.ManyToManyField(Barang)
+    barang = models.ManyToManyField(Barang, through='TransaksiKeluarBarang')
     no_bukti = models.CharField(max_length=10, unique=True)
     keterangan = models.TextField(null=True, blank=True)
-    qty_keluar = models.IntegerField()
     tanggal_pembuatan = models.DateTimeField(auto_now_add=True)
     terakhir_edit = models.DateTimeField(auto_now=True)
 
@@ -54,3 +57,8 @@ class TransaksiKeluar(models.Model):
         if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum
             self.generate_no_bukti() # jika belum berarti baru maka generate
         super().save(*args, **kwargs)
+
+class TransaksiKeluarBarang(models.Model):
+    transaksi = models.ForeignKey(TransaksiKeluar, on_delete=models.CASCADE)
+    barang = models.ForeignKey(Barang, on_delete=models.CASCADE)
+    qty = models.IntegerField()

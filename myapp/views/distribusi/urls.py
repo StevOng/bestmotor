@@ -6,6 +6,8 @@ from . import render
 router = DefaultRouter()
 router.register(r'transaksimasuk', TransaksiMasukViewSet)
 router.register(r'transaksikeluar', TransaksiKeluarViewSet)
+router.register(r'transaksimasukbarang', TransaksiMasukBarangViewSet)
+router.register(r'transaksikeluarbarang', TransaksiKeluarBarangViewSet)
 
 urlpatterns = [
     path('masuk/', render.transaksi_masuk, name='transaksi_masuk'),

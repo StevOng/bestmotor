@@ -57,21 +57,21 @@
           <input type="hidden" name="jenis" id="jenis" value="{{ jenis }}">
           <input type="hidden" name="id" id="id" value="{{ transaksi.id|default:"" }}">
           <label for="no-bukti" class="block text-sm font-medium text-gray-700">No Bukti</label>
-          <input type="text" id="no-bukti" placeholder="AUTO" value="{{ data_transaksi.no_bukti|default:"" }}" disabled
+          <input type="text" id="no-bukti" placeholder="AUTO" value="{{ transaksi.no_bukti|default:"" }}" disabled
             class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400">
         </div>
 
         <!-- Tanggal -->
         <div>
           <label for="tanggal" class="block text-sm font-medium text-gray-700">Tanggal</label>
-          <input type="text" id="tanggal" placeholder="AUTO" value="{{ data_transaksi.tanggal_pembuatan|default:"" }}" disabled
+          <input type="text" id="tanggal" placeholder="AUTO" value="{{ transaksi.tanggal_pembuatan|default:"" }}" disabled
             class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400">
         </div>
         <!-- Keterangan -->
         <div class="md:col-span-3">
           <label for="keterangan" class="block text-sm font-medium text-gray-700">Keterangan</label>
           <textarea id="keterangan" rows="3" placeholder="Masukkan keterangan"
-            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue">{{ data_transaksi.keterangan|default:"" }}</textarea>
+            class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue">{{ transaksi.keterangan|default:"" }}</textarea>
         </div>
       </div>
   </div>
@@ -92,19 +92,21 @@
           <tbody>
             {% for data in data_transaksi %}
             {% empty %}
-              <tr data-id="{{ data.id }}">
+              <tr>
                 <td>{{ forloop.counter|default:"1" }}</td>
                 <td>
-                  <input type="hidden" class="barang-id" value="{{ data.barang.id }}">
-                  <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ data.barang.id }}"></select>
+                  <input type="hidden" class="barang-id" value="{{ data.barang.id|default:"" }}">
+                  <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ data.barang.id|default:"" }}"></select>
                       <option value="{{ data.barang.id|default:"" }}" selected>{{ data.barang.kode_barang|default:"" }}</option>
                 </td>
                 <td id="namaBrg-{{ forloop.counter }}">
                   {{ data.barang.nama_barang|default:"" }}
                 </td>
-                <td><input type="number" value="{{ qty_barang|default:0 }}" class="input_qtybrg w-full rounded-md border-gray-300" /></td>
-                <td><button type="button" class="btn-submit" data-id="{{ data.id }}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-                <td><button type="button" onclick="confirmPopupBtn({{ data.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+                <td><input type="number" value="{{ data.qty|default:0 }}" class="input_qtybrg w-full rounded-md border-gray-300" /></td>
+                <td><button type="button" class="btn-submit" data-id="{{ data.id|default:"" }}" onclick="submitDetail(this)"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+                <td>
+                  <button type="button" onclick="confirmPopupBtn(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button>
+                </td>
               </tr>
             {% endfor %}
           </tbody>

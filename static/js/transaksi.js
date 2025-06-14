@@ -58,10 +58,14 @@ function confirmPopupBtnKeluar(id) {
     modal.style.display = "flex"; // Pastikan tampil dengan flexbox
 
     const confirmButton = document.getElementById("confirmAction");
+    const csrfToken = getCSRFToken()
 
     confirmButton.onclick = async () => {
         try {
             const response = await fetch(`/api/transaksikeluar/${id}/`, {
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
                 method: "DELETE"
             })
             if (response.ok) {

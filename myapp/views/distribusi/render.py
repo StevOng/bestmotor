@@ -19,13 +19,14 @@ def tambah_transaksi(request, jenis):
     
     transaksi = None
     transaksi_id = request.GET.get('id')
+    data_transaksi = []
 
     if transaksi_id:
         if jenis == 'masuk':
             transaksi = get_object_or_404(TransaksiMasuk, pk=transaksi_id)
+            data_transaksi = TransaksiMasukBarang.objects.filter(transaksi=transaksi).select_related("barang")
         else:
             transaksi = get_object_or_404(TransaksiKeluar, pk=transaksi_id)
-
-    qty = getattr(transaksi, 'qty_masuk' if jenis == 'masuk' else 'qty_keluar', 0) if transaksi else 0
+            data_transaksi = TransaksiKeluarBarang.objects.filter(transaksi=transaksi).select_related("barang")
     
-    return render(request, 'distribusi/tambahtransaksi.html', {'jenis': jenis, 'data_transaksi':transaksi, 'qty_barang': qty})
+    return render(request, 'distribusi/tambahtransaksi.html', {'jenis': jenis, 'transaksi': transaksi, 'data_transaksi':data_transaksi})

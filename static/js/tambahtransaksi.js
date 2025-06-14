@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     getOptionBrg()
-
     const tanggal = document.getElementById("tanggal")
     const today = new Date()
     const year = String(today.getFullYear())
@@ -12,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 function getCSRFToken() {
-  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
 $(document).ready(function () {
@@ -29,35 +28,24 @@ $(document).ready(function () {
     $('.dt-info').remove();
 });
 
-document.addEventListener("change", function (e) {
-    if (e.target.classList.contains("kodebrg-dropdown")) {
-        const lastRow = document.querySelector("tbody tr:last-child");
-        const selectedValue = e.target.value;
 
-        // Cek apakah dropdown dipilih dan belum pernah nambah baris baru
-        if (selectedValue && !lastRow.classList.contains("new-row-added")) {
-            addNewRow();
-        }
-    }
-});
-
-function confirmPopupBtn(id) {
+function confirmPopupBtn(attr) {
     const modal = document.getElementById("popupModalConfirm");
     modal.classList.remove("hidden"); // Tampilkan modal
     modal.style.display = "flex"; // Pastikan tampil dengan flexbox
-    const jenis = document.getElementById("jenis").value
 
     const confirmButton = document.getElementById("confirmAction");
 
     confirmButton.onclick = function () {
-        const row = document.querySelector(`tr[data-id="${id}"]`);
+        const row = attr.closest("tr");
+
         row.querySelectorAll("input, select, textarea").forEach((el) => {
-            el.value = ""
-            if (el.tagName == "select") {
-                el.selectedIndex = 0
-            }
+            el.value = "";
+            if (el.tagName === "SELECT") el.selectedIndex = 0;
+        });
+        row.querySelectorAll("td").forEach((td, i) => {
+            if (i == 2) td.textContent = ""
         })
-        row.removeAttribute("data-id")
         closeModalConfirm();
     };
 }
@@ -68,17 +56,18 @@ function closeModalConfirm() {
     modal.style.display = "none"; // Pastikan modal benar-benar hilang
 }
 
-async function loadBarangOptions(selectId, selectedId = null) {
+async function loadBarangOptions(selectId, selectedId) {
     let response = await fetch("/api/barang/")
     let data = await response.json()
     let select = document.getElementById(selectId)
+
     select.innerHTML = "<option disabled selected>Pilih Barang</option>"
 
     data.forEach(barang => {
         let option = document.createElement("option")
         option.value = barang.id
         option.text = barang.kode_barang
-        if (barang.id == selectedId) {
+        if (selectedId !== null && selectedId !== "" && barang.id == selectedId) {
             option.selected = true
         }
         select.appendChild(option)
@@ -89,13 +78,15 @@ async function getOptionBrg() {
     const selects = document.querySelectorAll("[id^='kodebrg-dropdown-']")
     selects.forEach(select => {
         const selectedId = select.dataset.selectedId
+        console.log("selectedId: ", selectedId)
+        console.log("select value: ", select.value)
         const namaBrgId = select.dataset.namaBarangId
-        loadBarangOptions(select.id, selectedId)
+        loadBarangOptions(select.id, select.value)
 
         select.addEventListener("change", async () => {
             const barangId = select.value
             const row = select.closest('tr')
-            const hiddenInput = row.querySelector(".barangId")
+            const hiddenInput = row.querySelector(".barang-id")
             if (hiddenInput) {
                 hiddenInput.value = barangId
             }
@@ -107,48 +98,54 @@ async function getOptionBrg() {
             if (namaBrgEl && data.nama_barang) {
                 namaBrgEl.textContent = data.nama_barang
             }
-            const hargaInput = row.querySelector(".input_hrgbrg")
-            if (hargaInput) {
-                hargaInput.value = data.harga_jual
+            // Cek apakah ini baris terakhir → baru tambahkan baris baru
+            const allRows = document.querySelectorAll("tbody tr");
+            const isLast = row === allRows[allRows.length - 1];
+            if (isLast) {
+                addNewRow();
             }
-
-            const table = $('#detailBrg').DataTable();
-            table.columns.adjust().draw();
         })
     })
 }
 
-
-function addNewRow() {
+function addNewRow(data = null) {
     const tbody = document.querySelector("tbody");
     const newRow = document.createElement("tr");
 
     const rowCount = tbody.querySelectorAll("tr").length + 1;
 
-    newRow.classList.add("new-row-added"); // untuk mencegah nambah berkali-kali
+    const selectId = `kodebrg-dropdown-${rowCount}`;
+    const namaBrgId = `namaBrg-${rowCount}`;
+
+    const barangId = data?.barang?.id || "";
+    const namaBarang = data?.barang?.nama_barang || "";
+    const qty = data?.qty_barang || "";
+    const detailId = data?.id || "";
+
+    newRow.classList.add("new-row-added");
+
     newRow.innerHTML = `
       <td>${rowCount}</td>
       <td>
-        <input type="hidden" id="barangId-${rowCount}" value="${data?.barang.id || ""}">
-        <select id="kodebrg-dropdown-${rowCount}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-${rowCount}" data-selected-id="${data?.barang.id || ""}">
+        <input type="hidden" class="barang-id" value="${barangId}">
+        <select id="${selectId}" class="kodebrg-dropdown" data-nama-barang-id="${namaBrgId}" data-selected-id="${barangId}">
           <option value="">Pilih Barang</option>
         </select>
       </td>
-      <td id="namaBrg-${rowCount}">${data?.barang.nama_barang || ""}</td>
-      <td><input type="number" id="input_qtybrg-${rowCount}" value="${data?.qty_barang || ""}" class="input_qtybrg w-20 rounded-md border-gray-300"/></td>
-      <td><button type="submit" class="btn-submit" data-id=""><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-      <td><button onclick="hapusRow(this)"><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
-    `
+      <td id="${namaBrgId}">${namaBarang}</td>
+      <td><input type="number" id="input_qtybrg-${rowCount}" value="${qty}" class="input_qtybrg w-20 rounded-md border-gray-300"/></td>
+      <td><button type="button" class="btn-submit" data-id="${detailId}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+      <td><button type="button" onclick="hapusRow(this)"><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+    `;
 
     tbody.appendChild(newRow);
 
-    const btnSubmit = newRow.querySelector(".btn-submit")
-    if (data?.id) {
-        btnSubmit.setAttribute("data-id", data.id)
-    }
-
-    loadBarangOptions(`kodebrg-dropdown-${rowCount}`, data?.barang_id || null);
+    setTimeout(() => {
+        loadBarangOptions(selectId, barangId);
+        getOptionBrg();
+    }, 0);
 }
+
 
 function hapusRow(btn) {
     const row = btn.closest("tr")
@@ -156,50 +153,54 @@ function hapusRow(btn) {
     setTimeout(() => row.remove(), 400)
 }
 
-document.querySelectorAll(".btn-submit").forEach((btn) => {
-    btn.addEventListener("click", async (event) => {
-        event.preventDefault();
+async function submitDetail(element) {
+    const button = element.closest("button")
+    const id = button.dataset?.id
+    const jenis = document.getElementById("jenis").value
+    const barangIds = Array.from(document.querySelectorAll(".barang-id")).map(input => parseInt(input.value)).filter(val => !isNaN(val))//filter utk buang null
+    const qtys = Array.from(document.querySelectorAll(".input_qtybrg")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
+    const ket = document.getElementById("keterangan").value
+    console.log(barangIds);
+    console.log(qtys)
 
-        const row = btn.closest("tr");
-        const id = btn.dataset?.id || null
-        const jenis = document.getElementById("jenis").value
-        const barangId = row.querySelector(".barang-id")?.value || null
-        const qty = row.querySelector(".input_qtybrg").value
-        const ket = document.getElementById("keterangan").value
-        console.log(ket);
-        console.log(barangId);
+    if (barangIds.length === 0) {
+        alert("Barang harus dipilih");
+        return;
+    }
 
-        if (!barangId) {
-            alert("Barang harus dipilih");
-            return;
-        }
+    const method = id ? "PUT" : "POST";
+    const apiUrl = id
+        ? `/api/transaksi${jenis}/${id}/`
+        : `/api/transaksi${jenis}/`;
+    const csrfToken = getCSRFToken()
 
-        const transaksi = new FormData();
-        transaksi.append("keterangan", ket);
-        if (jenis === "masuk") {
-            transaksi.append("qty_masuk", qty);
+    try {
+        const detail_barang = barangIds.map((barangId, index) => ({
+            barang: barangId,
+            qty: qtys[index]
+        }))
+        const response = await fetch(apiUrl, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                "keterangan": ket,
+                'detail_barang': detail_barang
+            }),
+        });
+        const result = await response.json();
+        if (response.ok) {
+            console.log("Transaksi & Detail berhasil disimpan:", result);
+            setTimeout(() => {
+                location.replace(`/barang/transaksi/${jenis}/`);
+            }, 1000);
         } else {
-            transaksi.append("qty_keluar", qty);
+            console.error("Gagal:", result);
+            alert("Gagal menyimpan transaksi: " + JSON.stringify(result));
         }
-
-        const method = id ? "PATCH" : "POST";
-        const apiUrl = id
-            ? `/api/transaksi${jenis}/${id}/`
-            : `/api/transaksi${jenis}/`;
-        const csrfToken = getCSRFToken()
-
-        try {
-            const response = await fetch(apiUrl, {
-                method: method,
-                headers: {
-                    'X-CSRFToken': csrfToken
-                },
-                body: transaksi,
-            });
-            const result = await response.json();
-            console.log(result);
-        } catch (error) {
-            console.error("Terjadi kesalahan:", error);
-        }
-    });
-});
+    } catch (error) {
+        console.error("Terjadi kesalahan:", error);
+    }
+}

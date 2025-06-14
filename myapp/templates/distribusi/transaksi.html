@@ -90,11 +90,7 @@
                     <td>{{ transaksi.terakhir_edit|date:"d/m/y" }}</td>
                     <td>{{ transaksi.keterangan }}</td>
                     <td>
-                        <a href="{% if jenis == 'masuk' %}
-                                    {% url 'transaksi_masuk' %}?id={{ transaksi.id }}
-                                {% else %}
-                                    {% url 'transaksi_keluar' %}?id={{ transaksi.id }}
-                                {% endif %}">
+                        <a href="{% url 'tambah_transaksi' jenis %}?id={{ transaksi.id }}">
                             <i class="fa-regular fa-eye text-2xl text-customBlue"></i>
                         </a>
                     </td>
