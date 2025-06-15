@@ -339,6 +339,57 @@
         </thead>
         <tbody>
           {% for invoice in invoices %}
+            <tr data-id={{ invoice.hutang.id }}>
+              <td>{{ forloop.counter|default:"1" }}</td>
+              <td>
+                <div class="relative">
+                  <input type="hidden" name="invoiceId" class="invoiceId" value="{{ invoice.id|default:"" }}">
+                  <input
+                    type="text"
+                    id="no_invoice-{{ forloop.counter }}"
+                    data-netto="netto-{{ forloop.counter }}"
+                    placeholder="Pilih Invoice"
+                    value="{{ invoice.no_invoice|default:"" }}"
+                    disabled
+                    class="block border w-36 border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue"
+                  />
+                  <button
+                    type="button"
+                    onclick="openModalInv()"
+                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none"
+                  >
+                    <i class="fas fa-ellipsis-h mr-1"></i>
+                  </button>
+                </div>
+              </td>
+              <td id="netto-{{ forloop.counter }}">{{ invoice.netto|default:"" }}</td>
+              <td>
+                <input
+                  type="number"
+                  value="{{ invoice.hutang.potongan|default:"" }}"
+                  id="potongan-{{ forloop.counter }}"
+                  class="potongan w-full rounded-md border-gray-300"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  value="{{ invoice.hutang.nilai_bayar|default:"" }}"
+                  id="nilaiBayar-{{ forloop.counter }}"
+                  class="nilaiBayar w-full rounded-md border-gray-300"
+                />
+              </td>
+              <td>
+                <button type="button" onclick="submit()" data-id={{ invoice.hutang.id }} class="btn-submit">
+                  <i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
+                </button>
+              </td>
+              <td>
+                <button onclick="confirmPopupBtn({{ invoice.hutang.id }})">
+                  <i class="fa-regular fa-trash-can text-2xl text-red-500"></i>
+                </button>
+              </td>
+            </tr>
           {% empty %}
             <tr data-id={{ invoice.hutang.id }}>
               <td>{{ forloop.counter|default:"1" }}</td>

@@ -224,6 +224,29 @@
           </thead>
           <tbody>
             {% for piutang in data_piutang %}
+                <tr data-id="{{ piutang.id }}">
+                  <td>{{ forloop.counter|default:"1" }}</td>
+                  <td>
+                    <div class="relative mt-1">
+                      <input type="hidden" name="fakturId" class="fakturId" value="{{ data_faktur.id|default:"" }}">
+                      <input type="text" id="noFaktur-{{ forloop.counter }}" placeholder="Pilih Faktur" value="{{ data_faktur.no_faktur|default:"" }}" disabled
+                        class="noFaktur mt-1 block w-36 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" data-nama-cust="namaCust-{{ forloop.counter }}" data-nilai-faktur="nilaiFaktur-{{ forloop.counter }}">
+                        <button type="button" onclick="openModalFaktur()"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none">
+                        <i class="fas fa-ellipsis-h"></i>
+                      </button>
+                    </div>
+                  </td>
+                  <td id="namaCust-{{ forloop.counter }}">
+                    <input type="hidden" name="custId" class="custId" value="{{ piutang.customer_id|default:"" }}">
+                    {{ piutang.customer_id.nama|default:"" }}
+                  </td>
+                  <td id="nilaiFaktur-{{ forloop.counter }}">{{ piutang.total_faktur|default:"" }}</td>
+                  <td><input type="number" value="{{ piutang.potongan|default:"" }}" id="potongan" class="potongan w-full rounded-md border-gray-300" /></td>
+                  <td><input type="number" value="{{ piutang.nilai_bayar|default:"" }}" id="nilaiByr" class="nilaiByr w-full rounded-md border-gray-300" /></td>
+                  <td><button type="submit" class="btn-submit" data-id="{{ piutang.id }}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+                  <td><button onclick="confirmPopupBtn({{ piutang.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+              </tr>
             {% empty %}
                 <tr data-id="{{ piutang.id }}">
                   <td>{{ forloop.counter|default:"1" }}</td>
