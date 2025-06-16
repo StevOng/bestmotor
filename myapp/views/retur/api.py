@@ -16,6 +16,9 @@ class ReturBeliViewSet(viewsets.ModelViewSet):
                 return Barang.objects.none()
         return super().get_queryset()
 
+class ReturBeliBarangViewSet(viewsets.ModelViewSet):
+    queryset = ReturBeliBarang.objects.all()
+    serializer_class = ReturBeliBarangSerializer
 
 class ReturJualViewSet(viewsets.ModelViewSet):
     queryset = ReturJual.objects.all()
@@ -30,3 +33,7 @@ class ReturJualViewSet(viewsets.ModelViewSet):
             except Faktur.DoesNotExist:
                 return Barang.objects.none()
         return super().get_queryset()
+    
+class ReturJualBarangViewSet(viewsets.ModelViewSet):
+    queryset = ReturJualBarang.objects.all()
+    serializer_class = ReturJualBarangSerializer

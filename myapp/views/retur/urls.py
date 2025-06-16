@@ -5,7 +5,9 @@ from . import render
 
 router = DefaultRouter()
 router.register(r'returjual', ReturJualViewSet)
+router.register(r'returjualbarang', ReturJualBarangViewSet)
 router.register(r'returbeli', ReturBeliViewSet)
+router.register(r'returbelibarang', ReturBeliBarangViewSet)
 
 urlpatterns = [
     path('penjualan/', render.retur_jual, name='retur_jual'),

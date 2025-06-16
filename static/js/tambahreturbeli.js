@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 function getCSRFToken() {
-  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
 $(document).ready(function () {
@@ -48,18 +48,6 @@ $(document).ready(function () {
     });
 });
 
-document.addEventListener("change", function (e) {
-    if (e.target.classList.contains("kodebrg-dropdown")) {
-        const lastRow = document.querySelector("tbody tr:last-child");
-        const selectedValue = e.target.value;
-
-        // Cek apakah dropdown dipilih dan belum pernah nambah baris baru
-        if (selectedValue && !lastRow.classList.contains("new-row-added")) {
-            addNewRow();
-        }
-    }
-});
-
 document.querySelectorAll(".input_hrgbrg").forEach(input => {
     input.addEventListener("input", updateDetailBiaya)
 })
@@ -78,7 +66,7 @@ document.getElementById("ongkir").addEventListener("input", updateDetailBiaya)
 
 document.getElementById("discount").addEventListener("input", updateDetailBiaya)
 
-function confirmPopupBtn(returId) {
+function confirmPopupBtn(attr) {
     const modal = document.getElementById("popupModalConfirm");
     modal.classList.remove("hidden"); // Tampilkan modal
     modal.style.display = "flex"; // Pastikan tampil dengan flexbox
@@ -86,14 +74,16 @@ function confirmPopupBtn(returId) {
     const confirmButton = document.getElementById("confirmAction");
 
     confirmButton.onclick = () => {
-        const row = document.querySelector(`tr[data-id=${returId}]`)
+        const row = attr.closest("tr")
         row.querySelectorAll("input, select, textarea").forEach((el) => {
             el.value = ""
             if (el.tagName == "select") {
                 el.selectedIndex = 0
             }
         })
-        row.removeAttribute("data-id")
+        row.querySelectorAll("td").forEach((td, i) => {
+            if (i == 2) td.textContent = ""
+        })
         closeModalConfirm();
     };
 }
@@ -145,6 +135,8 @@ async function getOptionBrg() {
     selects.forEach(select => {
         const selectedId = select.dataset.selectedId
         const namaBrgId = select.dataset.namaBarangId
+        console.log("selectedId: ", selectedId)
+        console.log("select value: ", select.value)
         loadBarangOptions(select.id, selectedId, invId)
 
         select.addEventListener("change", async () => {
@@ -168,15 +160,23 @@ async function getOptionBrg() {
             }
             updateDetailBiaya()
 
-            const table = $('#detailBrg').DataTable();
-            table.columns.adjust().draw();
+            // Cek apakah ini baris terakhir → baru tambahkan baris baru
+            const allRows = document.querySelectorAll("tbody tr");
+            const isLast = row === allRows[allRows.length - 1];
+            if (isLast) {
+                addNewRow();
+            }
         })
     })
 }
 
-function addNewRow() {
+function addNewRow(inv = null) {
     const tbody = document.querySelector("tbody");
     const newRow = document.createElement("tr");
+
+    const selectId = `kodebrg-dropdown-${rowCount}`;
+    const barangId = inv?.barang_id || ""
+    const invId = inv?.invoice_id || ""
 
     const rowCount = tbody.querySelectorAll("tr").length + 1;
 
@@ -185,30 +185,28 @@ function addNewRow() {
         <td>${rowCount}</td>
         <td>
           <input type="hidden" name="barangId" class="barangId" value="${inv?.barang_id || ""}">
-          <select id="kodebrg-dropdown-${rowCount}" class="kodebrg-dropdown" data-namaBrg="namaBrg-${rowCount}" data-selected-id="${inv?.barang_id || ""}">
-            <option value="${inv?.barang_id || ""}" selected>${inv?.barang_id.kode_barang || ""} - ${inv?.barang_id.nama_barang || ""}</option>
+          <select id="${selectId}" class="kodebrg-dropdown" data-namaBrg="namaBrg-${rowCount}" data-selected-id="${inv?.barang_id || ""}">
+            <option value="${inv?.barang_id || ""}" selected>${inv?.barang_id?.kode_barang || ""} - ${inv?.barang_id?.nama_barang || ""}</option>
           </select>
         </td>
         <td id="namaBrg-${rowCount}">
-          ${inv?.barang_id.nama_barang || ""}
+          ${inv?.barang_id?.nama_barang || ""}
         </td>
-        <td><input type="number" value="${inv?.harga_beli || ""}" id="input_hrgbrg-${rowCount}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
-        <td><input type="number" value="${inv?.qty_retur || ""}" id="input_qtybrg-${rowCount}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
-        <td><input type="number" value="${inv?.diskon_barang || ""}" id="disc-${rowCount}" class="disc w-20 rounded-md border-gray-300" /></td>
+        <td><input type="number" value="${inv?.harga_beli || ""}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
+        <td><input type="number" value="${inv?.qty_retur || ""}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
+        <td><input type="number" value="${inv?.diskon_barang || ""}" class="disc w-20 rounded-md border-gray-300" /></td>
         <td class="totalDisc">${inv?.total_diskon_barang || ""}</td>
         <td class="total">${inv?.total_harga_barang || ""}</td>
-        <td><button type="submit" data-id=""><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+        <td><button type="button" data-id=""><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
         <td><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
 
     tbody.appendChild(newRow);
-
-    const btnSubmit = newRow.querySelector(".btn-submit")
-    if (inv?.id) {
-        btnSubmit.setAttribute("data-id", inv.id)
-    }
-
-    loadBarangOptions(`kodebrg-dropdown-${rowCount}`, inv?.barang_id || null);
+    // deferring execution
+    setTimeout(() => {
+        loadBarangOptions(selectId, barangId, invId);
+        getOptionBrg();
+    }, 0);
 }
 
 function hapusRow(btn) {
@@ -230,86 +228,59 @@ function pilihInv(id, nomor, supplier) {
     closeModalConfirm()
 }
 
-document.querySelectorAll(".btn-submit").forEach((btn) => {
-    btn.addEventListener("submit", async (event) => {
-        event.preventDefault();
+async function submitDetail(element) {
+    const button = element.closest("button")
+    const id = button.dataset?.id
+    const barangIds = Array.from(document.querySelectorAll(".barangId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))//filter utk buang null
+    const qtyReturs = Array.from(document.querySelectorAll(".input_qtybrg")).map(input => parseInt(input.value)).filter(val => !isNaN(val))//filter utk buang null
+    const invId = document.getElementById("invId")?.value
+    const bruto = document.getElementById("bruto").value
+    const check = await fetch(`/api/detailinvoice/${invId}/`)
+    const data = await check.json()
 
-        const row = btn.closest("tr")
-        const barangId = row.querySelector(".barangId")?.value || null
-        const qtyRetur = row.querySelector("[id^='input_qtybrg-']").value
-        const hrgBrg = row.querySelector("[id^='input_hrgbrg-']").value
-        const disc = row.querySelector("[id^='disc-']").value
-        const id = document.getElementById("hiddenId")?.value || null
-        const invId = document.getElementById("invId")?.value || null
-        const bruto = document.getElementById("bruto").value
-        const ongkir = document.getElementById("ongkir").value
-        const ppn = document.getElementById("ppn").value
-        const discount = document.getElementById("discount").value
-        const nilaiPpn = ppn * ((qtyRetur * hrgBrg) - disc)
-        const check = await fetch(`/api/detailinvoice/${invId}/`)
-        const data = await check.json()
+    if (!barangIds || !invId) {
+        alert("Barang dan invoice harus dipilih");
+        return;
+    }
 
-        if (!barangId || !invId) {
-            alert("Barang dan invoice harus dipilih");
-            return;
-        }
+    if (qtyReturs > data.qty_beli) {
+        alert("Kuantiti retur melebihi stok beli")
+        return
+    }
 
-        if (qtyRetur > data.qty_beli) {
-            alert("Kuantiti retur melebihi stok beli")
-            return
-        }
-
-        const retur = new FormData()
-        retur.append("invoice_id", invId)
-        retur.append("subtotal", bruto)
-
-        const method = id ? "PATCH" : "POST";
-        const apiUrl = id ? `/api/returbeli/${id}/` : `/api/returbeli/`
-        const csrfToken = getCSRFToken()
-        try {
-            const response = await fetch(apiUrl, {
-                method: method,
-                headers: {
-                    'X-CSRFToken': csrfToken
-                },
-                body: retur
+    const method = id ? "PUT" : "POST";
+    const apiUrl = id ? `/api/returbeli/${id}/` : `/api/returbeli/`
+    const csrfToken = getCSRFToken()
+    try {
+        const detail_barang = barangIds.map((barangId, index) => ({
+            barang: barangId,
+            qty: qtyReturs[index]
+        }))
+        const response = await fetch(apiUrl, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                "subtotal": bruto,
+                "detail_barang": detail_barang
             })
-            if (response.ok) {
-                const patchInv = await fetch(`/api/invoice/${invId}/`, {
-                    method: "PATCH",
-                    headers: {
-                        'X-CSRFToken': csrfToken
-                    },
-                    body: JSON.stringify({
-                        bruto: (qtyRetur * hrgBrg),
-                        nilai_ppn: nilaiPpn,
-                        netto: bruto + nilaiPpn + ongkir - discount,
-                    })
-                })
-                const patchDetail = await fetch(`/api/detailinvoice/${invId}/`, {
-                    method: "PATCH",
-                    headers: {
-                        'X-CSRFToken': csrfToken
-                    },
-                    body: JSON.stringify({
-                        qty_retur: qtyRetur
-                    })
-                })
-                if (patchInv.ok && patchDetail.ok) {
-                    const response1 = await patchInv.json()
-                    const response2 = await patchDetail.json()
-                    console.log(response1, response2);
-                } else {
-                    console.log("Terjadi kesalahan saat PATCH invoice detailinvoice")
-                }
-            } else {
-                console.log(`Gagal ${method} ke ${apiUrl}`)
-            }
-        } catch (error) {
-            console.error("Terjadi kesalahan: ", error)
+        })
+        const result = await response.json()
+        if (response.ok) {
+            console.log("Retur & Detail berhasil disimpan:", result);
+            setTimeout(() => {
+                location.replace(`/retur/pembelian/`);
+            }, 1000);
+        } else {
+            console.error("Gagal:", result);
+            alert("Gagal menyimpan retur: " + JSON.stringify(result));
         }
-    });
-});
+    } catch (error) {
+        console.error("Terjadi kesalahan: ", error)
+    }
+}
 
 function updateDetailBiaya() {
     let bruto = 0

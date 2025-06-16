@@ -6,7 +6,7 @@ from .faktur import Faktur
 class ReturBeli(models.Model):
     id = models.AutoField(primary_key=True)
     invoice_id = models.ForeignKey(Invoice, on_delete=models.SET_NULL, null=True)
-    barang = models.ManyToManyField(Barang)
+    barang = models.ManyToManyField(Barang, through="ReturBeliBarang")
     no_bukti = models.CharField(max_length=10, unique=True)
     tanggal = models.DateTimeField(auto_now_add=True)
     terakhir_edit = models.DateTimeField(auto_now=True)
@@ -30,10 +30,15 @@ class ReturBeli(models.Model):
             self.generate_no_bukti() # jika belum berarti baru maka generate
         super().save(*args, **kwargs)
 
+class ReturBeliBarang(models.Model):
+    retur = models.ForeignKey(ReturBeli, on_delete=models.CASCADE)
+    barang = models.ForeignKey(Barang, on_delete=models.CASCADE)
+    qty = models.IntegerField()
+
 class ReturJual(models.Model):
     id = models.AutoField(primary_key=True)
     faktur_id = models.ForeignKey(Faktur, on_delete=models.SET_NULL, null=True)
-    barang = models.ManyToManyField(Barang)
+    barang = models.ManyToManyField(Barang, through="ReturJualBarang")
     no_bukti = models.CharField(max_length=10, unique=True)
     tanggal = models.DateTimeField(auto_now_add=True)
     terakhir_edit = models.DateTimeField(auto_now=True)
@@ -56,3 +61,8 @@ class ReturJual(models.Model):
         if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum
             self.generate_no_bukti() # jika belum berarti baru maka generate
         super().save(*args, **kwargs)
+
+class ReturJualBarang(models.Model):
+    retur = models.ForeignKey(ReturJual, on_delete=models.CASCADE)
+    barang = models.ForeignKey(Barang, on_delete=models.CASCADE)
+    qty = models.IntegerField()
