@@ -9,7 +9,7 @@ class TransaksiMasukBarangSerializer(serializers.ModelSerializer):
 
 class TransaksiMasukSerializer(serializers.ModelSerializer):
     detail_barang = TransaksiMasukBarangSerializer(many=True, write_only=True)
-    
+
     class Meta:
         model = TransaksiMasuk
         fields = '__all__'
