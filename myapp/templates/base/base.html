@@ -289,13 +289,14 @@
           />
         </a>
         <ul class="space-y-2 font-medium">
+          {% if role == "admin" %}
           <li>
             <a
               href="{% url 'dashboard' %}"
-              class="flex items-center p-2 rounded-lg group text-gray-500 hover:text-white hover:bg-customBlue focus:text-white focus:bg-customBlue {% if request.path == '/dashboard/' %}text-white bg-customBlue {% endif %}"
+              class="flex items-center p-2 rounded-lg group text-gray-500 hover:text-white hover:bg-customBlue focus:text-white focus:bg-customBlue {% if '/dashboard/' in request.path %}text-white bg-customBlue {% endif %}"
             >
               <svg
-                class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-white group-focus:text-white {% if request.path == '/dashboard/' %}text-white{% endif %}"
+                class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-white group-focus:text-white {% if '/dashboard/' in request.path %}text-white{% endif %}"
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="21"
@@ -313,6 +314,7 @@
               <span class="ms-3">Dashboard</span>
             </a>
           </li>
+          {% endif %}
           <li>
             <a
               href="{% url 'pesanan' %}"
@@ -337,6 +339,7 @@
               <span class="flex-1 ms-3 whitespace-nowrap">Pesanan</span>
             </a>
           </li>
+          {% if role == "admin" %}
           <li>
             <button
               type="button"
@@ -403,6 +406,32 @@
               </li>
             </ul>
           </li>
+          {% else %}
+          <li>
+            <a
+              href="{% url 'barang' %}"
+              class="flex items-center p-2 rounded-lg group text-gray-500 hover:text-white hover:bg-customBlue focus:text-white focus:bg-customBlue {% if '/barang' in request.path %}text-white bg-customBlue {% endif %}"
+            >
+              <svg
+                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-white group-focus:text-white {% if '/barang' in request.path %}text-white{% endif %}"
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="21"
+                viewBox="0 0 20 21"
+                fill="none"
+              >
+                <path
+                  d="M13.3332 7.16667C13.3332 8.05072 12.982 8.89857 12.3568 9.52369C11.7317 10.1488 10.8839 10.5 9.99982 10.5C9.11576 10.5 8.26792 10.1488 7.6428 9.52369C7.01768 8.89857 6.66649 8.05072 6.66649 7.16667M3.0275 6.66782L2.44417 13.6678C2.31885 15.1716 2.2562 15.9235 2.51039 16.5035C2.73372 17.0131 3.12068 17.4336 3.60997 17.6985C4.16688 18 4.92137 18 6.43035 18H13.5693C15.0783 18 15.8328 18 16.3897 17.6985C16.879 17.4336 17.2659 17.0131 17.4892 16.5035C17.7434 15.9235 17.6808 15.1716 17.5555 13.6678L16.9721 6.66782C16.8643 5.37396 16.8104 4.72703 16.5239 4.23738C16.2716 3.8062 15.8959 3.4605 15.4452 3.24487C14.9335 3 14.2843 3 12.986 3L7.01369 3C5.71534 3 5.06617 3 4.55442 3.24487C4.10377 3.4605 3.72807 3.8062 3.47576 4.23738C3.18923 4.72703 3.13532 5.37396 3.0275 6.66782Z"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span class="ms-3">Barang</span>
+            </a>
+          </li>
+          {% endif %}
           <li>
             <a
               href="{% if role == "admin" %}{% url 'admin_katalog' %}{% else %}{% url 'katalog' %}{% endif %}"
@@ -444,6 +473,7 @@
               <span class="flex-1 ms-3 whitespace-nowrap">Katalog</span>
             </a>
           </li>
+          {% if role == "admin" %}
           <li>
             <a
               href="{% url 'supplier' %}"
@@ -468,6 +498,7 @@
               <span class="flex-1 ms-3 whitespace-nowrap">Supplier</span>
             </a>
           </li>
+          {% endif %}
           <li>
             <a
               href="{% url 'customer' %}"
@@ -492,6 +523,7 @@
               <span class="flex-1 ms-3 whitespace-nowrap">Customer</span>
             </a>
           </li>
+          {% if role == "admin" %}
           <li>
             <button
               type="button"
@@ -558,6 +590,7 @@
               </li>
             </ul>
           </li>
+          {% endif %}
           <li>
             <button
               type="button"
