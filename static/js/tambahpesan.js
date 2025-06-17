@@ -33,12 +33,12 @@ $(document).ready(function () {
 
 document.addEventListener("change", function (e) {
     if (e.target.classList.contains("kodebrg-dropdown")) {
-        const allRows = document.querySelector("tbody tr");
+        const allRows = document.querySelectorAll("tbody tr");
         const selectedValue = e.target.value;
         const lastSelect = allRows[allRows.length - 1]?.querySelector(".kodebrg-dropdown")
 
         // Cek apakah dropdown dipilih
-        if (selectedValue && lastSelect && lastSelect.value) {
+        if (selectedValue && e.target === lastSelect) {
             addNewRow();
         }
     }
@@ -316,7 +316,7 @@ document.querySelectorAll(".btn-submit").forEach((btn) => {
     })
 })
 
-async function loadBarangOptions(selectId, selectedId = null) {
+async function loadBarangOptions(selectId, selectedId) {
     let response = await fetch("/api/barang/")
     let data = await response.json()
     let select = document.getElementById(selectId)
@@ -326,7 +326,7 @@ async function loadBarangOptions(selectId, selectedId = null) {
         let option = document.createElement("option")
         option.value = barang.id
         option.text = `${barang.kode_barang} - ${barang.nama_barang}`
-        if (barang.id == selectedId) {
+        if (selectedId !== null && selectedId !== "" && barang.id == selectedId) {
             option.selected = true
         }
         select.appendChild(option)
@@ -336,9 +336,8 @@ async function loadBarangOptions(selectId, selectedId = null) {
 async function getOptionBrg() {
     const selects = document.querySelectorAll("[id^='kodebrg-dropdown-']")
     selects.forEach(select => {
-        const selectedId = select.dataset.selectedId
         const namaBrgId = select.dataset.namaBarangId
-        loadBarangOptions(select.id, selectedId)
+        loadBarangOptions(select.id, select.value)
 
         select.addEventListener("change", async () => {
             const barangId = select.value
@@ -361,14 +360,15 @@ async function getOptionBrg() {
             }
             updateDetailBiaya()
 
-            const table = $('#detailBrg').DataTable();
-            table.columns.adjust().draw();
+            // const table = $('#detailBrg').DataTable();
+            // table.columns.adjust().draw();
         })
     })
 }
 
 function addNewRow(detail = null) {
-    const tbody = document.querySelector("tbody");
+    const tbodies = document.querySelectorAll("tbody");
+    const tbody = tbodies[tbodies.length - 1];
     const newRow = document.createElement("tr");
 
     const rowCount = tbody.querySelectorAll("tr").length + 1;
@@ -378,11 +378,11 @@ function addNewRow(detail = null) {
       <td>${rowCount}</td>
       <td>
         <input type="hidden" name="barangId-${rowCount}" class="barangId" value="${detail?.barang_id || ""}">
-        <select id="kodebrg-dropdown-${rowCount}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-${rowCount}" data-barang-id="${detail?.barang_id || ""}">
+        <select id="kodebrg-dropdown-${rowCount}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-${rowCount}" data-selected-id="${detail?.barang_id || ""}">
           <option value="">Pilih Barang</option>
         </select>
       </td>
-      <td class="kode-terpilih"></td>
+      <td class="kode-terpilih hidden"></td>
       <td id="namaBrg-${rowCount}">${detail?.barang_id?.nama_barang || ""}</td>
       <td><input type="number" value="${detail?.barang_id?.harga_jual || 0}" class="input_hrgbrg w-full rounded-md border-gray-300"/></td>
       <td><input type="number" value="${detail?.qty_pesan || 0}" class="input_qtybrg w-20 rounded-md border-gray-300"/></td>
@@ -401,6 +401,7 @@ function addNewRow(detail = null) {
     }
 
     loadBarangOptions(`kodebrg-dropdown-${rowCount}`, detail?.barang_id || null);
+    getOptionBrg();
 
     // 👉 Tambahkan listener baru agar updateDetailBiaya bekerja untuk baris ini
     newRow.querySelector(".input_hrgbrg")?.addEventListener("input", updateDetailBiaya);
