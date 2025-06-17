@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.db import transaction
 from ...models.retur import *
+from ...models.pesanan import *
+from ...models.invoice import *
 
 class ReturBeliBarangSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,6 +25,14 @@ class ReturBeliSerializer(serializers.ModelSerializer):
             retur = ReturBeli.objects.create(**validated_data)
             for item in detail_data:
                 ReturBeliBarang.objects.create(retur=retur, **item)
+
+                barang_id = item['barang'].id if isinstance(item['barang'], Barang) else item['barang']
+                qty_retur = item['qty']
+                detail_invoice = DetailInvoice.objects.get(invoice_id=retur.invoice_id, barang_id=barang_id)
+
+                detail_invoice.qty_beli -= qty_retur
+                detail_invoice.qty_retur += qty_retur
+                detail_invoice.save()
         return retur
     
     def update(self, instance, validated_data):
@@ -59,6 +69,14 @@ class ReturJualSerializer(serializers.ModelSerializer):
             retur = ReturJual.objects.create(**validated_data)
             for item in detail_data:
                 ReturJualBarang.objects.create(retur=retur, **item)
+
+                barang_id = item['barang'].id if isinstance(item['barang'], Barang) else item['barang']
+                qty_retur = item['qty']
+                detail_pesanan = DetailPesanan.objects.get(pesanan_id=retur.faktur_id.pesanan_id, barang_id=barang_id)
+
+                detail_pesanan.qty_pesan -= qty_retur
+                detail_pesanan.qty_retur += qty_retur
+                detail_pesanan.save()
         return retur
     
     def update(self, instance, validated_data):
