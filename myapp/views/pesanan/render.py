@@ -13,7 +13,7 @@ def pesanan(request):
     pesanan_list = Pesanan.objects.prefetch_related('detailpesanan_set')
 
     if role == 'sales':
-        pesanan_list = pesanan_list.filter(customer_id__sales_id=user_id)
+        pesanan_list = pesanan_list.filter(customer_id__user_id=user_id)
 
     if status:
         pesanan_list = pesanan_list.filter(status=status)
