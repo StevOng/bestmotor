@@ -389,8 +389,8 @@ function addNewRow(detail = null) {
       <td><input type="number" value="${detail?.diskon_barang || 0}" class="disc w-20 rounded-md border-gray-300"/></td>
       <td class="totalDisc">${detail?.total_diskon_barang || ""}</td>
       <td class="totalHarga">${detail?.total_harga_barang || ""}</td>
-      <td><button type="submit" class="btn-submit" data-id=""><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-      <td><button onclick="hapusRow(this)"><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+      <td><button type="button" class="btn-submit" data-id=""><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+      <td><button type="button" onclick="hapusRow(this)"><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
 
     tbody.appendChild(newRow);
@@ -400,8 +400,10 @@ function addNewRow(detail = null) {
         btnSubmit.setAttribute("data-id", detail.id);
     }
 
-    loadBarangOptions(`kodebrg-dropdown-${rowCount}`, detail?.barang_id || null);
-    getOptionBrg();
+    setTimeout(()=>{
+        loadBarangOptions(`kodebrg-dropdown-${rowCount}`, detail?.barang_id || null);
+        getOptionBrg();
+    }, 0)
 
     // 👉 Tambahkan listener baru agar updateDetailBiaya bekerja untuk baris ini
     newRow.querySelector(".input_hrgbrg")?.addEventListener("input", updateDetailBiaya);
