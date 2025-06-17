@@ -10,7 +10,7 @@ def pesanan(request):
     status = request.GET.get('status', None)
     role = request.session.get('role')
     user_id = request.session.get('user_id')
-    pesanan_list = Pesanan.objects.prefetch_related('detailpesanan_set')
+    pesanan_list = Pesanan.objects.prefetch_related('detailpesanan_set').select_related('customer_id')
 
     if role == 'sales':
         pesanan_list = pesanan_list.filter(customer_id__user_id=user_id)
@@ -26,8 +26,13 @@ def pesanan(request):
 @both_required
 def tambah_pesanan(request, id=None):
     pesanan = None
+    role = request.session.get("role")
+    user_id = request.session.get("user_id")
     detail_pesanan = []
     customers = Customer.objects.all()
+
+    if role == "sales":
+        customers = Customer.objects.filter(user_id=user_id)
 
     if id:
         pesanan = Pesanan.objects.get(id=id)
