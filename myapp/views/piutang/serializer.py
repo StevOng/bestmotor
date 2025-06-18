@@ -1,7 +1,40 @@
 from rest_framework import serializers
-from ...models.piutang import Piutang
+from django.db import transaction
+from ...models.piutang import *
+
+
+class PiutangFakturSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PiutangFaktur
+        fields = ['faktur', 'nilai_bayar']
 
 class PiutangSerializer(serializers.ModelSerializer):
+    list_faktur = PiutangFakturSerializer(many=True, write_only=True)
+
     class Meta:
         model = Piutang
         fields = '__all__'
+        extra_kwargs = {
+            'no_bukti': {'required': False}
+        }
+
+    def create(self, validated_data):
+        list_data = validated_data.pop("list_faktur")
+        with transaction.atomic:
+            piutang = Piutang.objects.create(**validated_data)
+            for item in list_data:
+                PiutangFaktur.objects.create(piutang=piutang, **item)
+        return piutang
+    
+    def update(self, instance, validated_data):
+        list_data = validated_data.pop("list_faktur")
+        with transaction.atomic():
+            for attr, value in validated_data.items():
+                setattr(instance, attr, value)
+            instance.save()
+
+            PiutangFaktur.objects.filter(transaksi=instance).delete()
+
+            for item in list_data:
+                PiutangFaktur.objects.create(transaksi=instance, **item)
+        return instance
