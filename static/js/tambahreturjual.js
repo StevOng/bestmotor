@@ -185,9 +185,9 @@ function addNewRow(re = null) {
     newRow.innerHTML = `
         <td>${rowCount}</td>
         <td>
-          <input type="hidden" name="barangId" class="barangId" value="${re?.barang_id || ""}">
-          <select id="${selectId}" class="kodebrg-dropdown" data-namaBrg="namaBrg-${rowCount}" data-selected-id="${re?.barang_id || ""}">
-            <option value="${re?.barang_id || ""}" selected>${re?.barang_id.kode_barang || ""} - ${re?.barang_id.nama_barang || ""}</option>
+          <input type="hidden" name="barangId" class="barangId" value="${barangId}">
+          <select id="${selectId}" class="kodebrg-dropdown" data-namaBrg="namaBrg-${rowCount}" data-selected-id="${barangId}">
+            <option value="${barangId}" selected>${re?.barang_id.kode_barang || ""} - ${re?.barang_id.nama_barang || ""}</option>
           </select>
         </td>
         <td id="namaBrg-${rowCount}">

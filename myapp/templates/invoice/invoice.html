@@ -75,11 +75,11 @@
             {% for invoice in invoice_list %}
                 <tr data-id="{{ invoice.id }}">
                     <td>{{ invoice.no_invoice}}</td>
-                    <td>{{ invoice.detailinvoice_set.first.tanggal }}</td>
+                    <td>{{ invoicet.tanggal }}</td>
                     {% if not request.GET.status %}
                         <td>{{ invoice.no_referensi }}</td>
                     {% else %}
-                        <td>{{ invoice.detailinvoice_set.first.jatuh_tempo }}</td>
+                        <td>{{ invoice.jatuh_tempo }}</td>
                     {% endif %}
                     <td>{{ invoice.supplier_id.perusahaan }}</td>
                     <td>{{ invoice.netto|floatformat:2|intcomma}}</td>

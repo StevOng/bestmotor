@@ -10,9 +10,7 @@ def invoice(request):
     invoice_list = Invoice.objects.prefetch_related("detailinvoice_set")
 
     if per_tgl:
-        invoice_list = invoice_list.filter(
-            detailinvoice__jatuh_tempo = per_tgl
-        ).distinct()
+        invoice_list = invoice_list.filter(jatuh_tempo=per_tgl)
 
     if status:
         invoice_list = invoice_list.filter(status=status)
