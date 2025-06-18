@@ -50,17 +50,6 @@ class Invoice(models.Model):
         self.netto = self.bruto + (self.bruto * self.ppn) + self.ongkir - self.diskon_invoice
         return self.netto
     
-    def update_status(self):
-        total_nilai_bayar = self.hutang.aggregate(total=models.Sum('nilai_bayar'))['total'] or Decimal('0')
-        sisa = self.netto - total_nilai_bayar
-        self.sisa_bayar = sisa
-
-        if sisa == 0:
-            self.status = 'lunas'
-        elif sisa > 0:
-            self.status = 'belum_lunas'
-        self.save()
-    
     def set_sisa_bayar(self):
         self.sisa_bayar = self.netto
         return self.sisa_bayar
