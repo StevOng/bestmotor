@@ -198,7 +198,7 @@ function addNewRow(re = null) {
         <td><input type="number" value="${re?.diskon_barang || ""}" id="disc-${rowCount}" class="disc w-20 rounded-md border-gray-300" /></td>
         <td class="totalDisc">${re?.total_diskon_barang || ""}</td>
         <td class="total">${re?.total_harga_barang || ""}</td>
-        <td><button type="submit" data-id=""><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+        <td><button type="button" data-id="${re?.id || ""}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
         <td><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
 
@@ -250,10 +250,6 @@ async function submitDetail(element) {
         return
     }
 
-    const retur = new FormData()
-    retur.append("faktur_id", fakturId)
-    retur.append("subtotal", bruto)
-
     const method = id ? "PATCH" : "POST";
     const apiUrl = id ? `/api/returjual/${id}/` : `/api/returjual/`
     const csrfToken = getCSRFToken()
@@ -269,6 +265,7 @@ async function submitDetail(element) {
                 'X-CSRFToken': csrfToken
             },
             body: JSON.stringify({
+                "faktur_id": fakturId,
                 "subtotal": bruto,
                 "detail_barang": detail_barang
             })

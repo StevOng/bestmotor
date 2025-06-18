@@ -1,13 +1,14 @@
 from django.db import models
 from django.db.models import Sum, F
 from .customer import Customer
+from .faktur import Faktur
 
 class Piutang(models.Model):
     id = models.AutoField(primary_key=True)
     customer_id = models.ForeignKey(Customer, on_delete=models.PROTECT)
+    faktur = models.ManyToManyField(Faktur, through="PiutangFaktur")
     no_bukti = models.CharField(max_length=10, unique=True)
     tanggal = models.DateTimeField(auto_now_add=True)
-    nilai_bayar = models.DecimalField(max_digits=19, decimal_places=2)
     total_potongan = models.DecimalField(max_digits=19, decimal_places=2)
     total_pelunasan = models.DecimalField(max_digits=19, decimal_places=2)
     updated_at = models.DateTimeField(auto_now=True)
@@ -43,3 +44,8 @@ class Piutang(models.Model):
         self.potongan_total()
         self.pelunasan_total()
         super().save(*args, **kwargs)
+
+class PiutangFaktur(models.Model):
+    piutang = models.ForeignKey(Piutang, on_delete=models.CASCADE)
+    faktur = models.ForeignKey(Faktur, on_delete=models.CASCADE)
+    nilai_bayar = models.DecimalField(max_digits=19, decimal_places=2)

@@ -6,7 +6,7 @@ from ...models.faktur import Faktur
 
 @both_required
 def piutang(request):
-    list_piutang = Piutang.objects.select_related("customer_id")
+    list_piutang = Piutang.objects.select_related("customer_id__user_id")
 
     for p in list_piutang:
         p.total_faktur = p.faktur_set.aggregate(total=Sum('total'))['total'] or 0

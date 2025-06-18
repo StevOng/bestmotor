@@ -32,17 +32,6 @@ class Faktur(models.Model):
             else:
                 self.no_faktur = "BJ20001" # kode pertama
         return self.no_faktur
-    
-    def update_status(self):
-        total_nilai_bayar = self.piutang.aggregate(total=models.Sum('nilai_bayar'))['total'] or Decimal('0')
-        sisa = self.total - total_nilai_bayar
-        self.sisa_bayar = sisa
-
-        if sisa == 0:
-            self.status = 'lunas'
-        elif sisa > 0:
-            self.status = 'belum_lunas'
-        self.save()
 
     def set_sisa_bayar(self):
         self.sisa_bayar = self.total
