@@ -26,7 +26,7 @@ def katalog(request):
                 'barang': barang,
                 "gambar": gambar_base64
             })
-    return render(request, "katalog/katalog.html", {'tipe_katalog': dict(tipe_katalog)})
+    return render(request, "katalog/katalog.html", {'tipe_katalog': list(dict.fromkeys(tipe_katalog))})
 
 def katalogbrg(request, tipe):
     data = []
