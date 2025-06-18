@@ -1,13 +1,14 @@
 from django.db import models
 from django.db.models import Sum, F
 from .supplier import Supplier
+from .invoice import *
 
 class Hutang(models.Model):
     id = models.AutoField(primary_key=True)
     supplier_id = models.ForeignKey(Supplier, on_delete=models.PROTECT)
+    invoice = models.ManyToManyField(Invoice, through="HutangInvoice")
     no_bukti = models.CharField(max_length=10, unique=True)
     tanggal = models.DateTimeField(auto_now_add=True)
-    nilai_bayar = models.DecimalField(max_digits=19, decimal_places=2)
     total_potongan = models.DecimalField(max_digits=19, decimal_places=2)
     total_pelunasan = models.DecimalField(max_digits=19, decimal_places=2)
     update_at = models.DateTimeField(auto_now=True)
@@ -41,3 +42,8 @@ class Hutang(models.Model):
         if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum
             self.generate_no_bukti() # jika belum berarti baru maka generate
         super().save(*args, **kwargs)
+
+class HutangInvoice(models.Model):
+    hutang = models.ForeignKey(Hutang, on_delete=models.CASCADE)
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
+    nilai_bayar = models.DecimalField(max_digits=19, decimal_places=2)

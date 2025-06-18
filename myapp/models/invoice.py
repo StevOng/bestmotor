@@ -1,14 +1,12 @@
 from django.db import models
 from datetime import timedelta
 from decimal import Decimal
-from .hutang import Hutang
 from .barang import *
 from .supplier import Supplier
 
 class Invoice(models.Model):
     id = models.AutoField(primary_key=True)
     supplier_id = models.ForeignKey(Supplier, on_delete=models.PROTECT)
-    hutang = models.ManyToManyField(Hutang)
     barang = models.ManyToManyField(Barang, through='DetailInvoice')
     no_invoice = models.CharField(max_length=50, unique=True)
     no_referensi = models.CharField(max_length=50)
