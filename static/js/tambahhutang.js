@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 function getCSRFToken() {
-  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
 $(document).ready(function () {
@@ -35,18 +35,6 @@ document.querySelectorAll(".potongan").forEach(input => {
 document.querySelectorAll(".nilaiBayar").forEach(input => {
     input.addEventListener("input", totalPelunasan)
 })
-
-document.addEventListener("change", function (e) {
-    if (e.target.classList.contains("no_invoice")) {
-      const lastRow = document.querySelector("tbody tr:last-child");
-      const selectedValue = e.target.value;
-  
-      // Cek apakah dropdown dipilih dan belum pernah nambah baris baru
-      if (selectedValue && !lastRow.classList.contains("new-row-added")) {
-        addNewRow();
-      }
-    }
-});
 
 //PopupModal Supplier
 function openModalSupp() {
@@ -116,76 +104,97 @@ $(document).ready(function () {
     });
 });
 
-function submit() {
-    alert("tes")
-}
+async function submitDetail(element) {
+    const button = element.closest("button")
+    const id = button.dataset?.id
+    const supplierId = document.getElementById("supplierId").value
+    const potongan = Array.from(document.querySelectorAll(".potongan")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
+    const nilaiByrs = Array.from(document.querySelectorAll(".nilaiByr")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
+    const invoiceIds = Array.from(document.querySelectorAll(".invoiceId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
 
-document.querySelectorAll(".btn-submit").forEach((btn) => {
-    btn.addEventListener("click", async (event) => {
-        event.preventDefault()
+    if (!supplierId || !invoiceIds) {
+        alert("Supplier dan Invoice harus dipilih")
+        return
+    }
 
-        const row = btn.closest("tr")
-        const id = btn.dataset?.id || null
-        const supplierId = document.getElementById("supplierId")?.value || null
-        const potongan = row.querySelector(".potongan").value
-        const nilaiByr = row.querySelector(".nilaiByr").value
-        const invoiceId = row.querySelector(".invoiceId").value
-
-        if (!supplierId || !invoiceId) {
-            alert("Supplier dan Invoice harus dipilih")
-            return
-        }
-        const csrfToken = getCSRFToken()
-        const hutang = new FormData()
-        hutang.append("supplier_id", supplierId)
-        hutang.append("nilai_bayar", nilaiByr)
-
-        if (potongan > 0) {
-            const response = await fetch(`/api/invoice/${invoiceId}/`, {
-                method: "PATCH",
-                headers:{
-                    'X-CSRFToken': csrfToken
-                },
-                body: JSON.stringify({
-                    potongan: potongan
-                })
-            })
-            if (response.ok) {
-                console.log(`Update nilai potongan pada invoice: ${invoiceId}, sebesar ${potongan}`)
-            }
-        }
-
-        const method = id ? "PATCH" : "POST" // jika ada id edit, tidak? tambah
-        const apiInvoice = id ? `/api/hutang/${id}/` : `/api/hutang/`
-
-        const response = await fetch(apiInvoice, {
+    if (nilaiByrs <= 0) {
+        alert("Harap mengisi nilai bayar")
+        return
+    }
+    const method = id ? "PUT" : "POST" // jika ada id edit, tidak? tambah
+    const apiUrl = id ? `/api/hutang/${id}/` : `/api/hutang/`
+    const csrfToken = getCSRFToken()
+    try {
+        const list_invoice = invoiceIds.map((invoiceId, index) => ({
+            invoice: invoiceId,
+            nilai_bayar: nilaiByrs[index]
+        }))
+        const response = await fetch(apiUrl, {
             method: method,
             headers: {
+                'Content-Type': 'application/json',
                 'X-CSRFToken': csrfToken
             },
-            body: hutang
+            body: JSON.stringify({
+                "supplier_id": supplierId,
+                "list_invoice": list_invoice
+            })
         })
         const result = await response.json()
-        console.log(result);
-    })
-})
+        if (response.ok) {
+            await Promise.all(invoiceIds.map(async (invoiceId, index) => {
+                const nilaiPotongan = potongan[index]
+                if (nilaiPotongan && nilaiPotongan > 0) {
+                    try {
+                        const patchRes = await fetch(`/api/invoice/${invoiceId}/`, {
+                            method: "PATCH",
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrfToken
+                            },
+                            body: JSON.stringify({
+                                potongan: nilaiPotongan
+                            })
+                        })
+                        if (!patchRes.ok) {
+                            console.warn(`Gagal PATCH potongan invoice ${invoiceId}`)
+                        }
+                    } catch (err) {
+                        console.error(`Error saat PATCH invoice ${invoiceId}`, err)
+                    }
+                }
+            }))
+            console.log("Piutang berhasil disimpan:", result);
+            setTimeout(() => {
+                location.replace(`/pembelian/pembayaran/hutang/`);
+            }, 1000);
+        } else {
+            console.error("Gagal:", result);
+            alert("Gagal menyimpan hutang: " + JSON.stringify(result));
+        }
+    } catch (error) {
+        console.error("Terjadi kesalahan: ", error)
+    }
+}
 
-function confirmPopupBtn(hutangId) {
+function confirmPopupBtn(attr) {
     const modal = document.getElementById("popupModalConfirm");
     modal.classList.remove("hidden"); // Tampilkan modal
     modal.style.display = "flex"; // Pastikan tampil dengan flexbox
 
     const confirmButton = document.getElementById("confirmAction");
 
-    confirmButton.onclick = function () {
-        const row = document.querySelector(`tr[data-id=${hutangId}]`)
+    confirmButton.onclick = () => {
+        const row = attr.closest("tr")
         row.querySelectorAll("input, select, textarea").forEach((el) => {
             el.value = ""
             if (el.tagName == "select") {
                 el.selectedIndex = 0
             }
         })
-        row.removeAttribute("data-id")
+        row.querySelectorAll("td").forEach((td, i) => {
+            if (i == 2) td.textContent = ""
+        })
         closeModalConfirm();
     };
 }
@@ -196,20 +205,38 @@ function closeModalConfirm() {
     modal.style.display = "none"; // Pastikan modal benar-benar hilang
 }
 
-function pilihInvoice(id, nomor, netto) {
+function pilihInvoice(id, nomor) {
     const inputInvoice = document.querySelectorAll("[id^='no_invoice-']")
     inputInvoice.forEach(invoice => {
         const displayText = `${nomor}`
         const row = invoice.closest('tr')
         const noInvoice = row.querySelector("[id^='no_invoice-']")
-        const nettoId = invoice.dataset.netto
-        const nettoEl = document.getElementById(nettoId)
         noInvoice.value = displayText
         const hiddenInput = row.querySelector(".invoiceId")
         if (hiddenInput) {
             hiddenInput.value = id
-            nettoEl.textContent = netto
         }
+
+        const nilaiInv = invoice.dataset.netto
+
+        invoice.addEventListener('change', async () => {
+            const invoiceId = invoice.value
+
+            const response = await fetch(`/api/invoice/${invoiceId}/`)
+            const data = await response.json()
+
+            const nilaiInvEl = document.getElementById(nilaiInv)
+            if (nilaiInvEl && data.netto) {
+                nilaiInvEl.textContent = data.netto
+            }
+
+            // Cek apakah ini baris terakhir → baru tambahkan baris baru
+            const allRows = document.querySelectorAll("tbody tr");
+            const isLast = row === allRows[allRows.length - 1];
+            if (isLast) {
+                addNewRow();
+            }
+        })
     })
     closeModalInv()
 }
@@ -246,9 +273,11 @@ function totalPelunasan() {
     document.getElementById("tot_lunas").value = total
 }
 
-function addNewRow() {
+function addNewRow(hut = null, invoices = null) {
     const tbody = document.querySelector("tbody");
     const newRow = document.createElement("tr");
+    const invoiceId = invoices?.id || ""
+    const noInv = `no_invoice-${rowCount}`
 
     const rowCount = tbody.querySelectorAll("tr").length + 1;
 
@@ -257,13 +286,13 @@ function addNewRow() {
         <td>${rowCount}</td>
         <td>
           <div class="relative">
-            <input type="hidden" name="invoiceId" class="invoiceId" value="{{ invoice.id|default:"" }}">
+            <input type="hidden" name="invoiceId" class="invoiceId" value="${invoiceId}">
             <input
               type="text"
-              id="no_invoice-${rowCount}"
+              id="${noInv}"
               data-netto="netto-${rowCount}"
               placeholder="Pilih Invoice"
-              value="{{ invoice.no_invoice|default:"" }}"
+              value="${invoices?.no_invoice || ""}"
               disabled
               class="block border w-36 border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue"
             />
@@ -276,11 +305,11 @@ function addNewRow() {
             </button>
           </div>
         </td>
-        <td id="netto-${rowCount}">{{ invoice.netto|default:"" }}</td>
+        <td id="netto-${rowCount}">${invoices?.netto || ""}</td>
         <td>
           <input
             type="number"
-            value="{{ invoice.hutang.potongan|default:"" }}"
+            value="${hut?.potongan || ""}"
             id="potongan-${rowCount}"
             class="potongan w-full rounded-md border-gray-300"
           />
@@ -288,13 +317,13 @@ function addNewRow() {
         <td>
           <input
             type="number"
-            value="{{ invoice.hutang.nilai_bayar|default:"" }}"
+            value="${hut?.nilai_byr || ""}"
             id="nilaiBayar-${rowCount}"
             class="nilaiBayar w-full rounded-md border-gray-300"
           />
         </td>
         <td>
-          <button type="submit" data-id={{ invoice.hutang.id }}>
+          <button type="button" onclick="submitDetail(this)" data-id="${hut?.id || ""}">
             <i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
           </button>
         </td>
@@ -307,10 +336,9 @@ function addNewRow() {
 
     tbody.appendChild(newRow);
 
-    const btnSubmit = newRow.querySelector(".btn-submit")
-    if (piutang?.id) {
-        btnSubmit.setAttribute("data-id", piutang.id)
-    }
+    setTimeout(() => {
+        pilihInvoice(invoiceId, noInv)
+    }, 0);
 }
 
 function hapusRow(btn) {

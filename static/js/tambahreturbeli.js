@@ -197,7 +197,7 @@ function addNewRow(inv = null) {
         <td><input type="number" value="${inv?.diskon_barang || ""}" class="disc w-20 rounded-md border-gray-300" /></td>
         <td class="totalDisc">${inv?.total_diskon_barang || ""}</td>
         <td class="total">${inv?.total_harga_barang || ""}</td>
-        <td><button type="button" data-id="${inv?.id || ""}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+        <td><button type="button" onclick="submitDetail(this)" data-id="${inv?.id || ""}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
         <td><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
 

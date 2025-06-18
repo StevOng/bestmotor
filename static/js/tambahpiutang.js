@@ -353,7 +353,7 @@ function addNewRow(piutang = null, data_faktur = null) {
         <td id="nilaiFaktur-${rowCount}">${piutang?.total_faktur || ""}</td>
         <td><input type="number" value="${piutang?.potongan || ""}" id="potongan-${rowCount}" class="potongan w-full rounded-md border-gray-300" /></td>
         <td><input type="number" value="${piutang?.nilai_bayar || ""}" id="nilaiByr-${rowCount}" class="nilaiByr w-full rounded-md border-gray-300" /></td>
-        <td><button type="button" class="btn-submit" data-id="${piutang?.id || ""}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+        <td><button type="button" onclick="submitDetail(this)" class="btn-submit" data-id="${piutang?.id || ""}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
         <td><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
 

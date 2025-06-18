@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.db.models import Sum
 from ...decorators import *
-from ...models.piutang import Piutang
+from ...models.piutang import *
 from ...models.faktur import Faktur
 
 @both_required
@@ -20,4 +20,5 @@ def tambah_bayarpiutang(request, id=None):
     if id:
         piutang = Piutang.objects.select_related('customer_id__user_id').get(id=id)
         piutang.total_faktur = piutang.faktur_set.aggregate(total=Sum('total'))['total'] or 0
+        piutang.nilai_byr = PiutangFaktur.objects.filter(piutang=piutang).values_list('nilai_bayar', flat=True)
     return render(request, 'piutang/tambahpiutang.html', {'data_piutang':piutang, 'data_faktur': faktur})

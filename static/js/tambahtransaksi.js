@@ -134,7 +134,7 @@ function addNewRow(data = null) {
       </td>
       <td id="${namaBrgId}">${namaBarang}</td>
       <td><input type="number" id="input_qtybrg-${rowCount}" value="${qty}" class="input_qtybrg w-20 rounded-md border-gray-300"/></td>
-      <td><button type="button" class="btn-submit" data-id="${detailId}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+      <td><button type="button" onclick="submitDetail(this)" class="btn-submit" data-id="${detailId}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
       <td><button type="button" onclick="hapusRow(this)"><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `;
 
