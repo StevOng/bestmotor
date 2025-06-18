@@ -33,8 +33,8 @@ class PiutangSerializer(serializers.ModelSerializer):
                 setattr(instance, attr, value)
             instance.save()
 
-            PiutangFaktur.objects.filter(transaksi=instance).delete()
+            PiutangFaktur.objects.filter(piutang=instance).delete()
 
             for item in list_data:
-                PiutangFaktur.objects.create(transaksi=instance, **item)
+                PiutangFaktur.objects.create(piutang=instance, **item)
         return instance

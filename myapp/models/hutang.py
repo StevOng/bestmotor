@@ -41,6 +41,8 @@ class Hutang(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum
             self.generate_no_bukti() # jika belum berarti baru maka generate
+        self.potongan_total()
+        self.pelunasan_total()
         super().save(*args, **kwargs)
 
 class HutangInvoice(models.Model):
