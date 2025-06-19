@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Sum, F
+from decimal import Decimal
 from .customer import Customer
 from .faktur import Faktur
 
@@ -9,8 +10,8 @@ class Piutang(models.Model):
     faktur = models.ManyToManyField(Faktur, through="PiutangFaktur")
     no_bukti = models.CharField(max_length=10, unique=True)
     tanggal = models.DateTimeField(auto_now_add=True)
-    total_potongan = models.DecimalField(max_digits=19, decimal_places=2)
-    total_pelunasan = models.DecimalField(max_digits=19, decimal_places=2)
+    total_potongan = models.DecimalField(max_digits=19, decimal_places=2, default=Decimal('0.00'))
+    total_pelunasan = models.DecimalField(max_digits=19, decimal_places=2, default=Decimal('0.00'))
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):

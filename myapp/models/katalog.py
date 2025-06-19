@@ -6,7 +6,7 @@ class Katalog(models.Model):
     barang = models.ManyToManyField(Barang)
     harga_tertera = models.DecimalField(max_digits=19, decimal_places=2)
     harga_diskon = models.DecimalField(max_digits=19, decimal_places=2)
-    is_katalog_utama = models.BooleanField()
+    is_katalog_utama = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

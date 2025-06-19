@@ -10,21 +10,16 @@ class Barang(models.Model):
     merk = models.CharField(max_length=50, choices=MERK, default=None)
     harga_jual = models.DecimalField(max_digits=19, decimal_places=2)
     stok_minimum = models.IntegerField()
-    harga_modal = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    harga_modal = models.DecimalField(max_digits=19, decimal_places=2, default=0)
     stok = models.IntegerField(default=0)
     qty_terjual = models.IntegerField(default=0)
-    gambar = models.BinaryField(null=True, blank=True)
+    gambar = models.ImageField(null=True, blank=True)
     keterangan = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.kode_barang
-
-    def db_type(self, connection):
-        if connection.vendor == 'mysql':
-            return 'MEDIUMBLOB'
-        return super().db_type(connection)
         
     def update_modal(self, qty_baru, harga_baru, diskon):
         total_stok_lama = self.stok

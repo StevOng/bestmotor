@@ -1,12 +1,9 @@
 from django.db import models
-from decimal import Decimal
 from .pesanan import Pesanan
-from .piutang import Piutang
 
 class Faktur(models.Model):
     id = models.AutoField(primary_key=True)
     pesanan_id = models.OneToOneField(Pesanan, on_delete=models.CASCADE)
-    piutang = models.ManyToManyField(Piutang)
     no_faktur = models.CharField(max_length=50, unique=True)
     sisa_bayar = models.DecimalField(max_digits=19, decimal_places=2)
     tanggal_faktur = models.DateTimeField(auto_now_add=True)
@@ -32,13 +29,8 @@ class Faktur(models.Model):
             else:
                 self.no_faktur = "BJ20001" # kode pertama
         return self.no_faktur
-
-    def set_sisa_bayar(self):
-        self.sisa_bayar = self.total
-        return self.sisa_bayar
     
     def save(self, *args, **kwargs):
         if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum
             self.generate_no_faktur() # jika belum berarti baru maka generate
-            self.set_sisa_bayar()
         super().save(*args, **kwargs)
