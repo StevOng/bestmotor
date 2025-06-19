@@ -75,15 +75,27 @@
             <label for="stok-minimum" class="block text-center text-sm font-medium text-gray-700">Harga Satuan</label>
           </div>
           <div id="harga-tiers-container">
-            <div class="harga-tier flex">
-              <div
-                class="mt-1 mr-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400"> Harga Grosir
+            {% for tier in tier_harga %}
+              <div class="harga-tier flex" data-id="{{ tier.id|default:"" }}">
+                <div
+                  class="mt-1 mr-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400"> Harga Grosir
+                </div>
+                <input type="number" 
+                  class="min-qty mt-1 mx-2 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ tier.min_qty_grosir|default:""}}"/>
+                <input type="number"
+                  class="harga-satuan mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ tier.harga_satuan|default:""}}" />
               </div>
-              <input type="number" 
-                class="min-qty mt-1 mx-2 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ detail_barang.min_qty_grosir|default:""}}"/>
-              <input type="number"
-                class="harga-satuan mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ detail_barang.harga_satuan|default:""}}" />
-            </div>
+            {% empty %}
+              <div class="harga-tier flex" data-id="{{ tier.id|default:"" }}">
+                <div
+                  class="mt-1 mr-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400"> Harga Grosir
+                </div>
+                <input type="number" 
+                  class="min-qty mt-1 mx-2 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ tier.min_qty_grosir|default:""}}"/>
+                <input type="number"
+                  class="harga-satuan mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ tier.harga_satuan|default:""}}" />
+              </div>           
+            {% endfor %}
           </div>
         </div>
         <div class="hidden md:block"></div>
@@ -93,7 +105,7 @@
             <label for="upload_gambar" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Upload Gambar</label>
             <div class="flex items- h-[89px] border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
                 <span id="placeholder" class="flex-grow px-3 py-2 text-sm text-gray-500 dark:text-gray-300">
-                Upload Gambar (0/5)
+                Upload Gambar
                 </span>
                 <label for="upload_gambar" class="cursor-pointer px-4 py-2 text-gray-700 rounded-r-lg dark:bg-gray-600 dark:text-white">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -101,7 +113,8 @@
                     <path d="M5 16L5 17C5 18.1046 5.89543 19 7 19L17 19C18.1046 19 19 18.1046 19 17V16" stroke="#222222"/>
                     </svg>
                 </label>
-                <input type="file" id="upload_gambar" multiple class="hidden" value="{{ detail_barang.gambar|default:""}}">
+                <input type="file" id="upload_gambar" multiple class="hidden" accept="image/*" value="{{ detail_barang.gambar.url|default:""}}">
+                <img id="previewGambar" src="#" alt="Preview" style="max-width: 200px; display: none;">
             </div>
         </div>
         

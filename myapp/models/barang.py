@@ -13,7 +13,7 @@ class Barang(models.Model):
     harga_modal = models.DecimalField(max_digits=19, decimal_places=2, default=0)
     stok = models.IntegerField(default=0)
     qty_terjual = models.IntegerField(default=0)
-    gambar = models.ImageField(null=True, blank=True)
+    gambar = models.ImageField(upload_to='images/',null=True, blank=True)
     keterangan = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

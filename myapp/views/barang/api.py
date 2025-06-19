@@ -14,12 +14,6 @@ class BarangViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ['kode_barang', 'nama_barang']
     parser = (MultiPartParser, FormParser) # Memproses file upload
-
-    def create(self, request, *args, **kwargs):
-        file = request.FILES.get("gambar") # Ambil file dari request
-        if file:
-            request.data["gambar"] = file.read() # Simpan sebagai biner
-        return super().create(request, *args, **kwargs)
     
     @action(detail=False, methods=['get'])
     def tipe_choices(self, request):
@@ -54,3 +48,11 @@ class BarangViewSet(viewsets.ModelViewSet):
 class TierHargaViewSet(viewsets.ModelViewSet):
     queryset = TierHarga.objects.all()
     serializer_class = TierHargaSerializer
+
+    def get_queryset(self):
+        queryset = TierHarga.objects.all()
+        barang_id = self.request.query_params.get('barang_id')
+        if barang_id:
+            queryset = queryset.filter(barang_id=barang_id)
+        return queryset
+    

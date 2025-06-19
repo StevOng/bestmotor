@@ -25,18 +25,18 @@ def barang(request):
 
     for brg in barang:
         brg.total_pesanan = sum(d.qty_pesan for d in brg.detailpesanan_set.all())
-        brg.qty_siap_jual = brg.stok - brg.total_pesanan
-        brg.selisih = brg.stok_minimum - brg.qty_siap_jual
 
     return render(request, 'barang/barang.html', {'barang': barang,'filter': filter})
 
 @admin_required
 def tambah_barang(request, id=None):
     barang = None
+    tier_harga = []
 
     if id:
         barang = Barang.objects.get(id=id)
-    return render(request, 'barang/tambahbrg.html', {'detail_barang': barang})
+        tier_harga = TierHarga.objects.filter(barang_id=barang.id)
+    return render(request, 'barang/tambahbrg.html', {'detail_barang': barang, 'tier_harga': tier_harga})
 
 def get_barang_laku(dari, sampe):
     dari = parse_date(dari)
@@ -44,7 +44,7 @@ def get_barang_laku(dari, sampe):
 
     return Barang.objects.annotate(total_terjual=Sum(
         'detailpesanan_qty_pesan',
-        filter=Q(detailpesanan__tanggal_pesanan__range=[dari,sampe])
+        filter=Q(detailpesanan__pesanan_id__tanggal_pesanan__range=[dari,sampe])
     )).filter(total_terjual__gt=0)
 
 def export_excel(request):

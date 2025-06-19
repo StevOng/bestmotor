@@ -1,7 +1,3 @@
-document.addEventListener('DOMContentLoaded', () => {
-    fetchGambar()
-})
-
 // {% comment %} tabel barang {% endcomment %}
 $(document).ready(function () {
     let table = $('#tabel-brg').DataTable({
@@ -68,32 +64,4 @@ function closeModalConfirm() {
     const modal = document.getElementById("popupModalConfirm");
     modal.classList.add("hidden"); // Sembunyikan modal
     modal.style.display = "none"; // Pastikan modal benar-benar hilang
-}
-
-async function fetchGambar() {
-    try {
-        const response = await fetch("/api/barang/")
-        const data = await response.json()
-
-        const containers = document.querySelectorAll(".gambarContainer")
-
-        containers.forEach(container => {
-            const brgId = container.dataset.brgId
-
-            const detail = data.find(item => item.id == brgId) // cari data sesuai id
-            if (detail) {
-                const img = document.createElement("img")
-                img.className = "w-16 h-16"
-                img.src = detail.gambar && detail.gambar.trim() !== "" 
-                    ? detail.gambar 
-                    : "../../../static/images/logo.png"
-                img.alt = detail.barang_id?.nama_barang || "Barang" // jika barang id true maka nama_barang jika false maka "Barang"
-
-                container.innerHTML = "" // Kosongkan jika sebelumnya ada isi
-                container.appendChild(img)
-            }
-        })
-    } catch (err) {
-        console.error(err);
-    }
 }
