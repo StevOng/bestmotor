@@ -227,9 +227,8 @@ function pilihFaktur(id, nomor) {
     closeModalFaktur()
 }
 
-async function submitDetail(element) {
-    const button = element.closest("button")
-    const id = button.dataset?.id
+async function submitDetail() {
+    const id = document.getElementById("piutangId")?.value
     const fakturIds = Array.from(document.querySelectorAll(".fakturId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
     const nilaiByrs = Array.from(document.querySelectorAll(".nilaiByr")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
     const custId = document.getElementById(".custId").value
@@ -353,7 +352,7 @@ function addNewRow(piutang = null, data_faktur = null) {
         <td id="nilaiFaktur-${rowCount}">${piutang?.total_faktur || ""}</td>
         <td><input type="number" value="${piutang?.potongan || ""}" id="potongan-${rowCount}" class="potongan w-full rounded-md border-gray-300" /></td>
         <td><input type="number" value="${piutang?.nilai_bayar || ""}" id="nilaiByr-${rowCount}" class="nilaiByr w-full rounded-md border-gray-300" /></td>
-        <td><button type="button" onclick="submitDetail(this)" class="btn-submit" data-id="${piutang?.id || ""}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+        <td><button type="button" onclick="submitDetail()" class="btn-submit"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
         <td><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
 

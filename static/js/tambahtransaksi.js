@@ -134,7 +134,7 @@ function addNewRow(data = null) {
       </td>
       <td id="${namaBrgId}">${namaBarang}</td>
       <td><input type="number" id="input_qtybrg-${rowCount}" value="${qty}" class="input_qtybrg w-20 rounded-md border-gray-300"/></td>
-      <td><button type="button" onclick="submitDetail(this)" class="btn-submit" data-id="${detailId}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+      <td><button type="button" onclick="submitDetail()" class="btn-submit"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
       <td><button type="button" onclick="hapusRow(this)"><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `;
 
@@ -153,9 +153,8 @@ function hapusRow(btn) {
     setTimeout(() => row.remove(), 400)
 }
 
-async function submitDetail(element) {
-    const button = element.closest("button")
-    const id = button.dataset?.id
+async function submitDetail() {
+    const id = document.getElementById("id")?.value
     const jenis = document.getElementById("jenis").value
     const barangIds = Array.from(document.querySelectorAll(".barang-id")).map(input => parseInt(input.value)).filter(val => !isNaN(val))//filter utk buang null
     const qtys = Array.from(document.querySelectorAll(".input_qtybrg")).map(input => parseInt(input.value)).filter(val => !isNaN(val))

@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 console.log("BarangData global:", window.barangData)
 
 function getCSRFToken() {
-  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
 $(document).ready(function () {
@@ -29,19 +29,6 @@ $(document).ready(function () {
     });
     $('.dt-search').remove();
     $('.dt-info').remove();
-});
-
-document.addEventListener("change", function (e) {
-    if (e.target.classList.contains("kodebrg-dropdown")) {
-        const allRows = document.querySelectorAll("tbody tr");
-        const selectedValue = e.target.value;
-        const lastSelect = allRows[allRows.length - 1]?.querySelector(".kodebrg-dropdown")
-
-        // Cek apakah dropdown dipilih
-        if (selectedValue && e.target === lastSelect) {
-            addNewRow();
-        }
-    }
 });
 
 document.querySelectorAll(".input_hrgbrg").forEach(input => {
@@ -118,27 +105,11 @@ $(document).ready(function () {
     });
 });
 
-// const searchKode = document.getElementById("searchKode");
-// const dropdownList = document.getElementById("dropdownList");
-
-// // Sembunyikan dropdown jika klik di luar
-// document.addEventListener("click", (event) => {
-//     if (!searchKode.contains(event.target) && !dropdownList.contains(event.target)) {
-//         dropdownList.classList.add("hidden");
-//     }
-// });
-
-// // Pilih item dan isi input
-// function selectKode(element) {
-//     searchKode.value = element.textContent;
-//     dropdownList.classList.add("hidden");
-// }
-
 document.getElementById("toggleCheck")?.addEventListener("click", function () {
     document.getElementById("checkIcon").classList.toggle("hidden");
 });
 
-function confirmPopupBtn(detailId) {
+function confirmPopupBtn(attr) {
     const modal = document.getElementById("popupModalConfirm");
     modal.classList.remove("hidden"); // Tampilkan modal
     modal.style.display = "flex"; // Pastikan tampil dengan flexbox
@@ -146,14 +117,16 @@ function confirmPopupBtn(detailId) {
     const confirmButton = document.getElementById("confirmAction");
 
     confirmButton.onclick = async function () {
-        const row = document.querySelector(`tr[data-id="${detailId}"]`);
+        const row = attr.closest("tr")
         row.querySelectorAll("input, select, textarea").forEach((el) => {
             el.value = ""
             if (el.tagName == "select") {
                 el.selectedIndex = 0
             }
         })
-        row.removeAttribute("data-id")
+        row.querySelectorAll("td").forEach((td, i) => {
+            if (i == 2) td.textContent = ""
+        })
         closeModalConfirm();
     };
 }
@@ -249,72 +222,67 @@ function pilihCustomer(id, nama, toko) {
     closeModal()
 }
 
-document.querySelectorAll(".btn-submit").forEach((btn) => {
-    btn.addEventListener("submit", async (event) => {
-        event.preventDefault()
+async function submitDetail() {
+    const id = document.getElementById("pesananId")?.value
+    const qtys = Array.from(document.querySelectorAll(".input_qtybrg")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
+    const diskonBarangs = Array.from(document.querySelectorAll(".disc")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
+    const barangIds = Array.from(document.querySelectorAll(".barangId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
+    const kurir = document.getElementById("kurir").value
+    const customer = document.getElementById("customerId")?.value
+    const top = document.getElementById("top").value
+    const alamat = document.getElementById("alamat_kirim").value
+    const keterangan = document.getElementById("keterangan").value
+    const ppn = document.getElementById("ppn").value
+    const ongkir = document.getElementById("ongkir").value
+    const diskon = document.getElementById("discount").value
 
-        const row = btn.closest("tr")
-        const id = btn.dataset?.id || null
-        const qty = row.querySelector(".input_qtybrg").value
-        const diskonBarang = row.querySelector(".disc").value
-        const barangId = row.querySelector(".barangId")?.value || null
-        const kurir = document.getElementById("kurir").value
-        const customer = document.getElementById("customerId")?.value || null
-        const top = document.getElementById("top").value
-        const alamat = document.getElementById("alamat_kirim").value
-        const keterangan = document.getElementById("keterangan").value
-        const ppn = document.getElementById("ppn").value
-        const ongkir = document.getElementById("ongkir").value
-        const diskon = document.getElementById("discount").value
-
-        if (!customer || !barangId) {
-            alert("Customer dan Barang harus dipilih")
-            return
-        }
-        const pesanan = new FormData()
-        pesanan.append("customer_id", customer)
-        pesanan.append("ppn", ppn)
-        pesanan.append("ongkir", ongkir)
-        pesanan.append("diskon_pesanan", diskon)
-
-        const method = id ? "PATCH" : "POST" // jika ada id edit, tidak? tambah
-        const apiPesanan = id ? `/api/pesanan/${id}/` : `/api/pesanan/`
-        const apiDetail = id ? `/api/detailpesanan/${id}/` : `/api/detailpesanan/`
-        const csrfToken = getCSRFToken()
-
-        const response = await fetch(apiPesanan, {
+    if (!customer || !barangIds) {
+        alert("Customer dan Barang harus dipilih")
+        return
+    }
+    if (qtys < 0 || diskonBarangs < 0) {
+        alert("Kuantiti dan diskon barang tidak bisa minus")
+        return
+    }
+    const method = id ? "PUT" : "POST";
+    const apiUrl = id ? `/api/pesanan/${id}/` : `/api/pesanan/`
+    const csrfToken = getCSRFToken()
+    try {
+        const detail_barang = barangIds.map((barangId, index) => ({
+            barang_id: barangId,
+            qty_pesan: qtys[index],
+            diskon_barang: diskonBarangs[index]
+        }))
+        const response = await fetch(apiUrl, {
             method: method,
             headers: {
+                'Content-Type': 'application/json',
                 'X-CSRFToken': csrfToken
             },
-            body: pesanan
-        })
-        const pesananData = await response.json()
-        console.log(pesananData);
-
-        if (pesananData.id) {
-            const detailPesanan = new FormData()
-            detailPesanan.append("pesanan_id", pesananData.id)
-            detailPesanan.append("barang_id", barangId)
-            detailPesanan.append("kurir", kurir)
-            detailPesanan.append("top", top)
-            detailPesanan.append("alamat_kirim", alamat)
-            detailPesanan.append("keterangan", keterangan)
-            detailPesanan.append("qty_pesan", qty)
-            detailPesanan.append("diskon_barang", diskonBarang)
-
-            let detailResponse = await fetch(apiDetail, {
-                method: method,
-                headers: {
-                    'X-CSRFToken': csrfToken
-                },
-                body: detailPesanan
+            body: JSON.stringify({
+                "customer_id": customer,
+                "kurir": kurir,
+                "top": top,
+                "ppn": ppn,
+                "ongkir": ongkir,
+                "diskon_pesanan": diskon,
+                "alamat_kirim": alamat,
+                "keterangan": keterangan
             })
-            let detailData = await detailResponse.json()
-            console.log(detailData);
+        })
+        if (response.ok) {
+            console.log("Pesanan & Detail berhasil disimpan:", result);
+            setTimeout(() => {
+                location.replace(`/pesanan/`);
+            }, 1000);
+        } else {
+            console.error("Gagal:", result);
+            alert("Gagal menyimpan pesanan: " + JSON.stringify(result));
         }
-    })
-})
+    } catch (error) {
+        console.error("Terjadi kesalahan: ", error)
+    }
+}
 
 async function loadBarangOptions(selectId, selectedId) {
     let response = await fetch("/api/barang/")
@@ -360,16 +328,22 @@ async function getOptionBrg() {
             }
             updateDetailBiaya()
 
-            // const table = $('#detailBrg').DataTable();
-            // table.columns.adjust().draw();
+            // Cek apakah ini baris terakhir → baru tambahkan baris baru
+            const allRows = document.querySelectorAll("tbody tr");
+            const isLast = row === allRows[allRows.length - 1];
+            if (isLast) {
+                addNewRow();
+            }
         })
     })
 }
 
 function addNewRow(detail = null) {
-    const tbodies = document.querySelectorAll("tbody");
-    const tbody = tbodies[tbodies.length - 1];
+    const tbody = document.querySelector("tbody");
     const newRow = document.createElement("tr");
+
+    const selectId = `kodebrg-dropdown-${rowCount}`;
+    const barangId = detail?.barang_id || ""
 
     const rowCount = tbody.querySelectorAll("tr").length + 1;
 
@@ -377,8 +351,8 @@ function addNewRow(detail = null) {
     newRow.innerHTML = `
       <td>${rowCount}</td>
       <td>
-        <input type="hidden" name="barangId-${rowCount}" class="barangId" value="${detail?.barang_id || ""}">
-        <select id="kodebrg-dropdown-${rowCount}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-${rowCount}" data-selected-id="${detail?.barang_id || ""}">
+        <input type="hidden" name="barangId-${rowCount}" class="barangId" value="${barangId}">
+        <select id="${selectId}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-${rowCount}" data-selected-id="${barangId}">
           <option value="">Pilih Barang</option>
         </select>
       </td>
@@ -389,26 +363,17 @@ function addNewRow(detail = null) {
       <td><input type="number" value="${detail?.diskon_barang || 0}" class="disc w-20 rounded-md border-gray-300"/></td>
       <td class="totalDisc">${detail?.total_diskon_barang || ""}</td>
       <td class="totalHarga">${detail?.total_harga_barang || ""}</td>
-      <td><button type="button" class="btn-submit" data-id=""><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+      <td><button type="button" onclick="submitDetail()" class="btn-submit"><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
       <td><button type="button" onclick="hapusRow(this)"><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
 
     tbody.appendChild(newRow);
 
-    const btnSubmit = newRow.querySelector(".btn-submit");
-    if (detail?.id) {
-        btnSubmit.setAttribute("data-id", detail.id);
-    }
-
-    setTimeout(()=>{
-        loadBarangOptions(`kodebrg-dropdown-${rowCount}`, detail?.barang_id || null);
+    // deferring execution
+    setTimeout(() => {
+        loadBarangOptions(selectId, barangId);
         getOptionBrg();
-    }, 0)
-
-    // 👉 Tambahkan listener baru agar updateDetailBiaya bekerja untuk baris ini
-    newRow.querySelector(".input_hrgbrg")?.addEventListener("input", updateDetailBiaya);
-    newRow.querySelector(".input_qtybrg")?.addEventListener("input", updateDetailBiaya);
-    newRow.querySelector(".disc")?.addEventListener("input", updateDetailBiaya);
+    }, 0);
 }
 
 

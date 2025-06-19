@@ -197,7 +197,7 @@ function addNewRow(inv = null) {
         <td><input type="number" value="${inv?.diskon_barang || ""}" class="disc w-20 rounded-md border-gray-300" /></td>
         <td class="totalDisc">${inv?.total_diskon_barang || ""}</td>
         <td class="total">${inv?.total_harga_barang || ""}</td>
-        <td><button type="button" onclick="submitDetail(this)" data-id="${inv?.id || ""}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+        <td><button type="button" onclick="submitDetail()"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
         <td><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
 
@@ -228,9 +228,8 @@ function pilihInv(id, nomor, supplier) {
     closeModalConfirm()
 }
 
-async function submitDetail(element) {
-    const button = element.closest("button")
-    const id = button.dataset?.id
+async function submitDetail() {
+    const id = document.getElementById("hiddenId")?.value
     const barangIds = Array.from(document.querySelectorAll(".barangId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))//filter utk buang null
     const qtyReturs = Array.from(document.querySelectorAll(".input_qtybrg")).map(input => parseInt(input.value)).filter(val => !isNaN(val))//filter utk buang null
     const invId = document.getElementById("invId")?.value

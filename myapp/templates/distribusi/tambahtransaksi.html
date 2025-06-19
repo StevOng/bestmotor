@@ -103,14 +103,14 @@
                   {{ data.barang.nama_barang|default:"" }}
                 </td>
                 <td><input type="number" value="{{ data.qty|default:0 }}" class="input_qtybrg w-full rounded-md border-gray-300" /></td>
-                <td><button type="button" class="btn-submit" data-id="{{ data.id|default:"" }}" onclick="submitDetail(this)"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+                <td><button type="button" class="btn-submit" onclick="submitDetail()"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
                 <td>
                   <button type="button" onclick="confirmPopupBtn(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button>
                 </td>
               </tr>
             {% empty %}
               <tr>
-                <td>1</td>
+                <td>{{ forloop.counter|default:"1" }}</td>
                 <td>
                   <input type="hidden" class="barang-id" value="{{ data.barang.id|default:"" }}">
                   <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ data.barang.id|default:"" }}">
@@ -121,7 +121,7 @@
                   {{ data.barang.nama_barang|default:"" }}
                 </td>
                 <td><input type="number" value="{{ data.qty|default:0 }}" class="input_qtybrg w-full rounded-md border-gray-300" /></td>
-                <td><button type="button" class="btn-submit" data-id="{{ data.id|default:"" }}" onclick="submitDetail(this)"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+                <td><button type="button" class="btn-submit" onclick="submitDetail()"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
                 <td>
                   <button type="button" onclick="confirmPopupBtn(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button>
                 </td>

@@ -104,10 +104,9 @@ $(document).ready(function () {
     });
 });
 
-async function submitDetail(element) {
-    const button = element.closest("button")
-    const id = button.dataset?.id
-    const supplierId = document.getElementById("supplierId").value
+async function submitDetail() {
+    const id = document.getElementById("hutId")?.value
+    const supplierId = document.getElementById("supplierId")?.value
     const potongan = Array.from(document.querySelectorAll(".potongan")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
     const nilaiByrs = Array.from(document.querySelectorAll(".nilaiByr")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
     const invoiceIds = Array.from(document.querySelectorAll(".invoiceId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
@@ -323,7 +322,7 @@ function addNewRow(hut = null, invoices = null) {
           />
         </td>
         <td>
-          <button type="button" onclick="submitDetail(this)" data-id="${hut?.id || ""}">
+          <button type="button" onclick="submitDetail()">
             <i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
           </button>
         </td>

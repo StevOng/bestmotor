@@ -214,7 +214,7 @@ function addNewRow(detail = null) {
         <td><input type="number" value="${detail?.diskon_barang || 0}" id="disc-${rowCount}" class="disc w-20 rounded-md border-gray-300" /></td>
         <td class="totalDisc">${detail?.total_diskon_barang || ""}</td>
         <td class="totalHarga">${detail?.total_harga_barang || ""}</td>
-        <td><button type="button" onclick="submitDetail(this)" class="btn-submit" data-id="${detail?.id || ""}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+        <td><button type="button" onclick="submitDetail()" class="btn-submit"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
         <td><button type="button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
 
@@ -245,71 +245,74 @@ function pilihSupplier(id, nama, perusahaan) {
     closeModal()
 }
 
+async function submitDetail() {
+    const id = document.getElementById("invoiceId")?.value
+    const noInv = document.getElementById("no_invoice").value
+    const hargaBelis = Array.from(document.querySelectorAll(".input_hrgbrg")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
+    const qtys = Array.from(document.querySelectorAll(".input_qtybrg")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
+    const diskonBarangs = Array.from(document.querySelectorAll(".disc")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
+    const barangIds = Array.from(document.querySelectorAll(".barangId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
+    const supplier = document.getElementById("supplierId")?.value
+    const top = document.getElementById("top_inv").value
+    const ppn = document.getElementById("ppn").value
+    const ongkir = document.getElementById("ongkir").value
+    const diskon = document.getElementById("discount").value
+
+    if (supplier == "" || barangIds == "") {
+        alert("Supplier dan Barang harus dipilih")
+        return
+    }
+
+    if (qtys < 0 || diskonBarangs < 0) {
+        alert("Kuantiti dan diskon barang tidak bisa minus")
+        return
+    }
+    const method = id ? "PUT" : "POST";
+    const apiUrl = id ? `/api/invoice/${id}/` : `/api/invoice/`
+    const csrfToken = getCSRFToken()
+    try {
+        const detail_barang = barangIds.map((barangId, index) => ({
+            barang_id: barangId,
+            qty_beli: qtys[index],
+            harga_beli: hargaBelis[index],
+            diskon_barang: diskonBarangs[index]
+        }))
+        const response = await fetch(apiUrl, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                "supplier_id": supplier,
+                "no_invoice": noInv,
+                "top": top,
+                "ppn": ppn,
+                "ongkir": ongkir,
+                "diskon_invoice": diskon,
+                "detail_barang": detail_barang
+            })
+        })
+        const result = await response.json()
+        if (response.ok) {
+            console.log("Invoice & Detail berhasil disimpan:", result);
+            setTimeout(() => {
+                location.replace(`/pembelian/invoice/`);
+            }, 1000);
+        } else {
+            console.error("Gagal:", result);
+            alert("Gagal menyimpan invoice: " + JSON.stringify(result));
+        }
+    } catch (error) {
+        console.error("Terjadi kesalahan: ", error)
+    }
+}
+
 document.querySelectorAll(".btn-submit").forEach((btn) => {
     btn.addEventListener("click", async (event) => {
         event.preventDefault()
 
         const row = btn.closest("tr")
-        const id = btn.dataset?.id
-        const noInv = document.getElementById("no_invoice").value
-        const hargaBelis = Array.from(document.querySelectorAll(".input_hrgbrg")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
-        const qtys = Array.from(document.querySelectorAll(".input_qtybrg")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
-        const diskonBarangs = Array.from(document.querySelectorAll(".disc")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
-        const barangIds = Array.from(document.querySelectorAll(".barangId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
-        const supplier = document.getElementById("supplierId")?.value || null
-        const top = document.getElementById("top_inv").value
-        const ppn = document.getElementById("ppn").value
-        const ongkir = document.getElementById("ongkir").value
-        const diskon = document.getElementById("discount").value
-
-        if (supplier == "" || barangIds == "") {
-            alert("Supplier dan Barang harus dipilih")
-            return
-        }
-
-        if (qtys < 0 || diskonBarangs < 0) {
-            alert("Kuantiti dan diskon barang tidak bisa minus")
-            return
-        }
-        const method = id ? "PUT" : "POST";
-        const apiUrl = id ? `/api/invoice/${id}/` : `/api/invoice/`
-        const csrfToken = getCSRFToken()
-        try {
-            const detail_barang = barangIds.map((barangId, index) => ({
-                barang: barangId,
-                qty_beli: qtys[index],
-                harga_beli: hargaBelis[index],
-                diskon_barang: diskonBarangs[index]
-            }))
-            const response = await fetch(apiUrl, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
-                },
-                body: JSON.stringify({
-                    "supplier_id": supplier,
-                    "no_invoice": noInv,
-                    "top": top,
-                    "ppn": ppn,
-                    "ongkir": ongkir,
-                    "diskon_invoice": diskon,
-                    "detail_barang": detail_barang
-                })
-            })
-            const result = await response.json()
-            if (response.ok) {
-                console.log("Invoice & Detail berhasil disimpan:", result);
-                setTimeout(() => {
-                    location.replace(`/pembelian/invoice/`);
-                }, 1000);
-            } else {
-                console.error("Gagal:", result);
-                alert("Gagal menyimpan invoice: " + JSON.stringify(result));
-            }
-        } catch (error) {
-            console.error("Terjadi kesalahan: ", error)
-        }
     })
 })
 
