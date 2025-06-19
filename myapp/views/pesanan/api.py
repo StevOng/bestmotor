@@ -88,12 +88,12 @@ class PesananViewSet(viewsets.ModelViewSet):
             "total_income": total_income,
             "total_orders": total_orders
         })
+    
+    @action(detail=False, methods=['get'])
+    def kurir_choices(self, request):
+        choices = [{'value': value, 'label': label} for value, label in Pesanan.KURIR]
+        return Response(choices)
 
 class DetailPesananViewSet(viewsets.ModelViewSet):
     queryset = DetailPesanan.objects.all()
     serializer_class = DetailPesananSerializer
-
-    @action(detail=False, methods=['get'])
-    def kurir_choices(self, request):
-        choices = [{'value': value, 'label': label} for value, label in DetailPesanan.CHOICES]
-        return Response(choices)

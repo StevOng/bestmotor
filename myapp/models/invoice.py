@@ -9,14 +9,14 @@ class Invoice(models.Model):
     supplier_id = models.ForeignKey(Supplier, on_delete=models.PROTECT)
     barang = models.ManyToManyField(Barang, through='DetailInvoice')
     no_invoice = models.CharField(max_length=50, unique=True)
-    no_referensi = models.CharField(max_length=50)
+    no_referensi = models.CharField(max_length=50, blank=True)
     tanggal = models.DateTimeField(auto_now_add=True)
     top = models.IntegerField()
     jatuh_tempo = models.DateTimeField(blank=True, null=True)
     bruto = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     ppn = models.DecimalField(max_digits=5, decimal_places=2)
     ongkir = models.DecimalField(max_digits=19, decimal_places=2)
-    diskon_invoice = models.DecimalField(max_digits=19, decimal_places=2)
+    diskon_invoice = models.DecimalField(max_digits=19, decimal_places=2, default=Decimal('0.00'))
     netto = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     potongan = models.DecimalField(max_digits=19, decimal_places=2, default=Decimal('0.00'))
     sisa_bayar = models.DecimalField(max_digits=19, decimal_places=2, default=Decimal('0.00'))
@@ -56,12 +56,17 @@ class Invoice(models.Model):
         self.sisa_bayar = self.netto
         return self.sisa_bayar
     
+    def set_jatuh_tempo(self):
+        self.jatuh_tempo = self.jatuh_tempo + timedelta(days=self.top)
+        return self.jatuh_tempo
+    
     def save(self, *args, **kwargs):
         if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum
             self.generate_no_referensi() # jika belum berarti baru maka generate
             self.set_sisa_bayar()
         self.hitung_total_bruto()
         self.hitung_total_netto()
+        self.set_jatuh_tempo()
         super().save(*args, **kwargs)
     
 class DetailInvoice(models.Model):
@@ -86,13 +91,8 @@ class DetailInvoice(models.Model):
     
     def nilai_ppn(self):
         return self.total_harga_barang() * self.invoice_id.ppn
-    
-    def set_jatuh_tempo(self):
-        self.jatuh_tempo = self.invoice_id.jatuh_tempo + timedelta(days=self.invoice_id.top)
-        return self.jatuh_tempo
 
     def save(self, *args, **kwargs):
-        self.set_jatuh_tempo()
         super().save(*args, **kwargs)
 
         barang = Barang.objects.get(id=self.barang_id)

@@ -9,12 +9,23 @@ class Pesanan(models.Model):
     customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
     barang = models.ManyToManyField(Barang, through='DetailPesanan')
     no_pesanan = models.CharField(max_length=20, unique=True)
-    no_referensi = models.CharField(max_length=50)
-    bruto = models.DecimalField(max_digits=10, decimal_places=2)
+    no_referensi = models.CharField(max_length=50, blank=True)
+    bruto = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     ppn = models.DecimalField(max_digits=5, decimal_places=2)
     ongkir = models.DecimalField(max_digits=19, decimal_places=2)
-    diskon_pesanan = models.DecimalField(max_digits=19, decimal_places=2)
-    netto = models.DecimalField(max_digits=10, decimal_places=2)
+    diskon_pesanan = models.DecimalField(max_digits=19, decimal_places=2, default=Decimal('0.00'))
+    netto = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
+    KURIR = [
+        ('jne','JNE'),
+        ('tiki','TIKI'),
+        ('j&t','J&T'),
+        ('pos indonesia','Pos Indonesia')
+    ]
+    kurir = models.CharField(max_length=255, choices=KURIR, default=None)
+    top = models.IntegerField()
+    jatuh_tempo = models.DateTimeField(blank=True, null=True)
+    alamat_kirim = models.CharField(max_length=255)
+    keterangan = models.TextField(null=True, blank=True)
     CHOICES = [
         ('pending','Pending'),
         ('ready','Ready'),
@@ -22,8 +33,8 @@ class Pesanan(models.Model):
         ('cancelled', 'Cancelled')
     ]
     status = models.CharField(max_length=30, choices=CHOICES, default='pending')
+    tanggal_pesanan = models.DateTimeField(auto_now_add=True)
     terakhir_edit = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.no_pesanan
@@ -58,6 +69,10 @@ class Pesanan(models.Model):
     def hitung_total_netto(self):
         self.netto = self.bruto + (self.bruto * self.ppn) + self.ongkir - self.diskon_pesanan
         return self.netto
+    
+    def set_jatuh_tempo(self):
+        self.jatuh_tempo = self.tanggal_pesanan + timedelta(days=self.top)
+        return self.jatuh_tempo
 
     def save(self, *args, **kwargs):
         if not self.pk:# cek jika id sudah ada atau belum
@@ -65,6 +80,7 @@ class Pesanan(models.Model):
             self.generate_no_referensi()
         self.hitung_total_bruto()
         self.hitung_total_netto()
+        self.set_jatuh_tempo()
         super().save(*args, **kwargs)
 
         if self.status == 'shipped':
@@ -84,21 +100,10 @@ class DetailPesanan(models.Model):
     id = models.AutoField(primary_key=True)
     pesanan_id = models.ForeignKey(Pesanan, on_delete=models.CASCADE)
     barang_id = models.ForeignKey(Barang, on_delete=models.SET_NULL, null=True)
-    tanggal_pesanan = models.DateTimeField(auto_now_add=True)
-    CHOICES = [
-        ('jne','JNE'),
-        ('tiki','TIKI'),
-        ('j&t','J&T'),
-        ('pos indonesia','Pos Indonesia')
-    ]
-    kurir = models.CharField(max_length=255, choices=CHOICES, default=None)
-    top = models.IntegerField()
-    jatuh_tempo = models.DateTimeField()
-    alamat_kirim = models.CharField(max_length=255)
-    keterangan = models.TextField(null=True, blank=True)
     qty_pesan = models.IntegerField()
-    qty_retur = models.IntegerField()
+    qty_retur = models.IntegerField(default=0)
     diskon_barang = models.DecimalField(max_digits=19, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -119,8 +124,6 @@ class DetailPesanan(models.Model):
         return self.jatuh_tempo
 
     def save(self, *args, **kwargs):
-        if not self.jatuh_tempo: # periksa jatuh tempo sudah/belum diatur
-            self.set_jatuh_tempo()
         super().save(*args, **kwargs)
 
         barang = Barang.objects.get(barang_id=self.barang_id)
