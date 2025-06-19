@@ -103,10 +103,13 @@
         <!-- Upload Gambar -->
         <div class="md:col-span-2">
             <label for="upload_gambar" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Upload Gambar</label>
-            <div class="flex items- h-[89px] border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+            <div class="flex items border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
                 <span id="placeholder" class="flex-grow px-3 py-2 text-sm text-gray-500 dark:text-gray-300">
                 Upload Gambar
                 </span>
+                <div class="flex items px-3 py-2">
+                  <img id="previewGambar" src="#" alt="Preview" style="max-width: 200px; display: none;">
+                </div>
                 <label for="upload_gambar" class="cursor-pointer px-4 py-2 text-gray-700 rounded-r-lg dark:bg-gray-600 dark:text-white">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M12 14L11.6464 14.3536L12 14.7071L12.3536 14.3536L12 14ZM12.5 5C12.5 4.72386 12.2761 4.5 12 4.5C11.7239 4.5 11.5 4.72386 11.5 5L12.5 5ZM6.64645 9.35355L11.6464 14.3536L12.3536 13.6464L7.35355 8.64645L6.64645 9.35355ZM12.3536 14.3536L17.3536 9.35355L16.6464 8.64645L11.6464 13.6464L12.3536 14.3536ZM12.5 14L12.5 5L11.5 5L11.5 14L12.5 14Z" fill="#222222"/>
@@ -114,7 +117,6 @@
                     </svg>
                 </label>
                 <input type="file" id="upload_gambar" multiple class="hidden" accept="image/*" value="{{ detail_barang.gambar.url|default:""}}">
-                <img id="previewGambar" src="#" alt="Preview" style="max-width: 200px; display: none;">
             </div>
         </div>
         

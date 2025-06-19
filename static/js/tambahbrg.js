@@ -8,13 +8,15 @@ function getCSRFToken() {
 }
 
 const uploadInput = document.getElementById('upload_gambar');
-const preview = document.getElementById('previewGambar');
+const preview = document.getElementById("previewGambar");
+const placeholder = document.getElementById("placeholder")
 
 uploadInput.addEventListener('change', function () {
   const file = this.files[0]
   if (file) {
     preview.src = URL.createObjectURL(file)
     preview.style.display = "block"
+    placeholder.textContent = file.name
   }
 });
 
