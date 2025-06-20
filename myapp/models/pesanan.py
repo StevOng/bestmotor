@@ -16,10 +16,8 @@ class Pesanan(models.Model):
     diskon_pesanan = models.DecimalField(max_digits=19, decimal_places=2, default=Decimal('0.00'))
     netto = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     KURIR = [
-        ('jne','JNE'),
-        ('tiki','TIKI'),
-        ('j&t','J&T'),
-        ('pos indonesia','Pos Indonesia')
+        ('staff','Staff'),
+        ('penangkutan','Pengangkutan'),
     ]
     kurir = models.CharField(max_length=255, choices=KURIR, default=None)
     top = models.IntegerField()

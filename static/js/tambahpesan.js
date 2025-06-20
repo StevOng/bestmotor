@@ -190,7 +190,7 @@ function updateDetailBiaya() {
 
 async function getKurir() {
     try {
-        let response = await fetch('/api/detailpesanan/kurir_choices/')
+        let response = await fetch('/api/pesanan/kurir_choices/')
         let choices = await response.json()
 
         let select = document.getElementById("kurir")
