@@ -118,7 +118,7 @@
             {% for brg in barang %}
                 <tr>
                     {% if brg.gambar %}
-                        <td><img src="{{ brg.gambar.url }}" alt="{{ brg.nama_barang }}"></td>
+                        <td><img src="{{ brg.gambar.url }}" alt="{{ brg.nama_barang }}" style="max-width: 50px;"></td>
                     {% else %}
                         <td>No Image</td>
                     {% endif %}

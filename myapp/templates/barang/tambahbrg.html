@@ -104,11 +104,11 @@
         <div class="md:col-span-2">
             <label for="upload_gambar" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Upload Gambar</label>
             <div class="flex items border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
-                <span id="placeholder" class="flex-grow px-3 py-2 text-sm text-gray-500 dark:text-gray-300">
-                Upload Gambar
-                </span>
-                <div class="flex items px-3 py-2">
-                  <img id="previewGambar" src="#" alt="Preview" style="max-width: 200px; display: none;">
+                <div class="flex-grow items-center justify-between px-3 py-2">
+                  <span id="placeholder" class="text-sm text-gray-500 dark:text-gray-300">
+                  {{ detail_barang.gambar.name|default:"Upload Gambar"}}
+                  </span>
+                  <img id="previewGambar" src="{{ detail_barang.gambar.url|default:""}}" alt="Preview" style="max-width: 200px; display: none;">
                 </div>
                 <label for="upload_gambar" class="cursor-pointer px-4 py-2 text-gray-700 rounded-r-lg dark:bg-gray-600 dark:text-white">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -116,7 +116,7 @@
                     <path d="M5 16L5 17C5 18.1046 5.89543 19 7 19L17 19C18.1046 19 19 18.1046 19 17V16" stroke="#222222"/>
                     </svg>
                 </label>
-                <input type="file" id="upload_gambar" multiple class="hidden" accept="image/*" value="{{ detail_barang.gambar.url|default:""}}">
+                <input type="file" id="upload_gambar" class="hidden">
             </div>
         </div>
         

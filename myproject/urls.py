@@ -24,6 +24,9 @@ urlpatterns = [
     path('', include('myapp.urls')),
     path('api/', include('myapp.routes')),
     path('admin/', admin.site.urls),
-    re_path(r'^.*$', render.halaman404, name='404'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += [
+    re_path(r'^.*$', render.halaman404, name='404'),
+]

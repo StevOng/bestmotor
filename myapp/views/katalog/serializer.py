@@ -1,5 +1,10 @@
 from rest_framework import serializers
-from ...models.katalog import Katalog
+from ...models.katalog import *
+
+class KatalogBarangSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KatalogBarang
+        fields = ['barang', 'gambar_pelengkap']
 
 class KatalogSerializer(serializers.ModelSerializer):
     barang_nama = serializers.SerializerMethodField()

@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from django.db.models import Q
-from ...models.katalog import Katalog
-from .serializer import KatalogSerializer
+from ...models.katalog import *
+from .serializer import *
 
 class KatalogViewSet(viewsets.ModelViewSet):
     queryset = Katalog.objects.all()
@@ -15,3 +15,7 @@ class KatalogViewSet(viewsets.ModelViewSet):
                 Q(barang__nama__icontains=search)
             ).distinct()
         return queryset
+    
+class KatalogBarangViewSet(viewsets.ModelViewSet):
+    queryset = KatalogBarang
+    serializer_class = KatalogBarangSerializer
