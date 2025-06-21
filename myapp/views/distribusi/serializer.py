@@ -23,6 +23,12 @@ class TransaksiMasukSerializer(serializers.ModelSerializer):
             transaksi = TransaksiMasuk.objects.create(**validated_data)
             for item in detail_data:
                 TransaksiMasukBarang.objects.create(transaksi=transaksi, **item)
+
+                barang_id = item['barang'].id if isinstance(item['barang'], Barang) else item['barang']
+                barang_masuk = item['qty']
+                barang = Barang.objects.get(id=barang_id)
+                barang.stok += barang_masuk
+                barang.save()
         return transaksi
     
     def update(self, instance, validated_data):
@@ -59,6 +65,12 @@ class TransaksiKeluarSerializer(serializers.ModelSerializer):
             transaksi = TransaksiKeluar.objects.create(**validated_data)
             for item in detail_data:
                 TransaksiKeluarBarang.objects.create(transaksi=transaksi, **item)
+
+                barang_id = item['barang'].id if isinstance(item['barang'], Barang) else item['barang']
+                barang_keluar = item['qty']
+                barang = Barang.objects.get(id=barang_id)
+                barang.stok -= barang_keluar
+                barang.save()
         return transaksi
     
     def update(self, instance, validated_data):
