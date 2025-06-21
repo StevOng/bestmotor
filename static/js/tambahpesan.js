@@ -228,6 +228,7 @@ async function submitDetail() {
     const diskonBarangs = Array.from(document.querySelectorAll(".disc")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
     const barangIds = Array.from(document.querySelectorAll(".barangId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
     const kurir = document.getElementById("kurir").value
+    const noRef = document.getElementById("no_referensi").value
     const customer = document.getElementById("customerId")?.value
     const top = document.getElementById("top").value
     const alamat = document.getElementById("alamat_kirim").value
@@ -261,6 +262,7 @@ async function submitDetail() {
             },
             body: JSON.stringify({
                 "customer_id": customer,
+                "no_referensi": noRef,
                 "kurir": kurir,
                 "top": top,
                 "ppn": ppn,

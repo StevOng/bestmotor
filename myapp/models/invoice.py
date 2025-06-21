@@ -31,16 +31,6 @@ class Invoice(models.Model):
     def __str__(self):
         return self.no_invoice
     
-    def generate_no_referensi(self):
-        if not self.no_referensi:
-            last_ref = Invoice.objects.order_by("-id").first() # berdasarkan id terbesar
-            if last_ref:
-                last_num = int(last_ref.no_referensi[5:]) # mengambil angka stelah 5 karakter REFPB
-                self.no_referensi = f"REFPB{last_num+1:04d}" # tambah 1 ke angka 4 digit terakhir
-            else:
-                self.no_referensi = "REFPB0001" # kode pertama
-        return self.no_referensi
-    
     def hitung_total_bruto(self):
         total = Decimal(0)
         for detail in self.detailinvoice_set.all():

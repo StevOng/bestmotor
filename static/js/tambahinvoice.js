@@ -253,6 +253,7 @@ async function submitDetail() {
     const diskonBarangs = Array.from(document.querySelectorAll(".disc")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
     const barangIds = Array.from(document.querySelectorAll(".barangId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
     const supplier = document.getElementById("supplierId")?.value
+    const noRef = document.getElementById("no_ref_inv").value
     const top = document.getElementById("top_inv").value
     const ppn = document.getElementById("ppn").value
     const ongkir = document.getElementById("ongkir").value
@@ -286,6 +287,7 @@ async function submitDetail() {
             body: JSON.stringify({
                 "supplier_id": supplier,
                 "no_invoice": noInv,
+                "no_referensi": noRef,
                 "top": top,
                 "ppn": ppn,
                 "ongkir": ongkir,

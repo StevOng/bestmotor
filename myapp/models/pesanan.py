@@ -47,16 +47,6 @@ class Pesanan(models.Model):
                 self.no_pesanan = "BM0001" # kode pertama
         return self.no_pesanan
     
-    def generate_no_referensi(self):
-        if not self.no_referensi:
-            last_pesan = Pesanan.objects.order_by("-id").first() # berdasarkan id terbesar
-            if last_pesan:
-                last_num = int(last_pesan.no_referensi[5:]) # mengambil angka stelah 5 karakter REFBM
-                self.no_referensi = f"REFBM{last_num+1:04d}" # tambah 1 ke angka 4 digit terakhir
-            else:
-                self.no_referensi = "REFBM0001" # kode pertama
-        return self.no_referensi
-    
     def hitung_total_bruto(self):
         total = Decimal(0)
         for detail in self.detailpesanan_set.all():
