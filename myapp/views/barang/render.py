@@ -25,6 +25,10 @@ def barang(request):
 
     for brg in barang:
         brg.total_pesanan = sum(d.qty_pesan for d in brg.detailpesanan_set.all())
+        if brg.stok <= brg.stok_minimum:
+            brg.selisih = brg.stok_minimum - brg.stok
+        else:
+            brg.selisih = 0
 
     return render(request, 'barang/barang.html', {'barang': barang,'filter': filter})
 

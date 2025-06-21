@@ -20,6 +20,13 @@ class PesananSerializer(serializers.ModelSerializer):
             pesanan = Pesanan.objects.create(**validated_data)
             for item in detail_data:
                 DetailPesanan.objects.create(pesanan_id=pesanan.id, **item)
+
+                barang_id = item['barang_id'].id if isinstance(item['barang_id'], Barang) else item['barang_id']
+                dipesan = item['qty_pesan']
+                barang = Barang.objects.get(id=barang_id)
+
+                barang.stok -= dipesan
+                barang.save()
         return pesanan
 
     def update(self, instance, validated_data):

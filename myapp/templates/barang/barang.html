@@ -104,7 +104,6 @@
                 {% endif %}
                 <th>Stok</th>
                 <th>Qty Pesanan</th>
-                <th>Qty Siap Jual</th>
                 {% if filter == 'rendah' %}
                     <th>Stok Minimum</th>
                     <th>Selisih</th>
@@ -135,7 +134,6 @@
                     {% endif %}
                     <td>{{ brg.stok }}</td>
                     <td>{{ brg.total_pesanan|default:"0" }}</td>
-                    <td>{{ brg.qty_siap_jual }}</td>
                     {% if filter == 'rendah' %}
                         <td>{{ brg.stok_minimum }}</td>
                         <td>{{ brg.selisih }}</td>

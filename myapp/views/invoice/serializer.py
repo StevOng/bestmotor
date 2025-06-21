@@ -20,6 +20,12 @@ class InvoiceSerializer(serializers.ModelSerializer):
             invoice = Invoice.objects.create(**validated_data)
             for item in detail_data:
                 DetailInvoice.objects.create(invoice_id=invoice.id, **item)
+
+                barang_id = item['barang_id'].id if isinstance(item['barang_id'], Barang) else item['barang_id']
+                dibeli = item['qty_beli']
+                barang = Barang.objects.get(id=barang_id)
+                barang.stok += dibeli
+                barang.save()
         return invoice
 
     def update(self, instance, validated_data):
