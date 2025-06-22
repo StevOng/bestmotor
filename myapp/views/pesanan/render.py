@@ -37,6 +37,7 @@ def tambah_pesanan(request, id=None):
     if id:
         pesanan = Pesanan.objects.get(id=id)
         detail_pesanan = pesanan.detailpesanan_set.all()
+        is_shipped = pesanan.status in ["ready", "shipped"]
 
     barang_data_dict = {
         barang.id: {
@@ -59,5 +60,6 @@ def tambah_pesanan(request, id=None):
         {
             'detail_pesanan':detail_pesanan, 
             'customers':customers, 
-            'barang_data_json':barang_data_json
+            'barang_data_json':barang_data_json,
+            'is_shipped': is_shipped
         })
