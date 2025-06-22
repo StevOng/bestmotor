@@ -12,7 +12,7 @@ const preview = document.getElementById("previewGambar");
 const placeholder = document.getElementById("placeholder")
 
 uploadInput.addEventListener('change', function () {
-  const file = this.files[0]
+  const file = this.files
   if (file) {
     preview.src = URL.createObjectURL(file)
     preview.style.display = "block"
@@ -155,6 +155,17 @@ function addTier(input) {
   const allTiers = tierContainer.querySelectorAll(".harga-tier")
   const lastTier = allTiers[allTiers.length - 1]
 
+  allTiers.forEach(div => {
+    const valQty = div.querySelector(".min-qty")
+    const valHrg = div.querySelector(".harga-satuan")
+    if (parseInt(valQty.value) <= 0 || parseFloat(valHrg.value) <= 0) {
+      alert("Kuantiti dan harga grosir tidak boleh 0 dan minus")
+      valQty.value = ""
+      valHrg.value = ""
+      return
+    }
+  })
+
   const minQty = lastTier.querySelector(".min-qty").value
   const hargaSatuan = lastTier.querySelector(".harga-satuan").value
 
@@ -175,8 +186,21 @@ function addTier(input) {
                     class="min-qty mt-1 mx-2 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" id="min-beli" oninput="addTier(this)" value="{{ detail_barang.min_qty_grosir|default:""}}"/>
                 <input type="number"
                     class="harga-satuan mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" id="harga" oninput="addTier(this)" value="{{ detail_barang.harga_satuan|default:""}}" />
+                <button type="button" onclick="hapusRow(this)" class="mt-1 mx-2"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button>
             `
       tierContainer.appendChild(newTier)
     }
   }
+}
+
+function hapusVal(btn) {
+  const div = btn.closest("div")
+  div.querySelector(".min-qty").value = ""
+  div.querySelector(".harga-satuan").value = ""
+}
+
+function hapusRow(btn) {
+    const div = btn.closest("div")
+    div.classList.add("fade-out")
+    setTimeout(() => div.remove(), 400)
 }

@@ -23,6 +23,20 @@ class PesananViewSet(viewsets.ModelViewSet):
         Pesanan.objects.filter(id__in=ids).update(status=new_status)
         return Response({"message":"Status pesanan berhasil diperbarui"})
     
+    @action(detail=True, methods=['patch'])
+    def cancelled(self, request, pk=None):
+        pesanan = self.queryset.get(pk=pk)
+        pesanan.status = "cancelled"
+        pesanan.save()
+
+        detail = DetailPesanan.objects.filter(pesanan_id=pesanan.id)
+        for item in detail:
+            barang_id = item.barang_id
+            barang = Barang.objects.get(pk=barang_id)
+            barang.stok += item.qty_pesan
+            barang.save()
+        return Response({"status": "cancelled"})
+    
     @action(detail=False, methods=['get'])
     def top_customer(self, request):
         data = (

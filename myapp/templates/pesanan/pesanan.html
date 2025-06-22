@@ -140,8 +140,13 @@
             <td>{{ pesanan.customer_id.sales_id.nama }}</td>
             <td>{{ pesanan.netto|floatformat:2|intcomma }},-</td>
             <td>{{ pesanan.status }}</td>
-            <td><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
-            <td><button onclick="confirmPopupBtn({{ pesanan.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+            {% if pesanan.status == "cancelled" %}
+              <td><a href="#" disabled><i class="fa-regular fa-eye text-2xl text-gray-500"></i></a></td>
+              <td><button disabled><i class="fa-regular fa-trash-can text-2xl text-gray-500"></i></button></td>
+            {% else %}
+              <td><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+              <td><button onclick="confirmPopupBtn({{ pesanan.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+            {% endif %}
           </tr>
         {% endfor %}
       </tbody>

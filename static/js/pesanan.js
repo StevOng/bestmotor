@@ -59,9 +59,10 @@ function confirmPopupBtn(id) {
 
     confirmButton.onclick = async function () {
         try {
-            const response = await fetch(`/api/pesanan/${id}/`, {
+            const response = await fetch(`/api/pesanan/${id}/cancelled/`, {
                 method: "PATCH",
                 headers: {
+                    'Content-Type': 'application/json',
                     'X-CSRFToken': csrfToken
                 },
                 body: JSON.stringify({

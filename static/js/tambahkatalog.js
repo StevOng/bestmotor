@@ -19,8 +19,31 @@ document.addEventListener("click", (event) => {
     }
 });
 
+const uploadInput = document.getElementById('upload_gambar');
+const placeholder = document.getElementById("placeholder")
+const previewDiv = document.getElementById("previewDiv")
+
+uploadInput.addEventListener('change', function () {
+    const files = Array.from(this.files)
+    if (files.length + previewDiv.children.length > 5) {
+        alert("Maksimal upload hanya 5 gambar")
+        uploadInput.value = ""
+        placeholder.textContent = `Upload Gambar (${previewDiv.children.length}/5)`
+        return
+    }
+    files.forEach(file => {
+        const img = document.createElement("img")
+        img.src = URL.createObjectURL(file)
+        img.style.maxWidth = "120px"
+        img.style.display = "block"
+        img.style.margin = "2px"
+        previewDiv.appendChild(img)
+    })
+    placeholder.textContent = `Upload Gambar (${previewDiv.children.length}/5)`
+});
+
 function getCSRFToken() {
-  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
 searchKode.addEventListener("input", async (event) => {
@@ -68,16 +91,17 @@ searchKode.addEventListener("input", async (event) => {
     }
 })
 
-document.getElementById("formKatalog").addEventListener("submit", async(event) => {
+document.getElementById("formKatalog").addEventListener("submit", async (event) => {
     event.preventDefault()
 
-    const id = document.getElementById("katalogId")?.value || null
+    const id = document.getElementById("katalogId")?.value
     const hargaTertera = document.getElementById("hrgbrg").value
     const hargaDiskon = document.getElementById("hrgdsc").value
+    const gambarPelengkap = Array.from(document.getElementById("upload_gambar").files)
     const inKatalogUtama = isKatalogUtama.value === "true"
-    
-    const method = id ? "PATCH":"POST"
-    const apiKatalog = id ? `/api/katalog/${id}/`:`/api/katalog/`
+
+    const method = id ? "PATCH" : "POST"
+    const apiKatalog = id ? `/api/katalog/${id}/` : `/api/katalog/`
     const csrfToken = getCSRFToken()
 
     const katalog = new FormData()
@@ -100,7 +124,7 @@ document.getElementById("formKatalog").addEventListener("submit", async(event) =
             const error = await response.json()
             console.error("Gagal: ", error);
         }
-    } catch(error) {
+    } catch (error) {
         console.error(error);
     }
 })

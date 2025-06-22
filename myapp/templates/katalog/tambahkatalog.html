@@ -42,7 +42,8 @@
             <label for="tipe-mtr" class="block text-sm font-medium text-gray-700">Tipe Motor</label>
             <input type="text" id="tipe-mtr" value="{{ katalog.barang.detailbarang.tipe|default:"" }}" disabled
               class="mt-1 block w-full border bg-gray-200 border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400">
-          </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Harga Tertera-->
             <div>
@@ -58,6 +59,34 @@
                     class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700">
             </div>
         </div>
+
+        <!-- Gambar Pelengkap -->
+        <div>
+            <span class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Upload Gambar Katalog</span>
+            <label for="upload_gambar" class="cursor-pointer block mb-1">
+              <div class="flex items border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                  <div class="flex-grow items-center justify-between px-3 py-2">
+                    <span id="placeholder" class="text-sm text-gray-500 dark:text-gray-300">
+                    Upload Gambar ({{ katalog.katalogbarang_set.gambar_pelengkap.count|default:0 }}/5)
+                    </span>
+                    <div id="previewDiv" style="display: flex; flex-wrap: wrap;">
+                      {% for img in katalog.katalogbarang_set.gambar_pelengkap.all  %}
+                        <img id="previewGambar" src="{{ img.url|default:""}}" alt="Preview" style="max-width: 200px; display: block;">
+                      {% empty %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <label for="upload_gambar" class="cursor-pointer px-4 py-2 text-gray-700 rounded-r-lg dark:bg-gray-600 dark:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 14L11.6464 14.3536L12 14.7071L12.3536 14.3536L12 14ZM12.5 5C12.5 4.72386 12.2761 4.5 12 4.5C11.7239 4.5 11.5 4.72386 11.5 5L12.5 5ZM6.64645 9.35355L11.6464 14.3536L12.3536 13.6464L7.35355 8.64645L6.64645 9.35355ZM12.3536 14.3536L17.3536 9.35355L16.6464 8.64645L11.6464 13.6464L12.3536 14.3536ZM12.5 14L12.5 5L11.5 5L11.5 14L12.5 14Z" fill="#222222"/>
+                      <path d="M5 16L5 17C5 18.1046 5.89543 19 7 19L17 19C18.1046 19 19 18.1046 19 17V16" stroke="#222222"/>
+                      </svg>
+                  </label>
+                  <input type="file" id="upload_gambar" class="hidden" multiple>
+              </div>
+            </label>
+        </div>
+        
         <div>
             <p>Tampilkan pada Katalog Utama</p>
             <button type="button" id="toggleCheck" class="p-1 mt-1 border-2 rounded-lg border-customBlue hover:bg-gray-200 w-8 h-8">
@@ -67,11 +96,12 @@
             </button>
             <input type="hidden" name="is_katalog_utama" id="isKatalogUtama" value"false">
         </div>
-      
-      <button type="submit" class="mt-5 ml-auto text-center">
-        <p class="text-sm font-medium text-gray-700">Simpan</p>
-        <i class="mt-1 fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
-      </button>
+        <div class="md:col-span-2 flex justify-end">
+          <button type="submit" class="mt-5 ml-auto text-center">
+            <p class="text-sm font-medium text-gray-700">Simpan</p>
+            <i class="mt-1 fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
+          </button>
+        </div>
     </form>
 </div>
 {% endblock %}
