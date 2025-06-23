@@ -103,29 +103,3 @@ async function getTipe() {
         console.error(err);
     }
 }
-
-document.getElementById("tableSearch").addEventListener("input", async function () {
-    const query = this.value.trim();
-    const resultsContainer = document.getElementById("searchResults");
-
-    if (query.length === 0) {
-        resultsContainer.innerHTML = "";
-        return;
-    }
-
-    try {
-        const response = await fetch(`/api/katalog/?search=${query}`);
-        const data = await response.json();
-
-        resultsContainer.innerHTML = "";
-
-        data.forEach(item => {
-            const li = document.createElement("li");
-            li.textContent = item.barang_nama || "Barang Tidak Diketahui";
-            li.className = "p-2 hover:bg-gray-200 cursor-pointer";
-            resultsContainer.appendChild(li);
-        });
-    } catch (err) {
-        console.error("Fetch error:", err);
-    }
-});

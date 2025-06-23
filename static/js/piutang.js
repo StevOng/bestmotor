@@ -60,17 +60,3 @@ function closeModalConfirm() {
     modal.classList.add("hidden"); // Sembunyikan modal
     modal.style.display = "none"; // Pastikan modal benar-benar hilang
 }
-
-document.getElementById("searchPiutang").addEventListener("input", function() {
-    const searchValue = this.value.toLowerCase()
-    const row = document.querySelectorAll('#allpiutang tbody tr')
-
-    row.forEach(row => {
-        const noBukti = row.querySelector('.no-bukti').textContent.toLowerCase()
-        if (noBukti.includes(searchValue)) {
-            row.style.display = ""
-        } else {
-            row.style.display = "none"
-        }
-    })
-})

@@ -20,11 +20,11 @@
         <input type="hidden" id="katalogId" value="{{ katalog.id|default:"" }}">
         <!-- Kode Barang -->
         <div class="relative">
-            <input type="hidden" name="barangId" id="barangId" value="{{ katalog.barang.id|default:"" }}">
+            <input type="hidden" name="barangId" id="barangId" value="{{ barang.id|default:"" }}">
             <label for="kode-brg" class="block text-sm font-medium text-gray-700">Kode Barang</label>
             
             <!-- Input untuk pencarian -->
-            <input type="text" id="searchKode" placeholder="Masukkan Kode barang" value="{{ katalog.barang.kode_barang|default:"" }}"
+            <input type="text" id="searchKode" placeholder="Masukkan Kode barang" value="{{ barang.kode_barang|default:"" }}"
                 class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm bg-white focus:outline-none focus:ring-customBlue focus:border-customBlue">
             
             <!-- Dropdown List -->
@@ -34,14 +34,14 @@
         <!-- Nama Barang -->
         <div>
             <label for="nama-brg" class="block text-sm font-medium text-gray-700">Nama Barang</label>
-            <input type="text" id="nama-brg" value="{{ katalog.barang.nama_barang|default:"" }}" disabled
+            <input type="text" id="nama-brg" value="{{ barang.nama_barang|default:"" }}" disabled
               class="mt-1 block w-full border bg-gray-200 border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400">
           </div>
         
         <!-- Tipe Motor -->
         <div>
             <label for="tipe-mtr" class="block text-sm font-medium text-gray-700">Tipe Motor</label>
-            <input type="text" id="tipe-mtr" value="{{ katalog.barang.detailbarang.tipe|default:"" }}" disabled
+            <input type="text" id="tipe-mtr" value="{{ barang.tipe|default:"" }}" disabled
               class="mt-1 block w-full border bg-gray-200 border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400">
         </div>
 
@@ -68,11 +68,11 @@
               <div class="flex items border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
                   <div class="flex-grow items-center justify-between px-3 py-2">
                     <span id="placeholder" class="text-sm text-gray-500 dark:text-gray-300">
-                    Upload Gambar ({{ katalog.katalogbarang_set.gambar_pelengkap.count|default:0 }}/5)
+                    Upload Gambar ({{ katalogbrg.gambar_pelengkap.count|default:0 }}/5)
                     </span>
                     <div id="previewDiv" style="display: flex; flex-wrap: wrap;">
-                      {% for img in katalog.katalogbarang_set.gambar_pelengkap.all  %}
-                        <img id="previewGambar" src="{{ img.url|default:""}}" alt="Preview" style="max-width: 200px; display: block;">
+                      {% for img in katalogbrg.gambar_pelengkap %}
+                        <img id="previewGambar" src="{{ img.url|default:""}}" alt="Preview" style="max-width: 120px; display: block; margin: 2px;">
                       {% empty %}
                       {% endfor %}
                     </div>
@@ -95,7 +95,7 @@
                   <path fill-rule="evenodd" d="M9 16.172l10.293-10.293-1.414-1.414L9 13.344l-4.293-4.293-1.414 1.414L9 16.172z" clip-rule="evenodd"/>
                 </svg>
             </button>
-            <input type="hidden" name="is_katalog_utama" id="isKatalogUtama" value"false">
+            <input type="hidden" name="is_katalog_utama" id="isKatalogUtama" value"{{ katalog.is_katalog_utama|default:"false" }}">
         </div>
         <div class="md:col-span-2 flex justify-end">
           <button type="submit" class="mt-5 ml-auto text-center">

@@ -25,18 +25,18 @@
       </button>
     </div>
     <p class="flex items-end text-customBlue px-6 md:px-12 pt-4 h-10">
-      {{ detail.tipe }}
+      {{ katalog.barang.tipe }}
     </p>
     <div
       class="flex justify-start items-center text-white h-16 px-6 md:px-12 bg-customBlue"
     >
-      <p class="font-semibold text-2xl">{{ barang.nama_barang }}</p>
+      <p class="font-semibold text-2xl">{{ katalog.barang.nama_barang }}</p>
     </div>
 
     <div class="flex flex-col justify-center items-center px-6 md:px-12">
       <img src="{% static "images/logo.png" %}" class="w-80 h-80" />
       <div class="relative pb-5">
-        <p class="text-gray-600 text-lg">{{ harga_tertera|intcomma }}</p>
+        <p class="text-gray-600 text-lg">{{ katalog.harga_tertera|intcomma }}</p>
         <div
           class="absolute top-4 -left-4 bg-red-500 w-28 h-[1px] transform rotate-[-10deg]"
         ></div>
@@ -48,7 +48,7 @@
         >
           NOW !
         </p>
-        <p class="text-orange-500 text-4xl font-bold">{{ harga_diskon|intcomma }}</p>
+        <p class="text-orange-500 text-4xl font-bold">{{ katalog.harga_diskon|intcomma }}</p>
       </div>
     </div>
     <div class="flex flex-col items-end p-4 px-6 md:px-12">
@@ -58,12 +58,12 @@
       </div>
     </div>
     <div class="pb-6 px-6 md:px-12">
-      <p class="py-2 text-customBlue text-2xl font-semibold">Merk : {{ detail.merk }}</p>
+      <p class="py-2 text-customBlue text-2xl font-semibold">Merk : {{ katalog.barang.merk }}</p>
       <p></p>
       <p class="py-2 text-customBlue text-2xl font-semibold">Deskripsi :</p>
       <p></p>
       <p>
-        {{ deskripsi }}
+        {{ katalog.barang.keterangan }}
       </p>
     </div>
   </body>
