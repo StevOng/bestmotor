@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils.dateparse import parse_date
 from django.db.models import Sum, Q
+from django.db.models.functions import Coalesce #filter none or null dan ubah menjadi 0
 from ...decorators import *
 from ...models.barang import *
 
@@ -46,10 +47,13 @@ def get_barang_laku(dari, sampe):
     dari = parse_date(dari)
     sampe = parse_date(sampe)
 
-    return Barang.objects.annotate(total_terjual=Sum(
-        'detailpesanan_qty_pesan',
+    return Barang.objects.annotate(
+        total_terjual=Coalesce(Sum
+        (
+        'detailpesanan__qty_pesan',
         filter=Q(detailpesanan__pesanan_id__tanggal_pesanan__range=[dari,sampe])
-    )).filter(total_terjual__gt=0)
+        ), 0)
+    ).filter(total_terjual__gt=100)
 
 def export_excel(request):
     work_book = openpyxl.Workbook()
