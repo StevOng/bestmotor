@@ -1,15 +1,17 @@
-const searchKode = document.getElementById("searchKode");
-const dropdownList = document.getElementById("dropdownList");
-const nama_barang = document.getElementById("nama-brg")
-const harga_barang = document.getElementById("hrgbrg")
-const tipe = document.getElementById("tipe-mtr")
-const toggleCheck = document.getElementById("toggleCheck")
-const checkIcon = document.getElementById("checkIcon")
-const isKatalogUtama = document.getElementById("isKatalogUtama")
+let searchKode = document.getElementById("searchKode");
+let dropdownList = document.getElementById("dropdownList");
+let nama_barang = document.getElementById("nama-brg")
+let harga_barang = document.getElementById("hrgbrg")
+let tipe = document.getElementById("tipe-mtr")
+let toggleCheck = document.getElementById("toggleCheck")
+let checkIcon = document.getElementById("checkIcon")
+let isKatalogUtama = document.getElementById("isKatalogUtama")
+let barangId = document.getElementById("barangId")
 
 toggleCheck.addEventListener("click", () => {
     const isChecked = checkIcon.classList.toggle("hidden")
     isKatalogUtama.value = !isChecked // kalau icon kelihatan berarti true
+    console.log(isKatalogUtama.value)
 })
 
 // Sembunyikan dropdown jika klik di luar
@@ -68,6 +70,7 @@ searchKode.addEventListener("input", async (event) => {
                 li.className = "px-4 py-2 hover:bg-gray-100 cursor-pointer"
 
                 li.addEventListener("click", () => {
+                    barangId.value = item.id
                     searchKode.value = item.kode_barang
                     nama_barang.value = item.nama_barang
                     harga_barang.value = item.harga_jual
@@ -98,9 +101,9 @@ document.getElementById("formKatalog").addEventListener("submit", async (event) 
     const hargaTertera = document.getElementById("hrgbrg").value
     const hargaDiskon = document.getElementById("hrgdsc").value
     const gambarPelengkap = Array.from(document.getElementById("upload_gambar").files)
-    const inKatalogUtama = isKatalogUtama.value === "true"
+    const inKatalogUtama = isKatalogUtama.value
 
-    const method = id ? "PATCH" : "POST"
+    const method = id ? "PUT" : "POST"
     const apiKatalog = id ? `/api/katalog/${id}/` : `/api/katalog/`
     const csrfToken = getCSRFToken()
 
@@ -108,6 +111,10 @@ document.getElementById("formKatalog").addEventListener("submit", async (event) 
     katalog.append("harga_tertera", hargaTertera)
     katalog.append("harga_diskon", hargaDiskon)
     katalog.append("is_katalog_utama", inKatalogUtama)
+    gambarPelengkap.forEach((gambar, index) => {
+        katalog.append(`promosi_barang[${index}][barang]`, barangId)
+        katalog.append(`promosi_barang[${index}][gambar_pelengkap]`, gambar)
+    })
 
     try {
         const response = await fetch(apiKatalog, {

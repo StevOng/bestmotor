@@ -20,6 +20,7 @@
         <input type="hidden" id="katalogId" value="{{ katalog.id|default:"" }}">
         <!-- Kode Barang -->
         <div class="relative">
+            <input type="hidden" name="barangId" id="barangId" value="{{ katalog.barang.id|default:"" }}">
             <label for="kode-brg" class="block text-sm font-medium text-gray-700">Kode Barang</label>
             
             <!-- Input untuk pencarian -->
