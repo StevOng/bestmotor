@@ -177,15 +177,15 @@ function addTier(input) {
     })
     if (!isEmptyTierExist) {
       const newTier = document.createElement("div")
-      newTier.className = "harga-tier flex"
+      newTier.className = "harga-tier grid grid-cols-[1fr_1fr_1fr_24px] gap-2 items-center mt-1"
       newTier.innerHTML = `
                 <div
-                    class="mt-1 mr-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400"> Harga Grosir
+                    class="block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400"> Harga Grosir
                 </div>
                 <input type="number" 
-                    class="min-qty mt-1 mx-2 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" id="min-beli" oninput="addTier(this)" value="{{ detail_barang.min_qty_grosir|default:""}}"/>
+                    class="min-qty block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" id="min-beli" oninput="addTier(this)" value="{{ detail_barang.min_qty_grosir|default:""}}"/>
                 <input type="number"
-                    class="harga-satuan mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" id="harga" oninput="addTier(this)" value="{{ detail_barang.harga_satuan|default:""}}" />
+                    class="harga-satuan block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400" id="harga" oninput="addTier(this)" value="{{ detail_barang.harga_satuan|default:""}}" />
                 <button type="button" onclick="hapusRow(this)" class="mt-1 mx-2"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button>
             `
       tierContainer.appendChild(newTier)

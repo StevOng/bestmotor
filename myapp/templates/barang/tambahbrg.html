@@ -69,33 +69,34 @@
 
         <!-- Harga Grosir -->
         <div class="md:col-span-2">
-          <div class="grid grid-cols-3">
-            <label for="stok-minimum" class="block text-sm font-medium text-gray-700">Grosir</label>
+          <div class="grid grid-cols-[1fr_1fr_1fr_24px] gap-2">
+            <label for="stok-minimum" class="block text-center text-sm font-medium text-gray-700">Grosir</label>
             <label for="stok-minimum" class="block text-center text-sm font-medium text-gray-700">Minimum Pembelian</label>
             <label for="stok-minimum" class="block text-center text-sm font-medium text-gray-700">Harga Satuan</label>
+            <div class="w-4"></div>
           </div>
           <div id="harga-tiers-container">
             {% for tier in tier_harga %}
-              <div class="harga-tier flex" data-id="{{ tier.id|default:"" }}">
+              <div class="harga-tier grid grid-cols-[1fr_1fr_1fr_24px] gap-2 items-center mt-1" data-id="{{ tier.id|default:"" }}">
                 <div
-                  class="mt-1 mr-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400"> Harga Grosir
+                  class="block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400 whitespace-nowrap overflow-hidden text-ellipsis"> Harga Grosir
                 </div>
                 <input type="number" 
-                  class="min-qty mt-1 mx-2 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ tier.min_qty_grosir|default:""}}"/>
+                  class="min-qty block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ tier.min_qty_grosir|default:""}}"/>
                 <input type="number"
-                  class="harga-satuan mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ tier.harga_satuan|default:""}}" />
-                <button type="button" onclick="hapusVal(this)" class="mt-1 mx-2"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button>
+                  class="harga-satuan block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ tier.harga_satuan|default:""}}" />
+                <div class="mt-1 mx-2 text-left"><button type="button" onclick="hapusVal(this)" class="mt-1 mx-2 text-left"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></div>
               </div>
             {% empty %}
-              <div class="harga-tier flex" data-id="{{ tier.id|default:"" }}">
+              <div class="harga-tier grid grid-cols-[1fr_1fr_1fr_24px] gap-2 items-center mt-1" data-id="{{ tier.id|default:"" }}">
                 <div
-                  class="mt-1 mr-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400"> Harga Grosir
+                  class="block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400 whitespace-nowrap overflow-hidden text-ellipsis"> Harga Grosir
                 </div>
                 <input type="number" 
-                  class="min-qty mt-1 mx-2 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ tier.min_qty_grosir|default:""}}"/>
+                  class="min-qty block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ tier.min_qty_grosir|default:""}}"/>
                 <input type="number"
-                  class="harga-satuan mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ tier.harga_satuan|default:""}}" />
-                <button type="button" onclick="hapusVal(this)" class="mt-1 mx-2"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button>
+                  class="harga-satuan block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ tier.harga_satuan|default:""}}" />
+                <div class="mt-1 mx-2 text-left"><button type="button" onclick="hapusVal(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></div>
               </div>           
             {% endfor %}
           </div>
