@@ -324,12 +324,13 @@ function totalPelunasan() {
 }
 
 function addNewRow(piutang = null, data_faktur = null) {
-    const tbody = document.querySelector("tbody");
+    const tbody = document.querySelector("#allpesanan tbody");
     const newRow = document.createElement("tr");
+    const rowCount = tbody.querySelectorAll("tr").length + 1;
+
     const fakturId = data_faktur?.id || ""
     const noFaktur = `noFaktur-${rowCount}`
 
-    const rowCount = tbody.querySelectorAll("tr").length + 1;
 
     newRow.classList.add("new-row-added"); // untuk mencegah nambah berkali-kali
     newRow.innerHTML = `

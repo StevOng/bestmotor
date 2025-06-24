@@ -65,6 +65,8 @@ def katalogbrg(request, tipe):
 @admin_required
 def tambah_brgkatalog(request, id=None):
     katalog = None
+    barang = None
+    katalogbrg = None
     if id:
         katalog = Katalog.objects.prefetch_related("barang").get(id=id)
         katalogbrg = KatalogBarang.objects.select_related("barang").filter(katalog=katalog)

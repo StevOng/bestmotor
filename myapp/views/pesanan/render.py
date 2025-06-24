@@ -26,6 +26,7 @@ def pesanan(request):
 @both_required
 def tambah_pesanan(request, id=None):
     pesanan = None
+    is_shipped = None
     role = request.session.get("role")
     user_id = request.session.get("user_id")
     detail_pesanan = []

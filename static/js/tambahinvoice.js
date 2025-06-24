@@ -191,13 +191,12 @@ async function getOptionBrg() {
 }
 
 function addNewRow(detail = null) {
-    const tbody = document.querySelector("tbody");
+    const tbody = document.querySelector("#detailBrg tbody");
     const newRow = document.createElement("tr");
+    const rowCount = tbody.querySelectorAll("tr").length + 1;
 
     const selectId = `kodebrg-dropdown-${rowCount}`;
     const barangId = detail?.barang_id || ""
-
-    const rowCount = tbody.querySelectorAll("tr").length + 1;
 
     newRow.classList.add("new-row-added"); // untuk mencegah nambah berkali-kali
     newRow.innerHTML = `

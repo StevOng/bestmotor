@@ -273,12 +273,12 @@ function totalPelunasan() {
 }
 
 function addNewRow(hut = null, invoices = null) {
-    const tbody = document.querySelector("tbody");
+    const tbody = document.querySelector("#allpesanan tbody");
     const newRow = document.createElement("tr");
+    const rowCount = tbody.querySelectorAll("tr").length + 1;
+
     const invoiceId = invoices?.id || ""
     const noInv = `no_invoice-${rowCount}`
-
-    const rowCount = tbody.querySelectorAll("tr").length + 1;
 
     newRow.classList.add("new-row-added"); // untuk mencegah nambah berkali-kali
     newRow.innerHTML = `
