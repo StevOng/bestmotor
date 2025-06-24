@@ -124,7 +124,7 @@
           <!-- No Referensi -->
           <div>
             <label for="no_referensi" class="block text-sm font-medium text-gray-700">No Referensi</label>
-            <input type="text" id="no_referensi" name="no_referensi" placeholder="-" value="{{ detail_pesanan.pesanan_id.no_referensi|default:"-" }}"
+            <input type="text" id="no_referensi" name="no_referensi" placeholder="-" value="{{ detail_pesanan.pesanan_id.no_referensi|default:"" }}"
               class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" {% if is_shipped %}disabled{% endif %}>
           </div>
           <!-- Kurir -->

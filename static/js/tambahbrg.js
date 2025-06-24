@@ -12,7 +12,7 @@ const preview = document.getElementById("previewGambar");
 const placeholder = document.getElementById("placeholder")
 
 uploadInput.addEventListener('change', function () {
-  const file = this.files
+  const file = this.files[0]
   if (file) {
     preview.src = URL.createObjectURL(file)
     preview.style.display = "block"
@@ -23,7 +23,7 @@ uploadInput.addEventListener('change', function () {
 document.getElementById("tambahbrgform").addEventListener("submit", async (event) => {
   event.preventDefault()
 
-  const id = document.getElementById("barangId")?.value
+  const id = document.getElementById("barangId").value
   const nama = document.getElementById("nama-brg").value
   const kode = document.getElementById("kode-brg").value
   const harga = document.getElementById("input-hrgbrg").value

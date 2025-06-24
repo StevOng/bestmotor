@@ -986,6 +986,10 @@ video {
   height: 100vh;
 }
 
+.h-40 {
+  height: 10rem;
+}
+
 .max-h-40 {
   max-height: 10rem;
 }
@@ -1157,18 +1161,6 @@ video {
 
 .grid-cols-3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.grid-cols-4 {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.grid-cols-\[1fr_1fr_1fr_12px\] {
-  grid-template-columns: 1fr 1fr 1fr 12px;
-}
-
-.grid-cols-\[1fr_1fr_1fr_20px\] {
-  grid-template-columns: 1fr 1fr 1fr 20px;
 }
 
 .grid-cols-\[1fr_1fr_1fr_24px\] {
@@ -1533,6 +1525,16 @@ video {
   padding-bottom: 1.5rem;
 }
 
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+.py-0\.5 {
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+}
+
 .pb-2 {
   padding-bottom: 0.5rem;
 }
@@ -1583,6 +1585,10 @@ video {
 
 .pt-5 {
   padding-top: 1.25rem;
+}
+
+.pl-4 {
+  padding-left: 1rem;
 }
 
 .text-left {
@@ -1723,6 +1729,11 @@ video {
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
+.text-gray-800 {
+  --tw-text-opacity: 1;
+  color: rgb(31 41 55 / var(--tw-text-opacity, 1));
+}
+
 .underline {
   text-decoration-line: underline;
 }
@@ -1792,6 +1803,10 @@ video {
 
 .duration-75 {
   transition-duration: 75ms;
+}
+
+.duration-150 {
+  transition-duration: 150ms;
 }
 
 .ease-in-out {

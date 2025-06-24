@@ -229,7 +229,7 @@
           </div>
 
           <!-- Customer -->
-          <div>
+          {% comment %} <div>
             <label for="customer" class="block text-sm font-medium text-gray-700">Sales</label>
             <div class="relative mt-1">
               <input type="hidden" name="custId" id="custId" value="{{ data_piutang.customer_id|default:"" }}">
@@ -240,7 +240,7 @@
                 <i class="fas fa-ellipsis-h"></i>
               </button>
             </div>
-          </div>
+          </div> {% endcomment %}
 
           <div class="hidden md:block lg:hidden"></div>
 
