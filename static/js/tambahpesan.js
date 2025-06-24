@@ -230,7 +230,7 @@ async function submitDetail() {
     const barangIds = Array.from(document.querySelectorAll(".barangId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
     const kurir = document.getElementById("kurir").value
     const noRef = document.getElementById("no_referensi").value
-    const customer = document.getElementById("customerId")?.value
+    const customer = document.getElementById("customerId").value
     const top = document.getElementById("top").value
     const alamat = document.getElementById("alamat_kirim").value
     const keterangan = document.getElementById("keterangan").value
@@ -290,12 +290,13 @@ async function loadBarangOptions(selectId, selectedId) {
     let response = await fetch("/api/barang/")
     let data = await response.json()
     let select = document.getElementById(selectId)
+
     select.innerHTML = "<option disabled selected>Pilih Barang</option>"
 
     data.forEach(barang => {
         let option = document.createElement("option")
         option.value = barang.id
-        option.text = `${barang.kode_barang} - ${barang.nama_barang}`
+        option.text = barang.kode_barang
         if (selectedId !== null && selectedId !== "" && barang.id == selectedId) {
             option.selected = true
         }
@@ -306,6 +307,9 @@ async function loadBarangOptions(selectId, selectedId) {
 async function getOptionBrg() {
     const selects = document.querySelectorAll("[id^='kodebrg-dropdown-']")
     selects.forEach(select => {
+        const selectedId = select.dataset.selectedId
+        console.log("selectedId: ", selectedId)
+        console.log("select value: ", select.value)
         const namaBrgId = select.dataset.namaBarangId
         loadBarangOptions(select.id, select.value)
 
@@ -347,18 +351,17 @@ function addNewRow(detail = null) {
     const rowCount = tbody.querySelectorAll("tr").length + 1;
 
     const selectId = `kodebrg-dropdown-${rowCount}`;
-    const barangId = detail?.barang_id || ""
+    const barangId = detail?.barang_id?.id || ""
 
     newRow.classList.add("new-row-added");
     newRow.innerHTML = `
       <td>${rowCount}</td>
       <td>
         <input type="hidden" name="barangId-${rowCount}" class="barangId" value="${barangId}">
-        <select id="${selectId}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-${rowCount}" data-selected-id="${barangId}">
-          <option value="">Pilih Barang</option>
+        <select id="${selectId}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-${rowCount}">
+          <option value="${barangId}">Pilih Barang</option>
         </select>
       </td>
-      <td class="kode-terpilih hidden"></td>
       <td id="namaBrg-${rowCount}">${detail?.barang_id?.nama_barang || ""}</td>
       <td><input type="number" value="${detail?.barang_id?.harga_jual || 0}" class="input_hrgbrg rounded-md border-gray-300"/></td>
       <td><input type="number" value="${detail?.qty_pesan || 0}" class="input_qtybrg w-20 rounded-md border-gray-300"/></td>

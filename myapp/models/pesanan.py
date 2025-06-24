@@ -65,12 +65,7 @@ class Pesanan(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:# cek jika id sudah ada atau belum
             self.generate_no_pesanan() # jika belum maka generate
-            super().save(*args, **kwargs)
-
-        self.hitung_total_bruto()
-        self.hitung_total_netto()
-        self.set_jatuh_tempo()
-        super().save(update_fields=["bruto", "netto", "jatuh_tempo", "terakhir_edit"])
+        super().save(*args, **kwargs)
 
         if self.status == 'shipped':
             from .faktur import Faktur

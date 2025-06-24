@@ -41,6 +41,11 @@ class PesananSerializer(serializers.ModelSerializer):
                 barang_obj.stok -= dipesan
                 barang_obj.save()
 
+            pesanan.hitung_total_bruto()
+            pesanan.hitung_total_netto()
+            pesanan.set_jatuh_tempo()
+            pesanan.save(update_fields=["bruto", "netto", "jatuh_tempo"])
+
         return pesanan
 
     def update(self, instance, validated_data):

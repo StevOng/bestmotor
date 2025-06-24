@@ -10,7 +10,7 @@ def pesanan(request):
     status = request.GET.get('status', None)
     role = request.session.get('role')
     user_id = request.session.get('user_id')
-    pesanan_list = Pesanan.objects.prefetch_related('detailpesanan_set').select_related('customer_id')
+    pesanan_list = Pesanan.objects.prefetch_related('detailpesanan_set').select_related('customer_id__user_id')
 
     if role == 'sales':
         pesanan_list = pesanan_list.filter(customer_id__user_id=user_id)
@@ -27,17 +27,17 @@ def pesanan(request):
 def tambah_pesanan(request, id=None):
     pesanan = None
     is_shipped = None
+    detail = []
     role = request.session.get("role")
     user_id = request.session.get("user_id")
-    detail_pesanan = []
     customers = Customer.objects.all()
 
     if role == "sales":
         customers = Customer.objects.filter(user_id=user_id)
 
     if id:
-        pesanan = Pesanan.objects.get(id=id)
-        detail_pesanan = pesanan.detailpesanan_set.all()
+        pesanan = Pesanan.objects.prefetch_related("detailpesanan_set__barang_id").select_related("customer_id").get(id=id)
+        detail = pesanan.detailpesanan_set.all()
         is_shipped = pesanan.status in ["ready", "shipped"]
 
     barang_data_dict = {
@@ -59,7 +59,8 @@ def tambah_pesanan(request, id=None):
     return render(
         request, 'pesanan/tambahpesan.html', 
         {
-            'detail_pesanan':detail_pesanan, 
+            'detail_pesanan':pesanan,
+            'detail_pesan': detail, 
             'customers':customers, 
             'barang_data_json':barang_data_json,
             'is_shipped': is_shipped

@@ -110,9 +110,9 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <!-- No Pesanan -->
           <div>
-            <input type="hidden" name="pesananId" id="pesananId" value="{{ detail_pesanan.pesanan_id|default:"" }}">
+            <input type="hidden" name="pesananId" id="pesananId" value="{{ detail_pesanan.id|default:"" }}">
             <label for="no_pesanan" class="block text-sm font-medium text-gray-700">No Pesanan</label>
-            <input type="text" id="no_pesanan" value="{{ detail_pesanan.pesanan_id.no_pesanan|default:"AUTO" }}" disabled
+            <input type="text" id="no_pesanan" value="{{ detail_pesanan.no_pesanan|default:"AUTO" }}" disabled
               class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
           </div>
           <!-- Tanggal -->
@@ -124,7 +124,7 @@
           <!-- No Referensi -->
           <div>
             <label for="no_referensi" class="block text-sm font-medium text-gray-700">No Referensi</label>
-            <input type="text" id="no_referensi" name="no_referensi" placeholder="-" value="{{ detail_pesanan.pesanan_id.no_referensi|default:"" }}"
+            <input type="text" id="no_referensi" name="no_referensi" placeholder="" value="{{ detail_pesanan.no_referensi|default:"" }}"
               class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" style="text-transform: uppercase;" {% if is_shipped %}disabled{% endif %}>
           </div>
           <!-- Kurir -->
@@ -139,8 +139,8 @@
           <div class="md:col-span-2">
             <label for="customer" class="block text-sm font-medium text-gray-700">Customer</label>
             <div class="relative mt-1">
-              <input type="hidden" id="customerId" name="customerId" value="{{ detail_pesanan.pesanan_id.customer_id|default:"" }}">
-              <input type="text" id="customer" placeholder="Tambah/Pilih Customer" value="{{ detail_pesanan.pesanan_id.customer_id.toko|default:"" }} - {{ detail_pesanan.pesanan_id.customer_id.nama|default:"" }}" readonly
+              <input type="hidden" id="customerId" name="customerId" value="{{ detail_pesanan.customer_id|default:"" }}">
+              <input type="text" id="customer" placeholder="Tambah/Pilih Customer" value="{{ detail_pesanan.customer_id.toko|default:"" }} - {{ detail_pesanan.customer_id.nama|default:"" }}" readonly
                 class="block w-full border border-gray-300 rounded-md py-2 px-3 text-gray-400" {% if is_shipped %}disabled{% endif %}>
               <button type="button" onclick="openModal()"
                 class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 focus:outline-none" {% if is_shipped %}disabled{% endif %}>
@@ -184,7 +184,7 @@
             <!-- Bruto -->
             <div>
               <label for="bruto" class="block text-sm font-medium text-gray-700">Bruto</label>
-              <input type="number" id="bruto" placeholder="0,00" value="{{ detail_pesanan.pesanan_id.bruto|default:0 }}" disabled
+              <input type="number" id="bruto" placeholder="0,00" value="{{ detail_pesanan.bruto|default:0 }}" disabled
                 class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-400">
             </div>
 
@@ -192,7 +192,7 @@
             <div>
                 <label for="ppn" class="block text-sm font-medium text-gray-700">PPN</label>
                 <div class="flex items-center">
-                  <input type="number" id="ppn" name="ppn" placeholder="0" value="{{ detail_pesanan.pesanan_id.ppn|default:0 }}"
+                  <input type="number" id="ppn" name="ppn" placeholder="0" value="{{ detail_pesanan.ppn|default:0 }}"
                     class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-right focus:outline-none focus:ring-customBlue focus:border-customBlue" {% if is_shipped %}disabled{% endif %}>
                   <span class="ml-2">%</span>
                 </div>
@@ -201,28 +201,28 @@
             <!-- Ongkir -->
             <div>
               <label for="ongkir" class="block text-sm font-medium text-gray-700">Ongkos Kirim <span class="text-gray-400">• Mata uang Rupiah (IDR)</span></label>
-              <input type="number" id="ongkir" name="ongkir" placeholder="0,00" value="{{ detail_pesanan.pesanan_id.ongkir|default:0 }}"
+              <input type="number" id="ongkir" name="ongkir" placeholder="0,00" value="{{ detail_pesanan.ongkir|default:0 }}"
                 class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-right focus:outline-none focus:ring-customBlue focus:border-customBlue" {% if is_shipped %}disabled{% endif %}>
             </div>
 
             <!-- Discount -->
             <div>
                 <label for="discount" class="block text-sm font-medium text-gray-700">Discount</label>
-                <input type="number" id="discount" name="diskon_faktur" placeholder="0,00" value="{{ detail_pesanan.pesanan_id.diskon_pesanan|default:0 }}"
+                <input type="number" id="discount" name="diskon_faktur" placeholder="0,00" value="{{ detail_pesanan.diskon_pesanan|default:0 }}"
                   class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-right focus:outline-none focus:ring-customBlue focus:border-customBlue" {% if is_shipped %}disabled{% endif %}>
               </div>
             
             <!-- Nilai PPN -->
             <div>
                 <label for="nilai_ppn" class="block text-sm font-medium text-gray-700">Nilai PPN</label>
-                <input type="number" id="nilai_ppn" placeholder="0,00" value="{{ detail_pesanan.nilai_ppn|default:0 }}" disabled
+                <input type="number" id="nilai_ppn" placeholder="0,00" value="{{ detail_pesanan.detailpesanan_set.nilai_ppn|default:0 }}" disabled
                   class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-400">
               </div>
             
             <!-- Netto -->
             <div>
                 <label for="netto" class="block text-sm font-medium text-gray-700">Netto</label>
-                <input type="number" id="netto" placeholder="0,00" value="{{ detail_pesanan.pesanan_id.netto|default:0 }}" disabled
+                <input type="number" id="netto" placeholder="0,00" value="{{ detail_pesanan.netto|default:0 }}" disabled
                   class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-400">
             </div>
           </div>
@@ -246,13 +246,13 @@
                 </tr>
             </thead>
             <tbody>
-                {% for detail in detail_pesanan %}
+                {% for detail in detail_pesan %}
                     <tr>
                       <td>{{ forloop.counter|default:"1" }}</td>
                       <td>
-                        <input type="hidden" class="barangId" value="{{ detail.barang_id|default:"" }}">
-                        <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ detail.barang_id }}" {% if is_shipped %}disabled{% endif %}>
-                          <option value="{{ detail.barang_id|default:"" }}" selected>{{ detail.barang_id.kode_barang|default:"" }} - {{ detail.barang_id.nama_barang|default:"" }}</option>
+                        <input type="hidden" class="barangId" value="{{ detail.barang_id.id|default:"" }}">
+                        <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ detail.barang_id.id|default:"" }}" {% if is_shipped %}disabled{% endif %}>
+                          <option value="{{ detail.barang_id.id|default:"" }}" selected>{{ detail.barang_id.kode_barang|default:"" }}</option>
                         </select>
                       </td>
                       <td id="namaBrg-{{ forloop.counter }}">
@@ -260,7 +260,7 @@
                       </td>
                       <td><input type="number" value="{{ detail.barang_id.harga_jual|default:0 }}" class="input_hrgbrg rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
                       <td><input type="number" value="{{ detail.qty_pesan|default:0 }}" class="input_qtybrg w-20 rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
-                      <td><input type="number" value="{{ detail.diskon_barang|default:0 }}%" class="disc w-20 rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
+                      <td><input type="number" value="{{ detail.diskon_barang|default:0 }}" class="disc w-20 rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
                       <td class="totalDisc">{{ detail.total_diskon_barang|default:"" }}</td>
                       <td class="totalHarga">{{ detail.total_harga_barang|default:"" }}</td>
                       <td><button type="button" onclick="submitDetail()" class="btn-submit" {% if is_shipped %}disabled{% endif %}><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>

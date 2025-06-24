@@ -120,7 +120,6 @@ function addNewRow(data = null) {
     const barangId = data?.barang?.id || "";
     const namaBarang = data?.barang?.nama_barang || "";
     const qty = data?.qty_barang || "";
-    const detailId = data?.id || "";
 
     newRow.classList.add("new-row-added");
 

@@ -134,10 +134,10 @@
           <tr data-id="{{ pesanan.id }}">
             <td>{{ forloop.counter }}</td>
             <td>{{ pesanan.no_pesanan }}</td>
-            <td>{{ pesanan.created_at }}</td>
+            <td>{{ pesanan.tanggal_pesanan }}</td>
             <td>{{ pesanan.customer_id.nama }}</td>
             <td>{{ pesanan.customer_id.lokasi }}</td>
-            <td>{{ pesanan.customer_id.sales_id.nama }}</td>
+            <td>{{ pesanan.customer_id.user_id.nama }}</td>
             <td>{{ pesanan.netto|floatformat:2|intcomma }},-</td>
             <td>{{ pesanan.status }}</td>
             {% if pesanan.status == "cancelled" %}
