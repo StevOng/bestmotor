@@ -7,6 +7,46 @@
 {% block page_title %}Penjualan{% endblock %} 
 
 {% block content %}
+<!-- Overlay & Modal -->
+<div id="popupModalExp" class="fixed inset-0 hidden items-center justify-center z-50 bg-gray-500/50">
+    <div class="bg-white w-full p-6 rounded-lg shadow-lg flex flex-col md:w-1/2">
+        <div class="flex flex-col p-2 h-auto mb-4 rounded border-2 border-gray-200 bg-gray-50">    
+            <div class="flex flex-row ml-2 mb-3 justify-between">
+                <p class="font-semibold text-lg">Filter Export Faktur</p>
+                <button onclick="closeModalExp()" class="flex justify-end"><i class="fa-solid fa-x m-2 text-gray-500"></i></button>
+            </div>
+            <hr class="border-gray-300 pb-3">
+            <div class="ml-2 mt-2">
+                <label for="sales-bestmtr" class="block text-sm font-medium text-gray-700">Pilih Sales Best Motor</label>
+                <input type="hidden" name="salesId" id="salesId" value="{{ customer.user_id.id|default:"" }}">
+                <select id="sales-bestmtr"
+                   data-selected-sales="{{ customer.user_id.id|default:'' }}"
+                    class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm bg-white focus:outline-none focus:ring-customBlue focus:border-customBlue">
+                    <option value="" disabled selected hidden>Pilih Sales</option>
+                </select>
+            </div>
+            <div class="mt-5 mx-2 gap-3 flex flex-col md:flex-row">
+                <div>
+                    <input type="hidden" name="filter" value="laku">
+                    <label for="dari_tgl" class="block text-sm font-medium text-gray-700">Dari Tanggal</label>
+                    <input type="date" id="dari_tgl" name="dari_tgl"
+                    class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" value="{{ request.GET.dari_tgl }}">
+                </div>
+                <div class="md:mt-0">
+                    <label for="smpe_tgl" class="block text-sm font-medium text-gray-700">s/d Tanggal</label>
+                    <input type="date" id="smpe_tgl" name="smpe_tgl"
+                        class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" value="{{ request.GET.smpe_tgl }}">
+                </div>
+            </div>
+            <div class="md:col-span-4 flex justify-end">
+                <button type="submit" class="text-center">
+                    <p class="text-sm font-medium text-gray-700">Export</p>
+                    <i class="fa-solid fa-arrow-up-from-bracket p-1 text-2xl text-customBlue"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="flex flex-row gap-3 justify-start mb-3">
     <a href="{% url 'faktur' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if not request.GET.status %} text-white bg-customBlue border-customBlue {% endif %}">
         Faktur
@@ -28,7 +68,14 @@
                 <i class="fas fa-search"></i>
             </button>
         </div>
-        {% if request.GET.status == 'jatuh_tempo' %}
+        {% if not request.GET.status %}
+            <button type="button" onclick="openModalExp()" class="p-2 justify-end border-2 rounded-lg border-gray-200">
+                <div class="flex flex-row justify-center items-center">
+                    <p class="hidden lg:block p-1 lg:text-gray-400">Export</p>
+                    <i class="fa-solid fa-arrow-up-from-bracket p-1 text-customBlue"></i>
+                </div>
+            </button>
+        {% elif request.GET.status == 'jatuh_tempo' %}
             <form action="{% url 'faktur' %}" method="GET">
                 <div class="mt-5 flex">
                     <div class="mx-1">
@@ -53,9 +100,10 @@
                 <th>Total</th>
                 {% if not request.GET.status %}
                     <th>Status</th>
-                    <th>Terakhir Edit</th>
                     <th>Sisa Bayar</th>
                 {% endif %}
+                <th>Lihat</th>
+                <th>Print</th>
             </tr>
         </thead>
         <tbody>
@@ -73,9 +121,11 @@
                     <td>{{ faktur.total|floatformat:2|intcomma }}</td>
                     {% if not request.GET.status %}
                         <td>{{ faktur.status }}</td>
-                        <td>{{ faktur.terakhir_edit }}</td>
+                        {% comment %} <td>{{ faktur.terakhir_edit }}</td> {% endcomment %}
                         <td>{{ faktur.sisa_bayar }}</td>
                     {% endif %}
+                    <td><a href="{% url 'tambah_pesanan' id=faktur.pesanan_id.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                    <td><button type="button"><i class="fa-solid fa-print text-2xl text-customBlue"></i></button></td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -23,7 +23,7 @@ uploadInput.addEventListener('change', function () {
 document.getElementById("tambahbrgform").addEventListener("submit", async (event) => {
   event.preventDefault()
 
-  const id = document.getElementById("barangId")?.value
+  const id = document.getElementById("barangId").value
   const nama = document.getElementById("nama-brg").value
   const kode = document.getElementById("kode-brg").value
   const harga = document.getElementById("input-hrgbrg").value
