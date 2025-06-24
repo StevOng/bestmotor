@@ -13,20 +13,34 @@ class PesananSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pesanan
         fields = '__all__'
+        extra_kwargs = {
+            "no_pesanan": {"required": False}
+        }
 
     def create(self, validated_data):
         detail_data = validated_data.pop('detail_barang')
         with transaction.atomic():
             pesanan = Pesanan.objects.create(**validated_data)
+
             for item in detail_data:
-                DetailPesanan.objects.create(pesanan_id=pesanan.id, **item)
-
-                barang_id = item['barang_id'].id if isinstance(item['barang_id'], Barang) else item['barang_id']
                 dipesan = item['qty_pesan']
-                barang = Barang.objects.get(id=barang_id)
+                diskon_barang = item['diskon_barang']
+                barang_obj = item['barang_id']  # bisa instance, bisa id
 
-                barang.stok -= dipesan
-                barang.save()
+                # Jika bukan instance, kita jadikan instance
+                if not isinstance(barang_obj, Barang):
+                    barang_obj = Barang.objects.get(pk=barang_obj)
+
+                DetailPesanan.objects.create(
+                    pesanan_id=pesanan,
+                    barang_id=barang_obj,
+                    qty_pesan=dipesan,
+                    diskon_barang=diskon_barang
+                )
+
+                barang_obj.stok -= dipesan
+                barang_obj.save()
+
         return pesanan
 
     def update(self, instance, validated_data):

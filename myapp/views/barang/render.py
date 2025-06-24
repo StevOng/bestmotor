@@ -77,6 +77,7 @@ def export_excel(request):
     ]
     sheet_barang.append(col_heads_barang)
 
+    barang = None
     header_font = Font(bold=True)
     for col_num, column_title in enumerate(col_heads_barang, start=1):
         sheet_barang.cell(row=1, column=col_num).font = header_font
@@ -117,8 +118,8 @@ def export_excel(request):
     for idx, tier in enumerate(TierHarga.objects.select_related('barang_id'), start=1):
         sheet_tier.append([
             idx,
-            tier.barang.kode_barang,
-            tier.barang.nama_barang,
+            tier.barang_id.kode_barang,
+            tier.barang_id.nama_barang,
             tier.min_qty_grosir,
             tier.harga_satuan
         ])

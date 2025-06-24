@@ -12,7 +12,7 @@ const preview = document.getElementById("previewGambar");
 const placeholder = document.getElementById("placeholder")
 
 uploadInput.addEventListener('change', function () {
-  const file = this.files
+  const file = this.files[0]
   if (file) {
     preview.src = URL.createObjectURL(file)
     preview.style.display = "block"

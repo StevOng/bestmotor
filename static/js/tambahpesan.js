@@ -32,24 +32,24 @@ $(document).ready(function () {
 });
 
 document.querySelectorAll(".input_hrgbrg").forEach(input => {
-    input.addEventListener("input", updateDetailBiaya)
+    input.addEventListener("input", callListener)
 })
 
 document.querySelectorAll(".input_qtybrg").forEach(input => {
-    input.addEventListener("input", updateDetailBiaya)
+    input.addEventListener("input", callListener)
 })
 
 document.querySelectorAll(".disc").forEach(input => {
-    input.addEventListener("input", updateDetailBiaya)
+    input.addEventListener("input", callListener)
 })
 
-document.getElementById("ppn").addEventListener("input", updateDetailBiaya)
+document.getElementById("ppn").addEventListener("input", callListener)
 
-document.getElementById("ongkir").addEventListener("input", updateDetailBiaya)
+document.getElementById("ongkir").addEventListener("input", callListener)
 
-document.getElementById("discount").addEventListener("input", updateDetailBiaya)
+document.getElementById("discount").addEventListener("input", callListener)
 
-document.getElementById("top").addEventListener("input", tanggalTop)
+document.getElementById("top").addEventListener("input", callListener)
 
 function tanggalTop() {
     const topInput = document.getElementById("top")
@@ -215,10 +215,11 @@ function pilihCustomer(id, nama, toko) {
 
     document.getElementById("customer").value = displayText
 
-    let hiddenInput = document.getElementById("customer_id")
+    let hiddenInput = document.getElementById("customerId")
     if (hiddenInput) {
         hiddenInput.value = id
     }
+    console.log(`id customer yang dipilih: ${hiddenInput.value} atau ${id}`)
     closeModal()
 }
 
@@ -239,10 +240,7 @@ async function submitDetail() {
 
     if (!customer || !barangIds) {
         alert("Customer dan Barang harus dipilih")
-        return
-    }
-    if (qtys < 0 || diskonBarangs < 0) {
-        alert("Kuantiti dan diskon barang tidak bisa minus")
+        console.log(`customerId: ${customer}, barangId: ${barangIds}`)
         return
     }
     const method = id ? "PUT" : "POST";
@@ -269,9 +267,11 @@ async function submitDetail() {
                 "ongkir": ongkir,
                 "diskon_pesanan": diskon,
                 "alamat_kirim": alamat,
-                "keterangan": keterangan
+                "keterangan": keterangan,
+                "detail_barang": detail_barang
             })
         })
+        const result = await response.json()
         if (response.ok) {
             console.log("Pesanan & Detail berhasil disimpan:", result);
             setTimeout(() => {
@@ -360,7 +360,7 @@ function addNewRow(detail = null) {
       </td>
       <td class="kode-terpilih hidden"></td>
       <td id="namaBrg-${rowCount}">${detail?.barang_id?.nama_barang || ""}</td>
-      <td><input type="number" value="${detail?.barang_id?.harga_jual || 0}" class="input_hrgbrg w-full rounded-md border-gray-300"/></td>
+      <td><input type="number" value="${detail?.barang_id?.harga_jual || 0}" class="input_hrgbrg rounded-md border-gray-300"/></td>
       <td><input type="number" value="${detail?.qty_pesan || 0}" class="input_qtybrg w-20 rounded-md border-gray-300"/></td>
       <td><input type="number" value="${detail?.diskon_barang || 0}" class="disc w-20 rounded-md border-gray-300"/></td>
       <td class="totalDisc">${detail?.total_diskon_barang || ""}</td>
@@ -376,6 +376,10 @@ function addNewRow(detail = null) {
         loadBarangOptions(selectId, barangId);
         getOptionBrg();
     }, 0);
+
+    newRow.querySelector(".input_hrgbrg").addEventListener("input", callListener)
+    newRow.querySelector(".input_qtybrg").addEventListener("input", callListener)
+    newRow.querySelector(".disc").addEventListener("input", callListener)
 }
 
 
@@ -383,4 +387,41 @@ function hapusRow(btn) {
     const row = btn.closest("tr")
     row.classList.add("fade-out")
     setTimeout(() => row.remove(), 400)
+}
+
+function minusCheck() {
+    const allInput = document.querySelectorAll("input")
+    allInput.forEach(input => {
+        if (input.type == "number" && input.value < 0) {
+            alert("Nilai tidak boleh minus")
+            input.value = null
+            updateDetailBiaya()
+            return
+        }
+    })
+}
+
+function qtyCheck() {
+    const row = document.querySelectorAll("#detailBrg tbody tr")
+    row.forEach(async (input) => {
+        const inputQty = input.querySelector(".input_qtybrg")
+        const rowQty = inputQty.value
+        const rowId = input.querySelector(".barangId").value
+        const data = await fetch(`/api/barang/${rowId}/`)
+        const res = await data.json()
+
+        if (rowQty > res.stok) {
+            alert(`Stok tidak mencukupi untuk pesanan, sisa stok tinggal ${res.stok}`)
+            inputQty.value = res.stok
+            updateDetailBiaya()
+            return
+        }
+    })
+}
+
+function callListener() {
+    minusCheck()
+    qtyCheck()
+    updateDetailBiaya()
+    tanggalTop()
 }
