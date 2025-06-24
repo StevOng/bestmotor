@@ -127,6 +127,9 @@ document.getElementById("formKatalog").addEventListener("submit", async (event) 
         if (response.ok) {
             const result = await response.json()
             console.log("Berhasil: ", result);
+            setTimeout(() => {
+                location.replace(`/katalog/admin/`);
+            }, 1000);
         } else {
             const error = await response.json()
             console.error("Gagal: ", error);
