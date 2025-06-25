@@ -12,6 +12,10 @@ class PesananViewSet(viewsets.ModelViewSet):
     queryset = Pesanan.objects.all()
     serializer_class = PesananSerializer
 
+    def get_queryset(self):
+        user_id = self.request.session.get("user_id")
+        return Pesanan.objects.filter(customer_id__user_id=user_id)
+
     @action(detail=False, methods=['patch'])
     def update_status_bulk(self, request):
         ids = request.data.get('ids', [])
@@ -25,7 +29,7 @@ class PesananViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['patch'])
     def cancelled(self, request, pk=None):
-        pesanan = self.queryset.get(pk=pk)
+        pesanan = self.get_queryset().get(pk=pk)
         pesanan.status = "cancelled"
         pesanan.save()
 
@@ -34,7 +38,7 @@ class PesananViewSet(viewsets.ModelViewSet):
             barang_id = item.barang_id
             barang = Barang.objects.get(pk=barang_id)
             barang.stok += item.qty_pesan
-            barang.save()
+            barang.save(update_fields=["stok"])
         return Response({"status": "cancelled"})
     
     @action(detail=False, methods=['get'])

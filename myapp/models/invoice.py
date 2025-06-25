@@ -47,16 +47,12 @@ class Invoice(models.Model):
         return self.sisa_bayar
     
     def set_jatuh_tempo(self):
-        self.jatuh_tempo = self.jatuh_tempo + timedelta(days=self.top)
+        self.jatuh_tempo = self.tanggal + timedelta(days=self.top)
         return self.jatuh_tempo
     
     def save(self, *args, **kwargs):
         if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum
-            self.generate_no_referensi() # jika belum berarti baru maka generate
-            self.set_sisa_bayar()
-        self.hitung_total_bruto()
-        self.hitung_total_netto()
-        self.set_jatuh_tempo()
+            self.set_sisa_bayar()  # jika belum berarti baru maka generate
         super().save(*args, **kwargs)
     
 class DetailInvoice(models.Model):

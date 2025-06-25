@@ -39,7 +39,7 @@ class PesananSerializer(serializers.ModelSerializer):
                 )
 
                 barang_obj.stok -= dipesan
-                barang_obj.save()
+                barang_obj.save(update_fields=["stok"])
 
             pesanan.hitung_total_bruto()
             pesanan.hitung_total_netto()
@@ -58,7 +58,7 @@ class PesananSerializer(serializers.ModelSerializer):
             for detail in detail_lama:
                 barang = detail.barang_id
                 barang.stok += detail.qty_pesan
-                barang.save()
+                barang.save(update_fields=["stok"])
             detail_lama.delete()
 
             for item in list_data:
@@ -67,7 +67,7 @@ class PesananSerializer(serializers.ModelSerializer):
     
                 qty_pesan = item['qty_pesan']
                 barang.stok -= qty_pesan
-                barang.save()
+                barang.save(update_fields=["stok"])
                 DetailPesanan.objects.create(pesanan_id=instance, **item)
             instance.hitung_total_bruto()
             instance.hitung_total_netto()

@@ -270,9 +270,9 @@
                   <tr>
                       <td>{{ forloop.counter|default:"1" }}</td>
                       <td>
-                        <input type="hidden" class="barangId" value="{{ detail.barang_id|default:"" }}">
-                        <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ detail.barang_id }}" {% if is_shipped %}disabled{% endif %}>
-                          <option value="{{ detail.barang_id|default:"" }}" selected>{{ detail.barang_id.kode_barang|default:"" }} - {{ detail.barang_id.nama_barang|default:"" }}</option>
+                        <input type="hidden" class="barangId" value="{{ detail.barang_id.id|default:"" }}">
+                        <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ detail.barang_id.id|default:"" }}" {% if is_shipped %}disabled{% endif %}>
+                          <option value="{{ detail.barang_id.id|default:"" }}" selected>{{ detail.barang_id.kode_barang|default:"" }} - {{ detail.barang_id.nama_barang|default:"" }}</option>
                         </select>
                       </td>
                       <td id="namaBrg-{{ forloop.counter }}">

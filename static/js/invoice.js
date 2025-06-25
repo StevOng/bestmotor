@@ -34,7 +34,7 @@ function confirmPopupBtn(id) {
 
     confirmButton.onclick = async function () {
         try {
-            const response = await fetch(`/api/invoice/${id}/`, {
+            const response = await fetch(`/api/invoice/${id}/delete/`, {
                 method: "DELETE",
                 headers: {
                     'X-CSRFToken': csrfToken

@@ -297,7 +297,7 @@ async function loadBarangOptions(selectId, selectedId) {
     data.forEach(barang => {
         let option = document.createElement("option")
         option.value = barang.id
-        option.text = barang.kode_barang
+        option.text = `${barang.kode_barang} - ${barang.nama_barang}`
         if (selectedId !== null && selectedId !== "" && barang.id == selectedId) {
             option.selected = true
         }
@@ -308,8 +308,7 @@ async function loadBarangOptions(selectId, selectedId) {
 async function getOptionBrg() {
     const selects = document.querySelectorAll("[id^='kodebrg-dropdown-']")
     selects.forEach(select => {
-        const selectedId = select.dataset.selectedId
-        console.log("selectedId: ", selectedId)
+        console.log("selectedId: ", select.id)
         console.log("select value: ", select.value)
         const namaBrgId = select.dataset.namaBarangId
         loadBarangOptions(select.id, select.value)

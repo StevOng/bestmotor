@@ -1,3 +1,5 @@
+document.addEventListener("DOMContentLoaded", checkBox)
+
 $(document).ready(function () {
     let table = $('#allpesanan').DataTable({
         pageLength: 20,
@@ -5,15 +7,15 @@ $(document).ready(function () {
         ordering: false,
         scrollX: true,
         "columnDefs": [
-      { className: "text-center", targets: [-1, -2] }, // kolom 8 dan 9 di tengah
-  ],
+            { className: "text-center", targets: [-1, -2] }, // kolom 8 dan 9 di tengah
+        ],
     });
     $('.dt-search').remove();
     $('.dt-info').remove();
 
     $('#tableSearch').on('keyup', function () { //search
-      let searchValue = $(this).val();
-      table.search(searchValue).draw();
+        let searchValue = $(this).val();
+        table.search(searchValue).draw();
     });
 });
 
@@ -24,29 +26,40 @@ $(document).ready(function () {
         ordering: false,
         scrollX: true,
         select: {
-          style: 'multi',
-          selector: 'td:first-child',
-      },
+            style: 'multi',
+            selector: 'td:first-child',
+        },
         "columnDefs": [
-      { className: "text-center", targets: [-1, -2] }, // kolom 8 dan 9 di tengah
-      {
-        orderable: false,
-        render: DataTable.render.select(),
-        targets: 0
-    }
-  ],
+            { className: "text-center", targets: [-1, -2] }, // kolom 8 dan 9 di tengah
+        ],
     });
     $('.dt-search').remove();
     $('.dt-info').remove();
 
     $('#tableSearch').on('keyup', function () { //search
-      let searchValue = $(this).val();
-      table.search(searchValue).draw();
+        let searchValue = $(this).val();
+        table.search(searchValue).draw();
     });
 });
 
+function checkBox() {
+    let checkAll = document.getElementById("checkedAll")
+    let allCheckBox = document.querySelectorAll("[id^='checkbox-']")
+    let buttonStats = document.getElementById("changeAll")
+    checkAll.addEventListener("change", () => {
+        checkAll.checked
+        buttonStats.disabled = !checkAll.checked
+        console.log("Centang semua:", checkAll.checked);
+        console.log("button disabled:", buttonStats.disabled)
+        allCheckBox.forEach(checkbox => {
+            checkbox.checked = checkAll.checked
+            console.log("Checkbox update:", checkbox.id, checkbox.checked)
+        })
+    })
+}
+
 function getCSRFToken() {
-  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
 function confirmPopupBtn(id) {
@@ -66,7 +79,7 @@ function confirmPopupBtn(id) {
                     'X-CSRFToken': csrfToken
                 },
                 body: JSON.stringify({
-                    status: "cancelled"
+                    "status": "cancelled"
                 })
             })
             if (response.ok) {
@@ -94,50 +107,53 @@ function closeModalConfirm() {
     modal.style.display = "none"; // Pastikan modal benar-benar hilang
 }
 
-document.getElementById('select-all-checkbox')?.addEventListener('change', () => {
-    const isChecked = this.checked
-    document.querySelectorAll('.checkbox-pesanan').forEach(cb => {
-        cb.checked = isChecked
-    })
-})
-
 async function updateBulkStatus(newStatus) {
-    const checkboxes = document.querySelectorAll('.checkbox-pesanan:checked')
-    let ids = Array.from(checkboxes).map(cb => cb.value)
+    const checkboxes = document.querySelectorAll("[id^='checkbox-']").checked
+    const ids = Array.from(checkboxes).map(cb => cb.value)
+    const csrfToken = getCSRFToken()
 
     if (ids.length === 0) {
         alert('Pilih setidaknya satu pesanan')
         return
     }
 
-    let response = await fetch('/api/pesanan/update_status_bulk/', {
+    const response = await fetch('/api/pesanan/update_status_bulk/', {
         method: 'PATCH',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+
         },
-        body: JSON.stringify({ ids, status: newStatus })
+        body: JSON.stringify({
+            "ids": ids,
+            "status": newStatus
+        })
     })
 
-    let result = await response.json()
+    const result = await response.json()
     if (response.ok) {
+        console.log(result)
         alert('status berhasil diubah')
         window.location.reload()
     } else {
-        alert("gagal: "+ result.error)
+        alert("gagal: " + result.error)
     }
 }
 
 async function updateSingleStatus(id, newStatus) {
+    const csrfToken = getCSRFToken()
     const response = await fetch(`/api/pesanan/${id}/`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
         },
-        body: JSON.stringify({ status: newStatus })
+        body: JSON.stringify({ "status": newStatus })
     });
 
     const result = await response.json();
     if (response.ok) {
+        console.log(result)
         alert("Status berhasil diubah!");
         window.location.reload();
     } else {

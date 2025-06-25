@@ -34,8 +34,7 @@ class Barang(models.Model):
         
         harga_modal_baru = (total_harga_lama + total_harga_baru) / total_unit
         self.harga_modal = harga_modal_baru
-        self.stok = total_unit
-        self.save()
+        self.save(update_fields=["harga_modal"])
 
     def update_qty_terjual(self, qty_terjual_baru):
         total_qty_terjual_lama = self.qty_terjual
@@ -46,7 +45,7 @@ class Barang(models.Model):
             return
         
         self.qty_terjual = total_unit
-        self.save()
+        self.save(update_fields=["qty_terjual"])
     
     def get_harga_berdasarkan_qty(self, qty):
         tier = self.tierharga_set.filter(min_qty_grosir__lte=qty).order_by('-min_qty_grosir').first()

@@ -1,16 +1,6 @@
 document.addEventListener('DOMContentLoaded', function (e) {
     e.preventDefault()
     getOptionBrg()
-
-    const tanggal = document.getElementById("tanggal_inv")
-    const today = new Date()
-    const year = String(today.getFullYear())
-    const month = String(today.getMonth() + 1).padStart(2, "0")
-    const day = String(today.getDate()).padStart(2, "0")
-    const formatDate = `${day}/${month}/${year}`
-
-    tanggal.value = formatDate
-    console.log(formatDate);
 })
 
 function getCSRFToken() {
@@ -32,24 +22,24 @@ $(document).ready(function () {
 });
 
 document.querySelectorAll(".input_hrgbrg").forEach(input => {
-    input.addEventListener("input", updateDetailBiaya)
+    input.addEventListener("input", callListener)
 })
 
 document.querySelectorAll(".input_qtybrg").forEach(input => {
-    input.addEventListener("input", updateDetailBiaya)
+    input.addEventListener("input", callListener)
 })
 
 document.querySelectorAll(".disc").forEach(input => {
-    input.addEventListener("input", updateDetailBiaya)
+    input.addEventListener("input", callListener)
 })
 
-document.getElementById("ppn").addEventListener("input", updateDetailBiaya)
+document.getElementById("ppn").addEventListener("input", callListener)
 
-document.getElementById("ongkir").addEventListener("input", updateDetailBiaya)
+document.getElementById("ongkir").addEventListener("input", callListener)
 
-document.getElementById("discount").addEventListener("input", updateDetailBiaya)
+document.getElementById("discount").addEventListener("input", callListener)
 
-document.getElementById("top_inv").addEventListener("input", tanggalTop)
+document.getElementById("top_inv").addEventListener("input", callListener)
 
 function tanggalTop() {
     const topInput = document.getElementById("top_inv")
@@ -153,11 +143,10 @@ async function loadBarangOptions(selectId, selectedId) {
 async function getOptionBrg() {
     const selects = document.querySelectorAll("[id^='kodebrg-dropdown-']")
     selects.forEach(select => {
-        const selectedId = select.dataset.selectedId
         const namaBrgId = select.dataset.namaBarangId
-        console.log("selectedId: ", selectedId)
+        console.log("selectedId: ", select.id)
         console.log("select value: ", select.value)
-        loadBarangOptions(select.id, selectedId)
+        loadBarangOptions(select.id, select.value)
 
         select.addEventListener("change", async () => {
             const barangId = select.value
@@ -196,15 +185,15 @@ function addNewRow(detail = null) {
     const rowCount = tbody.querySelectorAll("tr").length + 1;
 
     const selectId = `kodebrg-dropdown-${rowCount}`;
-    const barangId = detail?.barang_id || ""
+    const barangId = detail?.barang_id?.id || ""
 
     newRow.classList.add("new-row-added"); // untuk mencegah nambah berkali-kali
     newRow.innerHTML = `
         <td>${rowCount}</td>
         <td>
           <input type="hidden" name="barangId-${rowCount}" class="barangId" value="${barangId}">
-          <select id="${selectId}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-${rowCount}" data-selected-id="${barangId}">
-            <option value="">Pilih Barang</option>
+          <select id="${selectId}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-${rowCount}">
+            <option value="${barangId}">Kode</option>
           </select>
         </td>
         <td id="namaBrg-${rowCount}">${detail?.barang_id?.nama_barang || ""}</td>
@@ -224,6 +213,10 @@ function addNewRow(detail = null) {
         loadBarangOptions(selectId, barangId);
         getOptionBrg();
     }, 0);
+
+    newRow.querySelector(".input_hrgbrg").addEventListener("input", callListener)
+    newRow.querySelector(".input_qtybrg").addEventListener("input", callListener)
+    newRow.querySelector(".disc").addEventListener("input", callListener)
 }
 
 function hapusRow(btn) {
@@ -253,6 +246,7 @@ async function submitDetail() {
     const barangIds = Array.from(document.querySelectorAll(".barangId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
     const supplier = document.getElementById("supplierId")?.value
     const noRef = document.getElementById("no_ref_inv").value
+    const tanggal = document.getElementById("tanggal_inv").value
     const top = document.getElementById("top_inv").value
     const ppn = document.getElementById("ppn").value
     const ongkir = document.getElementById("ongkir").value
@@ -263,10 +257,6 @@ async function submitDetail() {
         return
     }
 
-    if (qtys < 0 || diskonBarangs < 0) {
-        alert("Kuantiti dan diskon barang tidak bisa minus")
-        return
-    }
     const method = id ? "PUT" : "POST";
     const apiUrl = id ? `/api/invoice/${id}/` : `/api/invoice/`
     const csrfToken = getCSRFToken()
@@ -287,6 +277,7 @@ async function submitDetail() {
                 "supplier_id": supplier,
                 "no_invoice": noInv,
                 "no_referensi": noRef,
+                "tanggal": tanggal,
                 "top": top,
                 "ppn": ppn,
                 "ongkir": ongkir,
@@ -303,19 +294,12 @@ async function submitDetail() {
         } else {
             console.error("Gagal:", result);
             alert("Gagal menyimpan invoice: " + JSON.stringify(result));
+            console.log(`tanggal val: ${tanggal}`)
         }
     } catch (error) {
         console.error("Terjadi kesalahan: ", error)
     }
 }
-
-document.querySelectorAll(".btn-submit").forEach((btn) => {
-    btn.addEventListener("click", async (event) => {
-        event.preventDefault()
-
-        const row = btn.closest("tr")
-    })
-})
 
 function updateDetailBiaya() {
     let bruto = 0
@@ -353,4 +337,22 @@ function updateDetailBiaya() {
 
     niliaPpnEl.value = nilaiPpn
     nettoEl.value = netto
+}
+
+function minusCheck() {
+    const allInput = document.querySelectorAll("input")
+    allInput.forEach(input => {
+        if (input.type == "number" && input.value < 0) {
+            alert("Nilai tidak boleh minus")
+            input.value = null
+            updateDetailBiaya()
+            return
+        }
+    })
+}
+
+function callListener() {
+    minusCheck()
+    updateDetailBiaya()
+    tanggalTop()
 }
