@@ -8,4 +8,5 @@ router.register(r'faktur', FakturViewSet)
 
 urlpatterns = [
     path('faktur/', render.faktur, name='faktur'),
+    path('faktur/export/', render.export_faktur, name='export_faktur')
 ]
