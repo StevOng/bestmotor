@@ -31,11 +31,6 @@ $(document).ready(function () {
         },
         "columnDefs": [
             { className: "text-center", targets: [-1, -2] }, // kolom 8 dan 9 di tengah
-            {
-                orderable: false,
-                render: DataTable.render.select(),
-                targets: 0
-            }
         ],
     });
     $('.dt-search').remove();
@@ -53,9 +48,12 @@ function checkBox() {
     let buttonStats = document.getElementById("changeAll")
     checkAll.addEventListener("change", () => {
         checkAll.checked
-        buttonStats.disabled = false
+        buttonStats.disabled = !checkAll.checked
+        console.log("Centang semua:", checkAll.checked);
+        console.log("button disabled:", buttonStats.disabled)
         allCheckBox.forEach(checkbox => {
             checkbox.checked = checkAll.checked
+            console.log("Checkbox update:", checkbox.id, checkbox.checked)
         })
     })
 }

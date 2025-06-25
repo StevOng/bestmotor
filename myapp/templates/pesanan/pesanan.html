@@ -119,7 +119,6 @@
             <tr>
                 <th>
                   <input id="checkedAll" type="checkbox" class="cursor-pointer w-4 h-4 text-blue-600 bg-white-600 border-black-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" value="">
-                  <label for="checkedAll"></label>
                 </th>
                 <th>No</th>
                 <th>No Pesanan</th>
@@ -138,15 +137,14 @@
           {% for pesanan in pesanan_list %}
             <tr data-id="{{ pesanan.id }}">
               <td>
-                <input id="checkbox-{{ forloop.counter }}" type="checkbox" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" value="{{ pesanan.id }}">
-                <label for="checkbox-{{ forloop.counter }}"></label>
+                <input id="checkbox-{{ forloop.counter }}" type="checkbox" class="cursor-pointer w-4 h-4 text-blue-600 bg-white-600 border-black-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" value="{{ pesanan.id }}">
               </td>
               <td>{{ forloop.counter }}</td>
               <td>{{ pesanan.no_pesanan }}</td>
-              <td>{{ pesanan.created_at }}</td>
+              <td>{{ pesanan.tanggal_pesanan }}</td>
               <td>{{ pesanan.customer_id.nama }}</td>
               <td>{{ pesanan.customer_id.lokasi }}</td>
-              <td>{{ pesanan.customer_id.sales_id.nama }}</td>
+              <td>{{ pesanan.customer_id.user_id.nama }}</td>
               <td>{{ pesanan.netto|floatformat:2|intcomma }},-</td>
               <td>{{ pesanan.status }}</td>
               <td><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
@@ -190,10 +188,10 @@
               </td>
               <td>{{ forloop.counter }}</td>
               <td>{{ pesanan.no_pesanan }}</td>
-              <td>{{ pesanan.created_at }}</td>
+              <td>{{ pesanan.tanggal_pesanan }}</td>
               <td>{{ pesanan.customer_id.nama }}</td>
               <td>{{ pesanan.customer_id.lokasi }}</td>
-              <td>{{ pesanan.customer_id.sales_id.nama }}</td>
+              <td>{{ pesanan.customer_id.user_id.nama }}</td>
               <td>{{ pesanan.netto|floatformat:2|intcomma }},-</td>
               <td>{{ pesanan.status }}</td>
               <td><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
