@@ -54,8 +54,23 @@ class PesananSerializer(serializers.ModelSerializer):
             for attr, value in validated_data.items():
                 setattr(instance, attr, value)
 
-            DetailPesanan.objects.filter(pesanan_id=instance).delete()
+            detail_lama = DetailPesanan.objects.filter(pesanan_id=instance)
+            for detail in detail_lama:
+                barang = detail.barang_id
+                barang.stok += detail.qty_pesan
+                barang.save()
+            detail_lama.delete()
 
             for item in list_data:
+                barang_id = item['barang_id'].id if isinstance(item['barang_id'], Barang) else item['barang_id']
+                barang = Barang.objects.get(id=barang_id)
+    
+                qty_pesan = item['qty_pesan']
+                barang.stok -= qty_pesan
+                barang.save()
                 DetailPesanan.objects.create(pesanan_id=instance, **item)
+            instance.hitung_total_bruto()
+            instance.hitung_total_netto()
+            instance.set_jatuh_tempo()
+            instance.save(update_fields=["bruto", "netto", "jatuh_tempo"])
         return instance

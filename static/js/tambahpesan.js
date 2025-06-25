@@ -280,6 +280,7 @@ async function submitDetail() {
         } else {
             console.error("Gagal:", result);
             alert("Gagal menyimpan pesanan: " + JSON.stringify(result));
+            console.log(`Customer ID: ${customer}`)
         }
     } catch (error) {
         console.error("Terjadi kesalahan: ", error)
@@ -405,19 +406,33 @@ function minusCheck() {
 }
 
 function qtyCheck() {
+    const id = document.getElementById("pesananId")?.value
+    console.log(`id: ${id}`)
     const row = document.querySelectorAll("#detailBrg tbody tr")
     row.forEach(async (input) => {
         const inputQty = input.querySelector(".input_qtybrg")
         const rowQty = inputQty.value
         const rowId = input.querySelector(".barangId").value
+        const dataAwal = parseInt(inputQty.dataset.qtyAwal)
         const data = await fetch(`/api/barang/${rowId}/`)
         const res = await data.json()
 
-        if (rowQty > res.stok) {
-            alert(`Stok tidak mencukupi untuk pesanan, sisa stok tinggal ${res.stok}`)
-            inputQty.value = res.stok
-            updateDetailBiaya()
-            return
+        if (!id) {
+            if (rowQty > res.stok) {
+                alert(`Stok tidak mencukupi untuk pesanan, sisa stok tinggal ${res.stok}`)
+                inputQty.value = res.stok
+                updateDetailBiaya()
+                return
+            }
+        } else {
+            const balikStok = res.stok + dataAwal
+            console.log(`stok: ${balikStok}`)
+            if (rowQty > balikStok) {
+                alert(`Stok tidak mencukupi untuk pesanan, sisa stok tinggal ${balikStok}`)
+                inputQty.value = balikStok
+                updateDetailBiaya()
+                return
+            }
         }
     })
 }
