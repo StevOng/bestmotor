@@ -13,28 +13,37 @@ def user_context(request):
 
 def notifications(request):
     notifikasi = []
+    role = request.session.get('role')
     low_stocks = Barang.objects.filter(stok__lte=F("stok_minimum")).all()
     faktur_jto = Faktur.objects.filter(status="jatuh_tempo").all()
     invoice_jto = Invoice.objects.filter(status="jatuh_tempo").all()
 
-    if low_stocks:
-        for push_notif in low_stocks:
-            notifikasi.append({
-                "head": "New alert from Barang",
-                "msg": f"Barang '{push_notif.nama_barang}' hampir habis sisa '{push_notif.stok}'"
-            })
-    
-    if faktur_jto:
-        for push_notif in faktur_jto:
-            notifikasi.append({
-                "head": "Penagihan faktur sudah bisa diproses",
-                "msg": f"Faktur '{push_notif.no_faktur}' sudah jatuh tempo"
-            })
+    if role == "admin":
+        if low_stocks:
+            for push_notif in low_stocks:
+                notifikasi.append({
+                    "head": "New alert from Barang",
+                    "msg": f"Barang '{push_notif.nama_barang}' hampir habis sisa '{push_notif.stok}'"
+                })
 
-    if invoice_jto:
-        for push_notif in invoice_jto:
-            notifikasi.append({
-                "head": "Pembayaran invoice sudah bisa diproses",
-                "msg": f"Invoice '{push_notif.no_invoice}' sudah jatuh tempo"
-            })
+        if faktur_jto:
+            for push_notif in faktur_jto:
+                notifikasi.append({
+                    "head": "Penagihan faktur sudah bisa diproses",
+                    "msg": f"Faktur '{push_notif.no_faktur}' sudah jatuh tempo"
+                })
+
+        if invoice_jto:
+            for push_notif in invoice_jto:
+                notifikasi.append({
+                    "head": "Pembayaran invoice sudah bisa diproses",
+                    "msg": f"Invoice '{push_notif.no_invoice}' sudah jatuh tempo"
+                })
+    else:
+        if faktur_jto:
+            for push_notif in faktur_jto:
+                notifikasi.append({
+                    "head": "Penagihan faktur sudah bisa diproses",
+                    "msg": f"Faktur '{push_notif.no_faktur}' sudah jatuh tempo"
+                })
     return {"notifikasi": notifikasi}

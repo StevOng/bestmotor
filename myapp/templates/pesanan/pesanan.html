@@ -87,7 +87,7 @@
             </button>
         </div>
         {% if request.GET.status == "pending" %}
-          <button onclick="updateBulkStatus('ready')" class="p-2 justify-end border-2 rounded-lg border-gray-200">
+          <button type="button" id="changeAll" onclick="updateBulkStatus('ready')" disabled class="p-2 justify-end border-2 rounded-lg border-gray-200">
             <div class="flex flex-row justify-center items-center">
                 <p class="hidden lg:block p-1 lg:text-gray-400">Terima Pesanan</p>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -96,7 +96,7 @@
             </div>
           </button>
         {% elif request.GET.status == "ready" %}
-          <button onclick="updateBulkStatus('shipped')" class="p-2 justify-end border-2 rounded-lg border-gray-200">
+          <button type="button" id="changeAll" onclick="updateBulkStatus('shipped')" disabled class="p-2 justify-end border-2 rounded-lg border-gray-200">
             <div class="flex flex-row justify-center items-center">
                 <p class="hidden lg:block p-1 lg:text-gray-400">Pesanan Terkirim</p>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -113,80 +113,43 @@
           </a>
         {% endif %}
     </div>
-    {% if not request.GET.status %}
-    <table id="allpesanan" class="display cell-border">
-      <thead>
-          <tr>
-              <th>No</th>
-              <th>No Pesanan</th>
-              <th>Tanggal Pesanan</th>
-              <th>Nama Pembeli</th>
-              <th>Lokasi Pembeli</th>
-              <th>Nama Sales</th>
-              <th>Total</th>
-              <th>Status</th>
-              <th>Edit</th>
-              <th>Tolak</th>
-          </tr>
-      </thead>
-      <tbody>
-        {% for pesanan in pesanan_list %}
-          <tr data-id="{{ pesanan.id }}">
-            <td>{{ forloop.counter }}</td>
-            <td>{{ pesanan.no_pesanan }}</td>
-            <td>{{ pesanan.tanggal_pesanan }}</td>
-            <td>{{ pesanan.customer_id.nama }}</td>
-            <td>{{ pesanan.customer_id.lokasi }}</td>
-            <td>{{ pesanan.customer_id.user_id.nama }}</td>
-            <td>{{ pesanan.netto|floatformat:2|intcomma }},-</td>
-            <td>{{ pesanan.status }}</td>
-            {% if pesanan.status == "cancelled" %}
-              <td><a href="#" disabled><i class="fa-regular fa-eye text-2xl text-gray-500"></i></a></td>
-              <td><button disabled><i class="fa-regular fa-trash-can text-2xl text-gray-500"></i></button></td>
-            {% else %}
+    {% if request.GET.status == "pending" %}
+      <table id="pesananTunda" class="display cell-border">
+        <thead>
+            <tr>
+                <th>
+                  <input id="checkedAll" type="checkbox" class="cursor-pointer w-4 h-4 text-blue-600 bg-white-600 border-black-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" value="">
+                  <label for="checkedAll"></label>
+                </th>
+                <th>No</th>
+                <th>No Pesanan</th>
+                <th>Tanggal Pesanan</th>
+                <th>Nama Pembeli</th>
+                <th>Lokasi Pembeli</th>
+                <th>Nama Sales</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Edit</th>
+                <th>Terima Pesanan</th>
+                <th>Tolak</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for pesanan in pesanan_list %}
+            <tr data-id="{{ pesanan.id }}">
+              <td>
+                <input id="checkbox-{{ forloop.counter }}" type="checkbox" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" value="{{ pesanan.id }}">
+                <label for="checkbox-{{ forloop.counter }}"></label>
+              </td>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ pesanan.no_pesanan }}</td>
+              <td>{{ pesanan.created_at }}</td>
+              <td>{{ pesanan.customer_id.nama }}</td>
+              <td>{{ pesanan.customer_id.lokasi }}</td>
+              <td>{{ pesanan.customer_id.sales_id.nama }}</td>
+              <td>{{ pesanan.netto|floatformat:2|intcomma }},-</td>
+              <td>{{ pesanan.status }}</td>
               <td><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
-              <td><button onclick="confirmPopupBtn({{ pesanan.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
-            {% endif %}
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% else %}
-    <table id="pesananTunda" class="display cell-border">
-      <thead>
-          <tr>
-              <th><input type="checkbox" id="select-all-checkbox"></th>
-              <th>No</th>
-              <th>No Pesanan</th>
-              <th>Tanggal Pesanan</th>
-              <th>Nama Pembeli</th>
-              <th>Lokasi Pembeli</th>
-              <th>Nama Sales</th>
-              <th>Total</th>
-              <th>Status</th>
-              {% if request.GET.status != "shipped" %}
-              <th>Edit</th>
-              <th>Terima Pesanan</th>
-              <th>Tolak</th>
-              {% else %}
-              <th>Lihat</th>
-              {% endif %}
-          </tr>
-      </thead>
-      <tbody>
-        {% for pesanan in pesanan_list %}
-          <tr data-id="{{ pesanan.id }}">
-            <td><input type="checkbox" class="checkbox-pesanan" value="{{ pesanan.id }}"></td>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ pesanan.no_pesanan }}</td>
-            <td>{{ pesanan.created_at }}</td>
-            <td>{{ pesanan.customer_id.nama }}</td>
-            <td>{{ pesanan.customer_id.lokasi }}</td>
-            <td>{{ pesanan.customer_id.sales_id.nama }}</td>
-            <td>{{ pesanan.netto|floatformat:2|intcomma }},-</td>
-            <td>{{ pesanan.status }}</td>
-            <td><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
-            {% if request.GET.status == "pending" %}
               <td>
                 <button onclick="updateSingleStatus('{{ pesanan.id }}','ready')">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -195,7 +158,45 @@
                 </button>
               </td>
               <td><button onclick="confirmPopupBtn({{ pesanan.id }})"><i class="fa-solid fa-x text-2xl text-red-500"></i></button></td>
-            {% elif request.GET.status == "ready" %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% elif request.GET.status == "ready" %}
+      <table id="pesananTunda" class="display cell-border">
+        <thead>
+            <tr>
+                <th>
+                  <input id="checkedAll" type="checkbox" class="cursor-pointer w-4 h-4 text-blue-600 bg-white-600 border-black-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" value="">
+                  <label for="checkedAll"></label>
+                </th>
+                <th>No</th>
+                <th>No Pesanan</th>
+                <th>Tanggal Pesanan</th>
+                <th>Nama Pembeli</th>
+                <th>Lokasi Pembeli</th>
+                <th>Nama Sales</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Lihat</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for pesanan in pesanan_list %}
+            <tr data-id="{{ pesanan.id }}">
+              <td>
+                <input id="default-checkbox-{{ forloop.counter }}" type="checkbox" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" value="{{ pesanan.id }}">
+                <label for="default-checkbox-{{ forloop.counter }}"></label>
+              </td>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ pesanan.no_pesanan }}</td>
+              <td>{{ pesanan.created_at }}</td>
+              <td>{{ pesanan.customer_id.nama }}</td>
+              <td>{{ pesanan.customer_id.lokasi }}</td>
+              <td>{{ pesanan.customer_id.sales_id.nama }}</td>
+              <td>{{ pesanan.netto|floatformat:2|intcomma }},-</td>
+              <td>{{ pesanan.status }}</td>
+              <td><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
               <td>
                 <button onclick="updateSingleStatus('{{ pesanan.id }}','shipped')">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -204,11 +205,48 @@
                 </button>
               </td>
               <td><button onclick="confirmPopupBtn({{ pesanan.id }})"><i class="fa-solid fa-x text-2xl text-red-500"></i></button></td>
-            {% endif %}
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <table id="allpesanan" class="display cell-border">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>No Pesanan</th>
+                <th>Tanggal Pesanan</th>
+                <th>Nama Pembeli</th>
+                <th>Lokasi Pembeli</th>
+                <th>Nama Sales</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Edit</th>
+                <th>Tolak</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for pesanan in pesanan_list %}
+            <tr data-id="{{ pesanan.id }}">
+              <td>{{ forloop.counter }}</td>
+              <td>{{ pesanan.no_pesanan }}</td>
+              <td>{{ pesanan.tanggal_pesanan }}</td>
+              <td>{{ pesanan.customer_id.nama }}</td>
+              <td>{{ pesanan.customer_id.lokasi }}</td>
+              <td>{{ pesanan.customer_id.user_id.nama }}</td>
+              <td>{{ pesanan.netto|floatformat:2|intcomma }},-</td>
+              <td>{{ pesanan.status }}</td>
+              {% if pesanan.status == "cancelled" %}
+                <td><a href="#" disabled><i class="fa-regular fa-eye text-2xl text-gray-500"></i></a></td>
+                <td><button disabled><i class="fa-regular fa-trash-can text-2xl text-gray-500"></i></button></td>
+              {% else %}
+                <td><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                <td><button onclick="confirmPopupBtn({{ pesanan.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     {% endif %}
 </div>
 </div>
