@@ -19,4 +19,4 @@ class Supplier(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.perusahaan
+        return f"{self.id}"
