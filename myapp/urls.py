@@ -9,6 +9,7 @@ urlpatterns = [
     path('logout/', logout_user, name='logout'),
     path('barang/', include('myapp.views.barang.urls')),
     path('barang/transaksi/', include('myapp.views.distribusi.urls')),
+    path('bonus/', include('myapp.views.bonus.urls')),
     path('customer/', include('myapp.views.customer.urls')),
     path('penjualan/', include('myapp.views.faktur.urls')),
     path('penjualan/pembayaran/', include('myapp.views.piutang.urls')),
