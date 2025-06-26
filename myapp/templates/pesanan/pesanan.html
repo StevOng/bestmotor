@@ -118,7 +118,7 @@
         <thead>
             <tr>
                 <th>
-                  <input id="checkedAll" type="checkbox" class="cursor-pointer w-4 h-4 text-blue-600 bg-white-600 border-black-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" value="">
+                  <input id="checkedAll" type="checkbox" class="cursor-pointer w-4 h-4 text-blue-600 bg-white-600 border-black-300 rounded-sm focus:ring-blue-500" value="">
                 </th>
                 <th>No</th>
                 <th>No Pesanan</th>
@@ -137,7 +137,7 @@
           {% for pesanan in pesanan_list %}
             <tr data-id="{{ pesanan.id }}">
               <td>
-                <input id="checkbox-{{ forloop.counter }}" type="checkbox" class="cursor-pointer w-4 h-4 text-blue-600 bg-white-600 border-black-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" value="{{ pesanan.id }}">
+                <input id="checkbox-{{ forloop.counter }}" type="checkbox" class="cursor-pointer w-4 h-4 text-blue-600 bg-white-600 border-black-300 rounded-sm " value="{{ pesanan.id }}">
               </td>
               <td>{{ forloop.counter }}</td>
               <td>{{ pesanan.no_pesanan }}</td>
