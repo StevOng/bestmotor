@@ -5,6 +5,7 @@ from . import render
 router = DefaultRouter()
 
 urlpatterns = [
-    path('', render.bonus_sales, name='bonus_sales'),
+    path('', render.sales, name='sales'),
+    path('bonus/', render.bonus, name='bonus'),
     path('merek/', render.bonus_merek, name='bonus_merek'),
 ]

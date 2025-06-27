@@ -9,9 +9,6 @@ $(document).ready(function () {
     autoWidth: false,
     ordering: false,
     scrollX: true,
-    "columnDefs": [
-      { className: "text-center", targets: [-1] } // isi field di tengah
-    ],
   });
   $('.dt-search').remove();
   $('.dt-info').remove();
@@ -22,15 +19,31 @@ $(document).ready(function () {
   });
 });
 
+$(document).ready(function () {
+  let table = $('#tabelDetailBonus').DataTable({
+    pageLength: 5,
+    lengthChange: false, // Hilangkan "Show entries"
+    ordering: false,
+    scrollX: true,
+  });
+  $('.dt-search').remove();
+  $('.dt-info').remove();
+
+  $('#bonusDetailSearch').on('keyup', function () { //search
+    let searchValue = $(this).val();
+    table.search(searchValue).draw();
+  });
+});
+
 //PopupModal
-function openModalBonus() {
-  let modal = document.getElementById("popupModalBonus");
+function openModal() {
+  let modal = document.getElementById("popupModal");
   modal.classList.remove("hidden");
   modal.classList.add("flex");
 }
 
-function closeModalBonus() {
-  let modal = document.getElementById("popupModalBonus");
+function closeModal() {
+  let modal = document.getElementById("popupModal");
   modal.classList.remove("flex");
   modal.classList.add("hidden");
 }
