@@ -12,6 +12,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from reportlab.lib.units import cm
 from django.conf import settings
+from ...models.user import User
 import os
 from io import BytesIO
 
@@ -96,8 +97,8 @@ def export_faktur(request, id):
     
     data += [
         ["", "", "", "", "", "Total Produk", f"Rp {pesanan.bruto:,.0f},-"],
-        ["", "", "", "", "", "Total Ongkir", f"{pesanan.ongkir:,.0f},-"],
-        ["", "", "", "", "", "Diskon", f"{pesanan.diskon_pesanan:,.0f},-"],
+        ["", "", "", "", "", "Total Ongkir", f"Rp {pesanan.ongkir:,.0f},-"],
+        ["", "", "", "", "", "Diskon", f"Rp {pesanan.diskon_pesanan:,.0f},-"],
         ["", "", "", "", "", "PPN", f"Rp {pesanan.ppn:,.0f},-"],
         ["", "", "", "", "", "Total", f"Rp {pesanan.netto:,.0f},-"],
     ]
@@ -117,8 +118,14 @@ def export_faktur(request, id):
 
     table.wrapOn(p, width, height)
     w, h = table.wrap(0, 0)
+    table_y = height - 210 - h
+    
+    if height - 210 - h < 50:
+        p.showPage()
+        table_y = height - 100 - h
+    
     p.drawString(40, height - 200, "Rincian Pesanan")
-    table.drawOn(p, 40, height - 210 - h)
+    table.drawOn(p, 40, table_y)
 
     # Informasi Pembayaran
     p.setFont("Helvetica", 10)
@@ -134,3 +141,103 @@ def export_faktur(request, id):
     response.write(pdf)
     return response
 
+@admin_required
+def export_faktur_filter(request):
+    sales_id = request.GET.get("salesId")
+    dari_tgl = request.GET.get("dari_tgl")
+    smpe_tgl = request.GET.get("smpe_tgl")
+
+    if not sales_id or not dari_tgl or not smpe_tgl:
+        return HttpResponse("Filter tidak lengkap", status=400)
+
+    try:
+        sales_user = User.objects.get(id=sales_id)
+    except User.DoesNotExist:
+        return HttpResponse("Sales tidak ditemukan", status=404)
+
+    faktur_list = Faktur.objects.filter(
+        pesanan_id__customer_id__user_id=sales_id,
+        tanggal_faktur__range=[dari_tgl, smpe_tgl]
+    ).select_related("pesanan_id__customer_id")
+
+    # Setup PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="faktur_filtered.pdf"'
+
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+    
+    # === Logo ===
+    logo_path = os.path.join(settings.BASE_DIR, "static/images/logo.png")
+    if os.path.exists(logo_path):
+        p.drawImage(logo_path, 40, height - 110, width=3.5*cm, height=3.5*cm, mask='auto')
+
+    # Header
+    p.setFont("Helvetica-Bold", 12)
+    p.drawString(150, height - 40, "Best Motor")
+    p.setFont("Helvetica", 10)
+    p.drawString(150, height - 55, "Jalan Taduan, Medan Deli")
+    p.drawString(150, height - 70, "Sumatera Utara")
+    p.drawString(150, height - 85, "21312")
+
+    # Title
+    p.setFont("Helvetica-Bold", 16)
+    p.drawCentredString(width / 2, height - 120, "Laporan Faktur")
+    
+    # Info kiri dan kanan
+    p.setFont("Helvetica", 10)
+    p.drawString(40, height - 140, "Informasi Sales :")
+    p.drawString(40, height - 155, f"Sales ID: {sales_id}")
+    p.drawString(40, height - 170, f"Nama Sales: {sales_user.nama}")
+    
+    p.drawString(width - 200, height - 140, f"Periode: {dari_tgl} s/d {smpe_tgl}")
+
+    # Tabel
+    data = [["No Faktur", "Tgl Faktur", "No Referensi", "Customer", "Total"]]
+    total_faktur = 0
+    for i, f in enumerate(faktur_list, 1):
+        data.append([
+            f.no_faktur,
+            str(f.tanggal_faktur),
+            f.pesanan_id.no_referensi,
+            f.pesanan_id.customer_id.nama if f.pesanan_id.customer_id else "-",
+            f"Rp {f.pesanan_id.netto:,.0f},-"
+        ])
+        total_faktur += f.pesanan.netto
+    
+    data += [[""] * 5] * 2
+    
+    data += [
+        ["", "", "", "Total", f"Rp {total_faktur:,.0f},-"],
+    ]
+
+    table = Table(data, colWidths=[3.5*cm, 3*cm, 5*cm, 3*cm, 4*cm])
+    table.setStyle(TableStyle([
+        ("ALIGN", (-1, 0), (-1, -1), "RIGHT"),
+        ("VALIGN", (0,0), (-1,-1), "MIDDLE"),
+        ("ALIGN", (-2, -1), (-1, -1), "RIGHT"),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 9),
+        ("LINEABOVE", (3, -1), (-1, -1), 0.5, colors.grey),
+        ("LINEABOVE", (0, 0), (-1, 0), 0.5, colors.grey),
+        ("LINEBELOW", (0, 0), (-1, 0), 0.5, colors.grey),
+    ]))
+
+    table.wrapOn(p, width, height)
+    w, h = table.wrap(0, 0)
+    table_y = height - 210 - h
+    
+    if height - 210 - h < 50:
+        p.showPage()
+        table_y = height - 100 - h
+    
+    p.drawString(40, height - 200, "Rincian Pesanan")
+    table.drawOn(p, 40, table_y)
+
+    p.showPage()
+    p.save()
+    response.write(buffer.getvalue())
+    buffer.close()
+
+    return response

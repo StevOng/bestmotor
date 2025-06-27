@@ -8,5 +8,6 @@ router.register(r'faktur', FakturViewSet)
 
 urlpatterns = [
     path('faktur/', render.faktur, name='faktur'),
-    path('faktur/export/<int:id>', render.export_faktur, name='export_faktur')
+    path('faktur/export/<int:id>/', render.export_faktur, name='export_faktur'),
+    path('faktur/export/filter', render.export_faktur_filter, name='export_faktur_filter'),
 ]
