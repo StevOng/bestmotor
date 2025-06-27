@@ -12,6 +12,19 @@ toggleCheck.addEventListener("click", () => {
     const isChecked = checkIcon.classList.toggle("hidden")
     isKatalogUtama.value = !isChecked // kalau icon kelihatan berarti true
     console.log(isKatalogUtama.value)
+    const konsolId = document.getElementById("katalogId").value
+    console.log("katalog id: ", konsolId)
+    console.log("barang id: ", barangId.value)
+})
+
+document.addEventListener('DOMContentLoaded', () => {
+    const checkIcon = document.getElementById("checkIcon");
+    const isKatalogUtama = document.getElementById("isKatalogUtama");
+
+    // Tampilkan icon centang jika value-nya true
+    if (isKatalogUtama.value === "true" || isKatalogUtama.value === "True") {
+        checkIcon.classList.remove("hidden");
+    }
 })
 
 // Sembunyikan dropdown jika klik di luar
@@ -30,6 +43,7 @@ uploadInput.addEventListener('change', function () {
     if (files.length + previewDiv.children.length > 5) {
         alert("Maksimal upload hanya 5 gambar")
         uploadInput.value = ""
+        previewDiv.innerHTML = ""
         placeholder.textContent = `Upload Gambar (${previewDiv.children.length}/5)`
         return
     }
@@ -111,11 +125,6 @@ document.getElementById("formKatalog").addEventListener("submit", async (event) 
     katalog.append("harga_tertera", hargaTertera)
     katalog.append("harga_diskon", hargaDiskon)
     katalog.append("is_katalog_utama", inKatalogUtama)
-    gambarPelengkap.forEach((gambar, index) => {
-        katalog.append(`promosi_barang[${index}][barang]`, barangId)
-        katalog.append(`promosi_barang[${index}][gambar_pelengkap]`, gambar)
-    })
-
     try {
         const response = await fetch(apiKatalog, {
             method: method,
@@ -127,9 +136,39 @@ document.getElementById("formKatalog").addEventListener("submit", async (event) 
         if (response.ok) {
             const result = await response.json()
             console.log("Berhasil: ", result);
-            setTimeout(() => {
-                location.replace(`/katalog/admin/`);
-            }, 1000);
+
+            const cekJumlah = await fetch(`/api/katalogbarang/?katalog=${result.id}/`);
+            const data = await cekJumlah.json();
+            const detailMethod = data.length + gambarPelengkap.length > 5 ? "PATCH" : "POST"
+            if (data.length + gambarPelengkap.length > 5) {
+                alert("Total gambar melebihi batas maksimum (5).");
+                return;
+            }
+            gambarPelengkap.forEach(async (gambar,index) => {
+                const detail = new FormData()
+                detail.append("katalog", result.id)
+                detail.append("barang", barangId.value)
+                detail.append("gambar_pelengkap", gambar)
+
+                const detailAPI = id ? `/api/katalogbarang/${data[index].id}/` : `/api/katalogbarang/`
+                const detailResp = await fetch(detailAPI, {
+                    method: detailMethod,
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: detail
+                })
+                const detailRes = await detailResp.json()
+                if (!detailResp.ok) {
+                    console.log("error: ", detailRes)
+                    console.log("result id: ", result.id)
+                } else {
+                    console.log("success: ", detailRes)
+                }
+            })
+            // setTimeout(() => {
+            //     location.reload();
+            // }, 1000);
         } else {
             const error = await response.json()
             console.error("Gagal: ", error);

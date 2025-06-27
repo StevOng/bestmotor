@@ -1,5 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
     getTipe()
+    const checkIcon = document.getElementById("checkIcon");
+    const isKatalogUtama = document.getElementById("isKatalogUtama");
+
+    // Tampilkan icon centang jika value-nya true
+    if (isKatalogUtama.value === "true" || isKatalogUtama.value === "True") {
+        checkIcon.classList.remove("hidden");
+    }
 })
 
 //   {% comment %} tabel katalog {% endcomment %}
@@ -43,7 +50,7 @@ document.getElementById("toggleCheck")?.addEventListener("click", function () {
 });
 
 function getCSRFToken() {
-  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
 function confirmPopupBtn(id) {
@@ -82,7 +89,7 @@ function closeModalConfirm() {
 }
 
 async function getTipe() {
-    try{
+    try {
         const response = await fetch('/api/barang/tipe_choices/')
         const choices = await response.json()
 
@@ -99,7 +106,7 @@ async function getTipe() {
             }
             select.appendChild(option)
         })
-    } catch(err) {
+    } catch (err) {
         console.error(err);
     }
 }

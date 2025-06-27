@@ -11,9 +11,9 @@ class Katalog(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.harga_tertera}"
+        return f"{self.id}"
     
 class KatalogBarang(models.Model):
-    katalog = models.ForeignKey(Katalog, on_delete=models.CASCADE)
+    katalog = models.ForeignKey(Katalog, on_delete=models.CASCADE, related_name="promosi_barang")
     barang = models.ForeignKey(Barang, on_delete=models.CASCADE)
     gambar_pelengkap = models.ImageField(upload_to='images/', null=True, blank=True)

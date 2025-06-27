@@ -3,36 +3,36 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 $(document).ready(function () {
-    let table = $('#tabel-bonus').DataTable({
-        pageLength: 20,
-        lengthChange: false, // Hilangkan "Show entries"
-        autoWidth: false,
-        ordering: false,
-        scrollX: true,
-        "columnDefs": [
-            { className: "text-center", targets: [-1] } // isi field di tengah
-        ],
-    });
-    $('.dt-search').remove();
-    $('.dt-info').remove();
+  let table = $('#tabel-bonus').DataTable({
+    pageLength: 20,
+    lengthChange: false, // Hilangkan "Show entries"
+    autoWidth: false,
+    ordering: false,
+    scrollX: true,
+    "columnDefs": [
+      { className: "text-center", targets: [-1] } // isi field di tengah
+    ],
+  });
+  $('.dt-search').remove();
+  $('.dt-info').remove();
 
-    $('#tableSearch').on('keyup', function () { //search
-        let searchValue = $(this).val();
-        table.search(searchValue).draw();
-    });
+  $('#tableSearch').on('keyup', function () { //search
+    let searchValue = $(this).val();
+    table.search(searchValue).draw();
+  });
 });
 
 //PopupModal
 function openModalBonus() {
-    let modal = document.getElementById("popupModalBonus");
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
+  let modal = document.getElementById("popupModalBonus");
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
 }
 
 function closeModalBonus() {
-    let modal = document.getElementById("popupModalBonus");
-    modal.classList.remove("flex");
-    modal.classList.add("hidden");
+  let modal = document.getElementById("popupModalBonus");
+  modal.classList.remove("flex");
+  modal.classList.add("hidden");
 }
 
 async function getMerk() {

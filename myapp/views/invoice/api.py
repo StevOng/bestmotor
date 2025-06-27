@@ -13,8 +13,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     serializer_class = InvoiceSerializer
 
     def get_queryset(self):
-        supplier_id = self.request.data.get("supplierId")
-        return Invoice.objects.filter(supplier_id=supplier_id)
+        return Invoice.objects.all()
 
     @action(detail=False, methods=['get'])
     def expenses(self, request):
@@ -73,7 +72,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         detail = DetailInvoice.objects.filter(invoice_id=invoice.id)
         for item in detail:
             barang_id = item.barang_id
-            barang = Barang.objects.get(pk=barang_id)
+            barang = Barang.objects.get(pk=barang_id.pk)
             barang.stok -= item.qty_beli
             barang.save(update_fields=["stok"])
         invoice.delete()

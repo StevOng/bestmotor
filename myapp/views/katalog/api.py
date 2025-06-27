@@ -17,5 +17,5 @@ class KatalogViewSet(viewsets.ModelViewSet):
         return queryset
     
 class KatalogBarangViewSet(viewsets.ModelViewSet):
-    queryset = KatalogBarang
+    queryset = KatalogBarang.objects.all()
     serializer_class = KatalogBarangSerializer

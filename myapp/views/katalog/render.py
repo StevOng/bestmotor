@@ -6,7 +6,7 @@ from ...models.barang import *
 
 @admin_required
 def admin_katalog(request):
-    data = Katalog.objects.prefetch_related("barang_set").all()
+    data = Katalog.objects.prefetch_related("promosi_barang__barang").all()
     return render(request, 'katalog/adminkatalog.html', {"data_katalog": data})
 
 def katalog(request):
@@ -68,8 +68,8 @@ def tambah_brgkatalog(request, id=None):
     barang = None
     katalogbrg = None
     if id:
-        katalog = Katalog.objects.prefetch_related("barang").get(id=id)
-        katalogbrg = KatalogBarang.objects.select_related("barang").filter(katalog=katalog)
+        katalog = Katalog.objects.prefetch_related("promosi_barang__barang").get(id=id)
+        katalogbrg = KatalogBarang.objects.select_related("barang").filter(katalog=id)
         barang = katalog.barang.first()
     return render(request, 'katalog/tambahkatalog.html', {"katalog": katalog, "barang": barang, "katalogbrg": katalogbrg})
 
