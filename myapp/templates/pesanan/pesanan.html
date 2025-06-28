@@ -145,7 +145,7 @@
               <td>{{ pesanan.customer_id.nama }}</td>
               <td>{{ pesanan.customer_id.lokasi }}</td>
               <td>{{ pesanan.customer_id.user_id.nama }}</td>
-              <td>{{ pesanan.netto|floatformat:2|intcomma }},-</td>
+              <td>{{ pesanan.netto|intcomma }},-</td>
               <td>{{ pesanan.status }}</td>
               <td><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
               <td>
@@ -192,7 +192,7 @@
               <td>{{ pesanan.customer_id.nama }}</td>
               <td>{{ pesanan.customer_id.lokasi }}</td>
               <td>{{ pesanan.customer_id.user_id.nama }}</td>
-              <td>{{ pesanan.netto|floatformat:2|intcomma }},-</td>
+              <td>{{ pesanan.netto|intcomma }},-</td>
               <td>{{ pesanan.status }}</td>
               <td><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
               <td>
@@ -232,7 +232,7 @@
               <td>{{ pesanan.customer_id.nama }}</td>
               <td>{{ pesanan.customer_id.lokasi }}</td>
               <td>{{ pesanan.customer_id.user_id.nama }}</td>
-              <td>{{ pesanan.netto|floatformat:2|intcomma }},-</td>
+              <td>{{ pesanan.netto|intcomma }},-</td>
               <td>{{ pesanan.status }}</td>
               {% if pesanan.status == "cancelled" %}
                 <td><a href="#" disabled><i class="fa-regular fa-eye text-2xl text-gray-500"></i></a></td>

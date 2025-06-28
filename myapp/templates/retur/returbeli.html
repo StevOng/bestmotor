@@ -55,7 +55,7 @@
                     <td>{{ retur.invoice_id.no_invoice }}</td>
                     <td>{{ retur.invoice_id.no_referensi }}</td>
                     <td>{{ retur.invoice_id.supplier_id.perusahaan }}</td>
-                    <td>{{ retur.subtotal|floatformat:2|intcomma }}</td>
+                    <td>{{ retur.subtotal|intcomma }}</td>
                     <td>{{ retur.terakhir_edit }}</td>
                     <td><a href="{% url 'tambah_returbeli' id=retur.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
                     <td><button onclick="confirmPopupBtn({{ retur.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>

@@ -80,7 +80,7 @@
           <p>{{ item.barang.merk }}</p>
           <p class="py-2 font-semibold text-orange-400">{{ item.katalog.harga_diskon }}</p>
           <a
-            href="{% url 'deskripsi' tipe item.barang.id %}"
+            href="{% url 'deskripsi' item.katalog.id %}"
             class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
           >
             Deskripsi

@@ -8,9 +8,9 @@ class Barang(models.Model):
     nama_barang = models.CharField(max_length=255)
     tipe = models.CharField(max_length=50, choices=TIPE, default=None)
     merk = models.CharField(max_length=50, choices=MERK, default=None)
-    harga_jual = models.DecimalField(max_digits=19, decimal_places=2)
+    harga_jual = models.DecimalField(max_digits=19, decimal_places=0)
     stok_minimum = models.IntegerField()
-    harga_modal = models.DecimalField(max_digits=19, decimal_places=2, default=0)
+    harga_modal = models.DecimalField(max_digits=19, decimal_places=0, default=0)
     stok = models.IntegerField(default=0)
     qty_terjual = models.IntegerField(default=0)
     gambar = models.ImageField(upload_to='images/',null=True, blank=True)
@@ -57,7 +57,7 @@ class TierHarga(models.Model):
     id = models.AutoField(primary_key=True)
     barang_id = models.ForeignKey(Barang, on_delete=models.CASCADE)
     min_qty_grosir = models.IntegerField()
-    harga_satuan = models.DecimalField(max_digits=19, decimal_places=2)
+    harga_satuan = models.DecimalField(max_digits=19, decimal_places=0)
 
     def __str__(self):
         return f"{self.barang_id.kode_barang} - Min Qty: {self.min_qty_grosir} - Harga: {self.harga_satuan}"

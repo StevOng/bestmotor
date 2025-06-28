@@ -5,12 +5,12 @@ from .faktur import Faktur
 
 class ReturBeli(models.Model):
     id = models.AutoField(primary_key=True)
-    invoice_id = models.ForeignKey(Invoice, on_delete=models.SET_NULL, null=True)
+    invoice_id = models.ForeignKey(Invoice, on_delete=models.CASCADE)
     barang = models.ManyToManyField(Barang, through="ReturBeliBarang")
     no_bukti = models.CharField(max_length=10, unique=True)
     tanggal = models.DateTimeField(auto_now_add=True)
     terakhir_edit = models.DateTimeField(auto_now=True)
-    subtotal = models.DecimalField(max_digits=19, decimal_places=2)
+    subtotal = models.DecimalField(max_digits=19, decimal_places=0)
 
     def __str__(self):
         return self.no_bukti
@@ -37,12 +37,12 @@ class ReturBeliBarang(models.Model):
 
 class ReturJual(models.Model):
     id = models.AutoField(primary_key=True)
-    faktur_id = models.ForeignKey(Faktur, on_delete=models.SET_NULL, null=True)
+    faktur_id = models.ForeignKey(Faktur, on_delete=models.CASCADE)
     barang = models.ManyToManyField(Barang, through="ReturJualBarang")
     no_bukti = models.CharField(max_length=10, unique=True)
     tanggal = models.DateTimeField(auto_now_add=True)
     terakhir_edit = models.DateTimeField(auto_now=True)
-    subtotal = models.DecimalField(max_digits=19, decimal_places=2)
+    subtotal = models.DecimalField(max_digits=19, decimal_places=0)
 
     def __str__(self):
         return self.no_bukti

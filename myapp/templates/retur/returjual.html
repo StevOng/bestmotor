@@ -55,7 +55,7 @@
                     <td>{{ retur.faktur_id.no_faktur }}</td>
                     <td>{{ retur.faktur_id.pesanan_id.no_referensi }}</td>
                     <td>{{ retur.faktur_id.pesanan_id.customer_id.nama }}</td>
-                    <td>{{ retur.subtotal|floatformat:2|intcomma }}</td>
+                    <td>{{ retur.subtotal|intcomma }}</td>
                     <td>{{ retur.terakhir_edit }}</td>
                     <td><a href="{% url 'tambah_returjual' id=retur.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></button></td>
                     <td><button onclick="confirmPopupBtn({{ retur.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>

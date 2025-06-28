@@ -24,7 +24,7 @@ class BarangViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def merk_choices(self, request):
         choices = [{'value': value, 'label': label} for value, label in MERK]
-        sorted_choices = sorted(choices, key=lambda x: x['value'])
+        sorted_choices = sorted(choices, key=lambda x: x['value'].lower())
         return Response(sorted_choices)
     
     @action(detail=False, methods=['get'])

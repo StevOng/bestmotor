@@ -5,10 +5,10 @@ class Faktur(models.Model):
     id = models.AutoField(primary_key=True)
     pesanan_id = models.OneToOneField(Pesanan, on_delete=models.CASCADE)
     no_faktur = models.CharField(max_length=50, unique=True)
-    sisa_bayar = models.DecimalField(max_digits=19, decimal_places=2)
+    sisa_bayar = models.DecimalField(max_digits=19, decimal_places=0)
     tanggal_faktur = models.DateTimeField(auto_now_add=True)
-    potongan = models.DecimalField(max_digits=19, decimal_places=2)
-    total = models.DecimalField(max_digits=19, decimal_places=2)
+    potongan = models.DecimalField(max_digits=19, decimal_places=0)
+    total = models.DecimalField(max_digits=19, decimal_places=0)
     CHOICES = [
         ('belum_lunas','Belum Lunas'),
         ('jatuh_tempo', 'Jatuh Tempo'),

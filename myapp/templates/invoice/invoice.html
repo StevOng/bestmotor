@@ -82,7 +82,7 @@
                         <td>{{ invoice.jatuh_tempo }}</td>
                     {% endif %}
                     <td>{{ invoice.supplier_id.perusahaan }}</td>
-                    <td>{{ invoice.netto|floatformat:2|intcomma}}</td>
+                    <td>{{ invoice.netto}}</td>
                     {% if not request.GET.status %}
                         <td>{{ invoice.status }}</td>
                         <td>{{ invoice.terakhir_edit }}</td>

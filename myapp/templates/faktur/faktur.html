@@ -118,7 +118,7 @@
                     {% endif %}
                     <td>{{ faktur.pesanan_id.no_referensi }}</td>
                     <td>{{ faktur.pesanan_id.customer_id.nama }}</td>
-                    <td>{{ faktur.total|floatformat:2|intcomma }}</td>
+                    <td>{{ faktur.total }}</td>
                     {% if not request.GET.status %}
                         <td>{{ faktur.status }}</td>
                         {% comment %} <td>{{ faktur.terakhir_edit }}</td> {% endcomment %}

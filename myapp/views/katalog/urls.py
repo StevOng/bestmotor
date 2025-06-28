@@ -11,6 +11,6 @@ urlpatterns = [
     path('admin/', render.admin_katalog, name='admin_katalog'),
     path('tambah/', render.tambah_brgkatalog, name='tambah_brgkatalog'),
     path('tambah/<int:id>/', render.tambah_brgkatalog, name='tambah_brgkatalog'),
+    path('deskripsi/<int:katalog_id>/', render.deskripsi, name='deskripsi'),
     path('<str:tipe>/', render.katalogbrg, name='katalogbrg'),
-    path('<str:tipe>/<int:barang_id>/deskripsi/', render.deskripsi, name='deskripsi'),
 ]

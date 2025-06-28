@@ -1,0 +1,21 @@
+2025-06-27 22:07:39,641 INFO [userlog] user1 - GET / -  - 
+2025-06-27 22:07:40,740 INFO [userlog] user1 - GET /favicon.ico -  - 
+2025-06-27 22:13:13,934 INFO [userlog] user1 - GET / -  - 
+2025-06-27 22:13:14,709 INFO [userlog] user1 - GET /favicon.ico -  - 
+2025-06-27 22:13:58,355 INFO [userlog] user1 - GET / -  - 
+2025-06-27 22:13:58,850 INFO [userlog] user1 - GET /favicon.ico -  - 
+2025-06-27 22:14:18,913 INFO [userlog] user1 - GET / -  - 
+2025-06-27 22:14:19,166 INFO [userlog] user1 - GET /favicon.ico -  - 
+2025-06-27 22:15:46,147 INFO [userlog] user1 - GET / -  - 
+2025-06-27 22:15:46,645 INFO [userlog] user1 - GET /favicon.ico -  - 
+2025-06-27 22:18:29,572 INFO [userlog] user1 - GET / - Lihat Katalog - User menjelajahi katalog
+2025-06-27 22:19:02,846 INFO [userlog] user1 - GET / - Lihat Katalog - User menjelajahi katalog
+2025-06-27 22:19:23,998 INFO [userlog] user1 - GET / - Lihat Katalog - User menjelajahi katalog
+2025-06-27 22:19:26,432 INFO [userlog] user1 - GET / - Lihat Katalog - User menjelajahi katalog
+2025-06-27 22:19:28,244 INFO [userlog] user1 - GET / - Lihat Katalog - User menjelajahi katalog
+2025-06-27 22:20:16,770 INFO [userlog] Anonymous - GET / - Lihat Katalog - User menjelajahi katalog
+2025-06-27 22:22:13,195 INFO [userlog] None - GET / - Lihat Katalog - User menjelajahi katalog
+2025-06-27 22:26:26,310 INFO [userlog] None - GET / - Lihat Katalog - User menjelajahi katalog
+2025-06-27 22:26:36,974 INFO [userlog] None - GET / - Lihat Katalog - User menjelajahi katalog
+2025-06-27 22:31:00,739 INFO [userlog] None - GET / - Lihat Katalog - User menjelajahi katalog
+2025-06-27 22:33:28,641 INFO [userlog] andi role: sales - GET / - Lihat Katalog - User menjelajahi katalog

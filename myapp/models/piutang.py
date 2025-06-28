@@ -10,8 +10,8 @@ class Piutang(models.Model):
     faktur = models.ManyToManyField(Faktur, through="PiutangFaktur")
     no_bukti = models.CharField(max_length=10, unique=True)
     tanggal = models.DateTimeField(auto_now_add=True)
-    total_potongan = models.DecimalField(max_digits=19, decimal_places=2, default=Decimal('0.00'))
-    total_pelunasan = models.DecimalField(max_digits=19, decimal_places=2, default=Decimal('0.00'))
+    total_potongan = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0'))
+    total_pelunasan = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0'))
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -49,4 +49,4 @@ class Piutang(models.Model):
 class PiutangFaktur(models.Model):
     piutang = models.ForeignKey(Piutang, on_delete=models.CASCADE)
     faktur = models.ForeignKey(Faktur, on_delete=models.CASCADE)
-    nilai_bayar = models.DecimalField(max_digits=19, decimal_places=2)
+    nilai_bayar = models.DecimalField(max_digits=19, decimal_places=0)

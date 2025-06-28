@@ -4,8 +4,8 @@ from .barang import Barang
 class Katalog(models.Model):
     id = models.AutoField(primary_key=True)
     barang = models.ManyToManyField(Barang, through="KatalogBarang")
-    harga_tertera = models.DecimalField(max_digits=19, decimal_places=2)
-    harga_diskon = models.DecimalField(max_digits=19, decimal_places=2)
+    harga_tertera = models.DecimalField(max_digits=19, decimal_places=0)
+    harga_diskon = models.DecimalField(max_digits=19, decimal_places=0)
     is_katalog_utama = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

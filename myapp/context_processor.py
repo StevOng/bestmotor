@@ -4,7 +4,6 @@ from .models.faktur import *
 from .models.invoice import *
 
 def user_context(request):
-    print(request.session.items())
     return {
         'username': request.session.get('username'),
         'nama': request.session.get('nama'),

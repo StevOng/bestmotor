@@ -126,10 +126,10 @@
                     <td>{{ brg.nama_barang }}</td>
                     <td>{{ brg.tipe }}</td>
                     <td>{{ brg.merk }}</td>
-                    {% if request.session.role == "admin" %}
-                        <td>{{ brg.harga_modal|floatformat:2|intcomma }}</td>
+                    {% if role == "admin" %}
+                        <td>{{ brg.harga_modal|intcomma }}</td>
                     {% endif %}
-                    <td>{{ brg.harga_jual|floatformat:2|intcomma }}</td>
+                    <td>{{ brg.harga_jual|intcomma }}</td>
                     {% if filter == 'laku' %}
                         <td>{{ brg.qty_terjual }}</td>
                     {% endif %}
@@ -145,26 +145,26 @@
                 </tr>
             {% empty %}
                 <tr>
-                    <th>Data kosong di tanggal tersebut</th>
-                    <th>Data kosong di tanggal tersebut</th>
-                    <th>Data kosong di tanggal tersebut</th>
-                    <th>Data kosong di tanggal tersebut</th>
-                    <th>Data kosong di tanggal tersebut</th>
-                    {% if request.session.role == "admin" %}
-                        <th>Data kosong di tanggal tersebut</th>
+                    <th>Penjualan tidak lewat 100</th>
+                    <th>Penjualan tidak lewat 100</th>
+                    <th>Penjualan tidak lewat 100</th>
+                    <th>Penjualan tidak lewat 100</th>
+                    <th>Penjualan tidak lewat 100</th>
+                    {% if role == "admin" %}
+                        <th>Penjualan tidak lewat 100</th>
                     {% endif %}
-                    <th>Data kosong di tanggal tersebut</th>
+                    <th>Penjualan tidak lewat 100</th>
                     {% if filter == 'laku' %}
-                        <th>Data kosong di tanggal tersebut</th>
+                        <th>Penjualan tidak lewat 100</th>
                     {% endif %}
-                    <th>Data kosong di tanggal tersebut</th>
-                    <th>Data kosong di tanggal tersebut</th>
+                    <th>Penjualan tidak lewat 100</th>
+                    <th>Penjualan tidak lewat 100</th>
                     {% if filter == 'rendah' %}
-                        <th>Data kosong di tanggal tersebut</th>
-                        <th>Data kosong di tanggal tersebut</th>
+                        <th>Penjualan tidak lewat 100</th>
+                        <th>Penjualan tidak lewat 100</th>
                     {% elif not filter %}
-                        <th>Data kosong di tanggal tersebut</th>
-                        <th>Data kosong di tanggal tersebut</th>
+                        <th>Penjualan tidak lewat 100</th>
+                        <th>Penjualan tidak lewat 100</th>
                     {% endif %}
                 </tr>
             {% endfor %}

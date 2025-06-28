@@ -15,6 +15,7 @@ toggleCheck.addEventListener("click", () => {
     const konsolId = document.getElementById("katalogId").value
     console.log("katalog id: ", konsolId)
     console.log("barang id: ", barangId.value)
+    console.log("tipe-mtr: ", tipe.value)
 })
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -166,9 +167,9 @@ document.getElementById("formKatalog").addEventListener("submit", async (event) 
                     console.log("success: ", detailRes)
                 }
             })
-            // setTimeout(() => {
-            //     location.reload();
-            // }, 1000);
+            setTimeout(() => {
+                location.replace('/katalog/admin/');
+            }, 1000);
         } else {
             const error = await response.json()
             console.error("Gagal: ", error);

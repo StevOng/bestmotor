@@ -1,16 +1,26 @@
 from django.shortcuts import render, get_object_or_404
+from django.utils.safestring import mark_safe
 from collections import defaultdict
+from myapp.utils.log_utils import log_user_action
 from ...decorators import *
 from ...models.katalog import *
 from ...models.barang import *
+import json
 
 @admin_required
 def admin_katalog(request):
-    data = Katalog.objects.prefetch_related("promosi_barang__barang").all()
+    data = Katalog.objects.prefetch_related("promosi_barang__barang")
     return render(request, 'katalog/adminkatalog.html', {"data_katalog": data})
 
+def get_value_tipe(input):
+    for value, label in TIPE:
+        if input == value or input == label:
+            return value
+    return input
+
 def katalog(request):
-    katalog_list = Katalog.objects.prefetch_related('barang', 'katalogbarang_set__barang')
+    log_user_action(request, action="Lihat Katalog", detail="User menjelajahi katalog")
+    katalog_list = Katalog.objects.prefetch_related("promosi_barang__barang").filter(is_katalog_utama=True)
 
     tipe_katalog = defaultdict(list)
 
@@ -20,15 +30,17 @@ def katalog(request):
         if not barang:
             continue
 
-        gambar_obj = katalog.katalogbarang_set.filter(barang=barang).first()
-        gambar = gambar_obj.gambar.url if gambar_obj and gambar_obj.gambar else None
+        gambar_obj = katalog.promosi_barang.filter(barang=barang).first()
+        gambar = gambar_obj.gambar_pelengkap.url if gambar_obj and gambar_obj.gambar_pelengkap else None
 
-        tipe = barang.tipe.lower()
+        tipe = barang.tipe
+        tipe_val = get_value_tipe(tipe)
 
-        tipe_katalog[tipe].append({
+        tipe_katalog[tipe_val].append({
             "barang": barang,
             "katalog": katalog,
             "gambar": gambar,
+            "tipe": tipe_val
         })
     return render(request, "katalog/katalog.html", {'tipe_katalog': dict(tipe_katalog)})
 
@@ -45,21 +57,23 @@ def katalogbrg(request, tipe):
 
         # Ambil satu gambar dari KatalogBarang (jika ada)
         katalog_barang = barang.katalogbarang_set.first()
-        gambar_url = katalog_barang.gambar.url if katalog_barang and katalog_barang.gambar else None
+        gambar_url = katalog_barang.gambar_pelengkap.url if katalog_barang and katalog_barang.gambar_pelengkap else None
+        tipe = get_value_tipe(barang.tipe)
 
         data.append({
             "nama": barang.nama_barang,
             "merk": barang.merk,
             "harga_diskon": katalog.harga_diskon if katalog else "-",
             "id": barang.id,
-            "tipe": barang.tipe,
+            "tipe": tipe,
             "gambar": gambar_url,
         })
 
     return render(request, "katalog/katalogbrg.html", {
         "tipe": tipe,
         "items": data,
-        "title": title
+        "title": title,
+        "items_json": mark_safe(json.dumps(data))
     })
 
 @admin_required
@@ -73,7 +87,27 @@ def tambah_brgkatalog(request, id=None):
         barang = katalog.barang.first()
     return render(request, 'katalog/tambahkatalog.html', {"katalog": katalog, "barang": barang, "katalogbrg": katalogbrg})
 
-def deskripsi(request, tipe, barang_id):
-    barang = get_object_or_404(Barang, id=barang_id, tipe=tipe)
-    katalog = Katalog.objects.filter(barang=barang).first()
+def deskripsi(request, katalog_id):
+    katalog = get_object_or_404(Katalog, id=katalog_id)
+    barang = katalog.barang.first()
     return render(request, "katalog/deskripsi.html", {"barang": barang, "katalog": katalog})
+
+
+def base_katalog(request):
+    # Ambil semua katalog utama dengan prefetch barang
+    katalog_list = Katalog.objects.prefetch_related("barang")
+
+    tipe_katalog = defaultdict(list)
+
+    for katalog in katalog_list:
+        # Ambil satu barang dari M2M field
+        barang = katalog.barang.first()
+        if not barang:
+            continue
+
+        tipe = get_value_tipe(barang.tipe)
+        tipe_katalog[tipe].append(katalog)
+
+    return render(request, "katalog/home.html", {
+        "tipe_katalog": dict(tipe_katalog),
+    })

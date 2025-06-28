@@ -13,13 +13,13 @@ class Invoice(models.Model):
     tanggal = models.DateTimeField(auto_now_add=True)
     top = models.IntegerField()
     jatuh_tempo = models.DateTimeField(blank=True, null=True)
-    bruto = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
-    ppn = models.DecimalField(max_digits=5, decimal_places=2)
-    ongkir = models.DecimalField(max_digits=19, decimal_places=2)
-    diskon_invoice = models.DecimalField(max_digits=19, decimal_places=2, default=Decimal('0.00'))
-    netto = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
-    potongan = models.DecimalField(max_digits=19, decimal_places=2, default=Decimal('0.00'))
-    sisa_bayar = models.DecimalField(max_digits=19, decimal_places=2, default=Decimal('0.00'))
+    bruto = models.DecimalField(max_digits=10, decimal_places=0, default=Decimal('0'))
+    ppn = models.DecimalField(max_digits=5, decimal_places=0)
+    ongkir = models.DecimalField(max_digits=19, decimal_places=0)
+    diskon_invoice = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0'))
+    netto = models.DecimalField(max_digits=10, decimal_places=0, default=Decimal('0'))
+    potongan = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0'))
+    sisa_bayar = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0'))
     CHOICES = [
         ('lunas','Lunas'),
         ('belum_lunas','Belum Lunas'),
@@ -58,11 +58,11 @@ class Invoice(models.Model):
 class DetailInvoice(models.Model):
     id = models.AutoField(primary_key=True)
     invoice_id = models.ForeignKey(Invoice, on_delete=models.CASCADE)
-    barang_id = models.ForeignKey(Barang, on_delete=models.SET_NULL, null=True)
+    barang_id = models.ForeignKey(Barang, on_delete=models.CASCADE)
     qty_beli = models.IntegerField()
     qty_retur = models.IntegerField(default=0)
-    harga_beli = models.DecimalField(max_digits=19, decimal_places=2)
-    diskon_barang = models.DecimalField(max_digits=19, decimal_places=2)
+    harga_beli = models.DecimalField(max_digits=19, decimal_places=0)
+    diskon_barang = models.DecimalField(max_digits=19, decimal_places=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

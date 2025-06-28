@@ -35,7 +35,7 @@ class Pesanan(models.Model):
     terakhir_edit = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.no_pesanan
+        return f"{self.id}"
     
     def generate_no_pesanan(self):
         if not self.no_pesanan:
@@ -70,11 +70,12 @@ class Pesanan(models.Model):
         if self.status == 'shipped':
             from .faktur import Faktur
             if not hasattr(self, 'faktur'):
-                Faktur.objects.create(
+                faktur = Faktur.objects.create(
                     pesanan_id = self.id,
                     sisa_bayar = self.netto,
                     total = self.netto
                 )
+                faktur.save()
 
         elif self.status == 'cancelled':
             if hasattr(self, 'faktur'):
