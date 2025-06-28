@@ -92,7 +92,7 @@
 </div>
 
 <div class="flex flex-row gap-3 justify-start mb-3">
-    {% if request.session.role == "admin" %}
+    {% if role == "admin" %}
         <a href="{% url 'sales' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if not list %} text-white bg-customBlue border-customBlue {% endif %}">
             Akun Sales
         </a>
@@ -122,7 +122,7 @@
             Total Penjualan Per Customer
         {% endif %}
     </p>
-    {% if request.session.role == "sales" and list == "bonus" %}
+    {% if role == "sales" and list == "bonus" %}
     <div class="mt-5 flex flex-col justify-between md:flex-row">
     {% else %}
     <div class="mt-5 flex flex-row justify-between">
@@ -133,7 +133,7 @@
                 <i class="fas fa-search"></i>
             </button>
         </div>
-        {% if request.session.role == "admin" and list == 'merek' %}
+        {% if role == "admin" and list == 'merek' %}
             <div class="inline-flex gap-2">
                 <button onclick="openModal()" class="p-2 justify-end border-2 rounded-lg border-gray-200">
                     <div class="flex flex-row justify-center items-center">
@@ -142,7 +142,7 @@
                     </div>
                 </button>
             </div>
-        {% elif request.session.role == "admin" and not list %}
+        {% elif role == "admin" and not list %}
             <div class="inline-flex gap-2">
                 <button onclick="openModal()" class="p-2 justify-end border-2 rounded-lg border-gray-200">
                     <div class="flex flex-row justify-center items-center">
@@ -151,7 +151,7 @@
                     </div>
                 </button>
             </div>
-        {% elif request.session.role == "sales" and list == "bonus" %}
+        {% elif role == "sales" and list == "bonus" %}
             <div class="mx-3 mt-2 md:mx-0 md:mt-0">
                 <div class="p-2 justify-end border-2 rounded-lg border-gray-200">
                     <div class="flex justify-center items-center">
@@ -181,7 +181,7 @@
                     <th>Total Bonus</th>
                     <th>Detail</th>
                     <th>Tanggal Bayar</th>
-                    {% if request.session.role == "admin" %}
+                    {% if role == "admin" %}
                         <th>Bayar</th>
                     {% endif %}
                 </tr>
@@ -203,7 +203,7 @@
             {% elif list == "bonus" %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    {% if request.session.role == "admin" %}
+                    {% if role == "admin" %}
                         <td>Sales 1</td>
                     {% else %}
                         <td>Customer 1</td>
@@ -213,7 +213,7 @@
                     <td></td>
                     <td class="text-center"><button onclick="openModal()"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></td>
                     <td>27/06/2025</td>
-                    {% if request.session.role == "admin" %}
+                    {% if role == "admin" %}
                         <td class="text-center">
                             <button>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">

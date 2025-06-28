@@ -96,7 +96,7 @@
                 <th>Nama Barang</th>
                 <th>Tipe Motor</th>
                 <th>Merk</th>
-                {% if request.session.role == "admin" %}
+                {% if role == "admin" %}
                     <th>Harga Modal</th>
                 {% endif %}
                 <th>Harga Jual</th>

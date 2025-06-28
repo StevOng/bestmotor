@@ -111,10 +111,17 @@
             <label for="upload_gambar" class="cursor-pointer block mb-1">
               <div class="flex items border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
                   <div class="flex-grow items-center justify-between px-3 py-2">
-                    <span id="placeholder" class="text-sm text-gray-500 dark:text-gray-300">
-                    {{ detail_barang.gambar.name|default:"Upload Gambar"}}
-                    </span>
-                    <img id="previewGambar" src="{{ detail_barang.gambar.url|default:""}}" alt="Preview" style="max-width: 200px; display: none;">
+                    {% if detail_barang.gambar %}
+                      <span id="placeholder" class="text-sm text-gray-500 dark:text-gray-300">
+                      {{ detail_barang.gambar.name }}
+                      </span>
+                      <img id="previewGambar" src="{{ detail_barang.gambar.url }}" alt="Preview" style="max-width: 200px; display: none;">
+                    {% else %}
+                      <span id="placeholder" class="text-sm text-gray-500 dark:text-gray-300">
+                        Upload Gambar
+                      </span>
+                      <img id="previewGambar" src="" alt="Preview" style="max-width: 200px; display: none;">                    
+                    {% endif %}
                   </div>
                   <label for="upload_gambar" class="cursor-pointer px-4 py-2 text-gray-700 rounded-r-lg dark:bg-gray-600 dark:text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
