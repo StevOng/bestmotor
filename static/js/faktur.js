@@ -69,3 +69,19 @@ async function getSales() {
         console.error("Error:", err)
     }
 }
+
+function exportLaporanPDF() {
+    const salesId = document.getElementById("salesId").value;
+    const dariTgl = document.getElementById("dari_tgl").value;
+    const smpeTgl = document.getElementById("smpe_tgl").value;
+    const urlBase = document.getElementById("exportBtn").dataset.url;
+
+    if (!salesId || !dariTgl || !smpeTgl) {
+        alert("Mohon isi semua filter terlebih dahulu.");
+        return;
+    }
+
+    const url = `${urlBase}?salesId=${salesId}&dari_tgl=${dariTgl}&smpe_tgl=${smpeTgl}`;
+    console.log("Navigating to:", url);
+    window.open(url, "_blank");
+}
