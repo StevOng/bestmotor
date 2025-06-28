@@ -17,6 +17,12 @@ def barang(request):
 
     barang = Barang.objects.none()
 
+    def get_label_tipe(input):
+        for value, label in TIPE:
+            if input == value or input == label:
+                return label
+        return input
+
     if filter == "laku" and dari and sampe:
         barang = get_barang_laku(dari, sampe)
     elif filter == "rendah":
@@ -25,6 +31,7 @@ def barang(request):
         barang = Barang.objects.prefetch_related('detailpesanan_set').all()
 
     for brg in barang:
+        brg.tipe = get_label_tipe(brg.tipe)
         brg.total_pesanan = sum(d.qty_pesan for d in brg.detailpesanan_set.all())
         if brg.stok <= brg.stok_minimum:
             brg.selisih = brg.stok_minimum - brg.stok
