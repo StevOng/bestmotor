@@ -1,6 +1,7 @@
 {% extends 'base/base_katalog.html' %} 
 
 {% load static %} 
+{% load humanize %} 
 
 {% block banner%}
 <div class="mb-2"><img src="{% static 'images/banner2.png' %}" class="min-h-56 w-full" /></div>
@@ -43,6 +44,7 @@
   {% for tipe, items in tipe_katalog.items %}
     <div class="py-2">
       <div class="flex flex-row justify-between items-center">
+        <p class="font-semibold">Rekomendasi {{ tipe.title }}</p>
         <div class="flex gap-4">
           <button
             id="scrollLeft{{ forloop.counter }}"
@@ -63,8 +65,7 @@
         class="flex flex-row py-2 overflow-x-auto gap-4 scroll-smooth no-scrollbar"
       >
       {% for item in items %}
-        <p class="font-semibold">Rekomendasi {{ item.title }}</p>
-        <div class="flex flex-col p-2 min-w-44">
+        <div class="flex flex-col p-2 min-w-44 border shadow rounded-md">
           {% if item.gambar %}
             <img
             src="{{ item.gambar }}"
@@ -78,7 +79,7 @@
           {% endif %}
           <p class="text-gray-500">{{ item.barang.nama_barang }}</p>
           <p>{{ item.barang.merk }}</p>
-          <p class="py-2 font-semibold text-orange-400">{{ item.katalog.harga_diskon }}</p>
+          <p class="py-2 font-semibold text-orange-400">Rp {{ item.katalog.harga_diskon|intcomma }},-</p>
           <a
             href="{% url 'deskripsi' item.katalog.id %}"
             class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"

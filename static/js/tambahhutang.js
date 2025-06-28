@@ -20,9 +20,6 @@ $(document).ready(function () {
         lengthChange: false, // Hilangkan "Show entries"
         ordering: false,
         scrollX: true,
-        columnDefs: [
-            { className: "text-center", targets: [-1, -2] }, // kolom 8 dan 9 di tengah
-        ],
     });
     $(".dt-search").remove();
     $(".dt-info").remove();
@@ -56,9 +53,6 @@ $(document).ready(function () {
         lengthChange: false, // Hilangkan "Show entries"
         ordering: false,
         scrollX: true,
-        columnDefs: [
-            { className: "text-center", targets: [-1, -2] }, // kolom 8 dan 9 di tengah
-        ],
     });
     $(".dt-search").remove();
     $(".dt-info").remove();
@@ -90,9 +84,6 @@ $(document).ready(function () {
         lengthChange: false, // Hilangkan "Show entries"
         ordering: false,
         scrollX: true,
-        columnDefs: [
-            { className: "text-center", targets: [-1, -2] }, // kolom 8 dan 9 di tengah
-        ],
     });
     $(".dt-search").remove();
     $(".dt-info").remove();
@@ -226,7 +217,7 @@ function pilihInvoice(id, nomor) {
 
             const nilaiInvEl = document.getElementById(nilaiInv)
             if (nilaiInvEl && data.netto) {
-                nilaiInvEl.textContent = data.netto
+                nilaiInvEl.textContent = data.netto.toLocaleString("en-EN")
             }
 
             // Cek apakah ini baris terakhir → baru tambahkan baris baru
@@ -272,6 +263,12 @@ function totalPelunasan() {
     document.getElementById("tot_lunas").value = total
 }
 
+function formatRupiah(angka){
+    if (isNaN(angka)) return "";
+    angka = Math.floor(angka);
+    return angka.toLocaleString("en-EN");
+}
+
 function addNewRow(hut = null, invoices = null) {
     const tbody = document.querySelector("#allpesanan tbody");
     const newRow = document.createElement("tr");
@@ -304,7 +301,7 @@ function addNewRow(hut = null, invoices = null) {
             </button>
           </div>
         </td>
-        <td id="netto-${rowCount}">${invoices?.netto || ""}</td>
+        <td id="netto-${rowCount}">${formatRupiah(invoices?.netto) || ""}</td>
         <td>
           <input
             type="number"
@@ -321,12 +318,12 @@ function addNewRow(hut = null, invoices = null) {
             class="nilaiBayar w-full rounded-md border-gray-300"
           />
         </td>
-        <td>
-          <button type="button" onclick="submitDetail()">
+        <td class="text-center">
+          <button type="button" onclick="submitDetail()" class="btn-submit">
             <i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
           </button>
         </td>
-        <td>
+        <td class="text-center">
           <button onclick="hapusRow(this)">
             <i class="fa-regular fa-trash-can text-2xl text-red-500"></i>
           </button>

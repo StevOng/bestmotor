@@ -18,9 +18,6 @@ $(document).ready(function () {
         ordering: false,
         scrollX: true,
         responsive: true,
-        "columnDefs": [
-            { className: "text-center", targets: [-1, -2, -3] } // isi field di tengah
-        ],
     });
     $('.dt-search').remove();
     $('.dt-info').remove();

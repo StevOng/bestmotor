@@ -106,7 +106,7 @@
               <td>{{ hut.supplier_id.no_hp }}</td>
               <td>{{ hut.supplier_id.lokasi }}</td>
               <td>{{ hut.supplier_id.jenis_barang }}</td>
-              <td>
+              <td class="text-center">
                 <button onclick="pilihSupplier('{{ hut.supplier_id }}', '{{ hut.supplier_id.perusahaan }}')">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -179,8 +179,8 @@
               <td>{{ invoice.detailinvoice_set.tanggal }}</td>
               <td>{{ invoice.no_referensi }}</td>
               <td>{{ invoice.supplier_id.perusahaan }}</td>
-              <td>{{ invoice.netto|floatformat:2|intcomma }}</td>
-              <td>
+              <td>{{ invoice.netto|floatformat:0|intcomma }}</td>
+              <td class="text-center">
                 <button onclick="pilihInvoice('{{ invoice.id }}', '{{ invoice.no_invoice }}')">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -362,7 +362,7 @@
                   </button>
                 </div>
               </td>
-              <td id="netto-{{ forloop.counter }}">{{ invoices.netto|default:"" }}</td>
+              <td id="netto-{{ forloop.counter }}">{{ invoices.netto|floatformat:0|intcomma|default:"" }}</td>
               <td>
                 <input
                   type="number"
@@ -379,12 +379,12 @@
                   class="nilaiBayar w-full rounded-md border-gray-300"
                 />
               </td>
-              <td>
+              <td class="text-center">
                 <button type="button" onclick="submitDetail()" class="btn-submit">
                   <i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
                 </button>
               </td>
-              <td>
+              <td class="text-center">
                 <button onclick="confirmPopupBtn(this)">
                   <i class="fa-regular fa-trash-can text-2xl text-red-500"></i>
                 </button>
@@ -414,7 +414,7 @@
                   </button>
                 </div>
               </td>
-              <td id="netto-{{ forloop.counter }}">{{ invoices.netto|default:"" }}</td>
+              <td id="netto-{{ forloop.counter }}">{{ invoices.netto|floatformat:0|intcomma|default:"" }}</td>
               <td>
                 <input
                   type="number"
@@ -431,12 +431,12 @@
                   class="nilaiBayar w-full rounded-md border-gray-300"
                 />
               </td>
-              <td>
+              <td class="text-center">
                 <button type="button" onclick="submitDetail()" class="btn-submit">
                   <i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
                 </button>
               </td>
-              <td>
+              <td class="text-center">
                 <button onclick="confirmPopupBtn(this)">
                   <i class="fa-regular fa-trash-can text-2xl text-red-500"></i>
                 </button>

@@ -80,9 +80,9 @@
                     <td>{{ katalog.barang.first.kode_barang }}</td>
                     <td>{{ katalog.barang.first.nama_barang }}</td>
                     <td>{{ katalog.barang.first.tipe }}</td>
-                    <td>{{ katalog.harga_tertera|intcomma }}</td>
-                    <td>{{ katalog.harga_diskon|intcomma }}</td>
-                    <td class="justify-center">
+                    <td>Rp {{ katalog.harga_tertera|intcomma }},-</td>
+                    <td>Rp {{ katalog.harga_diskon|intcomma }},-</td>
+                    <td class="text-center">
                         <button disabled id="toggleCheck" class="p-1 border-2 rounded-lg border-customBlue hover:bg-gray-200 w-8 h-8">
                             <svg id="checkIcon" class="w-5 h-5 text-green-500 hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 21" fill="currentColor">
                               <path fill-rule="evenodd" d="M9 16.172l10.293-10.293-1.414-1.414L9 13.344l-4.293-4.293-1.414 1.414L9 16.172z" clip-rule="evenodd"/>
@@ -90,8 +90,8 @@
                         </button>
                         <input readonly type="hidden" name="is_katalog_utama" id="isKatalogUtama" value="{{ katalog.is_katalog_utama|default:"false" }}">
                     </td>
-                    <td><a href="{% url 'tambah_brgkatalog' id=katalog.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
-                    <td><button onclick="confirmPopupBtn({{ katalog.id }})"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
+                    <td class="text-center"><a href="{% url 'tambah_brgkatalog' id=katalog.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                    <td class="text-center"><button onclick="confirmPopupBtn({{ katalog.id }})"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
                 </tr>
             {% endfor %}
         </tbody>

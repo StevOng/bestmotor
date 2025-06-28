@@ -20,9 +20,6 @@ $(document).ready(function () {
         lengthChange: false, // Hilangkan "Show entries"
         ordering: false,
         scrollX: true,
-        columnDefs: [
-            { className: "text-center", targets: [-1, -2] }, // kolom 8 dan 9 di tengah
-        ],
     });
     $(".dt-search").remove();
     $(".dt-info").remove();
@@ -55,9 +52,6 @@ $(document).ready(function () {
         lengthChange: false, // Hilangkan "Show entries"
         ordering: false,
         scrollX: true,
-        "columnDefs": [
-            { className: "text-center", targets: [-1, -2] } // kolom 8 dan 9 di tengah
-        ],
     });
     $('.dt-search').remove();
     $('.dt-info').remove();
@@ -87,9 +81,6 @@ $(document).ready(function () {
         lengthChange: false, // Hilangkan "Show entries"
         ordering: false,
         scrollX: true,
-        "columnDefs": [
-            { className: "text-center", targets: [-1, -2] } // 2 kolom terakhir di tengah
-        ],
     });
     $('.dt-search').remove();
     $('.dt-info').remove();
@@ -118,9 +109,6 @@ $(document).ready(function () {
         lengthChange: false, // Hilangkan "Show entries"
         ordering: false,
         scrollX: true,
-        "columnDefs": [
-            { className: "text-center", targets: [-1, -2] } // 2 kolom terakhir di tengah
-        ],
     });
     $('.dt-search').remove();
     $('.dt-info').remove();
@@ -323,6 +311,12 @@ function totalPelunasan() {
     document.getElementById("tot_lunas").value = total
 }
 
+function formatRupiah(angka){
+    if (isNaN(angka)) return "";
+    angka = Math.floor(angka);
+    return angka.toLocaleString("en-EN");
+}
+
 function addNewRow(piutang = null, data_faktur = null) {
     const tbody = document.querySelector("#allpesanan tbody");
     const newRow = document.createElement("tr");
@@ -350,11 +344,11 @@ function addNewRow(piutang = null, data_faktur = null) {
           <input type="hidden" name="custId-${rowCount}" class="custId" value="${piutang?.customer_id || ""}">
           ${piutang?.customer_id.nama || ""}
         </td>
-        <td id="nilaiFaktur-${rowCount}">${piutang?.total_faktur || ""}</td>
+        <td id="nilaiFaktur-${rowCount}">Rp ${formatRupiah(piutang?.total_faktur) || ""},-</td>
         <td><input type="number" value="${piutang?.potongan || ""}" id="potongan-${rowCount}" class="potongan w-full rounded-md border-gray-300" /></td>
         <td><input type="number" value="${piutang?.nilai_bayar || ""}" id="nilaiByr-${rowCount}" class="nilaiByr w-full rounded-md border-gray-300" /></td>
-        <td><button type="button" onclick="submitDetail()" class="btn-submit"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-        <td><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+        <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+        <tdclass="text-center"><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
 
     tbody.appendChild(newRow);

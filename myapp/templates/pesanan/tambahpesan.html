@@ -1,5 +1,6 @@
 {% extends 'base/base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block csrf %}
   <meta name="csrf-token" content="{{ csrf_token }}">
@@ -261,10 +262,10 @@
                       <td><input type="number" value="{{ detail.barang_id.harga_jual|default:0 }}" class="input_hrgbrg rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
                       <td><input type="number" value="{{ detail.qty_pesan|default:0 }}" data-qty-awal="{{ detail.qty_pesan|default:0 }}" class="input_qtybrg w-20 rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
                       <td><input type="number" value="{{ detail.diskon_barang|default:0 }}" class="disc w-20 rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
-                      <td class="totalDisc">{{ detail.total_diskon_barang|default:"" }}</td>
-                      <td class="totalHarga">{{ detail.total_harga_barang|default:"" }}</td>
-                      <td><button type="button" onclick="submitDetail()" class="btn-submit" {% if is_shipped %}disabled{% endif %}><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-                      <td><button type="button" onclick="confirmPopupBtn(this)" {% if is_shipped %}disabled{% endif %}><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+                      <td class="totalDisc">{{ detail.total_diskon_barang|intcomma|default:"" }}</td>
+                      <td class="totalHarga">{{ detail.total_harga_barang|intcomma|default:"" }}</td>
+                      <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit" {% if is_shipped %}disabled{% endif %}><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+                      <td class="text-center"><button type="button" onclick="confirmPopupBtn(this)" {% if is_shipped %}disabled{% endif %}><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
                   </tr>
                 {% empty %}
                   <tr>
@@ -281,10 +282,10 @@
                       <td><input type="number" value="{{ detail.barang_id.harga_jual|default:0 }}" class="input_hrgbrg rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
                       <td><input type="number" value="{{ detail.qty_pesan|default:0 }}" class="input_qtybrg w-20 rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
                       <td><input type="number" value="{{ detail.diskon_barang|default:0 }}" class="disc w-20 rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
-                      <td class="totalDisc">{{ detail.total_diskon_barang|default:"" }}</td>
-                      <td class="totalHarga">{{ detail.total_harga_barang|default:"" }}</td>
-                      <td><button type="button" onclick="submitDetail()" class="btn-submit" {% if is_shipped %}disabled{% endif %}><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-                      <td><button type="button" onclick="confirmPopupBtn(this)" {% if is_shipped %}disabled{% endif %}><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+                      <td class="totalDisc">{{ detail.total_diskon_barang|intcomma|default:"" }}</td>
+                      <td class="totalHarga">{{ detail.total_harga_barang|intcomma|default:"" }}</td>
+                      <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit" {% if is_shipped %}disabled{% endif %}><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+                      <td class="text-center"><button type="button" onclick="confirmPopupBtn(this)" {% if is_shipped %}disabled{% endif %}><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
                   </tr>
                 {% endfor %}
             </tbody>
