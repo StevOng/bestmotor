@@ -14,6 +14,14 @@ class PesananViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user_id = self.request.session.get("user_id")
+        user_role = self.request.session.get("role")
+
+        if not user_id:
+            return Pesanan.objects.none()
+
+        if user_role == "admin":
+            return Pesanan.objects.all()
+        
         return Pesanan.objects.filter(customer_id__user_id=user_id)
 
     @action(detail=False, methods=['patch'])
@@ -26,6 +34,18 @@ class PesananViewSet(viewsets.ModelViewSet):
         
         Pesanan.objects.filter(id__in=ids).update(status=new_status)
         return Response({"message":"Status pesanan berhasil diperbarui"})
+
+    @action(detail=True, methods=['patch'])
+    def update_status_single(self, request, pk=None):
+        pesanan = self.get_queryset().get(pk=pk)
+        newStatus = request.data.get("status")
+
+        if not newStatus or newStatus not in ["cancelled", "ready", "shipped"]:
+            return Response({"message": "Status baru tidak ditemukan"}, status=status.HTTP_404_NOT_FOUND)
+
+        pesanan.status = newStatus
+        pesanan.save(update_fields=["status"])
+        return Response({"message": "Status pesanan berhasil diperbarui"}, status=status.HTTP_200_OK)
     
     @action(detail=True, methods=['patch'])
     def cancelled(self, request, pk=None):
@@ -39,7 +59,7 @@ class PesananViewSet(viewsets.ModelViewSet):
             barang = Barang.objects.get(pk=barang_id)
             barang.stok += item.qty_pesan
             barang.save(update_fields=["stok"])
-        return Response({"status": "cancelled"})
+        return Response({"status": "cancelled"}, status=status.HTTP_200_OK)
     
     @action(detail=False, methods=['get'])
     def top_customer(self, request):

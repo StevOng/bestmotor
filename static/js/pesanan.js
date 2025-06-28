@@ -43,9 +43,21 @@ $(document).ready(function () {
 });
 
 function checkBox() {
+    const trData = document.querySelectorAll("tbody tr")
     let checkAll = document.getElementById("checkedAll")
     let allCheckBox = document.querySelectorAll("[id^='checkbox-']")
     let buttonStats = document.getElementById("changeAll")
+    if (trData.length == 0 || !trData) {
+        checkAll.classList.remove("cursor-pointer")
+        checkAll.disabled = true
+    }
+
+    function updateButtonState() {
+        const anyChecked = Array.from(allCheckBox).some(cb => cb.checked);
+        buttonStats.disabled = !anyChecked;
+        console.log("Tombol aktif?", !buttonStats.disabled);
+    }
+
     checkAll.addEventListener("change", () => {
         checkAll.checked
         buttonStats.disabled = !checkAll.checked
@@ -56,6 +68,16 @@ function checkBox() {
             console.log("Checkbox update:", checkbox.id, checkbox.checked)
         })
     })
+
+    allCheckBox.forEach(checkbox => {
+        checkbox.addEventListener("change", () => {
+            const allChecked = Array.from(allCheckBox).every(cb => cb.checked);
+            checkAll.checked = allChecked;  // Update status "check all" jika semua dicentang
+
+            updateButtonState(); // Update status tombol
+            console.log("Checkbox manual:", checkbox.id, checkbox.checked);
+        });
+    });
 }
 
 function getCSRFToken() {
@@ -108,8 +130,8 @@ function closeModalConfirm() {
 }
 
 async function updateBulkStatus(newStatus) {
-    const checkboxes = document.querySelectorAll("[id^='checkbox-']").checked
-    const ids = Array.from(checkboxes).map(cb => cb.value)
+    const checkboxes = document.querySelectorAll("[id^='checkbox-']")
+    const ids = Array.from(checkboxes).map(cb => cb.checked)
     const csrfToken = getCSRFToken()
 
     if (ids.length === 0) {
@@ -142,7 +164,7 @@ async function updateBulkStatus(newStatus) {
 
 async function updateSingleStatus(id, newStatus) {
     const csrfToken = getCSRFToken()
-    const response = await fetch(`/api/pesanan/${id}/`, {
+    const response = await fetch(`/api/pesanan/${id}/update_status_single/`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',

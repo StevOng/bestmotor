@@ -66,6 +66,9 @@
     <a href="{% url 'pesanan' %}?status=ready" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.GET.status == "ready" %} text-white bg-customBlue border-customBlue {% endif %}">
         Pesanan Siap Kirim
     </a>
+    <a href="{% url 'pesanan' %}?status=shipped" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.GET.status == "shipped" %} text-white bg-customBlue border-customBlue {% endif %}">
+        Pesanan Terkirim
+    </a>
   </div>
   <div
   class="flex flex-col p-2 h-auto mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800"
@@ -75,6 +78,8 @@
         Data Pesanan Tertunda
       {% elif request.GET.status == "ready" %}
         Data Pesanan Siap Kirim
+      {% elif request.GET.status == "shipped" %}
+        Data Pesanan Terkirim
       {% else %}
         Data Semua Pesanan
       {% endif %}
@@ -104,6 +109,7 @@
                   </svg>
             </div>
           </button>
+        {% elif request.GET.status == "shipped" %}
         {% else %}
           <a href="{% url 'tambah_pesanan' %}" class="p-2 justify-end border-2 rounded-lg border-gray-200">
               <div class="flex flex-row justify-center items-center">
@@ -177,6 +183,8 @@
                 <th>Total</th>
                 <th>Status</th>
                 <th>Lihat</th>
+                <th>Kirim</th>
+                <th>Batal</th>
             </tr>
         </thead>
         <tbody>
@@ -203,6 +211,37 @@
                 </button>
               </td>
               <td><button onclick="confirmPopupBtn({{ pesanan.id }})"><i class="fa-solid fa-x text-2xl text-red-500"></i></button></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% elif request.GET.status == "shipped" %}
+      <table id="pesananTunda" class="display cell-border">
+        <thead>
+            <tr>
+              <th>No</th>
+              <th>No Pesanan</th>
+              <th>Tanggal Pesanan</th>
+              <th>Nama Pembeli</th>
+              <th>Lokasi Pembeli</th>
+              <th>Nama Sales</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Lihat</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for pesanan in pesanan_list %}
+            <tr data-id="{{ pesanan.id }}">
+              <td>{{ forloop.counter }}</td>
+              <td>{{ pesanan.no_pesanan }}</td>
+              <td>{{ pesanan.tanggal_pesanan }}</td>
+              <td>{{ pesanan.customer_id.nama }}</td>
+              <td>{{ pesanan.customer_id.lokasi }}</td>
+              <td>{{ pesanan.customer_id.user_id.nama }}</td>
+              <td>{{ pesanan.netto|intcomma }},-</td>
+              <td>{{ pesanan.status }}</td>
+              <td><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
             </tr>
           {% endfor %}
         </tbody>
