@@ -39,9 +39,9 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         filter_end = date(year, month_number, end_day)
 
         queryset = Invoice.objects.filter(
-            created_at__date__range=[filter_start, filter_end]
+            tanggal__date__range=[filter_start, filter_end]
         ).annotate(
-            weekday=ExtractWeekDay('created_at')
+            weekday=ExtractWeekDay('tanggal')
         ).values('weekday').annotate(
             total=Sum('netto'),
             count=Count('id')

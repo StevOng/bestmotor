@@ -91,7 +91,7 @@ document.getElementById("monthDropdownbtn").addEventListener("click", async (e) 
 async function updateIncomeChart(month, week) {
     const chartData = await fetchIncomeData(month, week);
     if (chartData) {
-        chart.updateOptions({
+        incomeChart.updateOptions({
             xaxis: chartData.xaxis,
             series: chartData.series
         });
@@ -144,6 +144,17 @@ const fetchExpenseData = async (selectedMonth, selectedWeek) => {
     }
 };
 
+// Update expenses ApexChart
+async function updateExpenseChart(month, week) {
+    const chartData = await fetchExpenseData(month, week);
+    if (chartData) {
+        expenseChart.updateOptions({
+            xaxis: chartData.xaxis,
+            series: chartData.series
+        });
+    }
+}
+
 //Event listener dropdown
 document.getElementById("dropdown").addEventListener("click", async (e) => {
     if (e.target.tagName === "A") {
@@ -164,17 +175,6 @@ document.getElementById("monthDropdown").addEventListener("click", async (e) => 
         updateExpenseChart(selectedMonth, selectedWeek);
     }
 });
-
-// Update expenses ApexChart
-async function updateExpenseChart(month, week) {
-    const chartData = await fetchExpenseData(month, week);
-    if (chartData) {
-        chart.updateOptions({
-            xaxis: chartData.xaxis,
-            series: chartData.series
-        });
-    }
-}
 
 
 if (document.getElementById("expense-chart") && typeof ApexCharts !== 'undefined') {
@@ -202,7 +202,7 @@ const getPieBarangTidakLaku = async () => {
         const series = data.map(item => item.qty_terjual);
         const pieColors = data.map((_, i) => colors[i % colors.length]);
 
-        return {
+        const options = {
             series,
             colors: pieColors,
             chart: { type: 'pie', height: 250, width: "100%" },
@@ -219,16 +219,29 @@ const getPieBarangTidakLaku = async () => {
                 horizontalAlign: "center",
             }
         };
+        if (series.every(val => val === 0)) {
+            const container = document.getElementById("pie-tlaku");
+            const infoText = document.createElement("div");
+            infoText.textContent = "Chart kosong karena tidak ada barang yang terjual pada data ini.";
+            infoText.className = "text-sm text-gray-900 text-center mt-2";
+            container.appendChild(infoText);
+        }
+        return options
     } catch (error) {
         console.error("Error:", error);
         return null;
     }
 };
 
-if (document.getElementById("pie-laku") && typeof ApexCharts !== 'undefined') {
-    const chart = new ApexCharts(document.getElementById("pie-tlaku"), getPieBarangLaku());
-    chart.render();
-}
+(async () => {
+    if (document.getElementById("pie-tlaku") && typeof ApexCharts !== 'undefined') {
+        const options = await getPieBarangTidakLaku();
+        if (options) {
+            const chart = new ApexCharts(document.getElementById("pie-tlaku"), options);
+            chart.render();
+        }
+    }
+})();
 
 // {% comment %} Pie Chart Tak Laku {% endcomment %}
 const getPieBarangLaku = async () => {
@@ -270,10 +283,15 @@ const getPieBarangLaku = async () => {
     }
 };
 
-if (document.getElementById("pie-tlaku") && typeof ApexCharts !== 'undefined') {
-    const chart = new ApexCharts(document.getElementById("pie-laku"), getPieTLaku());
-    chart.render();
-}
+(async () => {
+    if (document.getElementById("pie-laku") && typeof ApexCharts !== 'undefined') {
+        const options = await getPieBarangLaku()
+        if (options) {
+            const chart = new ApexCharts(document.getElementById("pie-laku"), options);
+            chart.render();
+        }
+    }
+})()
 
 // {% comment %} Pie Chart Hampir Habis {% endcomment %}
 const getPieHabis = async () => {
@@ -325,10 +343,15 @@ const getPieHabis = async () => {
     }
 };
 
-if (document.getElementById("pie-habis") && typeof ApexCharts !== 'undefined') {
-    const chart = new ApexCharts(document.getElementById("pie-habis"), getPieHabis());
-    chart.render();
-}
+(async () => {
+    if (document.getElementById("pie-habis") && typeof ApexCharts !== 'undefined') {
+        const options = await getPieHabis()
+        if (options) {
+            const chart = new ApexCharts(document.getElementById("pie-habis"), options);
+            chart.render();
+        }
+    }
+})()
 
 // {% comment %} Pie Chart Tak Laku {% endcomment %}
 const getPieCustomer = async () => {
@@ -379,10 +402,15 @@ const getPieCustomer = async () => {
     }
 };
 
-if (document.getElementById("pie-customer") && typeof ApexCharts !== 'undefined') {
-    const chart = new ApexCharts(document.getElementById("pie-customer"), getPieCustomer());
-    chart.render();
-}
+(async () => {
+    if (document.getElementById("pie-customer") && typeof ApexCharts !== 'undefined') {
+        const options = await getPieCustomer()
+        if (options) {
+            const chart = new ApexCharts(document.getElementById("pie-customer"), options);
+            chart.render();
+        }
+    }
+})()
 
 // {% comment %} tabel {% endcomment %}
 

@@ -78,13 +78,13 @@ class PesananViewSet(viewsets.ModelViewSet):
         start_day = (minggu - 1) * 7 + 1
         end_day = min(start_day + 6, days_in_month)
 
-        filter_start = date(year, bulan, start_day)
-        filter_end = date(year, bulan, end_day)
+        filter_start = date(year, month_number, start_day)
+        filter_end = date(year, month_number, end_day)
 
         queryset = Pesanan.objects.filter(
-            created_at__date__range=[filter_start, filter_end]
+            tanggal_pesanan__date__range=[filter_start, filter_end]
         ).annotate(
-            weekday=ExtractWeekDay('created_at')
+            weekday=ExtractWeekDay('tanggal_pesanan')
         ).values('weekday').annotate(
             total=Sum('netto'),
             count=Count('id')
