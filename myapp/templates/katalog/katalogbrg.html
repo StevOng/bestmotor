@@ -6,9 +6,9 @@
 <div class="bg-customBlue px-6 md:px-12 py-6 text-white">
     <p class="text-2xl font-bold">Katalog {{ title|title }}</p>
     <span class="flex flex-row mt-4 text-sm">
-        Beranda >
+        <a href="{% url 'katalog' %}" class="font-medium text-gray-200 hover:underline">Beranda ></a>
         <p class="ml-1 text-gray-200">Tipe Motor ></p>
-        <p class="ml-1 text-gray-400">{{ title|title }}</p>
+        <p class="ml-1 text-gray-200">{{ title|title }}</p>
     </span>
 </div>
 {% endblock %}
@@ -48,7 +48,7 @@
           <p>{{ item.nama }}</p>
           <p class="py-2 font-semibold text-orange-400">{{ item.harga_diskon }}</p>
           <button
-            onclick="window.location.href='{% url 'deskripsi' item.tipe item.id %}'"
+            onclick="window.location.href='{% url 'deskripsi' item.katalog_id %}'"
             class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
           >
             Deskripsi
@@ -57,10 +57,6 @@
       {% endfor %}
       </div>
       <div class="pt-5">
-        <p class="font-semibold">Item Lainnya</p>
-        <div
-        id="productContainer" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 grid-rows-3 py-2 overflow-hidden gap-5">
-        </div>
         <!-- Pagination -->
           <div class="flex justify-center mt-4 space-x-2">
             <button id="prevPage" class="bg-white text-customBlue p-2 px-3 rounded-full shadow border-gray-300"><i class="fa-solid fa-arrow-left"></i></button>
@@ -74,7 +70,7 @@
 
 {% block script %}
 <script>
-  const allItems = {{ items_json|safe }}
+  window.allItems = JSON.parse('{{ all_items|escapejs }}')
 </script>
 <script src="{% static 'js/katalogbrg.js' %}"></script>
 {% endblock %}

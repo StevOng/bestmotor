@@ -11,6 +11,7 @@ from .models.piutang import *
 from .models.retur import *
 from .models.supplier import *
 from .models.user import *
+from .models.bonus import *
 
 # Register your models here.
 admin.site.register(Barang)
@@ -37,3 +38,6 @@ admin.site.register(ReturBeli)
 admin.site.register(ReturBeliBarang)
 admin.site.register(ReturJual)
 admin.site.register(ReturJualBarang)
+admin.site.register(PersenBonus)
+admin.site.register(Bonus)
+admin.site.register(BonusDetail)

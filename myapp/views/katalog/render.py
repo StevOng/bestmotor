@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
-from django.utils.safestring import mark_safe
+from django.core.serializers.json import DjangoJSONEncoder
 from collections import defaultdict
+from decimal import Decimal
 from myapp.utils.log_utils import log_user_action
 from ...decorators import *
 from ...models.katalog import *
@@ -16,6 +17,12 @@ def get_value_tipe(input):
     for value, label in TIPE:
         if input == value or input == label:
             return value
+    return input
+
+def get_label_tipe(input):
+    for value, label in TIPE:
+        if input == value or input == label:
+            return label
     return input
 
 def katalog(request):
@@ -35,21 +42,24 @@ def katalog(request):
 
         tipe = barang.tipe
         tipe_val = get_value_tipe(tipe)
+        title = get_label_tipe(tipe)
 
         tipe_katalog[tipe_val].append({
             "barang": barang,
             "katalog": katalog,
             "gambar": gambar,
-            "tipe": tipe_val
+            "tipe": tipe_val,
+            "title": title
         })
     return render(request, "katalog/katalog.html", {'tipe_katalog': dict(tipe_katalog)})
 
 def katalogbrg(request, tipe):
     data = []
     title = tipe
+    tipe_label = get_label_tipe(tipe)
 
     # Ambil semua barang bertipe tertentu, termasuk relasi ke KatalogBarang
-    barang_list = Barang.objects.filter(tipe=tipe).prefetch_related("katalogbarang_set", "katalog_set")
+    barang_list = Barang.objects.filter(tipe=tipe_label).prefetch_related("katalogbarang_set", "katalog_set")
 
     for barang in barang_list:
         # Ambil satu entri katalog terkait barang
@@ -58,22 +68,22 @@ def katalogbrg(request, tipe):
         # Ambil satu gambar dari KatalogBarang (jika ada)
         katalog_barang = barang.katalogbarang_set.first()
         gambar_url = katalog_barang.gambar_pelengkap.url if katalog_barang and katalog_barang.gambar_pelengkap else None
-        tipe = get_value_tipe(barang.tipe)
+        tipe = tipe_label
 
         data.append({
             "nama": barang.nama_barang,
             "merk": barang.merk,
-            "harga_diskon": katalog.harga_diskon if katalog else "-",
-            "id": barang.id,
+            "harga_diskon": float(katalog.harga_diskon) if katalog else 0.0,
+            "katalog_id": katalog.id if katalog else None,
             "tipe": tipe,
             "gambar": gambar_url,
         })
-
+    all_items = json.dumps(data, cls=DjangoJSONEncoder)
     return render(request, "katalog/katalogbrg.html", {
         "tipe": tipe,
         "items": data,
         "title": title,
-        "items_json": mark_safe(json.dumps(data))
+        "all_items": all_items
     })
 
 @admin_required
@@ -89,8 +99,11 @@ def tambah_brgkatalog(request, id=None):
 
 def deskripsi(request, katalog_id):
     katalog = get_object_or_404(Katalog, id=katalog_id)
-    barang = katalog.barang.first()
-    return render(request, "katalog/deskripsi.html", {"barang": barang, "katalog": katalog})
+    katalogbrg = KatalogBarang.objects.filter(katalog=katalog).select_related("barang","katalog")
+    url_list = []
+    for kat in katalogbrg:
+        url_list.append({"url": kat.gambar_pelengkap.url})
+    return render(request, "katalog/deskripsi.html", {"katalogbrg": katalogbrg, "url_list": url_list})
 
 
 def base_katalog(request):
@@ -106,7 +119,10 @@ def base_katalog(request):
             continue
 
         tipe = get_value_tipe(barang.tipe)
-        tipe_katalog[tipe].append(katalog)
+        title = get_label_tipe(barang.tipe)
+        tipe_katalog[tipe].append({
+            "title": title
+        })
 
     return render(request, "katalog/home.html", {
         "tipe_katalog": dict(tipe_katalog),

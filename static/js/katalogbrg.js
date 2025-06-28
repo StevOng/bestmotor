@@ -1,3 +1,4 @@
+const allItems = window.allItems
 let currentPage = 1;
 let itemsPerPage = getItemsPerPage();
 let totalPages = Math.ceil(allItems.length / itemsPerPage);

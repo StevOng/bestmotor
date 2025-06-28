@@ -43,7 +43,6 @@
   {% for tipe, items in tipe_katalog.items %}
     <div class="py-2">
       <div class="flex flex-row justify-between items-center">
-        <p class="font-semibold">Rekomendasi {{ tipe|title }}r</p>
         <div class="flex gap-4">
           <button
             id="scrollLeft{{ forloop.counter }}"
@@ -64,6 +63,7 @@
         class="flex flex-row py-2 overflow-x-auto gap-4 scroll-smooth no-scrollbar"
       >
       {% for item in items %}
+        <p class="font-semibold">Rekomendasi {{ item.title }}</p>
         <div class="flex flex-col p-2 min-w-44">
           {% if item.gambar %}
             <img
@@ -93,28 +93,30 @@
     <div class="py-6">
       <p class="text-lg font-semibold">Lihat Katalog Lainnya</p>
       <div class="my-4 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div class="flex flex-row justify-between border shadow rounded-md">
-          <div class="flex flex-col justify-between p-4 w-[45%]">
-            <span>
-              <p>Katalog {{ tipe|title }}</p>
-              <p class="pb-2 text-gray-500 text-sm">Tersedia {{ items|length }}+ produk</p>
-            </span>
-            <a href="{% url 'katalogbrg' tipe %}">
-              <button
-                class="p-2 w-full border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-              >
-                Lihat Sekarang
-              </button>
-            </a>
+        {% for item in items %}
+          <div class="flex flex-row justify-between border shadow rounded-md">
+            <div class="flex flex-col justify-between p-4 w-[45%]">
+              <span>
+                <p>Katalog {{ item.title }}</p>
+                <p class="pb-2 text-gray-500 text-sm">Tersedia {{ items|length }}+ produk</p>
+              </span>
+              <a href="{% url 'katalogbrg' tipe %}">
+                <button
+                  class="p-2 w-full border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
+                >
+                  Lihat Sekarang
+                </button>
+              </a>
+            </div>
+            {% with items.0 as first_item %}
+              {% if first_item.gambar %}
+                <img src="{{ first_item.gambar }}" class="w-[55%] h-auto" />
+              {% else %}
+                <img src="{% static 'images/logo.png' %}" class="w-[55%] h-auto" />
+              {% endif %}
+            {% endwith %}
           </div>
-          {% with items.0 as first_item %}
-            {% if first_item.gambar %}
-              <img src="{{ first_item.gambar }}" class="w-[55%] h-auto" />
-            {% else %}
-              <img src="{% static 'images/logo.png' %}" class="w-[55%] h-auto" />
-            {% endif %}
-          {% endwith %}
-        </div>
+        {% endfor %}
       </div>
     </div>
   {% endfor %}
