@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.exceptions import PermissionDenied
 from .serializer import *
 from ...models.bonus import *
 from decimal import Decimal
@@ -9,10 +10,14 @@ class BonusViewSet(viewsets.ModelViewSet):
 
     def create_sales_bonus(self):
         user_id = self.request.session.get("user_id")
-        pesanan_list = Pesanan.objects.filter(status="ready", customer_id__user_id=user_id)
+        user = User.objects.get(id=user_id)
+        if user.role != "sales":
+            raise PermissionDenied("Hanya sales yang mendapat bonus")
+        
+        pesanan_list = Pesanan.objects.filter(status="shipped", customer_id__user_id=user_id).exclude(id__in=BonusDetail.objects.values_list("pesanan_id", flat=True))
 
-        if not pesanan_list:
-            raise ValueError("Tidak ada pesanan ready dari sales ini")
+        if not pesanan_list.exists():
+            raise ValueError("Tidak ada pesanan shipped dari sales ini")
         
         detailpesanan = DetailPesanan.objects.filter(pesanan_id__in=pesanan_list).select_related("barang_id")
         persen_sales = PersenBonus.objects.all()

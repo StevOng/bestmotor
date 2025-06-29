@@ -71,15 +71,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                    </tr>
+                    {% for detail in bonus_detail %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ detail.nama_barang }}</td>
+                            <td>{{ detail.merk }}</td>
+                            <td>{{ detail.nilai_bonus }}</td>
+                            <td>{{ detail.qty }}</td>
+                            <td>{{ detail.harga }}</td>
+                            <td>{{ detail.bonus_id.total_bonus }}</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
             {% elif list == 'merek' %}

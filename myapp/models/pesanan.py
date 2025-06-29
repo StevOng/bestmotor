@@ -69,6 +69,8 @@ class Pesanan(models.Model):
 
         if self.status == 'shipped':
             from .faktur import Faktur
+            from .bonus import Bonus
+            from ..views.sales.api import BonusViewSet
             if not hasattr(self, 'faktur'):
                 faktur = Faktur.objects.create(
                     pesanan_id = self.id,
@@ -76,6 +78,9 @@ class Pesanan(models.Model):
                     total = self.netto
                 )
                 faktur.save()
+            
+            if not hasattr(self, 'bonus'):
+                bonus = BonusViewSet.create_sales_bonus()
 
         elif self.status == 'cancelled':
             if hasattr(self, 'faktur'):
