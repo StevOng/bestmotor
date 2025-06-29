@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
-from django.db.models import Prefetch
+from myapp.views.barang.tipe_choices import TIPE
 from ...models.faktur import Faktur
 from ...decorators import *
 from django.http import HttpResponse
@@ -21,9 +21,13 @@ def faktur(request):
     status = request.GET.get("status", None)
     per_tgl = request.GET.get("per_tgl")
 
-    list_faktur = Faktur.objects.select_related('pesanan_id').prefetch_related(
-        Prefetch('pesanan__detailpesanan_set')
-    )
+    def get_label_tipe(input):
+        for value, label in TIPE:
+            if input == value or input == label:
+                return label
+        return input
+
+    list_faktur = Faktur.objects.prefetch_related('pesanan_id__detailpesanan_set').select_related("pesanan_id")
     
     if per_tgl:
         list_faktur = list_faktur.filter(
@@ -31,7 +35,7 @@ def faktur(request):
         ).distinct()
 
     if status:
-        list_faktur = list_faktur.filter(status=status)
+        list_faktur = Faktur.objects.prefetch_related('pesanan_id__detailpesanan_set').select_related("pesanan_id").filter(status=status)
     return render(request, 'faktur/faktur.html', {'list_faktur': list_faktur})
 
 @admin_required
@@ -86,7 +90,7 @@ def export_faktur(request, id):
         data.append([
             str(i),
             Paragraph(detail.barang_id.nama_barang + "-" + detail.barang_id.tipe , styleN),
-            detail.barang_id.merek,
+            detail.barang_id.merk,
             f"Rp {detail.barang_id.harga_jual:,.0f},-",
             int(detail.qty_pesan),
             f"Rp {detail.diskon_barang:,.0f},-",

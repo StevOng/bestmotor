@@ -18,14 +18,28 @@ class InvoiceSerializer(serializers.ModelSerializer):
         detail_data = validated_data.pop('detail_barang')
         with transaction.atomic():
             invoice = Invoice.objects.create(**validated_data)
-            for item in detail_data:
 
-                barang_id = item['barang_id'].id if isinstance(item['barang_id'], Barang) else item['barang_id']
+            for item in detail_data:
                 dibeli = item['qty_beli']
-                barang = Barang.objects.get(id=barang_id)
-                barang.stok += dibeli
-                barang.save(update_fields=["stok"])
-                DetailInvoice.objects.create(invoice_id=invoice.id, **item)
+                harga_beli = item['harga_beli']
+                diskon_barang = item['diskon_barang']
+                barang_obj = item['barang_id']  # bisa instance, bisa id
+
+                # Jika bukan instance, kita jadikan instance
+                if not isinstance(barang_obj, Barang):
+                    barang_obj = Barang.objects.get(pk=barang_obj)
+
+                DetailInvoice.objects.create(
+                    invoice_id=invoice,
+                    barang=barang_obj,
+                    qty_beli=dibeli,
+                    harga_beli=harga_beli,
+                    diskon_barang=diskon_barang
+                )
+
+                barang_obj.stok += dibeli
+                barang_obj.save(update_fields=["stok"])
+
             invoice.hitung_total_bruto()
             invoice.hitung_total_netto()
             invoice.set_jatuh_tempo()

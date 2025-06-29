@@ -67,25 +67,6 @@ class Pesanan(models.Model):
             self.generate_no_pesanan() # jika belum maka generate
         super().save(*args, **kwargs)
 
-        if self.status == 'shipped':
-            from .faktur import Faktur
-            from .bonus import Bonus
-            from ..views.sales.api import BonusViewSet
-            if not hasattr(self, 'faktur'):
-                faktur = Faktur.objects.create(
-                    pesanan_id = self.id,
-                    sisa_bayar = self.netto,
-                    total = self.netto
-                )
-                faktur.save()
-            
-            if not hasattr(self, 'bonus'):
-                bonus = BonusViewSet.create_sales_bonus()
-
-        elif self.status == 'cancelled':
-            if hasattr(self, 'faktur'):
-                self.faktur.delete()
-
 class DetailPesanan(models.Model):
     id = models.AutoField(primary_key=True)
     pesanan_id = models.ForeignKey(Pesanan, on_delete=models.CASCADE)

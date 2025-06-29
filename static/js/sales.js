@@ -1,5 +1,3 @@
-const { act, use } = require("react");
-
 document.addEventListener("DOMContentLoaded", () => {
   attachMinusCheck()
   validate()
@@ -147,7 +145,7 @@ function openModal(id) {
           body: JSON.stringify({
             "barang_id": barangId,
             "merk_nama": merk_nama,
-            "persenan": bonus
+            "persenan": parseFloat(bonus).toFixed(2)
           })
         })
         const result = await response.json()
@@ -166,7 +164,7 @@ function openModal(id) {
             'X-CSRFToken': csrfToken
           },
           body: JSON.stringify({
-            "persenan": bonus
+            "persenan": parseFloat(bonus).toFixed
           })
         })
         const result = await response.json()

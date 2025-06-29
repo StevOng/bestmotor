@@ -31,8 +31,9 @@ class PesananViewSet(viewsets.ModelViewSet):
 
         if not ids or not new_status:
             return Response({"error":"IDs dan status harus dikirim"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        Pesanan.objects.filter(id__in=ids).update(status=new_status)
+        for pesanan in Pesanan.objects.filter(id__in=ids):
+            pesanan.status = new_status
+            pesanan.save(update_fields=["status"])
         return Response({"message":"Status pesanan berhasil diperbarui"})
 
     @action(detail=True, methods=['patch'])

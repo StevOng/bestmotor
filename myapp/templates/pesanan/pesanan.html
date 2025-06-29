@@ -171,8 +171,7 @@
         <thead>
             <tr>
                 <th>
-                  <input id="checkedAll" type="checkbox" class="cursor-pointer w-4 h-4 text-blue-600 bg-white-600 border-black-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" value="">
-                  <label for="checkedAll"></label>
+                  <input id="checkbox-{{ forloop.counter }}" type="checkbox" class="cursor-pointer w-4 h-4 text-blue-600 bg-white-600 border-black-300 rounded-sm " value="{{ pesanan.id }}">
                 </th>
                 <th>No</th>
                 <th>No Pesanan</th>
@@ -276,6 +275,9 @@
               {% if pesanan.status == "cancelled" %}
                 <td class="text-center"><a href="#" disabled><i class="fa-regular fa-eye text-2xl text-gray-500"></i></a></td>
                 <td class="text-center"><button disabled><i class="fa-solid fa-x text-2xl text-red-500"></i></button></td>
+              {% elif pesanan.status == "shipped" %}
+                <td class="text-center"><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                <td class="text-center"><button disabled onclick="confirmPopupBtn({{ pesanan.id }})"><i class="fa-solid fa-x text-2xl text-gray-500"></i></button></td>
               {% else %}
                 <td class="text-center"><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
                 <td class="text-center"><button onclick="confirmPopupBtn({{ pesanan.id }})"><i class="fa-solid fa-x text-2xl text-red-500"></i></button></td>

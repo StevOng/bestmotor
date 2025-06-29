@@ -1,6 +1,7 @@
 {% extends 'base/base.html' %}
 {% load static %}
 {% load humanize %}
+{% load custom_filters %}
 
 {% block title %}Faktur{% endblock %} 
 
@@ -92,7 +93,7 @@
             <tr>
                 <th>No Faktur</th>
                 <th>Tanggal Faktur</th>
-                {% if request.GET.status %}
+                {% if not request.GET.status %}
                     <th>Tanggal Jatuh Tempo</th>
                 {% endif %}
                 <th>No Referensi</th>
@@ -111,16 +112,14 @@
                 <tr data-id="{{ faktur.id }}">
                     <td>{{ faktur.no_faktur }}</td>
                     <td>{{ faktur.tanggal_faktur }}</td>
-                    {% if request.GET.status %}
-                        {% with detail=faktur.pesanan_id.detailpesanan_set.first %}
-                            <td>{{ detail.jatuh_tempo }}</td>
-                        {% endwith %}
+                    {% if not request.GET.status %}
+                        <td>{{ detail.pesanan_id.jatuh_tempo|default:"Cash" }}</td>
                     {% endif %}
                     <td>{{ faktur.pesanan_id.no_referensi }}</td>
                     <td>{{ faktur.pesanan_id.customer_id.nama }}</td>
                     <td>Rp {{ faktur.total|floatformat:0|intcomma }},-</td>
                     {% if not request.GET.status %}
-                        <td>{{ faktur.status }}</td>
+                        <td>{{ faktur.status|replace_underscore }}</td>
                         {% comment %} <td>{{ faktur.terakhir_edit }}</td> {% endcomment %}
                         <td>Rp {{ faktur.sisa_bayar|floatformat:0|intcomma }},-</td>
                     {% endif %}

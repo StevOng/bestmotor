@@ -1,5 +1,3 @@
-document.addEventListener("DOMContentLoaded", checkBox)
-
 $(document).ready(function () {
     let table = $('#allpesanan').DataTable({
         pageLength: 20,
@@ -38,10 +36,14 @@ $(document).ready(function () {
 
 function checkBox() {
     const trData = document.querySelectorAll("tbody tr")
-    let checkAll = document.getElementById("checkedAll")
-    let allCheckBox = document.querySelectorAll("[id^='checkbox-']")
-    let buttonStats = document.getElementById("changeAll")
-    if (trData.length == 0 || !trData) {
+    const checkAll = document.getElementById("checkbox-")
+    const allCheckBox = document.querySelectorAll("[id^='default-checkbox-']")
+    const buttonStats = document.getElementById("changeAll")
+
+    // Jika elemen penting tidak ditemukan, hentikan eksekusi
+    if (!checkAll || !buttonStats) return;
+
+    if (trData.length === 0) {
         checkAll.classList.remove("cursor-pointer")
         checkAll.disabled = true
     }
@@ -53,26 +55,22 @@ function checkBox() {
     }
 
     checkAll.addEventListener("change", () => {
-        checkAll.checked
-        buttonStats.disabled = !checkAll.checked
-        console.log("Centang semua:", checkAll.checked);
-        console.log("button disabled:", buttonStats.disabled)
+        buttonStats.disabled = !checkAll.checked;
         allCheckBox.forEach(checkbox => {
-            checkbox.checked = checkAll.checked
-            console.log("Checkbox update:", checkbox.id, checkbox.checked)
-        })
-    })
+            checkbox.checked = checkAll.checked;
+        });
+    });
 
     allCheckBox.forEach(checkbox => {
         checkbox.addEventListener("change", () => {
             const allChecked = Array.from(allCheckBox).every(cb => cb.checked);
-            checkAll.checked = allChecked;  // Update status "check all" jika semua dicentang
-
-            updateButtonState(); // Update status tombol
-            console.log("Checkbox manual:", checkbox.id, checkbox.checked);
+            checkAll.checked = allChecked;
+            updateButtonState();
         });
     });
 }
+
+document.addEventListener("DOMContentLoaded", checkBox);
 
 function getCSRFToken() {
     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
