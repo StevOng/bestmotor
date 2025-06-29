@@ -140,6 +140,8 @@ function addNewRow(data = null) {
         loadBarangOptions(selectId, barangId);
         getOptionBrg();
     }, 0);
+
+    newRow.querySelector(".input_qtybrg").addEventListener("input", callListener)
 }
 
 
@@ -159,7 +161,7 @@ async function submitDetail() {
     console.log(qtys)
 
     if (barangIds.length === 0) {
-        alert("Barang harus dipilih");
+        showWarningToast("Data Kurang", "Isi barang diwajibkan")
         return;
     }
 
@@ -188,14 +190,67 @@ async function submitDetail() {
         const result = await response.json();
         if (response.ok) {
             console.log("Transaksi & Detail berhasil disimpan:", result);
+            showSuccessToast("Berhasil", "Berhasil meyimpan data")
             setTimeout(() => {
                 location.replace(`/barang/transaksi/${jenis}/`);
             }, 1000);
         } else {
             console.error("Gagal:", result);
-            alert("Gagal menyimpan transaksi: " + JSON.stringify(result));
+            showWarningToast("Gagal", "Gagal menyimpan data")
         }
     } catch (error) {
         console.error("Terjadi kesalahan:", error);
     }
+}
+
+function minusCheck() {
+    const allInput = document.querySelectorAll("input")
+    allInput.forEach(input => {
+        if (input.type == "number" && input.value < 0) {
+            const headWarn = "Peringatan Input Minus"
+            const parWarn = "Harga, diskon dan tanggal tidak bisa minus"
+            showWarningToast(headWarn, parWarn)
+            input.value = null
+            updateDetailBiaya()
+            return
+        }
+    })
+}
+
+function showWarningToast(head, msg) {
+  const toast = document.getElementById("toastWarning");
+  const title = document.getElementById("toastWarnHead");
+  const paragraph = document.getElementById("toastWarnPar");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
+}
+
+function showSuccessToast(head, msg) {
+  const toast = document.getElementById("toastSuccess");
+  const title = document.getElementById("toastScs");
+  const paragraph = document.getElementById("toastScsp");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
+}
+
+function callListener() {
+    minusCheck()
 }

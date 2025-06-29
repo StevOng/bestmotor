@@ -38,12 +38,16 @@ document.getElementById("custForm").addEventListener("submit", async (event) => 
         },
         body: customer
     })
+    const result = await response.json()
     if (response.ok) {
-        const result = await response.json()
         console.log(result);
+        showSuccessToast("Berhasil", "Berhasil menyimpan data")
         setTimeout(() => {
             location.replace("/customer/");
         }, 1000);
+    } else {
+        console.log("Gagal", result)
+        showWarningToast("Gagal", "Gagal menyimpan data")
     }
 })
 
@@ -80,5 +84,41 @@ async function getSales() {
 
     } catch (err) {
         console.error("Error:", err)
+        showWarningToast("Gagal", "Terjadi Kesalahan")
     }
+}
+
+
+function showWarningToast(head, msg) {
+  const toast = document.getElementById("toastWarning");
+  const title = document.getElementById("toastWarnHead");
+  const paragraph = document.getElementById("toastWarnPar");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
+}
+
+function showSuccessToast(head, msg) {
+  const toast = document.getElementById("toastSuccess");
+  const title = document.getElementById("toastScs");
+  const paragraph = document.getElementById("toastScsp");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
 }

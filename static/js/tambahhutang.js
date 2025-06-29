@@ -103,14 +103,10 @@ async function submitDetail() {
     const invoiceIds = Array.from(document.querySelectorAll(".invoiceId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
 
     if (!supplierId || !invoiceIds) {
-        alert("Supplier dan Invoice harus dipilih")
+        showWarningToast("Data Kurang", "Lengkapi data supplier dan invoice")
         return
     }
 
-    if (nilaiByrs <= 0) {
-        alert("Harap mengisi nilai bayar")
-        return
-    }
     const method = id ? "PUT" : "POST" // jika ada id edit, tidak? tambah
     const apiUrl = id ? `/api/hutang/${id}/` : `/api/hutang/`
     const csrfToken = getCSRFToken()
@@ -155,15 +151,17 @@ async function submitDetail() {
                 }
             }))
             console.log("Piutang berhasil disimpan:", result);
+            showSuccessToast("Berhasil", "Berhasil menyimpan data")
             setTimeout(() => {
                 location.replace(`/pembelian/pembayaran/hutang/`);
             }, 1000);
         } else {
             console.error("Gagal:", result);
-            alert("Gagal menyimpan hutang: " + JSON.stringify(result));
+            showWarningToast("Gagal", "Gagal menyimpan data")
         }
     } catch (error) {
         console.error("Terjadi kesalahan: ", error)
+        showWarningToast("Gagal", "Terjadi kesalahan")
     }
 }
 
@@ -335,10 +333,64 @@ function addNewRow(hut = null, invoices = null) {
     setTimeout(() => {
         pilihInvoice(invoiceId, noInv)
     }, 0);
+
+    newRow.querySelector(".nilaiBayar").addEventListener("input", callListener)
+    newRow.querySelector(".potongan").addEventListener("input", callListener)
 }
 
 function hapusRow(btn) {
     const row = btn.closest("tr")
     row.classList.add("fade-out")
     setTimeout(() => row.remove(), 400)
+}
+
+function minusCheck() {
+    const allInput = document.querySelectorAll("input")
+    allInput.forEach(input => {
+        if (input.type == "number" && input.value < 0) {
+            const headWarn = "Peringatan Input Minus"
+            const parWarn = "Harga, diskon dan tanggal tidak bisa minus"
+            showWarningToast(headWarn, parWarn)
+            input.value = null
+            return
+        }
+    })
+}
+
+function showWarningToast(head, msg) {
+  const toast = document.getElementById("toastWarning");
+  const title = document.getElementById("toastWarnHead");
+  const paragraph = document.getElementById("toastWarnPar");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
+}
+
+function showSuccessToast(head, msg) {
+  const toast = document.getElementById("toastSuccess");
+  const title = document.getElementById("toastScs");
+  const paragraph = document.getElementById("toastScsp");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
+}
+
+function callListener() {
+    minusCheck()
 }

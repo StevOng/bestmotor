@@ -43,22 +43,22 @@ $(document).ready(function () {
 });
 
 document.querySelectorAll(".input_hrgbrg").forEach(input => {
-    input.addEventListener("input", updateDetailBiaya)
+    input.addEventListener("input", callListener)
 })
 
 document.querySelectorAll(".input_qtybrg").forEach(input => {
-    input.addEventListener("input", updateDetailBiaya)
+    input.addEventListener("input", callListener)
 })
 
 document.querySelectorAll(".disc").forEach(input => {
-    input.addEventListener("input", updateDetailBiaya)
+    input.addEventListener("input", callListener)
 })
 
-document.getElementById("ppn").addEventListener("input", updateDetailBiaya)
+document.getElementById("ppn").addEventListener("input", callListener)
 
-document.getElementById("ongkir").addEventListener("input", updateDetailBiaya)
+document.getElementById("ongkir").addEventListener("input", callListener)
 
-document.getElementById("discount").addEventListener("input", updateDetailBiaya)
+document.getElementById("discount").addEventListener("input", callListener)
 
 function confirmPopupBtn(attr) {
     const modal = document.getElementById("popupModalConfirm");
@@ -131,7 +131,7 @@ async function getOptionBrg() {
         const namaBrgId = select.dataset.namaBarangId
         console.log("selectedId: ", selectedId)
         console.log("select value: ", select.value)
-        loadBarangOptions(select.id, selectedId, invId)
+        loadBarangOptions(select.id, select.value, invId)
 
         select.addEventListener("change", async () => {
             const barangId = select.value
@@ -200,6 +200,10 @@ function addNewRow(inv = null) {
         loadBarangOptions(selectId, barangId, invId);
         getOptionBrg();
     }, 0);
+
+    newRow.querySelector(".input_hrgbrg").addEventListener("input", callListener)
+    newRow.querySelector(".input_qtybrg").addEventListener("input", callListener)
+    newRow.querySelector(".disc").addEventListener("input", callListener)
 }
 
 function hapusRow(btn) {
@@ -231,15 +235,9 @@ async function submitDetail() {
     const data = await check.json()
 
     if (!barangIds || !invId) {
-        alert("Barang dan invoice harus dipilih");
+        showWarningToast("Data Kurang", "Lengkapi data seperti gambar dan invoice")
         return;
     }
-
-    if (qtyReturs > data.qty_beli) {
-        alert("Kuantiti retur melebihi stok beli")
-        return
-    }
-
     const method = id ? "PUT" : "POST";
     const apiUrl = id ? `/api/returbeli/${id}/` : `/api/returbeli/`
     const csrfToken = getCSRFToken()
@@ -263,12 +261,13 @@ async function submitDetail() {
         const result = await response.json()
         if (response.ok) {
             console.log("Retur & Detail berhasil disimpan:", result);
+            showSuccessToast("Berhasil", "Berhasil menyimpan data")
             setTimeout(() => {
                 location.replace(`/retur/pembelian/`);
             }, 1000);
         } else {
             console.error("Gagal:", result);
-            alert("Gagal menyimpan retur: " + JSON.stringify(result));
+            showWarningToast("Gagal", "Gagal menyimpan data")
         }
     } catch (error) {
         console.error("Terjadi kesalahan: ", error)
@@ -323,4 +322,96 @@ function updateDetailBiaya() {
 
     niliaPpnEl.value = nilaiPpn
     nettoEl.value = netto
+}
+
+function minusCheck() {
+    const allInput = document.querySelectorAll("input")
+    allInput.forEach(input => {
+        if (input.type == "number" && input.value < 0) {
+            const headWarn = "Peringatan Input Minus"
+            const parWarn = "Harga, diskon dan tanggal tidak bisa minus"
+            showWarningToast(headWarn, parWarn)
+            input.value = null
+            updateDetailBiaya()
+            return
+        }
+    })
+}
+
+async function qtyCheck() {
+    const invoiceId = document.getElementById("invId")?.value; // pastikan ini tersedia di form
+    const isEdit = !!document.getElementById("hiddenId")?.value;
+    const rows = document.querySelectorAll("#detailBrg tbody tr");
+
+    for (const row of rows) {
+        const inputQty = row.querySelector(".input_qtybrg");
+        const rowQty = parseInt(inputQty.value) || 0;
+        const rowBarangId = row.querySelector(".barangId").value;
+        const dataAwal = parseInt(inputQty.dataset.qtyAwal) || 0;
+
+        try {
+            const res = await fetch(`/api/detailinvoice/${rowBarangId}/get_qty_info/?invoice_id=${invoiceId}`);
+            if (!res.ok) throw new Error("Gagal mengambil data invoice");
+            const data = await res.json();
+
+            const qtyBeli = parseInt(data.qty_beli);
+            const qtyRetur = parseInt(data.qty_retur);
+            let maxRetur = qtyBeli - qtyRetur;
+
+            if (isEdit) {
+                maxRetur += dataAwal;  // tambahkan kembali jika sedang edit
+            }
+
+            if (rowQty > maxRetur) {
+                showWarningToast("Peringatan Jumlah Retur",
+                  `Jumlah retur melebihi pembelian. Maksimum retur yang diizinkan: ${maxRetur}`
+                );
+                inputQty.value = maxRetur;
+                updateDetailBiaya();
+            }
+        } catch (error) {
+            console.error("Gagal memuat data retur invoice:", error);
+            showErrorToast("Gagal Memuat Data", "Terjadi kesalahan saat mengambil data retur.");
+        }
+    }
+}
+
+function showWarningToast(head, msg) {
+  const toast = document.getElementById("toastWarning");
+  const title = document.getElementById("toastWarnHead");
+  const paragraph = document.getElementById("toastWarnPar");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
+}
+
+function showSuccessToast(head, msg) {
+  const toast = document.getElementById("toastSuccess");
+  const title = document.getElementById("toastScs");
+  const paragraph = document.getElementById("toastScsp");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
+}
+
+function callListener() {
+    minusCheck()
+    qtyCheck()
+    updateDetailBiaya()
 }

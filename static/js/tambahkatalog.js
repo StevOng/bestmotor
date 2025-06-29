@@ -171,7 +171,7 @@ document.getElementById("formKatalog").addEventListener("submit", async (event) 
             })
             const headScs = "Berhasil"
             const parScs = "Data berhasil ditambah"
-            showWarningToast(headScs, parScs)
+            showSuccessToast(headScs, parScs)
             setTimeout(() => {
                 location.replace('/katalog/admin/');
             }, 1000);
@@ -188,18 +188,35 @@ document.getElementById("formKatalog").addEventListener("submit", async (event) 
 })
 
 function showWarningToast(head, msg) {
-    const toast = document.getElementById("toastWarning");
-    const title = document.getElementById("toastWarnHead");
-    const paragraph = document.getElementById("toastWarnPar");
+  const toast = document.getElementById("toastWarning");
+  const title = document.getElementById("toastWarnHead");
+  const paragraph = document.getElementById("toastWarnPar");
 
-    title.innerText = head;
-    paragraph.innerText = msg;
+  title.innerText = head;
+  paragraph.innerText = msg;
 
-    toast.classList.remove("hidden");
+  toast.classList.remove("hidden");
 
-    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
 
-    toast.toastTimeout = setTimeout(() => {
-        toast.classList.add("hidden");
-    }, 2000);
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
+}
+
+function showSuccessToast(head, msg) {
+  const toast = document.getElementById("toastSuccess");
+  const title = document.getElementById("toastScs");
+  const paragraph = document.getElementById("toastScsp");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
 }

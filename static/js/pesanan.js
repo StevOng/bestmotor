@@ -105,13 +105,16 @@ function confirmPopupBtn(id) {
                     const statusCell = row.querySelector("td:nth-child(8)")
                     if (statusCell) {
                         statusCell.textContent = "Cancelled"
+                        showSuccessToast("Berhasil", "Status berhasil dibatalkan")
                     }
                 }
             } else {
                 console.error("Gagal membatalkan pesanan");
+                showWarningToast("Gagal", "Gagal membatalkan pesanan")
             }
         } catch (error) {
             console.error("Terjadi kesalahan: ", error);
+            showWarningToast("Gagal", "Terjadi kesalahan")
         }
         closeModalConfirm();
     };
@@ -129,7 +132,7 @@ async function updateBulkStatus(newStatus) {
     const csrfToken = getCSRFToken()
 
     if (ids.length === 0) {
-        alert('Pilih setidaknya satu pesanan')
+        showWarningToast("Pilihan Kosong", "Centang setidaknya satu pesanan untuk diubah status")
         return
     }
 
@@ -149,10 +152,11 @@ async function updateBulkStatus(newStatus) {
     const result = await response.json()
     if (response.ok) {
         console.log(result)
-        alert('status berhasil diubah')
+        showSuccessToast("Berhasil", "Berhasil mengubah status")
         window.location.reload()
     } else {
-        alert("gagal: " + result.error)
+        console.error(result)
+        showWarningToast("Gagal", "Gagal mengubah status")
     }
 }
 
@@ -170,9 +174,44 @@ async function updateSingleStatus(id, newStatus) {
     const result = await response.json();
     if (response.ok) {
         console.log(result)
-        alert("Status berhasil diubah!");
+        showSuccessToast("Berhasil", "Status berhasil diubah")
         window.location.reload();
     } else {
-        alert("Gagal: " + result.error);
+        console.error(result)
+        showWarningToast("Gagal", `Gagal mengubah status`)
     }
+}
+
+function showWarningToast(head, msg) {
+  const toast = document.getElementById("toastWarning");
+  const title = document.getElementById("toastWarnHead");
+  const paragraph = document.getElementById("toastWarnPar");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
+}
+
+function showSuccessToast(head, msg) {
+  const toast = document.getElementById("toastSuccess");
+  const title = document.getElementById("toastScs");
+  const paragraph = document.getElementById("toastScsp");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
 }

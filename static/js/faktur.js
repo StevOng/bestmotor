@@ -74,11 +74,45 @@ function exportLaporanPDF() {
     const urlBase = document.getElementById("exportBtn").dataset.url;
 
     if (!salesId || !dariTgl || !smpeTgl) {
-        alert("Mohon isi semua filter terlebih dahulu.");
+        showWarningToast("Data Kurang", "Mohon untuk mengisi semua filter terlebih dahulu")
         return;
     }
 
     const url = `${urlBase}?salesId=${salesId}&dari_tgl=${dariTgl}&smpe_tgl=${smpeTgl}`;
     console.log("Navigating to:", url);
     window.open(url, "_blank");
+}
+
+function showWarningToast(head, msg) {
+  const toast = document.getElementById("toastWarning");
+  const title = document.getElementById("toastWarnHead");
+  const paragraph = document.getElementById("toastWarnPar");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
+}
+
+function showSuccessToast(head, msg) {
+  const toast = document.getElementById("toastSuccess");
+  const title = document.getElementById("toastScs");
+  const paragraph = document.getElementById("toastScsp");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
 }

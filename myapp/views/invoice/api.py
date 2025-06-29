@@ -81,3 +81,15 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 class DetailInvoiceViewSet(viewsets.ModelViewSet):
     queryset = DetailInvoice.objects.all()
     serializer_class = DetailInvoiceSerializer
+
+    @action(detail=True, methods=['get'])
+    def get_qty_info(self, request, pk=None):
+        invoice_id = request.query_params.get("invoice_id")
+        try:
+            detail = DetailInvoice.objects.get(invoice_id=invoice_id, barang_id=pk)
+            return Response({
+                "qty_beli": detail.qty_beli,
+                "qty_retur": detail.qty_retur
+            })
+        except DetailInvoice.DoesNotExist:
+            return Response({"error": "Data tidak ditemukan"}, status=404)

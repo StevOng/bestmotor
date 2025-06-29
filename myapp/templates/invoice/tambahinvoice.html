@@ -243,7 +243,7 @@
                     {{ detail.barang_id.nama_barang|default:"" }}
                   </td>
                   <td><input type="number" value="{{ detail.harga_beli|default:0 }}" class="input_hrgbrg rounded-md border-gray-300" /></td>
-                  <td><input type="number" value="{{ detail.qty_beli|default:0 }}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
+                  <td><input type="number" value="{{ detail.qty_beli|default:0 }}" data-qty-awal="{{detail.qty_beli|default:0}}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
                   <td><input type="number" value="{{ detail.diskon_barang|default:0 }}" class="disc w-20 rounded-md border-gray-300" /></td>
                   <td class="totalDisc">{{ detail.total_diskon_barang|default:"" }}</td>
                   <td class="totalHarga">{{ detail.total_harga_barang|default:"" }}</td>

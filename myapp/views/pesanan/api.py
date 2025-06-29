@@ -135,3 +135,25 @@ class PesananViewSet(viewsets.ModelViewSet):
 class DetailPesananViewSet(viewsets.ModelViewSet):
     queryset = DetailPesanan.objects.all()
     serializer_class = DetailPesananSerializer
+
+    @action(detail=True, methods=["get"])
+    def retur_info(self, request, pk=None):
+        invoice_id = request.query_params.get("pesanan_id")
+        barang = self.get_object()
+
+        if not invoice_id:
+            return Response({"error": "pesanan_id dibutuhkan"}, status=400)
+
+        detail = DetailPesanan.objects.filter(
+            pesanan_id=invoice_id,
+            barang_id=barang.id
+        ).first()
+
+        if not detail:
+            return Response({"error": "Data tidak ditemukan"}, status=404)
+
+        data = {
+            "qty_pesan": detail.qty_pesan,
+            "qty_retur": detail.qty_retur or 0
+        }
+        return Response(data)

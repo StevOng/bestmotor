@@ -92,7 +92,7 @@ document.getElementById("tambahbrgform").addEventListener("submit", async (event
       }, 1000);
     } else {
       console.error("Gagal simpan barang:", barangData);
-      alert("Gagal menyimpan barang: " + JSON.stringify(barangData));
+      showWarningToast("Gagal", "Gagal menyimpan data")
     }
   } catch (error) {
     console.error("Terjadi kesalahan:", error);
@@ -159,7 +159,7 @@ function addTier(input) {
     const valQty = div.querySelector(".min-qty")
     const valHrg = div.querySelector(".harga-satuan")
     if (parseInt(valQty.value) <= 0 || parseFloat(valHrg.value) <= 0) {
-      alert("Kuantiti dan harga grosir tidak boleh 0 dan minus")
+      showWarningToast("Data Minus", "Harga, diskon dan kuantiti tidak boleh diisi minus")
       valQty.value = ""
       valHrg.value = ""
       return
@@ -203,4 +203,38 @@ function hapusRow(btn) {
     const div = btn.closest("div")
     div.classList.add("fade-out")
     setTimeout(() => div.remove(), 400)
+}
+
+function showWarningToast(head, msg) {
+  const toast = document.getElementById("toastWarning");
+  const title = document.getElementById("toastWarnHead");
+  const paragraph = document.getElementById("toastWarnPar");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
+}
+
+function showSuccessToast(head, msg) {
+  const toast = document.getElementById("toastSuccess");
+  const title = document.getElementById("toastScs");
+  const paragraph = document.getElementById("toastScsp");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
 }

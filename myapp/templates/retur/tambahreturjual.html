@@ -129,6 +129,7 @@
         <!-- No Faktur -->
         <div class="col-span-3">
           <input type="hidden" name="fakturId" id="fakturId" value="{{ returan.faktur_id|default:"" }}">
+          <input type="hidden" name="pesananId" id="pesananId" value="{{ returan.faktur_id.pesanan_id|default:""}}">
           <label for="no_faktur" class="block text-sm font-medium text-gray-700">No Faktur</label>
           <div class="relative mt-1">
             <input type="text" id="no_faktur" placeholder="-" value="{{ returan.faktur_id.no_faktur|default:"" }}" disabled
@@ -251,7 +252,7 @@
                   {{ re.barang_id.nama_barang|default:"" }}
                 </td>
                 <td><input type="number" value="{{ re.barang_id.harga_jual|default:0 }}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
-                <td><input type="number" value="{{ re.qty_retur|default:0 }}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
+                <td><input type="number" value="{{ re.qty_retur|default:0 }}" data-qty-awal="{{returan.faktur_id.pesanan_id.detailpesanan_set.first.qty_pesan|default:0}}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
                 <td><input type="number" value="{{ re.diskon_barang|default:0 }}" class="disc w-20 rounded-md border-gray-300" /></td>
                 <td class="totalDisc">{{ re.total_diskon_barang|default:"" }}</td>
                 <td class="total">{{ re.total_harga_barang|default:"" }}</td>

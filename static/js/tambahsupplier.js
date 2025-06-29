@@ -42,12 +42,65 @@ document.getElementById("supplierForm").addEventListener("submit", async(event) 
         console.log(result);
 
         if(response.ok){
+            showSuccessToast("Berhasil", "Berhasil menyimpan data")
             setTimeout(() => {
                 window.location.replace("/supplier/");
             }, 1000);
         }
     } catch (error){
         console.error("Error:", error);
-        alert("Terjadi kesalahan saat menyimpan data.");
+        showWarningToast("Gagal", "Gagal menyimpan data")
     }
 })
+
+function minusCheck() {
+    const allInput = document.querySelectorAll("input")
+    allInput.forEach(input => {
+        if (input.type == "number" && input.value < 0) {
+            const headWarn = "Peringatan Input Minus"
+            const parWarn = "Harga, diskon dan tanggal tidak bisa minus"
+            showWarningToast(headWarn, parWarn)
+            input.value = null
+            updateDetailBiaya()
+            return
+        }
+    })
+}
+
+function showWarningToast(head, msg) {
+  const toast = document.getElementById("toastWarning");
+  const title = document.getElementById("toastWarnHead");
+  const paragraph = document.getElementById("toastWarnPar");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
+}
+
+function showSuccessToast(head, msg) {
+  const toast = document.getElementById("toastSuccess");
+  const title = document.getElementById("toastScs");
+  const paragraph = document.getElementById("toastScsp");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
+}
+
+function callListener() {
+    minusCheck()
+}

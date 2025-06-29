@@ -68,12 +68,15 @@ function confirmPopupBtn(id) {
             })
             if (response.ok) {
                 console.log("Katalog berhasil dihapus");
+                showSuccessToast("Berhasil", "Berhasil menghapus data")
                 document.querySelector(`button[onclick="confirmPopupBtn(${id})"]`).closest("tr").remove()
             } else {
                 console.error("Gagal menghapus Katalog");
+                showWarningToast("Gagal", "Gagal menghapus data")
             }
         } catch (error) {
             console.error("Terjadi kesalahan: ", error);
+            showWarningToast("Gagal", "Terjadi kesalahan")
         }
         closeModalConfirm();
     };
@@ -106,4 +109,38 @@ async function getTipe() {
     } catch (err) {
         console.error(err);
     }
+}
+
+function showWarningToast(head, msg) {
+  const toast = document.getElementById("toastWarning");
+  const title = document.getElementById("toastWarnHead");
+  const paragraph = document.getElementById("toastWarnPar");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
+}
+
+function showSuccessToast(head, msg) {
+  const toast = document.getElementById("toastSuccess");
+  const title = document.getElementById("toastScs");
+  const paragraph = document.getElementById("toastScsp");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
 }

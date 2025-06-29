@@ -247,7 +247,7 @@ async function submitDetail() {
     const diskon = document.getElementById("discount").value
 
     if (supplier == "" || barangIds == "") {
-        alert("Supplier dan Barang harus dipilih")
+        showWarningToast("Data Kurang", "Lengkapi data seperti supplier dan barang")
         return
     }
 
@@ -282,16 +282,18 @@ async function submitDetail() {
         const result = await response.json()
         if (response.ok) {
             console.log("Invoice & Detail berhasil disimpan:", result);
+            showSuccessToast("Berhasil", "Berhasil menyimpan data")
             setTimeout(() => {
                 location.replace(`/pembelian/invoice/`);
             }, 1000);
         } else {
             console.error("Gagal:", result);
-            alert("Gagal menyimpan invoice: " + JSON.stringify(result));
+            showWarningToast("Gagal", "Gagal menyimpan data")
             console.log(`tanggal val: ${tanggal}`)
         }
     } catch (error) {
         console.error("Terjadi kesalahan: ", error)
+        showWarningToast("Gagal", "Terjadi kesalahan")
     }
 }
 
@@ -337,7 +339,7 @@ function minusCheck() {
     const allInput = document.querySelectorAll("input")
     allInput.forEach(input => {
         if (input.type == "number" && input.value < 0) {
-            alert("Nilai tidak boleh minus")
+            showWarningToast("Nilai Minus", "Isi harga, kuantiti dan diskon tidak boleh minus")
             input.value = null
             updateDetailBiaya()
             return
@@ -345,8 +347,66 @@ function minusCheck() {
     })
 }
 
+function qtyCheck() {
+    const id = document.getElementById("invoiceId")?.value
+    console.log(`id: ${id}`)
+    const row = document.querySelectorAll("#detailBrg tbody tr")
+    row.forEach(async (input) => {
+        const inputQty = input.querySelector(".input_qtybrg")
+        const rowQty = inputQty.value
+        const rowId = input.querySelector(".barangId").value
+        const dataAwal = parseInt(inputQty.dataset.qtyAwal)
+        const data = await fetch(`/api/barang/${rowId}/`)
+        const res = await data.json()
+
+        if (rowQty > res.qty_beli) {
+            const headWarn = "Peringatan Stok Kurang"
+            const parWarn = `Stok beli tidak mencukupi, sisa stok yang dibeli tinggal ${res.qty_beli}`
+            showWarningToast(headWarn, parWarn)
+            inputQty.value = res.qty_beli
+            updateDetailBiaya()
+            return
+        }
+    })
+}
+
+function showWarningToast(head, msg) {
+    const toast = document.getElementById("toastWarning");
+    const title = document.getElementById("toastWarnHead");
+    const paragraph = document.getElementById("toastWarnPar");
+
+    title.innerText = head;
+    paragraph.innerText = msg;
+
+    toast.classList.remove("hidden");
+
+    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+    toast.toastTimeout = setTimeout(() => {
+        toast.classList.add("hidden");
+    }, 2000);
+}
+
+function showSuccessToast(head, msg) {
+    const toast = document.getElementById("toastSuccess");
+    const title = document.getElementById("toastScs");
+    const paragraph = document.getElementById("toastScsp");
+
+    title.innerText = head;
+    paragraph.innerText = msg;
+
+    toast.classList.remove("hidden");
+
+    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+    toast.toastTimeout = setTimeout(() => {
+        toast.classList.add("hidden");
+    }, 2000);
+}
+
 function callListener() {
     minusCheck()
+    qtyCheck()
     updateDetailBiaya()
     tanggalTop()
 }

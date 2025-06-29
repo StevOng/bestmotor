@@ -22,6 +22,23 @@ function showWarningToast(head, msg) {
   }, 2000);
 }
 
+function showSuccessToast(head, msg) {
+  const toast = document.getElementById("toastSuccess");
+  const title = document.getElementById("toastScs");
+  const paragraph = document.getElementById("toastScsp");
+
+  title.innerText = head;
+  paragraph.innerText = msg;
+
+  toast.classList.remove("hidden");
+
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
+}
+
 let barangId = null
 let merk_nama = null
 
@@ -94,7 +111,7 @@ function openModalAkun() {
       })
       const result = await response.json()
       if (response.ok) {
-        showWarningToast("Berhasil", "Data berhasil ditambah")
+        showSuccessToast("Berhasil", "Data berhasil ditambah")
         console.log(result)
         location.reload()
       } else {
@@ -136,7 +153,7 @@ function openModal(id) {
         const result = await response.json()
         if (response.ok) {
           console.log(result)
-          showWarningToast("Berhasil", "Data berhasil ditambahkan")
+          showSuccessToast("Berhasil", "Data berhasil ditambahkan")
           location.reload()
         } else {
           console.log("error", result)
@@ -155,7 +172,7 @@ function openModal(id) {
         const result = await response.json()
         if (response.ok) {
           console.log(result)
-          showWarningToast("Berhasil", "Data berhasil ditambahkan")
+          showSuccessToast("Berhasil", "Data berhasil ditambahkan")
           location.reload()
         } else {
           console.log("error", result)
@@ -198,10 +215,9 @@ function openModalConfirm(id) {
       if (response.ok) {
         const headScs = "Berhasil"
         const parScs = "Data berhasil ditambah"
-        showWarningToast(headScs, parScs)
+        showSuccessToast(headScs, parScs)
         console.log("Bonus telah dicairkan ke Sales tanggal ", new Date().toISOString())
         console.log(result)
-        closeModalConfirm()
         location.reload()
       } else {
         console.log("Gagal mengirim tanggal cair", result)
