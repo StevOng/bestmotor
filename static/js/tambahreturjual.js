@@ -21,9 +21,6 @@ $(document).ready(function () {
         lengthChange: false, // Hilangkan "Show entries"
         ordering: false,
         scrollX: true,
-        "columnDefs": [
-            { className: "text-center", targets: [-1, -2] } // kolom 8 dan 9 di tengah
-        ],
     });
     $('.dt-search').remove();
     $('.dt-info').remove();
@@ -40,9 +37,6 @@ $(document).ready(function () {
         lengthChange: false, // Hilangkan "Show entries"
         ordering: false,
         scrollX: true,
-        "columnDefs": [
-            { className: "text-center", targets: [-1, -2] } // kolom 8 dan 9 di tengah
-        ],
     });
     $('.dt-search').remove();
     $('.dt-info').remove();
@@ -196,8 +190,8 @@ function addNewRow(re = null) {
         <td><input type="number" value="${re?.diskon_barang || ""}" id="disc-${rowCount}" class="disc w-20 rounded-md border-gray-300" /></td>
         <td class="totalDisc">${re?.total_diskon_barang || ""}</td>
         <td class="total">${re?.total_harga_barang || ""}</td>
-        <td><button type="button" onclick="submitDetail()"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-        <td><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+        <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+        <td class="text-center"><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
 
     tbody.appendChild(newRow);
@@ -320,8 +314,8 @@ function updateDetailBiaya() {
         const totalDiskon = harga * qty * (diskon / 100);
         const totalHarga = harga * qty - totalDiskon;
 
-        totalDiscEl.textContent = totalDiskon.toFixed(2);
-        totalHargaEl.textContent = totalHarga.toFixed(2);
+        totalDiscEl.textContent = "Rp" + totalDiskon.toLocaleString("en-EN") + ",-";
+        totalHargaEl.textContent = "Rp" + totalHarga.toLocaleString("en-EN") + ",-";
         bruto += totalHarga
     });
     brutoEl.value = bruto

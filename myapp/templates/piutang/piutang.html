@@ -53,11 +53,11 @@
                     <td class="no-bukti">{{ piutang.no_bukti }}</td>
                     <td>{{ piutang.tanggal }}</td>
                     <td>{{ piutang.customer_id.nama }}</td>
-                    <td>{{ piutang.total_potangan }}</td>
-                    <td>Rp {{ piutang.total_faktur|intcomma }}</td>
-                    <td>Rp {{ piutang.total_pelunasan|intcomma }}</td>
-                    <td><a href="{% url 'tambah_bayarpiutang' id=piutang.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
-                    <td><button onclick="confirmPopupBtn({{ piutang.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+                    <td>{{ piutang.total_potangan|floatformat:0|intcomma }}</td>
+                    <td>Rp {{ piutang.total_faktur|floatformat:0|intcomma }}</td>
+                    <td>Rp {{ piutang.total_pelunasan|floatformat:0|intcomma }}</td>
+                    <td class="text-center"><a href="{% url 'tambah_bayarpiutang' id=piutang.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                    <td class="text-center"><button onclick="confirmPopupBtn({{ piutang.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
                 </tr>
             {% endfor %}
         </tbody>

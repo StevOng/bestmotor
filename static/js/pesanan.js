@@ -6,9 +6,6 @@ $(document).ready(function () {
         lengthChange: false, // Hilangkan "Show entries"
         ordering: false,
         scrollX: true,
-        "columnDefs": [
-            { className: "text-center", targets: [-1, -2] }, // kolom 8 dan 9 di tengah
-        ],
     });
     $('.dt-search').remove();
     $('.dt-info').remove();
@@ -28,10 +25,7 @@ $(document).ready(function () {
         select: {
             style: 'multi',
             selector: 'td:first-child',
-        },
-        "columnDefs": [
-            { className: "text-center", targets: [-1, -2] }, // kolom 8 dan 9 di tengah
-        ],
+        }
     });
     $('.dt-search').remove();
     $('.dt-info').remove();

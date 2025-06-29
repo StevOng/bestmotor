@@ -23,9 +23,6 @@ $(document).ready(function () {
         lengthChange: false,
         ordering: false,
         scrollX: true,
-        "columnDefs": [
-            { className: "text-center", targets: [-1, -2] } // kolom 8 dan 9 di tengah
-        ],
     });
     $('.dt-search').remove();
     $('.dt-info').remove();
@@ -176,8 +173,8 @@ function updateDetailBiaya() {
         const totalDiskon = harga * qty * (diskon / 100);
         const totalHarga = harga * qty - totalDiskon;
 
-        totalDiscEl.textContent = totalDiskon.toFixed(2);
-        totalHargaEl.textContent = totalHarga.toFixed(2);
+        totalDiscEl.textContent = "Rp " + totalDiskon.toLocaleString('en-US') + ",-";
+        totalHargaEl.textContent = "Rp " + totalHarga.toLocaleString('en-US') + ",-";
         bruto += totalHarga
     });
     brutoEl.value = bruto
@@ -375,8 +372,8 @@ function addNewRow(detail = null) {
       <td><input type="number" value="${detail?.diskon_barang || 0}" class="disc w-20 rounded-md border-gray-300"/></td>
       <td class="totalDisc">${detail?.total_diskon_barang || ""}</td>
       <td class="totalHarga">${detail?.total_harga_barang || ""}</td>
-      <td><button type="button" onclick="submitDetail()" class="btn-submit"><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-      <td><button type="button" onclick="hapusRow(this)"><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+      <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit"><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
+      <td class="text-center"><button type="button" onclick="hapusRow(this)"><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
 
     tbody.appendChild(newRow);

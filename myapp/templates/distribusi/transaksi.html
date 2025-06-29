@@ -89,12 +89,12 @@
                     <td>{{ transaksi.tanggal_pembuatan|date:"d/m/y" }}</td>
                     <td>{{ transaksi.terakhir_edit|date:"d/m/y" }}</td>
                     <td>{{ transaksi.keterangan }}</td>
-                    <td>
+                    <td class="text-center">
                         <a href="{% url 'tambah_transaksi' jenis %}?id={{ transaksi.id }}">
                             <i class="fa-regular fa-eye text-2xl text-customBlue"></i>
                         </a>
                     </td>
-                    <td><button onclick="confirmPopupBtn{{ jenis|capfirst }}({{ transaksi.id }})"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
+                    <td class="text-center"><button onclick="confirmPopupBtn{{ jenis|capfirst }}({{ transaksi.id }})"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
                 </tr>
             {% endfor %}
         </tbody>

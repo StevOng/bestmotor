@@ -127,9 +127,9 @@
                     <td>{{ brg.tipe }}</td>
                     <td>{{ brg.merk }}</td>
                     {% if role == "admin" %}
-                        <td>{{ brg.harga_modal|intcomma }}</td>
+                        <td>Rp {{ brg.harga_modal|intcomma }},-</td>
                     {% endif %}
-                    <td>{{ brg.harga_jual|intcomma }}</td>
+                    <td>Rp {{ brg.harga_jual|intcomma }},-</td>
                     {% if filter == 'laku' %}
                         <td>{{ brg.qty_terjual }}</td>
                     {% endif %}
@@ -139,8 +139,8 @@
                         <td>{{ brg.stok_minimum }}</td>
                         <td>{{ brg.selisih }}</td>
                     {% elif not filter %}
-                        <td><a href="{% url 'tambah_barang' id=brg.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
-                        <td><button onclick="confirmPopupBtn({{ brg.id }})"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
+                        <td class="text-center"><a href="{% url 'tambah_barang' id=brg.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                        <td class="text-center"><button onclick="confirmPopupBtn({{ brg.id }})"><i class="fa-solid fa-trash-can text-2xl text-red-500"></i></button></td>
                     {% endif %}
                 </tr>
             {% empty %}
