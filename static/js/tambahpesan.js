@@ -239,7 +239,9 @@ async function submitDetail() {
     const diskon = document.getElementById("discount").value
 
     if (!customer || !barangIds) {
-        alert("Customer dan Barang harus dipilih")
+        const headWarn = "Peringatan Data Penting"
+        const parWarn = "Customer dan Barang harus dipilih"
+        showWarningToast(headWarn, parWarn)
         console.log(`customerId: ${customer}, barangId: ${barangIds}`)
         return
     }
@@ -274,12 +276,17 @@ async function submitDetail() {
         const result = await response.json()
         if (response.ok) {
             console.log("Pesanan & Detail berhasil disimpan:", result);
+            const headScs = "Berhasil"
+            const parScs = "Data berhasil ditambah"
+            showWarningToast(headScs, parScs)
             setTimeout(() => {
                 location.replace(`/pesanan/`);
             }, 1000);
         } else {
             console.error("Gagal:", result);
-            alert("Gagal menyimpan pesanan: " + JSON.stringify(result));
+            const headWarn = "Gagal Melakukan Aksi"
+            const parWarn = "Terjadi kesalahan dalam menyimpan pesanan"
+            showWarningToast(headWarn, parWarn)
             console.log(`Customer ID: ${customer}`)
         }
     } catch (error) {
@@ -396,7 +403,9 @@ function minusCheck() {
     const allInput = document.querySelectorAll("input")
     allInput.forEach(input => {
         if (input.type == "number" && input.value < 0) {
-            alert("Nilai tidak boleh minus")
+            const headWarn = "Peringatan Input Minus"
+            const parWarn = "Harga, diskon dan tanggal tidak bisa minus"
+            showWarningToast(headWarn, parWarn)
             input.value = null
             updateDetailBiaya()
             return
@@ -418,7 +427,9 @@ function qtyCheck() {
 
         if (!id) {
             if (rowQty > res.stok) {
-                alert(`Stok tidak mencukupi untuk pesanan, sisa stok tinggal ${res.stok}`)
+                const headWarn = "Peringatan Stok Kurang"
+                const parWarn = `Stok tidak mencukupi untuk pesanan, sisa stok tinggal ${res.stok}`
+                showWarningToast(headWarn, parWarn)
                 inputQty.value = res.stok
                 updateDetailBiaya()
                 return
@@ -427,13 +438,32 @@ function qtyCheck() {
             const balikStok = res.stok + dataAwal
             console.log(`stok: ${balikStok}`)
             if (rowQty > balikStok) {
-                alert(`Stok tidak mencukupi untuk pesanan, sisa stok tinggal ${balikStok}`)
+                const headWarn = "Peringatan Stok Kurang"
+                const parWarn = `Stok tidak mencukupi untuk pesanan, sisa stok tinggal ${res.stok}`
+                showWarningToast(headWarn, parWarn)
                 inputQty.value = balikStok
                 updateDetailBiaya()
                 return
             }
         }
     })
+}
+
+function showWarningToast(head, msg) {
+    const toast = document.getElementById("toastWarning");
+    const title = document.getElementById("toastWarnHead");
+    const paragraph = document.getElementById("toastWarnPar");
+
+    title.innerText = head;
+    paragraph.innerText = msg;
+
+    toast.classList.remove("hidden");
+
+    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+    toast.toastTimeout = setTimeout(() => {
+        toast.classList.add("hidden");
+    }, 2000);
 }
 
 function callListener() {

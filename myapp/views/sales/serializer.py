@@ -10,3 +10,8 @@ class BonusDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = BonusDetail
         fields = '__all__'
+
+class PersenBonusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PersenBonus
+        fields = '__all__'

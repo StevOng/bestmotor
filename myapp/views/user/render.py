@@ -21,7 +21,7 @@ def login_view(request):
                 if user.role == 'admin':
                     return redirect('dashboard')
                 elif user.role == 'sales':
-                    return redirect('katalog')
+                    return redirect('bonus')
             else:
                 messages.error(request, "Password salah")
                 return redirect('login')

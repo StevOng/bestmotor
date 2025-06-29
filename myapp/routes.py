@@ -12,6 +12,7 @@ from .views.piutang.urls import router as piutang_router
 from .views.retur.urls import router as retur_router
 from .views.supplier.urls import router as supplier_router
 from .views.user.urls import router as user_router
+from .views.sales.urls import router as sales_router
 
 router = DefaultRouter()
 router.registry.extend(barang_router.registry) # menggabungkan semua endpoint kedalam satu router
@@ -26,6 +27,7 @@ router.registry.extend(piutang_router.registry)
 router.registry.extend(retur_router.registry)
 router.registry.extend(supplier_router.registry)
 router.registry.extend(user_router.registry)
+router.registry.extend(sales_router.registry)
 
 urlpatterns = [
     path('', include(router.urls))

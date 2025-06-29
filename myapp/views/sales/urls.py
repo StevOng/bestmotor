@@ -5,7 +5,8 @@ from . import render
 
 router = DefaultRouter()
 router.register(r'bonus', BonusViewSet)
-router.register(r'persenbonus', BonusDetailViewSet)
+router.register(r'bonusdetail', BonusDetailViewSet)
+router.register(r'persenbonus', PersenBonusViewSet)
 
 urlpatterns = [
     path('', render.sales, name='sales'),

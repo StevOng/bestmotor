@@ -42,7 +42,9 @@ const previewDiv = document.getElementById("previewDiv")
 uploadInput.addEventListener('change', function () {
     const files = Array.from(this.files)
     if (files.length + previewDiv.children.length > 5) {
-        alert("Maksimal upload hanya 5 gambar")
+        const headWarn = "Peringatan Jumlah Upload"
+        const parWarn = "Maksimal upload hanya 5 gambar"
+        showWarningToast(headWarn, parWarn)
         uploadInput.value = ""
         previewDiv.innerHTML = ""
         placeholder.textContent = `Upload Gambar (${previewDiv.children.length}/5)`
@@ -145,7 +147,7 @@ document.getElementById("formKatalog").addEventListener("submit", async (event) 
                 alert("Total gambar melebihi batas maksimum (5).");
                 return;
             }
-            gambarPelengkap.forEach(async (gambar,index) => {
+            gambarPelengkap.forEach(async (gambar, index) => {
                 const detail = new FormData()
                 detail.append("katalog", result.id)
                 detail.append("barang", barangId.value)
@@ -167,14 +169,37 @@ document.getElementById("formKatalog").addEventListener("submit", async (event) 
                     console.log("success: ", detailRes)
                 }
             })
+            const headScs = "Berhasil"
+            const parScs = "Data berhasil ditambah"
+            showWarningToast(headScs, parScs)
             setTimeout(() => {
                 location.replace('/katalog/admin/');
             }, 1000);
         } else {
             const error = await response.json()
+            const headScs = "Berhasil"
+            const parScs = "Data berhasil ditambah"
+            showWarningToast(headScs, parScs)
             console.error("Gagal: ", error);
         }
     } catch (error) {
         console.error(error);
     }
 })
+
+function showWarningToast(head, msg) {
+    const toast = document.getElementById("toastWarning");
+    const title = document.getElementById("toastWarnHead");
+    const paragraph = document.getElementById("toastWarnPar");
+
+    title.innerText = head;
+    paragraph.innerText = msg;
+
+    toast.classList.remove("hidden");
+
+    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+
+    toast.toastTimeout = setTimeout(() => {
+        toast.classList.add("hidden");
+    }, 2000);
+}

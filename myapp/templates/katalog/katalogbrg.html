@@ -1,5 +1,5 @@
 {% extends 'base/base_katalog.html' %}
-
+{% load humanize %}
 {% load static %}
 
 {% block banner %}
@@ -46,7 +46,7 @@
           {% endif %}
           <p class="text-gray-500">{{ item.tipe }}</p>
           <p>{{ item.nama }}</p>
-          <p class="py-2 font-semibold text-orange-400">{{ item.harga_diskon }}</p>
+          <p class="py-2 font-semibold text-orange-400">{{ item.harga_diskon|intcomma }}</p>
           <button
             onclick="window.location.href='{% url 'deskripsi' item.katalog_id %}'"
             class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"

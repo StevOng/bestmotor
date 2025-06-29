@@ -49,3 +49,7 @@ class BonusViewSet(viewsets.ModelViewSet):
 class BonusDetailViewSet(viewsets.ModelViewSet):
     queryset = BonusDetail.objects.all()
     serializer_class = BonusDetailSerializer
+
+class PersenBonusViewSet(viewsets.ModelViewSet):
+    queryset = PersenBonus.objects.all()
+    serializer_class = PersenBonusSerializer
