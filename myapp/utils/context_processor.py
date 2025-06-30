@@ -1,7 +1,7 @@
 from django.db.models import F
-from .models.barang import *
-from .models.faktur import *
-from .models.invoice import *
+from ..models.barang import *
+from ..models.faktur import *
+from ..models.invoice import *
 
 def user_context(request):
     return {
