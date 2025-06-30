@@ -98,7 +98,7 @@ function openModal() {
 function closeModal() {
     const modal = document.getElementById("popupModalInv");
     modal.classList.add("hidden"); // Sembunyikan modal
-    modal.style.display = "none"; // Pastikan modal benar-benar hilang
+    modal.classList.remove("none"); // Pastikan modal benar-benar hilang
 }
 
 async function loadBarangOptions(selectId, selectedId = null, invId = null) {
@@ -213,7 +213,7 @@ function hapusRow(btn) {
 }
 
 async function pilihInvoice(invoiceId) {
-    const response = await fetch(`/api/invoice/${invoiceId}/data/`);
+    const response = await fetch(`/api/returbeli/${invoiceId}/data/`);
     const data = await response.json();
     const contentType = response.headers.get("content-type");
     console.log("Response content type:", contentType);
@@ -225,12 +225,9 @@ async function pilihInvoice(invoiceId) {
     }
 
     // Isi field invoice
-    document.getElementById("invoiceId").value = invoiceId;
+    document.getElementById("invId").value = invoiceId;
     document.getElementById("no_invoice").value = data.no_invoice;
     document.getElementById("tanggal_inv").value = data.tanggal;
-    document.getElementById("no_ref_inv").value = data.no_referensi;
-    document.getElementById("top_inv").value = data.top;
-    document.getElementById("jatuh_tempo").value = data.jatuh_tempo;
     document.getElementById("bruto").value = data.bruto;
     document.getElementById("netto").value = data.netto;
     document.getElementById("ppn").value = data.ppn;
@@ -238,7 +235,6 @@ async function pilihInvoice(invoiceId) {
     document.getElementById("discount").value = data.diskon_invoice;
 
     // Supplier
-    document.getElementById("supplierId").value = data.supplier.id;
     document.getElementById("supplier").value = `${data.supplier.perusahaan} - ${data.supplier.nama_sales}`;
 
     // Render tabel barang
@@ -266,6 +262,8 @@ async function pilihInvoice(invoiceId) {
       </tr>
     `;
     });
+
+    closeModal();
 }
 
 async function submitDetail() {

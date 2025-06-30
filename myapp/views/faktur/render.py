@@ -1,10 +1,8 @@
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from myapp.views.barang.tipe_choices import TIPE
 from ...models.faktur import Faktur
 from ...decorators import *
-from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import Table, TableStyle, Paragraph
@@ -12,6 +10,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from reportlab.lib.units import cm
 from django.conf import settings
+from datetime import datetime, timedelta, date
 from ...models.user import User
 import os
 from io import BytesIO
@@ -29,13 +28,31 @@ def faktur(request):
 
     list_faktur = Faktur.objects.prefetch_related('pesanan_id__detailpesanan_set').select_related("pesanan_id")
     
+    today = date.today()
+    for faktur in list_faktur:
+        pesanan = faktur.pesanan_id
+        if pesanan.jatuh_tempo and pesanan.jatuh_tempo.date() <= today:
+            if faktur.status == "belum_lunas":
+                faktur.status = "jatuh_tempo"
+                faktur.save(update_fields=["status"])
+    
     if per_tgl:
         list_faktur = list_faktur.filter(
             pesanan__detailpesanan__jatuh_tempo=per_tgl
         ).distinct()
 
-    if status:
-        list_faktur = Faktur.objects.prefetch_related('pesanan_id__detailpesanan_set').select_related("pesanan_id").filter(status=status)
+    if status == "belum_lunas":
+        list_faktur = Faktur.objects.prefetch_related('pesanan_id__detailpesanan_set') \
+            .select_related("pesanan_id") \
+            .filter(status__in=["belum_lunas", "jatuh_tempo"])
+    elif status:  # jika status != None dan != kosong string
+        list_faktur = Faktur.objects.prefetch_related('pesanan_id__detailpesanan_set') \
+            .select_related("pesanan_id") \
+            .filter(status=status)
+    else:  # tidak ada filter status, tampilkan semua
+        list_faktur = Faktur.objects.prefetch_related('pesanan_id__detailpesanan_set') \
+            .select_related("pesanan_id")
+    
     return render(request, 'faktur/faktur.html', {'list_faktur': list_faktur})
 
 @admin_required
@@ -74,9 +91,9 @@ def export_faktur(request, id):
     p.drawString(40, height - 155, f"{pesanan.customer_id.nama, pesanan.customer_id.no_hp}")
     p.drawString(40, height - 170, f"{pesanan.customer_id.alamat_lengkap}")
 
-    p.drawString(width - 200, height - 140, f"Tanggal Faktur : {faktur.tanggal_faktur}")
+    p.drawString(width - 200, height - 140, f"Tanggal Faktur : {faktur.tanggal_faktur.strftime('%Y-%m-%d %H:%M:%S')}")
     p.drawString(width - 200, height - 155, f"No. Faktur         : {faktur.no_faktur}")
-    p.drawString(width - 200, height - 170, f"Jatuh Tempo    : {pesanan.jatuh_tempo}")
+    p.drawString(width - 200, height - 170, f"Jatuh Tempo    : {pesanan.jatuh_tempo.strftime('%Y-%m-%d %H:%M:%S')}")
 
     styles = getSampleStyleSheet()
     styleN = styles['Normal']
@@ -150,6 +167,8 @@ def export_faktur_filter(request):
     sales_id = request.GET.get("salesId")
     dari_tgl = request.GET.get("dari_tgl")
     smpe_tgl = request.GET.get("smpe_tgl")
+    from_tgl = datetime.strptime(dari_tgl, "%Y-%m-%d")
+    to_tgl = datetime.strptime(smpe_tgl, "%Y-%m-%d") + timedelta(days=1)
 
     if not sales_id or not dari_tgl or not smpe_tgl:
         return HttpResponse("Filter tidak lengkap", status=400)
@@ -161,7 +180,8 @@ def export_faktur_filter(request):
 
     faktur_list = Faktur.objects.filter(
         pesanan_id__customer_id__user_id=sales_id,
-        tanggal_faktur__range=[dari_tgl, smpe_tgl]
+        tanggal_faktur__gte=from_tgl,
+        tanggal_faktur__lt=to_tgl
     ).select_related("pesanan_id__customer_id")
 
     # Setup PDF
@@ -203,12 +223,12 @@ def export_faktur_filter(request):
     for i, f in enumerate(faktur_list, 1):
         data.append([
             f.no_faktur,
-            str(f.tanggal_faktur),
-            f.pesanan_id.no_referensi,
+            str(f.tanggal_faktur.strftime('%Y-%m-%d')),
+            f.pesanan_id.no_referensi.upper(),
             f.pesanan_id.customer_id.nama if f.pesanan_id.customer_id else "-",
             f"Rp {f.pesanan_id.netto:,.0f},-"
         ])
-        total_faktur += f.pesanan.netto
+        total_faktur += f.pesanan_id.netto
     
     data += [[""] * 5] * 2
     

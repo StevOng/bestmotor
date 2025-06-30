@@ -123,7 +123,7 @@
         <label for="no_invoice" class="block text-sm font-medium text-gray-700">No Invoice</label>
         <div class="relative mt-1">
           <input type="hidden" name="invId" id="invId" value="{{ returan.invoice_id|default:"" }}">
-          <input type="text" id="no_invoice" placeholder="-" disabled
+          <input type="text" id="no_invoice" placeholder="-" value="{{ returan.invoice_id.no_invoice|default:"" }}" disabled
             class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue">
             <button onclick="openModal()" type="button" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none">
             <i class="fas fa-ellipsis-h"></i>
@@ -135,7 +135,7 @@
       <div>
         <label for="supplier" class="block text-sm font-medium text-gray-700">Supplier</label>
         <div class="relative mt-1">
-          <input type="text" id="supplier" placeholder="-" disabled
+          <input type="text" id="supplier" placeholder="-" value="{{ returan.invoice_id.supplier_id.perusahaan|default:"" }} - {{ returan.invoice_id.supplier_id.nama_sales|default:"" }}" disabled
             class="block w-full border border-gray-300 rounded-md py-2 px-3 bg-gray-200 text-gray-700">
         </div>
       </div>

@@ -24,7 +24,7 @@ class Faktur(models.Model):
         if not self.no_faktur:
             last_bukti = Faktur.objects.order_by("-id").first() # berdasarkan id terbesar
             if last_bukti:
-                last_num = int(last_bukti.no_bukti[3:]) # mengambil angka stelah 3 karakter BJ2
+                last_num = int(last_bukti.no_faktur[3:]) # mengambil angka stelah 3 karakter BJ2
                 self.no_faktur = f"BJ2{last_num+1:04d}" # tambah 1 ke angka 4 digit terakhir
             else:
                 self.no_faktur = "BJ20001" # kode pertama

@@ -77,11 +77,13 @@
             {% for katalog in data_katalog %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    {% for promo in katalog.promosi_barang.all %}
-                        <td>{{ promo.barang.kode_barang }}</td>
-                        <td>{{ promo.barang.nama_barang }}</td>
-                        <td>{{ promo.barang.tipe }}</td>
-                    {% endfor %}
+                    {% with katalog.promosi_barang.first as promo %}
+                        {% if promo %}
+                            <td>{{ promo.barang.kode_barang }}</td>
+                            <td>{{ promo.barang.nama_barang }}</td>
+                            <td>{{ promo.barang.tipe }}</td>
+                        {% endif %}
+                    {% endwith %}
                     <td>Rp {{ katalog.harga_tertera|intcomma }},-</td>
                     <td>Rp {{ katalog.harga_diskon|intcomma }},-</td>
                     <td class="text-center">

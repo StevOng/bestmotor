@@ -65,7 +65,8 @@ function confirmPopupBtn(id) {
                 method: "DELETE",
                 headers: {
                     'X-CSRFToken': csrfToken
-                }
+                },
+                credentials: 'same-origin'
             })
             if (response.ok) {
                 console.log("Katalog berhasil dihapus");

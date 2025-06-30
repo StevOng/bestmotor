@@ -10,7 +10,10 @@ class ReturBeliViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], url_path='data')
     def get_invoice_data(self, request, pk=None):
-        invoice = self.get_object()
+        try:
+            invoice = Invoice.objects.get(pk=pk)
+        except Invoice.DoesNotExist:
+            return Response({"error": "Invoice tidak ditemukan"}, status=404)
         detail_qs = invoice.detailinvoice_set.select_related('barang_id')
     
         barang_list = []
@@ -23,8 +26,8 @@ class ReturBeliViewSet(viewsets.ModelViewSet):
                 "harga_beli": float(d.harga_beli),
                 "qty_beli": d.qty_beli,
                 "diskon_barang": float(d.diskon_barang),
-                "total_diskon_barang": float(d.total_diskon_barang),
-                "total_harga_barang": float(d.total_harga_barang)
+                "total_diskon_barang": float(d.total_diskon_barang()),
+                "total_harga_barang": float(d.total_harga_barang())
             })
     
         return Response({
@@ -45,6 +48,30 @@ class ReturBeliViewSet(viewsets.ModelViewSet):
             },
             "barang": barang_list
         })
+        
+    # def list(self, request):
+    #     inv_id = request.GET.get('invId')
+    #     if inv_id:
+    #         try:
+    #             invoice = Invoice.objects.get(id=inv_id)
+    #         except Invoice.DoesNotExist:
+    #             return Response([], status=404)
+
+    #         detail_qs = invoice.detailinvoice_set.select_related('barang_id')
+
+    #         data = []
+    #         for d in detail_qs:
+    #             b = d.barang_id
+    #             data.append({
+    #                 "id": b.id,
+    #                 "kode_barang": b.kode_barang,
+    #                 "nama_barang": b.nama_barang,
+    #             })
+
+    #         return Response(data)
+
+    #     # default jika tidak ada invId → tetap pakai bawaan ModelViewSet
+    #     return super().list(request)
 
 class ReturBeliBarangViewSet(viewsets.ModelViewSet):
     queryset = ReturBeliBarang.objects.all()

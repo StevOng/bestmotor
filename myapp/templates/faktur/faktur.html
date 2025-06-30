@@ -113,9 +113,9 @@
                     <td>{{ faktur.no_faktur }}</td>
                     <td>{{ faktur.tanggal_faktur }}</td>
                     {% if not request.GET.status %}
-                        <td>{{ detail.pesanan_id.jatuh_tempo|default:"Cash" }}</td>
+                        <td>{{ faktur.pesanan_id.jatuh_tempo|default:"Cash" }}</td>
                     {% endif %}
-                    <td>{{ faktur.pesanan_id.no_referensi }}</td>
+                    <td style="text-transform: uppercase;">{{ faktur.pesanan_id.no_referensi }}</td>
                     <td>{{ faktur.pesanan_id.customer_id.nama }}</td>
                     <td>Rp {{ faktur.total|floatformat:0|intcomma }},-</td>
                     {% if not request.GET.status %}
