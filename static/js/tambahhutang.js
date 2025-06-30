@@ -196,50 +196,87 @@ function closeModalConfirm() {
     modal.style.display = "none"; // Pastikan modal benar-benar hilang
 }
 
-function pilihInvoice(id, nomor) {
-    const inputInvoice = document.querySelectorAll("[id^='no_invoice-']")
-    inputInvoice.forEach(invoice => {
-        const displayText = `${nomor}`
-        const row = invoice.closest('tr')
-        const noInvoice = row.querySelector("[id^='no_invoice-']")
-        noInvoice.value = displayText
-        const hiddenInput = row.querySelector(".invoiceId")
-        if (hiddenInput) {
-            hiddenInput.value = id
+async function pilihInvoice(id, nomor) {
+    const inputInvoice = document.querySelector("input[name='invoiceId']");
+    const noInvoiceInput = document.querySelector("[id^='no_invoice-']");
+    const nilaiInvoiceCell = document.querySelector("[id^='netto-']");
+
+    try {
+        const response = await fetch(`/api/invoice/${id}/data/`);
+        const data = await response.json();
+
+        if (!response.ok) {
+            showWarningToast("Gagal", data.error || "Gagal mengambil data invoice");
+            return;
         }
 
-        const nilaiInv = invoice.dataset.netto
+        // Isi input & cell
+        inputInvoice.value = id;
+        noInvoiceInput.value = data.no_invoice;
+        nilaiInvoiceCell.textContent = formatRupiah(data.netto);
 
-        invoice.addEventListener('change', async () => {
-            const invoiceId = invoice.value
+        // Optional: isi total invoice di atas
+        const totInput = document.getElementById("tot_inv");
+        if (totInput) {
+            totInput.value = formatRupiah(data.netto);
+        }
 
-            const response = await fetch(`/api/invoice/${invoiceId}/`)
-            const data = await response.json()
+        // Tambahkan baris baru jika ini baris terakhir
+        const allRows = document.querySelectorAll("#allpesanan tbody tr");
+        const lastRow = allRows[allRows.length - 1];
+        if (noInvoiceInput.closest("tr") === lastRow) {
+            addNewRow();
+        }
 
-            const nilaiInvEl = document.getElementById(nilaiInv)
-            if (nilaiInvEl && data.netto) {
-                nilaiInvEl.textContent = data.netto.toLocaleString("en-EN")
-            }
+    } catch (err) {
+        console.error("Error ambil detail invoice:", err);
+    }
 
-            // Cek apakah ini baris terakhir → baru tambahkan baris baru
-            const allRows = document.querySelectorAll("tbody tr");
-            const isLast = row === allRows[allRows.length - 1];
-            if (isLast) {
-                addNewRow();
-            }
-        })
-    })
-    closeModalInv()
+    closeModalInv();
 }
 
-function pilihSupplier(id, perusahaan) {
-    const supplierId = document.getElementById("supplierId")
-    const supplier = document.getElementById("supplier")
-    if (supplierId) {
-        supplierId.value = id
-        supplier.value = perusahaan
+async function pilihSupplier(id, perusahaan) {
+  const supplierIdInput = document.getElementById("supplierId");
+  const supplierInput = document.getElementById("supplier");
+
+  supplierIdInput.value = id;
+  supplierInput.value = perusahaan;
+
+  try {
+    const response = await fetch(`/api/invoice/by_supplier/${id}/`);
+    const invoices = await response.json();
+
+    const tbody = document.getElementById("invoiceTbody");
+    tbody.innerHTML = "";
+
+    if (invoices.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500">Tidak ada invoice</td></tr>`;
+    } else {
+      invoices.forEach(invoice => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${invoice.no_invoice}</td>
+            <td>${new Date(invoice.tanggal).toLocaleDateString()}</td>
+            <td>${invoice.no_referensi ?? '-'}</td>
+            <td>${perusahaan}</td>
+            <td>Rp ${invoice.netto.toLocaleString()}</td>
+            <td class="text-center">
+              <button onclick="pilihInvoice('${invoice.id}', '${invoice.no_invoice}')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
+                  <path d="M9.72217 11L12.7222 14L22.7222 4M16.7222 3H8.52217C6.84201 3 6.00193 3 5.3602 3.32698C4.79571 3.6146 4.33677 4.07354 4.04915 4.63803C3.72217 5.27976 3.72217 6.11984 3.72217 7.8V16.2C3.72217 17.8802 3.72217 18.7202 4.04915 19.362C4.33677 19.9265 4.79571 20.3854 5.3602 20.673C6.00193 21 6.84201 21 8.52217 21H16.9222C18.6023 21 19.4424 21 20.0841 20.673C20.6486 20.3854 21.1076 19.9265 21.3952 19.362C21.7222 18.7202 21.7222 17.8802 21.7222 16.2V12"
+                    stroke="#3D5A80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
     }
-    closeModalSupp()
+  } catch (err) {
+    console.error("Gagal mengambil invoice:", err);
+  }
+
+  closeModalSupp();
 }
 
 function totalPotongan() {

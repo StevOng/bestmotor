@@ -77,6 +77,38 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             barang.save(update_fields=["stok"])
         invoice.delete()
         return Response({"status": "deleted"})
+    
+    @action(detail=False, methods=['get'], url_path='by_supplier/(?P<supplier_id>[^/.]+)')
+    def by_supplier(self, request, supplier_id=None):
+        invoices = Invoice.objects.filter(supplier_id=supplier_id, status__in=["belum_lunas", "jatuh_tempo"])
+        data = [
+            {
+                "id": inv.id,
+                "no_invoice": inv.no_invoice,
+                "tanggal": inv.tanggal,
+                "netto": float(inv.netto),
+                "status": inv.status
+            }
+            for inv in invoices
+        ]
+        return Response(data)
+    
+    @action(detail=True, methods=['get'], url_path='data')
+    def get_invoice_data(self, request, pk=None):
+        try:
+            invoice = Invoice.objects.get(pk=pk)
+            return Response({
+                "no_invoice": invoice.no_invoice,
+                "tanggal": invoice.tanggal,
+                "no_referensi": invoice.no_referensi,
+                "netto": float(invoice.netto),
+                "bruto": float(invoice.bruto),
+                "diskon_invoice": float(invoice.diskon_invoice or 0),
+                "ongkir": float(invoice.ongkir or 0),
+                "ppn": float(invoice.ppn or 0),
+            })
+        except Invoice.DoesNotExist:
+            return Response({"error": "Invoice tidak ditemukan"}, status=404)
 
 class DetailInvoiceViewSet(viewsets.ModelViewSet):
     queryset = DetailInvoice.objects.all()

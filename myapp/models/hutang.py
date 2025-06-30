@@ -6,7 +6,7 @@ from .invoice import *
 class Hutang(models.Model):
     id = models.AutoField(primary_key=True)
     supplier_id = models.ForeignKey(Supplier, on_delete=models.PROTECT)
-    invoice = models.ManyToManyField(Invoice, through="HutangInvoice")
+    invoice = models.ManyToManyField(Invoice, through="HutangInvoice", related_name="hutang_set")
     no_bukti = models.CharField(max_length=10, unique=True)
     tanggal = models.DateTimeField(auto_now_add=True)
     total_potongan = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0'))
