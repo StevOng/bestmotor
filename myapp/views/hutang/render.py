@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Sum
-from ...decorators import admin_required
+from myapp.utils.decorators import admin_required
 from ...models.hutang import *
 from ...models.invoice import *
 

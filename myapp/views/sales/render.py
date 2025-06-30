@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Sum, Count
-from ...decorators import *
+from myapp.utils.decorators import admin_required, both_required
 from ...models.barang import *
 from ...models.user import User
 from ...models.bonus import *

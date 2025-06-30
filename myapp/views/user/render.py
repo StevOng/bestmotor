@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from myapp.utils.decorators import admin_required
 from ...models.user import User
-from ...decorators import admin_required
 from ...models.pesanan import *
 from ...models.invoice import *
 

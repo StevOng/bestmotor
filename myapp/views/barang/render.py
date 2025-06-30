@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.utils.dateparse import parse_date
 from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce #filter none or null dan ubah menjadi 0
-from ...decorators import *
+from myapp.utils.decorators import admin_required, both_required
 from ...models.barang import *
 
 @both_required

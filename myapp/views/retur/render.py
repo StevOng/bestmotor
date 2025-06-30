@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.serializers.json import DjangoJSONEncoder
-from ...decorators import *
+from myapp.utils.decorators import admin_required, both_required
 from ...models.retur import *
 from ...models.invoice import *
 from ...models.faktur import Faktur
