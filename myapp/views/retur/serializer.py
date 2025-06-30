@@ -26,26 +26,33 @@ class ReturBeliSerializer(serializers.ModelSerializer):
             for item in detail_data:
                 ReturBeliBarang.objects.create(retur=retur, **item)
 
-                barang_id = item['barang'].id if isinstance(item['barang'], Barang) else item['barang']
-                qty_retur = item['qty']
-                detail_invoice = DetailInvoice.objects.get(invoice_id=retur.invoice_id, barang_id=barang_id)
+                # Update stok
+                barang = item['barang']
+                barang.stok -= item['qty']
+                barang.save()
 
-                detail_invoice.qty_beli -= qty_retur
-                detail_invoice.qty_retur += qty_retur
-                detail_invoice.save()
         return retur
-    
+
     def update(self, instance, validated_data):
         detail_data = validated_data.pop('detail_barang')
         with transaction.atomic():
+            # Rollback stok sebelumnya
+            old_details = ReturBeliBarang.objects.filter(retur=instance)
+            for old in old_details:
+                old.barang.stok += old.qty
+                old.barang.save()
+
             for attr, value in validated_data.items():
                 setattr(instance, attr, value)
             instance.save()
 
-            ReturBeliBarang.objects.filter(retur=instance).delete()
+            old_details.delete()
 
             for item in detail_data:
                 ReturBeliBarang.objects.create(retur=instance, **item)
+                item['barang'].stok -= item['qty']
+                item['barang'].save()
+
         return instance
 
 class ReturJualBarangSerializer(serializers.ModelSerializer):
@@ -71,23 +78,59 @@ class ReturJualSerializer(serializers.ModelSerializer):
                 ReturJualBarang.objects.create(retur=retur, **item)
 
                 barang_id = item['barang'].id if isinstance(item['barang'], Barang) else item['barang']
+                barang = item['barang']
                 qty_retur = item['qty']
                 detail_pesanan = DetailPesanan.objects.get(pesanan_id=retur.faktur_id.pesanan_id, barang_id=barang_id)
 
                 detail_pesanan.qty_pesan -= qty_retur
                 detail_pesanan.qty_retur += qty_retur
                 detail_pesanan.save()
+                
+                barang.stok += qty_retur
+                barang.save()
         return retur
     
     def update(self, instance, validated_data):
         detail_data = validated_data.pop('detail_barang')
         with transaction.atomic():
+            # Rollback stok dan qty_retur sebelumnya
+            old_details = ReturJualBarang.objects.filter(retur=instance)
+            for old in old_details:
+                # Kembalikan stok & qty_retur
+                barang = old.barang
+                barang.stok -= old.qty
+                barang.save()
+
+                detail_pesanan = DetailPesanan.objects.get(
+                    pesanan_id=instance.faktur_id.pesanan_id,
+                    barang_id=barang.id
+                )
+                detail_pesanan.qty_pesan += old.qty
+                detail_pesanan.qty_retur -= old.qty
+                detail_pesanan.save()
+
+            # Update data ReturJual
             for attr, value in validated_data.items():
                 setattr(instance, attr, value)
             instance.save()
 
-            ReturJualBarang.objects.filter(retur=instance).delete()
-
+            # Hapus dan buat ulang detail retur baru
+            old_details.delete()
             for item in detail_data:
                 ReturJualBarang.objects.create(retur=instance, **item)
+
+                barang = item['barang']
+                qty_retur = item['qty']
+
+                barang.stok += qty_retur
+                barang.save()
+
+                detail_pesanan = DetailPesanan.objects.get(
+                    pesanan_id=instance.faktur_id.pesanan_id,
+                    barang_id=barang.id
+                )
+                detail_pesanan.qty_pesan -= qty_retur
+                detail_pesanan.qty_retur += qty_retur
+                detail_pesanan.save()
+
         return instance

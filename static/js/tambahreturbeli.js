@@ -9,6 +9,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatDate = `${day}/${month}/${year}`
 
     tanggal.value = formatDate
+
+    setTimeout(() => {
+        if (window.barangData && Object.keys(window.barangData).length > 0) {
+            updateDetailBiaya();
+        } else {
+            console.warn("BarangData masih kosong, perhitungan ditunda.");
+        }
+    }, 300);
 })
 
 function getCSRFToken() {
@@ -109,6 +117,15 @@ async function loadBarangOptions(selectId, selectedId = null, invId = null) {
 
     let response = await fetch(url);
     let data = await response.json();
+
+    if (!window.barangData) {
+        window.barangData = {};
+    }
+
+    data.forEach(barang => {
+        window.barangData[barang.id] = barang;  // penting
+    });
+
     let select = document.getElementById(selectId);
     select.innerHTML = "<option disabled selected>Pilih Barang</option>";
 
@@ -212,59 +229,26 @@ function hapusRow(btn) {
     setTimeout(() => row.remove(), 400)
 }
 
-async function pilihInvoice(invoiceId) {
-    const response = await fetch(`/api/returbeli/${invoiceId}/data/`);
-    const data = await response.json();
-    const contentType = response.headers.get("content-type");
-    console.log("Response content type:", contentType);
+function pilihInvoice(id, nomor, supplier) {
+    let displayTextNomor = `${nomor}`;
+    let displayTextSupplier = `${supplier}`;
 
-    if (!response.ok || !contentType.includes("application/json")) {
-        const text = await response.text();
-        console.error("Response bukan JSON:\n", text);
-        throw new Error("Bukan response JSON yang valid");
+    let hiddenInput = document.getElementById("invId");
+
+    if (hiddenInput) {
+        hiddenInput.value = id;
+
+        // Isi input tampilan
+        document.getElementById("no_invoice").value = displayTextNomor;
+        document.getElementById("supplier").value = displayTextSupplier;
+
+        // Setelah invoice diisi → ambil pilihan barang yang tersedia
+        getOptionBrg(); 
     }
-
-    // Isi field invoice
-    document.getElementById("invId").value = invoiceId;
-    document.getElementById("no_invoice").value = data.no_invoice;
-    document.getElementById("tanggal_inv").value = data.tanggal;
-    document.getElementById("bruto").value = data.bruto;
-    document.getElementById("netto").value = data.netto;
-    document.getElementById("ppn").value = data.ppn;
-    document.getElementById("ongkir").value = data.ongkir;
-    document.getElementById("discount").value = data.diskon_invoice;
-
-    // Supplier
-    document.getElementById("supplier").value = `${data.supplier.perusahaan} - ${data.supplier.nama_sales}`;
-
-    // Render tabel barang
-    const tbody = document.querySelector("#detailBrg tbody");
-    tbody.innerHTML = "";
-
-    data.barang.forEach((item, index) => {
-        tbody.innerHTML += `
-      <tr>
-        <td>${index + 1}</td>
-        <td>
-          <input type="hidden" name="barangId" class="barangId" value="${item.barang_id}">
-          <select>
-            <option selected>${item.kode_barang} - ${item.nama_barang}</option>
-          </select>
-        </td>
-        <td>${item.nama_barang}</td>
-        <td><input type="number" value="${item.harga_beli}" class="input_hrgbrg" /></td>
-        <td><input type="number" value="${item.qty_beli}" class="input_qtybrg" /></td>
-        <td><input type="number" value="${item.diskon_barang}" class="disc" /></td>
-        <td class="totalDisc">${item.total_diskon_barang}</td>
-        <td class="totalHarga">${item.total_harga_barang}</td>
-        <td><button type="button" onclick="submitDetail()" class="btn-submit">💾</button></td>
-        <td><button type="button" onclick="confirmPopupBtn(this)">🗑️</button></td>
-      </tr>
-    `;
-    });
 
     closeModal();
 }
+
 
 async function submitDetail() {
     const id = document.getElementById("hiddenId")?.value
@@ -390,8 +374,13 @@ async function qtyCheck() {
         const rowBarangId = row.querySelector(".barangId").value;
         const dataAwal = parseInt(inputQty.dataset.qtyAwal) || 0;
 
+        if (!rowBarangId || !invoiceId) {
+            console.warn("Lewati baris karena barangId atau invoiceId kosong:", rowBarangId, invoiceId);
+            continue;
+        }
+
         try {
-            const res = await fetch(`/api/detailinvoice/${rowBarangId}/get_qty_info/?invoice_id=${invoiceId}`);
+            const res = await fetch(`/api/detailinvoice/get_qty_info/?invoice_id=${invoiceId}&barang_id=${rowBarangId}`);
             if (!res.ok) throw new Error("Gagal mengambil data invoice");
             const data = await res.json();
 

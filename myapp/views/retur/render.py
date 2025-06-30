@@ -19,7 +19,7 @@ def tambah_returjual(request, id=None):
 
     if id:
         returan = ReturJual.objects.select_related("faktur_id__pesanan_id__customer_id").prefetch_related(
-            "pesanan_id__detailpesanan_set__barang_id"
+            "faktur_id__pesanan_id__detailpesanan_set__barang_id"
         ).get(id=id)
 
         pesanan = returan.faktur_id.pesanan_id
@@ -47,7 +47,6 @@ def tambah_returjual(request, id=None):
                 }
                 for tier in barang.tierharga_set.all().order_by('min_qty_grosir')
             ]
-
         }
         for barang in barang_qs
     }
