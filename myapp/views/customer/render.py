@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from ...decorators import both_required
+from myapp.utils.decorators import both_required
 from ...models.customer import Customer
 
 @both_required

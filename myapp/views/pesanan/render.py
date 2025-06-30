@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.core.serializers.json import DjangoJSONEncoder
-from ...decorators import both_required
+from myapp.utils.decorators import both_required
 from ...models.pesanan import *
 from ...models.customer import Customer
 import json

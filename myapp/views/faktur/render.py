@@ -1,8 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
+from myapp.utils.decorators import admin_required, both_required
 from myapp.views.barang.tipe_choices import TIPE
-from ...models.faktur import Faktur
-from ...decorators import *
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import Table, TableStyle, Paragraph
@@ -12,6 +11,7 @@ from reportlab.lib.units import cm
 from django.conf import settings
 from datetime import datetime, timedelta, date
 from ...models.user import User
+from ...models.faktur import Faktur
 import os
 from io import BytesIO
 

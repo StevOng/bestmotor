@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.core.serializers.json import DjangoJSONEncoder
 from collections import defaultdict
 from decimal import Decimal
-from myapp.utils.log_utils import log_user_action
-from ...decorators import *
+from myapp.utils.decorators import admin_required
+from myapp.utils.activity_logs import activity_logs
 from ...models.katalog import *
 from ...models.barang import *
 import json
@@ -26,7 +26,6 @@ def get_label_tipe(input):
     return input
 
 def katalog(request):
-    log_user_action(request, action="Lihat Katalog", detail="User menjelajahi katalog")
     katalog_list = Katalog.objects.prefetch_related("promosi_barang__barang").filter(is_katalog_utama=True)
 
     tipe_katalog = defaultdict(list)

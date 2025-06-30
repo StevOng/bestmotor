@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from ...decorators import admin_required
+from myapp.utils.decorators import admin_required
 from ...models.distribusi import *
 
 @admin_required
