@@ -63,27 +63,33 @@ def retur_beli(request):
 @admin_required
 def tambah_returbeli(request, id=None):
     invoice = Invoice.objects.select_related("supplier_id").filter(status__in=['belum_lunas','jatuh_tempo'])
+    print(invoice)
     returan = None
     barang_data_dict = {}
 
     if id:
-        returan = ReturBeli.objects.select_related("invoice_id__supplier_id").prefetch_related(
+        returan = ReturBeli.objects.select_related(
+            "invoice_id__supplier_id"  # untuk ambil supplier langsung
+        ).prefetch_related(
             "invoice_id__detailinvoice_set__barang_id"
         ).get(id=id)
-        
         pembelian = returan.invoice_id
+        supplier = pembelian.supplier_id  # karena field di Invoice adalah supplier_id
         barang_qs = Barang.objects.filter(
             detailinvoice__invoice_id=pembelian
         ).distinct()
     else:
         invoice_id = request.POST.get("invId")
         if invoice_id:
-            fakturObj = get_object_or_404(Faktur, id=invoice_id)
-            pembelian = fakturObj.pesanan_id
+            invoiceObj = Invoice.objects.select_related("supplier_id").get(id=invoice_id)
+            pembelian = invoiceObj
+            supplier = pembelian.supplier_id
             barang_qs = Barang.objects.filter(
                 detailinvoice__invoice_id=pembelian
             ).distinct()
         else:
+            pembelian = None
+            supplier = None
             barang_qs = Barang.objects.none()
 
     barang_data_dict = {
@@ -100,6 +106,15 @@ def tambah_returbeli(request, id=None):
         }
         for barang in barang_qs
     }
+    detail_barang_qs = DetailInvoice.objects.filter(invoice_id=pembelian).select_related('barang_id')
 
+    print(returan)
     barang_data_json = json.dumps(barang_data_dict, cls=DjangoJSONEncoder)
-    return render(request, 'retur/tambahreturbeli.html', {'returan': returan, 'invoice': invoice, 'barang_data_json': barang_data_json})
+    return render(request, 'retur/tambahreturbeli.html', {
+        'returan': returan, 
+        'invoice': invoice, 
+        'barang_data_json': barang_data_json,
+        "supplier": supplier,
+        "pembelian": pembelian,
+        "detail_barang_lis": detail_barang_qs
+    })

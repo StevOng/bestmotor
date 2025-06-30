@@ -158,7 +158,7 @@
         </div>
         {% if role == "admin" and list == 'merek' %}
             <div class="inline-flex gap-2">
-                <button onclick="openModal()" class="p-2 justify-end border-2 rounded-lg border-gray-200">
+                <button onclick="getMerk()" class="p-2 justify-end border-2 rounded-lg border-gray-200">
                     <div class="flex flex-row justify-center items-center">
                         <p class="hidden lg:block p-1 lg:text-gray-400">Tambah Bonus Merek</p>
                         <i class="fas fa-plus p-1 text-customBlue"></i>
@@ -256,7 +256,7 @@
                         <td>{{ forloop.counter }}</td>
                         <td>{{ persen.merk_nama }}</td>
                         <td>{{ persen.persenan }}</td>
-                        <td class="text-center"><button class="edit" onclick="openModal({{ persen.id }})"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></button></td>
+                        <td class="text-center"><button class="edit" onclick="getMerk({{ persen.id }})"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></button></td>
                     </tr>
                 {% endfor %}
             {% endif %}

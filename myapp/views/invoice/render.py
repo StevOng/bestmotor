@@ -24,6 +24,6 @@ def tambah_invoice(request, id=None):
 
     if id:
         invoice = Invoice.objects.get(id=id)
-        detailinvoice = invoice.detailinvoice_set.first()
+        detailinvoice = invoice.detailinvoice_set.all()
 
     return render(request, 'invoice/tambahinvoice.html', {'suppliers': supplier, 'detailinvoice': detailinvoice })

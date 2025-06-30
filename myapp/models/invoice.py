@@ -10,7 +10,7 @@ class Invoice(models.Model):
     barang = models.ManyToManyField(Barang, through='DetailInvoice')
     no_invoice = models.CharField(max_length=50, unique=True)
     no_referensi = models.CharField(max_length=50, blank=True)
-    tanggal = models.DateTimeField(auto_now_add=True)
+    tanggal = models.DateTimeField(null=True, blank=True)
     top = models.IntegerField()
     jatuh_tempo = models.DateTimeField(blank=True, null=True)
     bruto = models.DecimalField(max_digits=10, decimal_places=0, default=Decimal('0'))
@@ -25,11 +25,11 @@ class Invoice(models.Model):
         ('belum_lunas','Belum Lunas'),
         ('jatuh_tempo','Jatuh Tempo')
     ]
-    status = models.CharField(max_length=30, choices=CHOICES, default='belum lunas')
+    status = models.CharField(max_length=30, choices=CHOICES, default='belum_lunas')
     terakhir_edit = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.no_invoice
+        return f"{self.id}"
     
     def hitung_total_bruto(self):
         total = Decimal(0)
@@ -81,6 +81,5 @@ class DetailInvoice(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        barang = Barang.objects.get(id=self.barang_id)
-        if barang:
-            barang.update_modal(self.qty_beli, self.harga_beli, self.diskon_barang if self.diskon_barang else 0)
+        if self.barang_id:
+            self.barang_id.update_modal(self.qty_beli, self.harga_beli, self.diskon_barang if self.diskon_barang else 0)

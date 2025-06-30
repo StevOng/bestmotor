@@ -45,11 +45,9 @@
 2025-06-28 20:13:21,109 INFO [userlog] Guest Guest - GET / - Lihat Katalog - User menjelajahi katalog
 2025-06-28 20:14:03,048 INFO [userlog] Guest Guest - GET / - Lihat Katalog - User menjelajahi katalog
 2025-06-28 20:15:43,585 INFO [userlog] Guest Guest - GET / - Lihat Katalog - User menjelajahi katalog
-<<<<<<< HEAD
 2025-06-28 22:09:39,836 INFO [userlog] admin admin - GET / - Lihat Katalog - User menjelajahi katalog
 2025-06-28 22:09:58,290 INFO [userlog] admin admin - GET / - Lihat Katalog - User menjelajahi katalog
 2025-06-28 23:52:55,792 INFO [userlog] sales andi - GET / - Lihat Katalog - User menjelajahi katalog
-=======
 2025-06-28 23:10:56,394 INFO [userlog] admin admin - GET / - Lihat Katalog - User menjelajahi katalog
 2025-06-28 23:14:39,852 INFO [userlog] admin admin - GET / - Lihat Katalog - User menjelajahi katalog
 2025-06-28 23:19:15,981 INFO [userlog] admin admin - GET / - Lihat Katalog - User menjelajahi katalog
@@ -72,10 +70,11 @@
 2025-06-29 00:02:45,447 INFO [userlog] admin admin - GET / - Lihat Katalog - User menjelajahi katalog
 2025-06-29 00:03:15,183 INFO [userlog] admin admin - GET / - Lihat Katalog - User menjelajahi katalog
 2025-06-29 00:03:34,666 INFO [userlog] admin admin - GET / - Lihat Katalog - User menjelajahi katalog
->>>>>>> 78684e12269b2b03cd67e36651c9f4462b470105
 2025-06-29 15:43:14,609 INFO [userlog] sales tes - GET / - Lihat Katalog - User menjelajahi katalog
 2025-06-29 16:04:20,853 INFO [userlog] sales tes - GET / - Lihat Katalog - User menjelajahi katalog
 2025-06-29 16:06:52,140 INFO [userlog] admin admin - GET / - Lihat Katalog - User menjelajahi katalog
 2025-06-29 16:11:45,685 INFO [userlog] admin admin - GET / - Lihat Katalog - User menjelajahi katalog
 2025-06-29 16:21:43,782 INFO [userlog] admin admin - GET / - Lihat Katalog - User menjelajahi katalog
 2025-06-30 01:31:07,948 INFO [userlog] admin admin - GET / - Lihat Katalog - User menjelajahi katalog
+2025-06-29 22:04:32,065 INFO [userlog] admin admin - GET / - Lihat Katalog - User menjelajahi katalog
+2025-06-29 22:55:27,155 INFO [userlog] admin admin - GET / - Lihat Katalog - User menjelajahi katalog

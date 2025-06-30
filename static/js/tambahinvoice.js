@@ -46,7 +46,6 @@ function tanggalTop() {
     let today = new Date()
     let jatuhTempo = new Date(today);
     jatuhTempo.setDate(today.getDate() + top);
-
     const yjto = jatuhTempo.getFullYear();
     const mjto = String(jatuhTempo.getMonth() + 1).padStart(2, "0");
     const djto = String(jatuhTempo.getDate()).padStart(2, "0");
@@ -145,7 +144,7 @@ async function getOptionBrg() {
         select.addEventListener("change", async () => {
             const barangId = select.value
             const row = select.closest('tr')
-            const hiddenInput = row.querySelector(".barangId")
+            let hiddenInput = row.querySelector(".barangId")
             if (hiddenInput) {
                 hiddenInput.value = barangId
             }
@@ -245,8 +244,11 @@ async function submitDetail() {
     const ppn = document.getElementById("ppn").value
     const ongkir = document.getElementById("ongkir").value
     const diskon = document.getElementById("discount").value
+    console.log("Nilai supplierId sebelum submit:", supplier)
 
-    if (supplier == "" || barangIds == "") {
+    if (!supplier || barangIds.length == 0) {
+        console.log("supplier:",supplier,"barang:", barangIds)
+        console.log(id)
         showWarningToast("Data Kurang", "Lengkapi data seperti supplier dan barang")
         return
     }
@@ -290,6 +292,7 @@ async function submitDetail() {
             console.error("Gagal:", result);
             showWarningToast("Gagal", "Gagal menyimpan data")
             console.log(`tanggal val: ${tanggal}`)
+            console.log("supplierID: ", supplier)
         }
     } catch (error) {
         console.error("Terjadi kesalahan: ", error)
@@ -394,7 +397,8 @@ function showSuccessToast(head, msg) {
 
     title.innerText = head;
     paragraph.innerText = msg;
-
+    toast.classList.remove("z-50")
+    toast.classList.add("z-60")
     toast.classList.remove("hidden");
 
     if (toast.toastTimeout) clearTimeout(toast.toastTimeout);

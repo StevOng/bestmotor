@@ -1,4 +1,6 @@
 from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from ...models.retur import *
 from .serializer import *
 
@@ -6,15 +8,43 @@ class ReturBeliViewSet(viewsets.ModelViewSet):
     queryset = ReturBeli.objects.all()
     serializer_class = ReturBeliSerializer
 
-    def get_queryset(self):
-        invoice_id = self.request.query_params.get('invId')
-        if invoice_id:
-            try:
-                invoice = Invoice.objects.select_related("supplier_id").get(id=invoice_id)
-                return Barang.objects.filter(detailinvoice__invoice_id=invoice.id).distinct()
-            except Invoice.DoesNotExist:
-                return Barang.objects.none()
-        return super().get_queryset()
+    @action(detail=True, methods=['get'], url_path='data')
+    def get_invoice_data(self, request, pk=None):
+        invoice = self.get_object()
+        detail_qs = invoice.detailinvoice_set.select_related('barang_id')
+    
+        barang_list = []
+        for d in detail_qs:
+            b = d.barang_id
+            barang_list.append({
+                "barang_id": b.id,
+                "kode_barang": b.kode_barang,
+                "nama_barang": b.nama_barang,
+                "harga_beli": float(d.harga_beli),
+                "qty_beli": d.qty_beli,
+                "diskon_barang": float(d.diskon_barang),
+                "total_diskon_barang": float(d.total_diskon_barang),
+                "total_harga_barang": float(d.total_harga_barang)
+            })
+    
+        return Response({
+            "no_invoice": invoice.no_invoice,
+            "tanggal": invoice.tanggal,
+            "no_referensi": invoice.no_referensi,
+            "top": invoice.top,
+            "jatuh_tempo": invoice.jatuh_tempo,
+            "bruto": invoice.bruto,
+            "netto": invoice.netto,
+            "ppn": invoice.ppn,
+            "ongkir": invoice.ongkir,
+            "diskon_invoice": invoice.diskon_invoice,
+            "supplier": {
+                "id": invoice.supplier_id.id,
+                "perusahaan": invoice.supplier_id.perusahaan,
+                "nama_sales": invoice.supplier_id.nama_sales,
+            },
+            "barang": barang_list
+        })
 
 class ReturBeliBarangViewSet(viewsets.ModelViewSet):
     queryset = ReturBeliBarang.objects.all()

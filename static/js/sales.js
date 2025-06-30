@@ -236,31 +236,57 @@ function closeModalConfirm() {
   modal.classList.add("hidden");
 }
 
-function setSelectedMerk(selectElement) {
-  const selectedValue = selectElement.value;
-  fetch('/api/barang/')
-    .then(res => res.json())
-    .then(data => {
-      const barang = data.find(item => item.merk.toLowerCase() === selectedValue.toLowerCase());
-      if (barang) {
-        barangId = barang.id;
-        merk_nama = barang.merk;
-        console.log("Dipilih:", barangId, merk_nama);
-      }
-    });
+async function getMerk(id) {
+  let modal = document.getElementById("popupModal");
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+
+  const select = document.getElementById("merk");
+  const input = document.getElementById("bonus");
+
+  select.innerHTML = '<option value="" disabled>Masukkan merek barang</option>';
+  select.disabled = false;
+  input.value = "";
+
+  try {
+    if (id) {
+      const respons = await fetch(`/api/persenbonus/${id}/`);
+      const data = await respons.json()
+
+      const option = document.createElement("option");
+      option.value = data.merk_nama;
+      option.textContent = data.merk_nama;
+      option.selected = true;
+      select.appendChild(option);
+      select.disabled = true;
+
+      input.value = data.persenan;
+
+    } else {
+      const response = await fetch('/api/barang/merk_choices/');
+      const choices = await response.json();
+
+      const selectedMerk = select.dataset.selectedMerk;
+      const placeholder = select.querySelector('option[value=""]');
+      choices.forEach(choice => {
+        let option = document.createElement("option");
+        option.value = choice.value;
+        option.textContent = choice.label;
+        if (choice.value === selectedMerk) {
+          option.selected = true;
+          if (placeholder) placeholder.removeAttribute('selected');
+        }
+        select.appendChild(option);
+      });
+
+      select.disabled = false;
+    }
+  } catch (err) {
+    console.error("Gagal ambil data merk atau bonus:", err);
+  }
 }
 
 function validate() {
-  const button = document.querySelectorAll("tbody tr td button.edit")
-  let selectMerk = document.getElementById("merk")
-  button.forEach(btn => {
-    btn.addEventListener("click", () => {
-      if (btn.classList.contains("edit")) {
-        selectMerk.disabled = true
-      }
-    })
-  })
-
   const tanggal = document.querySelectorAll(".tanggal-cair")
   tanggal.forEach(tgl => {
     if (tgl.textContent.trim() !== "") {

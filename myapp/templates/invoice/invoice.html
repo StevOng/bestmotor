@@ -1,6 +1,7 @@
 {% extends 'base/base.html' %}
 {% load static %}
 {% load humanize %}
+{% load custom_filters %}
 
 {% block csrf %}
   <meta name="csrf-token" content="{{ csrf_token }}">
@@ -84,7 +85,7 @@
                     <td>{{ invoice.supplier_id.perusahaan }}</td>
                     <td>{{ invoice.netto|intcomma }}</td>
                     {% if not request.GET.status %}
-                        <td>{{ invoice.status }}</td>
+                        <td>{{ invoice.status|replace_underscore }}</td>
                         <td>{{ invoice.terakhir_edit }}</td>
                         <td class="text-center"><a href="{% url 'tambah_invoice' id=invoice.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
                         <td class="text-center"><button onclick="confirmPopupBtn({{ invoice.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
