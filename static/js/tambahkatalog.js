@@ -216,7 +216,6 @@ function showSuccessToast(head, msg) {
 
     title.innerText = head;
     paragraph.innerText = msg;
-
     toast.classList.remove("hidden");
 
     if (toast.toastTimeout) clearTimeout(toast.toastTimeout);

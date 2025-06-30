@@ -34,6 +34,42 @@ $(document).ready(function () {
     });
 });
 
+function checkBoxPending() {
+    const trData = document.querySelectorAll("tbody tr")
+    const checkAll = document.getElementById("checkedAll")
+    const allCheckBox = document.querySelectorAll("[id^='checkbox-']")
+    const buttonStats = document.getElementById("changeAll")
+
+    // Jika elemen penting tidak ditemukan, hentikan eksekusi
+    if (!checkAll || !buttonStats) return;
+
+    if (trData.length === 0) {
+        checkAll.classList.remove("cursor-pointer")
+        checkAll.disabled = true
+    }
+
+    function updateButtonState() {
+        const anyChecked = Array.from(allCheckBox).some(cb => cb.checked);
+        buttonStats.disabled = !anyChecked;
+        console.log("Tombol aktif?", !buttonStats.disabled);
+    }
+
+    checkAll.addEventListener("change", () => {
+        buttonStats.disabled = !checkAll.checked;
+        allCheckBox.forEach(checkbox => {
+            checkbox.checked = checkAll.checked;
+        });
+    });
+
+    allCheckBox.forEach(checkbox => {
+        checkbox.addEventListener("change", () => {
+            const allChecked = Array.from(allCheckBox).every(cb => cb.checked);
+            checkAll.checked = allChecked;
+            updateButtonState();
+        });
+    });
+}
+
 function checkBox() {
     const trData = document.querySelectorAll("tbody tr")
     const checkAll = document.getElementById("checkbox-")
@@ -70,7 +106,10 @@ function checkBox() {
     });
 }
 
-document.addEventListener("DOMContentLoaded", checkBox);
+document.addEventListener("DOMContentLoaded", () => {
+    checkBox()
+    checkBoxPending()
+});
 
 function getCSRFToken() {
     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');

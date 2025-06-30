@@ -212,17 +212,60 @@ function hapusRow(btn) {
     setTimeout(() => row.remove(), 400)
 }
 
-function pilihInv(id, nomor, supplier) {
-    let displayTextNomor = `${nomor}`
-    let displayTextSupplier = `${supplier}`
+async function pilihInvoice(invoiceId) {
+    const response = await fetch(`/api/invoice/${invoiceId}/data/`);
+    const data = await response.json();
+    const contentType = response.headers.get("content-type");
+    console.log("Response content type:", contentType);
 
-    let hiddenInput = document.getElementById("invId")
-    if (hiddenInput) {
-        hiddenInput.value = id
-        document.getElementById("no_invoice").value = displayTextNomor
-        document.getElementById("supplier").value = displayTextSupplier
+    if (!response.ok || !contentType.includes("application/json")) {
+        const text = await response.text();
+        console.error("Response bukan JSON:\n", text);
+        throw new Error("Bukan response JSON yang valid");
     }
-    closeModalConfirm()
+
+    // Isi field invoice
+    document.getElementById("invoiceId").value = invoiceId;
+    document.getElementById("no_invoice").value = data.no_invoice;
+    document.getElementById("tanggal_inv").value = data.tanggal;
+    document.getElementById("no_ref_inv").value = data.no_referensi;
+    document.getElementById("top_inv").value = data.top;
+    document.getElementById("jatuh_tempo").value = data.jatuh_tempo;
+    document.getElementById("bruto").value = data.bruto;
+    document.getElementById("netto").value = data.netto;
+    document.getElementById("ppn").value = data.ppn;
+    document.getElementById("ongkir").value = data.ongkir;
+    document.getElementById("discount").value = data.diskon_invoice;
+
+    // Supplier
+    document.getElementById("supplierId").value = data.supplier.id;
+    document.getElementById("supplier").value = `${data.supplier.perusahaan} - ${data.supplier.nama_sales}`;
+
+    // Render tabel barang
+    const tbody = document.querySelector("#detailBrg tbody");
+    tbody.innerHTML = "";
+
+    data.barang.forEach((item, index) => {
+        tbody.innerHTML += `
+      <tr>
+        <td>${index + 1}</td>
+        <td>
+          <input type="hidden" name="barangId" class="barangId" value="${item.barang_id}">
+          <select>
+            <option selected>${item.kode_barang} - ${item.nama_barang}</option>
+          </select>
+        </td>
+        <td>${item.nama_barang}</td>
+        <td><input type="number" value="${item.harga_beli}" class="input_hrgbrg" /></td>
+        <td><input type="number" value="${item.qty_beli}" class="input_qtybrg" /></td>
+        <td><input type="number" value="${item.diskon_barang}" class="disc" /></td>
+        <td class="totalDisc">${item.total_diskon_barang}</td>
+        <td class="totalHarga">${item.total_harga_barang}</td>
+        <td><button type="button" onclick="submitDetail()" class="btn-submit">💾</button></td>
+        <td><button type="button" onclick="confirmPopupBtn(this)">🗑️</button></td>
+      </tr>
+    `;
+    });
 }
 
 async function submitDetail() {
@@ -364,7 +407,7 @@ async function qtyCheck() {
 
             if (rowQty > maxRetur) {
                 showWarningToast("Peringatan Jumlah Retur",
-                  `Jumlah retur melebihi pembelian. Maksimum retur yang diizinkan: ${maxRetur}`
+                    `Jumlah retur melebihi pembelian. Maksimum retur yang diizinkan: ${maxRetur}`
                 );
                 inputQty.value = maxRetur;
                 updateDetailBiaya();
@@ -377,37 +420,37 @@ async function qtyCheck() {
 }
 
 function showWarningToast(head, msg) {
-  const toast = document.getElementById("toastWarning");
-  const title = document.getElementById("toastWarnHead");
-  const paragraph = document.getElementById("toastWarnPar");
+    const toast = document.getElementById("toastWarning");
+    const title = document.getElementById("toastWarnHead");
+    const paragraph = document.getElementById("toastWarnPar");
 
-  title.innerText = head;
-  paragraph.innerText = msg;
+    title.innerText = head;
+    paragraph.innerText = msg;
 
-  toast.classList.remove("hidden");
+    toast.classList.remove("hidden");
 
-  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
 
-  toast.toastTimeout = setTimeout(() => {
-    toast.classList.add("hidden");
-  }, 2000);
+    toast.toastTimeout = setTimeout(() => {
+        toast.classList.add("hidden");
+    }, 2000);
 }
 
 function showSuccessToast(head, msg) {
-  const toast = document.getElementById("toastSuccess");
-  const title = document.getElementById("toastScs");
-  const paragraph = document.getElementById("toastScsp");
+    const toast = document.getElementById("toastSuccess");
+    const title = document.getElementById("toastScs");
+    const paragraph = document.getElementById("toastScsp");
 
-  title.innerText = head;
-  paragraph.innerText = msg;
+    title.innerText = head;
+    paragraph.innerText = msg;
 
-  toast.classList.remove("hidden");
+    toast.classList.remove("hidden");
 
-  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
 
-  toast.toastTimeout = setTimeout(() => {
-    toast.classList.add("hidden");
-  }, 2000);
+    toast.toastTimeout = setTimeout(() => {
+        toast.classList.add("hidden");
+    }, 2000);
 }
 
 function callListener() {

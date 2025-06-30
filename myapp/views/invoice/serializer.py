@@ -31,7 +31,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
 
                 DetailInvoice.objects.create(
                     invoice_id=invoice,
-                    barang=barang_obj,
+                    barang_id=barang_obj,
                     qty_beli=dibeli,
                     harga_beli=harga_beli,
                     diskon_barang=diskon_barang
@@ -64,7 +64,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
                 barang = Barang.objects.get(id=barang_id)
     
                 qty_beli = item['qty_beli']
-                barang.stok -= qty_beli
+                barang.stok += qty_beli
                 barang.save(update_fields=["stok"])
                 DetailInvoice.objects.create(invoice_id=instance, **item)
             instance.hitung_total_bruto()

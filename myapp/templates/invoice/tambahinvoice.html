@@ -115,30 +115,30 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <!-- No Invoice -->
           <div>
-            <input type="hidden" name="invoiceId" id="invoiceId" value="{{ detailinvoice.invoice_id|default:"" }}">
+            <input type="hidden" name="invoiceId" id="invoiceId" value="{{ detailinvoice.first.invoice_id.id|default:"" }}">
             <label for="no_invoice" class="block text-sm font-medium text-gray-700">No Invoice</label>
-            <input type="text" id="no_invoice" placeholder="INV/" value="{{ detailinvoice.invoice_id.no_invoice|default:"" }}"
+            <input type="text" id="no_invoice" placeholder="INV/" value="{{ detailinvoice.first.invoice_id.no_invoice|default:"" }}"
               style="text-transform: uppercase;"
               class="no_invoice mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue">
           </div>
           <!-- Tanggal -->
           <div>
             <label for="tanggal_inv" class="block text-sm font-medium text-gray-700">Tanggal</label>
-            <input type="date" id="tanggal_inv" value="{{ detailinvoice.invoice_id.tanggal|default:""}}"
+            <input type="date" id="tanggal_inv" value="{{ detailinvoice.first.invoice_id.tanggal|default:""}}"
               class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-gray-700">
           </div>
           <!-- No Referensi -->
           <div>
             <label for="no_ref_inv" class="block text-sm font-medium text-gray-700">No Referensi</label>
-            <input type="text" id="no_ref_inv" placeholder="-" value="{{ detailinvoice.invoice_id.no_referensi|default:"" }}"
+            <input type="text" id="no_ref_inv" placeholder="-" value="{{ detailinvoice.first.invoice_id.no_referensi|default:"" }}"
               class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-gray-700" style="text-transform: uppercase;">
           </div>
           <!-- Supplier -->
           <div class="md:col-span-2">
             <label for="supplier" class="block text-sm font-medium text-gray-700">Supplier</label>
             <div class="relative mt-1">
-              <input type="hidden" name="supplierId" id="supplierId" value="{{ detailinvoice.invoice_id.hutang.supplier_id|default:"" }}">
-              <input type="text" id="supplier" placeholder="Tambah/Pilih Supplier" value="{{ detailinvoice.invoice_id.supplier_id.perusahaan|default:"" }} - {{ detailinvoice.invoice_id.supplier_id.nama_sales|default:"" }}" disabled
+              <input type="hidden" name="supplier_id" id="supplierId" value="{{ detailinvoice.first.invoice_id.supplier_id.id|default:"" }}">
+              <input type="text" id="supplier" placeholder="Tambah/Pilih Supplier" value="{{ detailinvoice.first.invoice_id.supplier_id.perusahaan|default:"" }} - {{ detailinvoice.first.invoice_id.supplier_id.nama_sales|default:"" }}" disabled
                 class="block w-full border border-gray-300 rounded-md py-2 px-3 text-gray-700">
               <button type="button" onclick="openModal()"
                 class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none">
@@ -150,7 +150,7 @@
           <div>
             <label for="top_inv" class="block text-sm font-medium text-gray-700">Term Of Payment (TOP)</label>
             <div class="flex items-center">
-              <input type="number" id="top_inv" value="{{ detailinvoice.invoice_id.top|default:0 }}"
+              <input type="number" id="top_inv" value="{{ detailinvoice.first.invoice_id.top|default:0 }}"
                 class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue">
               <span class="ml-2">Hari</span>
             </div>
@@ -158,7 +158,7 @@
           <!-- Tanggal Jatuh Tempo -->
           <div>
             <label for="jatuh_tempo" class="block text-sm font-medium text-gray-700">Tanggal Jatuh Tempo</label>
-            <input type="text" id="jatuh_tempo" value="{{ detailinvoice.invoice_id.jatuh_tempo|default:"dd/mm/yyyy" }}" disabled
+            <input type="text" id="jatuh_tempo" value="{{ detailinvoice.first.invoice_id.jatuh_tempo|default:"dd/mm/yyyy" }}" disabled
               class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-gray-400">
           </div>
         </div>
@@ -170,14 +170,14 @@
           <!-- Bruto -->
           <div>
             <label for="bruto" class="block text-sm font-medium text-gray-700">Bruto</label>
-            <input type="number" id="bruto" placeholder="0,00" value="{{ detailinvoice.invoice_id.bruto|default:0 }}" disabled
+            <input type="number" id="bruto" placeholder="0,00" value="{{ detailinvoice.first.invoice_id.bruto|default:0 }}" disabled
               class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-700">
           </div>
           <!-- PPN -->
           <div>
               <label for="ppn" class="block text-sm font-medium text-gray-700">PPN</label>
               <div class="flex items-center">
-                <input type="number" id="ppn" placeholder="0" value="{{ detailinvoice.invoice_id.ppn|default:0 }}"
+                <input type="number" id="ppn" placeholder="0" value="{{ detailinvoice.first.invoice_id.ppn|default:0 }}"
                   class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-right focus:outline-none focus:ring-customBlue focus:border-customBlue">
                 <span class="ml-2">%</span>
               </div>
@@ -186,27 +186,27 @@
           <!-- Ongkir -->
           <div>
             <label for="ongkir" class="block text-sm font-medium text-gray-700">Ongkos Kirim <span class="text-gray-400">• Mata uang Rupiah (IDR)</span></label>
-            <input type="number" id="ongkir" placeholder="0,00" value="{{ detailinvoice.invoice_id.ongkir|default:0 }}"
+            <input type="number" id="ongkir" placeholder="0,00" value="{{ detailinvoice.first.invoice_id.ongkir|default:0 }}"
               class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-right focus:outline-none focus:ring-customBlue focus:border-customBlue">
           </div>
           <!-- Discount -->
           <div>
               <label for="discount" class="block text-sm font-medium text-gray-700">Discount</label>
-              <input type="number" id="discount" placeholder="0,00" value="{{ detailinvoice.invoice_id.diskon_invoice|default:0 }}"
+              <input type="number" id="discount" placeholder="0,00" value="{{ detailinvoice.first.invoice_id.diskon_invoice|default:0 }}"
                 class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-right focus:outline-none focus:ring-customBlue focus:border-customBlue">
             </div>
           
           <!-- Nilai PPN -->
           <div>
               <label for="nilai_ppn" class="block text-sm font-medium text-gray-700">Nilai PPN</label>
-              <input type="number" id="nilai_ppn" placeholder="0,00" value="{{ detailinvoice.nilai_ppn|default:0 }}" disabled
+              <input type="number" id="nilai_ppn" placeholder="0,00" value="{{ detailinvoice.first.nilai_ppn|default:0 }}" disabled
                 class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-700">
             </div>
           
           <!-- Netto -->
           <div>
             <label for="netto" class="block text-sm font-medium text-gray-700">Netto</label>
-            <input type="number" id="netto" placeholder="0,00" value="{{ detailinvoice.invoice_id.netto|default:0 }}" disabled
+            <input type="number" id="netto" placeholder="0,00" value="{{ detailinvoice.first.invoice_id.netto|default:0 }}" disabled
                 class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-700">
           </div>
         </div>
@@ -234,7 +234,7 @@
                 <tr>
                   <td>{{ forloop.counter|default:"1" }}</td>
                   <td>
-                    <input type="hidden" name="barangId" class="barangId" value="{{ detail.barang_id.id|default:"" }}">
+                    <input type="hidden" name="barangId" class="barangId" value="{{ detail.barang_id|default:"" }}">
                     <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ detail.barang_id.id|default:"" }}">
                       <option value="{{ detail.barang_id.id|default:"" }}" selected>{{ detail.barang_id.kode_barang|default:"" }} - {{ detail.barang_id.nama_barang|default:"" }}</option>
                     </select>
