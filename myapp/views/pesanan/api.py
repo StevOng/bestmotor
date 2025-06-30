@@ -137,17 +137,17 @@ class DetailPesananViewSet(viewsets.ModelViewSet):
     queryset = DetailPesanan.objects.all()
     serializer_class = DetailPesananSerializer
 
-    @action(detail=True, methods=["get"])
+    @action(detail=False, methods=["get"], url_path="retur_info")
     def retur_info(self, request, pk=None):
-        invoice_id = request.query_params.get("pesanan_id")
-        barang = self.get_object()
+        pesanan_id = request.query_params.get("pesanan_id")
+        barang_id = request.query_params.get("barang_id")
 
-        if not invoice_id:
-            return Response({"error": "pesanan_id dibutuhkan"}, status=400)
+        if not pesanan_id or not barang_id:
+            return Response({"error": "pesanan_id dan barang_id dibutuhkan"}, status=400)
 
         detail = DetailPesanan.objects.filter(
-            pesanan_id=invoice_id,
-            barang_id=barang.id
+            pesanan_id=pesanan_id,
+            barang_id=barang_id
         ).first()
 
         if not detail:

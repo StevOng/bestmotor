@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    getOptionBrg()
-
     const tanggal = document.getElementById("tanggal_inv")
     const today = new Date()
     const year = String(today.getFullYear())
@@ -9,7 +7,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatDate = `${day}/${month}/${year}`
 
     tanggal.value = formatDate
+
+    setTimeout(() => {
+        if (window.barangData && Object.keys(window.barangData).length > 0) {
+            updateDetailBiaya();
+        } else {
+            console.warn("BarangData masih kosong, perhitungan ditunda.");
+        }
+    }, 300);
 })
+console.log("BarangData global:", window.barangData)
 
 function getCSRFToken() {
     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -102,20 +109,34 @@ function closeModalConfirm() {
 }
 
 async function loadBarangOptions(selectId, selectedId = null, fakturId = null) {
-    let url = "/api/returjual/";
-    if (fakturId) {
-        url += `?fakturId=${fakturId}`;
+    let url = "/api/returjual/barang-dari-faktur/";
+    if (url){
+        url += `?fakturId=${fakturId}`
     }
 
     let response = await fetch(url);
     let data = await response.json();
+
+    if (!Array.isArray(data)) {
+        console.warn("Data bukan array:", data);
+        return; // atau tampilkan warning
+    }
+
+    if (!window.barangData) {
+        window.barangData = {};
+    }
+
+    data.forEach(barang => {
+        window.barangData[barang.id] = barang;  // penting
+    });
+
     let select = document.getElementById(selectId);
     select.innerHTML = "<option disabled selected>Pilih Barang</option>";
 
     data.forEach(barang => {
         let option = document.createElement("option");
         option.value = barang.id;
-        option.text = barang.kode_barang;
+        option.text = barang.kode_barang + "-" + barang.nama_barang;
         if (barang.id == selectedId) {
             option.selected = true;
         }
@@ -127,9 +148,8 @@ async function getOptionBrg() {
     const selects = document.querySelectorAll("[id^='kodebrg-dropdown-']")
     const fakturId = document.getElementById("fakturId")?.value
     selects.forEach(select => {
-        const selectedId = select.dataset.selectedId
         const namaBrgId = select.dataset.namaBarangId
-        console.log("selectedId: ", selectedId)
+        console.log("selectedId: ", select.id)
         console.log("select value: ", select.value)
         loadBarangOptions(select.id, select.value, fakturId)
 
@@ -152,7 +172,28 @@ async function getOptionBrg() {
             if (hargaInput) {
                 hargaInput.value = data.harga_jual
             }
-            updateDetailBiaya()
+            // Tambahan pengisian field lainnya (jika ada di API)
+            const qtyInput = row.querySelector(".input_qtybrg");
+            if (qtyInput && data.qty_retur) {
+                qtyInput.value = data.qty_retur;
+            }
+
+            const discInput = row.querySelector(".disc");
+            if (discInput && data.diskon_barang) {
+                discInput.value = data.diskon_barang;
+            }
+
+            const totalDiscTd = row.querySelector(".totalDisc");
+            if (totalDiscTd && data.total_diskon_barang) {
+                totalDiscTd.textContent = data.total_diskon_barang;
+            }
+
+            const totalTd = row.querySelector(".total");
+            if (totalTd && data.total_harga_barang) {
+                totalTd.textContent = data.total_harga_barang;
+            }
+
+            updateDetailBiaya();
 
             // Cek apakah ini baris terakhir → baru tambahkan baris baru
             const allRows = document.querySelectorAll("tbody tr");
@@ -171,7 +212,7 @@ function addNewRow(re = null) {
 
     const selectId = `kodebrg-dropdown-${rowCount}`;
     const barangId = re?.barang_id || ""
-    const fakturId = re?.faktur_id || ""
+    const fakturId = re?.faktur_id || document.getElementById("fakturId")?.value || ""
 
     newRow.classList.add("new-row-added"); // untuk mencegah nambah berkali-kali
     newRow.innerHTML = `
@@ -212,17 +253,22 @@ function hapusRow(btn) {
     setTimeout(() => row.remove(), 400)
 }
 
-function pilihFaktur(id, nomor, cust) {
+function pilihFaktur(id, nomor, cust, pesanan_id) {
     let displayTextNomor = `${nomor}`
     let displayTextSupplier = `${cust}`
 
     let hiddenInput = document.getElementById("fakturId")
+    let hiddenPesananId = document.getElementById("pesananId")
     if (hiddenInput) {
         hiddenInput.value = id
+        hiddenPesananId.value = pesanan_id
         document.getElementById("no_faktur").value = displayTextNomor
         document.getElementById("customer").value = displayTextSupplier
+
+        // baru setelah faktur diisi → ambil option barang
+        getOptionBrg();
     }
-    closeModalConfirm()
+    closeModal()
 }
 
 async function submitDetail() {
@@ -281,9 +327,9 @@ function updateDetailBiaya() {
     const brutoEl = document.getElementById("bruto")
     const ppnInput = document.getElementById("ppn")
     const ongkirInput = document.getElementById("ongkir")
-    const discInvInput = document.getElementById("discount")
     const niliaPpnEl = document.getElementById("nilai_ppn")
     const nettoEl = document.getElementById("netto")
+    console.log("BarangData global:", window.barangData)
     document.querySelectorAll("tr").forEach(row => {
         const inputQty = row.querySelector(".input_qtybrg");
         const inputHarga = row.querySelector(".input_hrgbrg");
@@ -320,7 +366,7 @@ function updateDetailBiaya() {
     });
     brutoEl.value = bruto
     const nilaiPpn = bruto * (ppnInput.value / 100)
-    const netto = bruto + nilaiPpn + Number(ongkirInput.value) - discInvInput.value
+    const netto = bruto + nilaiPpn + Number(ongkirInput.value)
 
     niliaPpnEl.value = nilaiPpn
     nettoEl.value = netto
@@ -351,8 +397,13 @@ async function qtyCheck() {
         const rowBarangId = row.querySelector(".barangId").value;
         const dataAwal = parseInt(inputQty.dataset.qtyAwal) || 0;
 
+        if (!rowBarangId || !pesananId) {
+            console.warn("Lewati baris karena barangId atau pesananId kosong:", rowBarangId, pesananId);
+            continue;
+        }
+
         try {
-            const res = await fetch(`/api/detailpesanan/${rowBarangId}/retur_info/?pesanan_id=${pesananId}`);
+            const res = await fetch(`/api/detailpesanan/retur_info/?pesanan_id=${pesananId}&barang_id=${rowBarangId}`);
             if (!res.ok) throw new Error("Gagal fetch retur info");
 
             const data = await res.json();
