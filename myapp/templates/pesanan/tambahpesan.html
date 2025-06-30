@@ -167,14 +167,14 @@
           <!-- Alamat Kirim -->
           <div class="md:col-span-2">
             <label for="alamat_kirim" class="block text-sm font-medium text-gray-700">Alamat Kirim</label>
-            <textarea id="alamat_kirim" name="alamat_kirim" rows="3" placeholder="Masukkan alamat" value="{{ detail_pesanan.alamat_kirim|default:"" }}"
-              class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" {% if is_shipped %}disabled{% endif %}></textarea>
+            <textarea id="alamat_kirim" name="alamat_kirim" rows="3" placeholder="Masukkan alamat"
+              class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" {% if is_shipped %}disabled{% endif %}>{{ detail_pesanan.alamat_kirim|default:"" }}</textarea>
           </div>
           <!-- Keterangan -->
           <div class="md:col-span-2">
             <label for="keterangan" class="block text-sm font-medium text-gray-700">Keterangan</label>
-            <textarea id="keterangan" rows="3" name="keterangan" placeholder="Masukkan keterangan" value="{{ detail_pesanan.keterangan|default:"" }}"
-              class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" {% if is_shipped %}disabled{% endif %}></textarea>
+            <textarea id="keterangan" rows="3" name="keterangan" placeholder="Masukkan keterangan"
+              class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" {% if is_shipped %}disabled{% endif %}>{{ detail_pesanan.keterangan|default:"" }}</textarea>
           </div>
         </div>
     </div>
@@ -185,7 +185,7 @@
             <!-- Bruto -->
             <div>
               <label for="bruto" class="block text-sm font-medium text-gray-700">Bruto</label>
-              <input type="number" id="bruto" placeholder="0,00" value="{{ detail_pesanan.bruto|default:0 }}" disabled
+              <input type="number" id="bruto" placeholder="0,00" value="{{ detail_pesanan.bruto|floatformat:0|default:0 }}" disabled
                 class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-400">
             </div>
 
@@ -202,14 +202,14 @@
             <!-- Ongkir -->
             <div>
               <label for="ongkir" class="block text-sm font-medium text-gray-700">Ongkos Kirim <span class="text-gray-400">• Mata uang Rupiah (IDR)</span></label>
-              <input type="number" id="ongkir" name="ongkir" placeholder="0,00" value="{{ detail_pesanan.ongkir|default:0 }}"
+              <input type="number" id="ongkir" name="ongkir" placeholder="0,00" value="{{ detail_pesanan.ongkir|floatformat:0|default:0 }}"
                 class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-right focus:outline-none focus:ring-customBlue focus:border-customBlue" {% if is_shipped %}disabled{% endif %}>
             </div>
 
             <!-- Discount -->
             <div>
                 <label for="discount" class="block text-sm font-medium text-gray-700">Discount</label>
-                <input type="number" id="discount" name="diskon_faktur" placeholder="0,00" value="{{ detail_pesanan.diskon_pesanan|default:0 }}"
+                <input type="number" id="discount" name="diskon_faktur" placeholder="0,00" value="{{ detail_pesanan.diskon_pesanan|floatformat:0|default:0 }}"
                   class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-right focus:outline-none focus:ring-customBlue focus:border-customBlue" {% if is_shipped %}disabled{% endif %}>
               </div>
             
@@ -223,7 +223,7 @@
             <!-- Netto -->
             <div>
                 <label for="netto" class="block text-sm font-medium text-gray-700">Netto</label>
-                <input type="number" id="netto" placeholder="0,00" value="{{ detail_pesanan.netto|default:0 }}" disabled
+                <input type="number" id="netto" placeholder="0,00" value="{{ detail_pesanan.netto|floatformat:0|default:0 }}" disabled
                   class="mt-1 block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-right text-gray-400">
             </div>
           </div>
@@ -262,8 +262,8 @@
                       <td><input type="number" value="{{ detail.barang_id.harga_jual|default:0 }}" class="input_hrgbrg rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
                       <td><input type="number" value="{{ detail.qty_pesan|default:0 }}" data-qty-awal="{{ detail.qty_pesan|default:0 }}" class="input_qtybrg w-20 rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
                       <td><input type="number" value="{{ detail.diskon_barang|default:0 }}" class="disc w-20 rounded-md border-gray-300" {% if is_shipped %}disabled{% endif %}/></td>
-                      <td class="totalDisc">{{ detail.total_diskon_barang|intcomma|default:"" }}</td>
-                      <td class="totalHarga">{{ detail.total_harga_barang|intcomma|default:"" }}</td>
+                      <td class="totalDisc">{{ detail.total_diskon_barang|floatformat:0|intcomma|default:"" }}</td>
+                      <td class="totalHarga">{{ detail.total_harga_barang|floatformat:0|intcomma|default:"" }}</td>
                       <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit" {% if is_shipped %}disabled{% endif %}><i class="btn-simpan fa-regular fa-floppy-disk text-2xl"{% if is_shipped %}text-gray-500{% else %}text-customBlue{% endif %}></i></button></td>
                       <td class="text-center"><button type="button" onclick="confirmPopupBtn(this)" {% if is_shipped %}disabled{% endif %}><i class="btn-hapus fa-regular fa-trash-can text-2xl"{% if is_shipped %}text-gray-500{% else %}text-red-500{% endif %}></i></button></td>
                   </tr>

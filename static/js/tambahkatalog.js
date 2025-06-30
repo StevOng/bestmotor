@@ -40,14 +40,14 @@ const placeholder = document.getElementById("placeholder")
 const previewDiv = document.getElementById("previewDiv")
 
 uploadInput.addEventListener('change', function () {
+    previewDiv.innerHTML = ""
     const files = Array.from(this.files)
-    if (files.length + previewDiv.children.length > 5) {
+    if (files.length > 5) {
         const headWarn = "Peringatan Jumlah Upload"
         const parWarn = "Maksimal upload hanya 5 gambar"
         showWarningToast(headWarn, parWarn)
         uploadInput.value = ""
-        previewDiv.innerHTML = ""
-        placeholder.textContent = `Upload Gambar (${previewDiv.children.length}/5)`
+        placeholder.textContent = `Upload Gambar (0/5)`
         return
     }
     files.forEach(file => {

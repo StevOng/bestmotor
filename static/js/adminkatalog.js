@@ -1,12 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     getTipe()
-    const checkIcon = document.getElementById("checkIcon");
-    const isKatalogUtama = document.getElementById("isKatalogUtama");
+    const rows = document.querySelectorAll("#isKatalogUtama");
 
-    // Tampilkan icon centang jika value-nya true
-    if (isKatalogUtama.value === "true" || isKatalogUtama.value === "True") {
-        checkIcon.classList.remove("hidden");
-    }
+    rows.forEach((input, index) => {
+        const icon = input.closest("td").querySelector("#checkIcon");
+        if (input.value === "true" || input.value === "True") {
+            icon.classList.remove("hidden");
+        }
+    });
 })
 
 //   {% comment %} tabel katalog {% endcomment %}
