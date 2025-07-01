@@ -1,238 +1,233 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const tanggal = document.getElementById("tgl_byrhutang")
-    const today = new Date()
-    const year = String(today.getFullYear())
-    const month = String(today.getMonth() + 1).padStart(2, "0")
-    const day = String(today.getDate()).padStart(2, "0")
-    const formatDate = `${day}/${month}/${year}`
+  const tanggal = document.getElementById("tgl_byrhutang")
+  const today = new Date()
+  const year = String(today.getFullYear())
+  const month = String(today.getMonth() + 1).padStart(2, "0")
+  const day = String(today.getDate()).padStart(2, "0")
+  const formatDate = `${day}/${month}/${year}`
 
-    tanggal.value = formatDate
+  tanggal.value = formatDate
 })
 
 document.querySelector(".nilaiBayar").addEventListener("input", callListener)
 document.querySelector(".potongan").addEventListener("input", callListener)
 
 function getCSRFToken() {
-    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
 $(document).ready(function () {
-    $("#allpesanan").DataTable({
-        pageLength: 20,
-        lengthChange: false, // Hilangkan "Show entries"
-        ordering: false,
-        scrollX: true,
-    });
-    $(".dt-search").remove();
-    $(".dt-info").remove();
+  $("#allpesanan").DataTable({
+    pageLength: 20,
+    lengthChange: false, // Hilangkan "Show entries"
+    ordering: false,
+    scrollX: true,
+  });
+  $(".dt-search").remove();
+  $(".dt-info").remove();
 });
 
 document.querySelectorAll(".potongan").forEach(input => {
-    input.addEventListener("input", totalPotongan)
+  input.addEventListener("input", totalPotongan)
 })
 
 document.querySelectorAll(".nilaiBayar").forEach(input => {
-    input.addEventListener("input", totalPelunasan)
+  input.addEventListener("input", totalPelunasan)
 })
 
 //PopupModal Supplier
 function openModalSupp() {
-    let modal = document.getElementById("popupModalSupp");
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
+  let modal = document.getElementById("popupModalSupp");
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
 }
 
 function closeModalSupp() {
-    let modal = document.getElementById("popupModalSupp");
-    modal.classList.remove("flex");
-    modal.classList.add("hidden");
+  let modal = document.getElementById("popupModalSupp");
+  modal.classList.remove("flex");
+  modal.classList.add("hidden");
 }
 
 //tabel modal popup supplier
 $(document).ready(function () {
-    let table = $("#modalSupplier").DataTable({
-        pageLength: 20,
-        lengthChange: false, // Hilangkan "Show entries"
-        ordering: false,
-        scrollX: true,
-    });
-    $(".dt-search").remove();
-    $(".dt-info").remove();
+  let table = $("#modalSupplier").DataTable({
+    pageLength: 20,
+    lengthChange: false, // Hilangkan "Show entries"
+    ordering: false,
+    scrollX: true,
+  });
+  $(".dt-search").remove();
+  $(".dt-info").remove();
 
-    $("#supplierSearch").on("keyup", function () {
-        //search
-        let searchValue = $(this).val();
-        table.search(searchValue).draw();
-    });
+  $("#supplierSearch").on("keyup", function () {
+    //search
+    let searchValue = $(this).val();
+    table.search(searchValue).draw();
+  });
 });
 
 //PopupModal Invoice
-function openModalInv() {
-    let modal = document.getElementById("popupModalInv");
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
+let currentRow = null;
+
+function openModalInv(btn) {
+  currentRow = btn.closest("tr");
+  const modal = document.getElementById("popupModalInv")
+  modal.classList.replace("hidden", "flex");
 }
 
 function closeModalInv() {
-    let modal = document.getElementById("popupModalInv");
-    modal.classList.remove("flex");
-    modal.classList.add("hidden");
+  let modal = document.getElementById("popupModalInv");
+  modal.classList.remove("flex");
+  modal.classList.add("hidden");
 }
 
 //Tabel Modal Popup Invoice
 $(document).ready(function () {
-    let table = $("#modalInvoice").DataTable({
-        pageLength: 20,
-        lengthChange: false, // Hilangkan "Show entries"
-        ordering: false,
-        scrollX: true,
-    });
-    $(".dt-search").remove();
-    $(".dt-info").remove();
+  let table = $("#modalInvoice").DataTable({
+    pageLength: 20,
+    lengthChange: false, // Hilangkan "Show entries"
+    ordering: false,
+    scrollX: true,
+  });
+  $(".dt-search").remove();
+  $(".dt-info").remove();
 
-    $("#invoiceSearch").on("keyup", function () {
-        //search
-        let searchValue = $(this).val();
-        table.search(searchValue).draw();
-    });
+  $("#invoiceSearch").on("keyup", function () {
+    //search
+    let searchValue = $(this).val();
+    table.search(searchValue).draw();
+  });
 });
 
 async function submitDetail() {
-    const id = document.getElementById("hutId")?.value
-    const supplierId = document.getElementById("supplierId")?.value
-    const potongan = Array.from(document.querySelectorAll(".potongan")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
-    const nilaiByrs = Array.from(document.querySelectorAll(".nilaiBayar")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
-    const invoiceIds = Array.from(document.querySelectorAll(".invoiceId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
+  const id = document.getElementById("hutId")?.value
+  const supplierId = document.getElementById("supplierId")?.value
+  const potongan = Array.from(document.querySelectorAll(".potongan")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
+  const nilaiByrs = Array.from(document.querySelectorAll(".nilaiBayar")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
+  const invoiceIds = Array.from(document.querySelectorAll(".invoiceId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
 
-    if (!supplierId || !invoiceIds) {
-        showWarningToast("Data Kurang", "Lengkapi data supplier dan invoice")
-        return
-    }
+  if (!supplierId || !invoiceIds) {
+    showWarningToast("Data Kurang", "Lengkapi data supplier dan invoice")
+    return
+  }
 
-    const method = id ? "PUT" : "POST" // jika ada id edit, tidak? tambah
-    const apiUrl = id ? `/api/hutang/${id}/` : `/api/hutang/`
-    const csrfToken = getCSRFToken()
-    try {
-        const list_invoice = invoiceIds.map((invoiceId, index) => ({
-            invoice: invoiceId,
-            nilai_bayar: nilaiByrs[index]
-        }))
-        const response = await fetch(apiUrl, {
-            method: method,
-            headers: {
+  const method = id ? "PUT" : "POST" // jika ada id edit, tidak? tambah
+  const apiUrl = id ? `/api/hutang/${id}/` : `/api/hutang/`
+  const csrfToken = getCSRFToken()
+  try {
+    const list_invoice = invoiceIds.map((invoiceId, index) => ({
+      invoice: invoiceId,
+      nilai_bayar: nilaiByrs[index]
+    }))
+    const response = await fetch(apiUrl, {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+      },
+      body: JSON.stringify({
+        "supplier_id": supplierId,
+        "list_invoice": list_invoice
+      })
+    })
+    const result = await response.json()
+    if (response.ok) {
+      await Promise.all(invoiceIds.map(async (invoiceId, index) => {
+        const nilaiPotongan = potongan[index]
+        if (nilaiPotongan && nilaiPotongan > 0) {
+          try {
+            const patchRes = await fetch(`/api/invoice/${invoiceId}/`, {
+              method: "PATCH",
+              headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': csrfToken
-            },
-            body: JSON.stringify({
-                "supplier_id": supplierId,
-                "list_invoice": list_invoice
+              },
+              body: JSON.stringify({
+                potongan: nilaiPotongan
+              })
             })
-        })
-        const result = await response.json()
-        if (response.ok) {
-            await Promise.all(invoiceIds.map(async (invoiceId, index) => {
-                const nilaiPotongan = potongan[index]
-                if (nilaiPotongan && nilaiPotongan > 0) {
-                    try {
-                        const patchRes = await fetch(`/api/invoice/${invoiceId}/`, {
-                            method: "PATCH",
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRFToken': csrfToken
-                            },
-                            body: JSON.stringify({
-                                potongan: nilaiPotongan
-                            })
-                        })
-                        if (!patchRes.ok) {
-                            console.warn(`Gagal PATCH potongan invoice ${invoiceId}`)
-                        }
-                    } catch (err) {
-                        console.error(`Error saat PATCH invoice ${invoiceId}`, err)
-                    }
-                }
-            }))
-            console.log("Piutang berhasil disimpan:", result);
-            showSuccessToast("Berhasil", "Berhasil menyimpan data")
-            setTimeout(() => {
-                location.replace(`/pembelian/pembayaran/hutang/`);
-            }, 1000);
-        } else {
-            console.error("Gagal:", result);
-            showWarningToast("Gagal", "Gagal menyimpan data")
+            if (!patchRes.ok) {
+              console.warn(`Gagal PATCH potongan invoice ${invoiceId}`)
+            }
+          } catch (err) {
+            console.error(`Error saat PATCH invoice ${invoiceId}`, err)
+          }
         }
-    } catch (error) {
-        console.error("Terjadi kesalahan: ", error)
-        showWarningToast("Gagal", "Terjadi kesalahan")
+      }))
+      console.log("Piutang berhasil disimpan:", result);
+      showSuccessToast("Berhasil", "Berhasil menyimpan data")
+      setTimeout(() => {
+        location.replace(`/pembelian/pembayaran/hutang/`);
+      }, 1000);
+    } else {
+      console.error("Gagal:", result);
+      showWarningToast("Gagal", "Gagal menyimpan data")
     }
+  } catch (error) {
+    console.error("Terjadi kesalahan: ", error)
+    showWarningToast("Gagal", "Terjadi kesalahan")
+  }
 }
 
 function confirmPopupBtn(attr) {
-    const modal = document.getElementById("popupModalConfirm");
-    modal.classList.remove("hidden"); // Tampilkan modal
-    modal.style.display = "flex"; // Pastikan tampil dengan flexbox
+  const modal = document.getElementById("popupModalConfirm");
+  modal.classList.remove("hidden"); // Tampilkan modal
+  modal.style.display = "flex"; // Pastikan tampil dengan flexbox
 
-    const confirmButton = document.getElementById("confirmAction");
+  const confirmButton = document.getElementById("confirmAction");
 
-    confirmButton.onclick = () => {
-        const row = attr.closest("tr")
-        row.querySelectorAll("input, select, textarea").forEach((el) => {
-            el.value = ""
-            if (el.tagName == "select") {
-                el.selectedIndex = 0
-            }
-        })
-        row.querySelectorAll("td").forEach((td, i) => {
-            if (i == 2) td.textContent = ""
-        })
-        closeModalConfirm();
-    };
+  confirmButton.onclick = () => {
+    const row = attr.closest("tr")
+    row.querySelectorAll("input, select, textarea").forEach((el) => {
+      el.value = ""
+      if (el.tagName == "select") {
+        el.selectedIndex = 0
+      }
+    })
+    row.querySelectorAll("td").forEach((td, i) => {
+      if (i == 2) td.textContent = ""
+    })
+    closeModalConfirm();
+  };
 }
 
 function closeModalConfirm() {
-    const modal = document.getElementById("popupModalConfirm");
-    modal.classList.add("hidden"); // Sembunyikan modal
-    modal.style.display = "none"; // Pastikan modal benar-benar hilang
+  const modal = document.getElementById("popupModalConfirm");
+  modal.classList.add("hidden"); // Sembunyikan modal
+  modal.style.display = "none"; // Pastikan modal benar-benar hilang
 }
 
 async function pilihInvoice(id, nomor) {
-    const inputInvoice = document.querySelector("input[name='invoiceId']");
-    const noInvoiceInput = document.querySelector("[id^='no_invoice-']");
-    const nilaiInvoiceCell = document.querySelector("[id^='netto-']");
+  const row = currentRow;
+  const inputInvoice = row.querySelector(".invoiceId");
+  const noInvoiceInput = row.querySelector("#no_invoice");
+  const nilaiInvoiceCell = row.querySelector(".nettoCell");
 
-    try {
-        const response = await fetch(`/api/invoice/${id}/data/`);
-        const data = await response.json();
+  try {
+    const res = await fetch(`/api/invoice/${id}/data/?format=json`, {
+      headers: { 'Accept': 'application/json' }
+    });
+    if (!res.ok) throw new Error(`Status ${res.status}`);
+    const data = await res.json();
 
-        if (!response.ok) {
-            showWarningToast("Gagal", data.error || "Gagal mengambil data invoice");
-            return;
-        }
+    inputInvoice.value = id;
+    noInvoiceInput.value = data.no_invoice || nomor;
+    nilaiInvoiceCell.textContent = `Rp ${formatRupiah(data.netto)},-`;
 
-        // Isi input & cell
-        inputInvoice.value = id;
-        noInvoiceInput.value = data.no_invoice;
-        nilaiInvoiceCell.textContent = formatRupiah(data.netto);
+    recalcTotals();
 
-        // Optional: isi total invoice di atas
-        const totInput = document.getElementById("tot_inv");
-        if (totInput) {
-            totInput.value = formatRupiah(data.netto);
-        }
-
-        // Tambahkan baris baru jika ini baris terakhir
-        const allRows = document.querySelectorAll("#allpesanan tbody tr");
-        const lastRow = allRows[allRows.length - 1];
-        if (noInvoiceInput.closest("tr") === lastRow) {
-            addNewRow();
-        }
-
-    } catch (err) {
-        console.error("Error ambil detail invoice:", err);
+    // Jika ini baris terakhir, tambahkan baris baru
+    const allRows = document.querySelectorAll("#allpesanan tbody tr");
+    if (row === allRows[allRows.length - 1]) {
+      addNewRow();
     }
-
+  } catch (err) {
+    console.error("Error ambil detail invoice:", err);
+    showWarningToast("Gagal", "Gagal mengambil data invoice");
+  } finally {
     closeModalInv();
+  }
 }
 
 async function pilihSupplier(id, perusahaan) {
@@ -280,127 +275,138 @@ async function pilihSupplier(id, perusahaan) {
 }
 
 function totalPotongan() {
-    const potongan = document.querySelectorAll('.potongan')
-    let total = 0
+  const potongan = document.querySelectorAll('.potongan')
+  let total = 0
 
-    potongan.forEach(p => {
-        total += parseFloat(p.value) || 0
-    })
+  potongan.forEach(p => {
+    total += parseFloat(p.value) || 0
+  })
 
-    document.getElementById("tot_pot").value = total
+  document.getElementById("tot_pot").value = total
 }
 
 function totalPelunasan() {
-    const bayar = document.querySelectorAll(".nilaiBayar")
-    let total = 0
+  const bayar = document.querySelectorAll(".nilaiBayar")
+  let total = 0
 
-    bayar.forEach(b => {
-        total += parseFloat(b.value) || 0
-    })
+  bayar.forEach(b => {
+    total += parseFloat(b.value) || 0
+  })
 
-    document.getElementById("tot_lunas").value = total
+  document.getElementById("tot_lunas").value = total
 }
 
 function formatRupiah(angka) {
-    if (isNaN(angka)) return "";
-    angka = Math.floor(angka);
-    return angka.toLocaleString("en-EN");
+  if (isNaN(angka)) return "";
+  angka = Math.floor(angka);
+  return angka.toLocaleString("en-EN");
 }
 
-function addNewRow(hut = null, invoices = null) {
-    const tbody = document.querySelector("#allpesanan tbody");
-    const newRow = document.createElement("tr");
-    const rowCount = tbody.querySelectorAll("tr").length + 1;
-
-    const invoiceId = invoices?.id || ""
-    const noInv = `no_invoice-${rowCount}`
-
-    newRow.classList.add("new-row-added"); // untuk mencegah nambah berkali-kali
-    newRow.innerHTML = `
-        <td>${rowCount}</td>
-        <td>
-          <div class="relative">
-            <input type="hidden" name="invoiceId" class="invoiceId" value="${invoiceId}">
-            <input
-              type="text"
-              id="${noInv}"
-              data-netto="netto-${rowCount}"
-              placeholder="Pilih Invoice"
-              value="${invoices?.no_invoice || ""}"
-              disabled
-              class="block border w-36 border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue"
-            />
-            <button
-              type="button"
-              onclick="openModalInv()"
-              class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none"
-            >
-              <i class="fas fa-ellipsis-h mr-1"></i>
-            </button>
-          </div>
-        </td>
-        <td id="netto-${rowCount}">${formatRupiah(invoices?.netto) || ""}</td>
-        <td>
+function addNewRow() {
+  const tbody = document.getElementById("allpesanan-body");
+  const idx = tbody.children.length + 1;
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <tr>
+      <td>${idx}</td>
+      <td>
+        <div class="relative">
+          <input type="hidden" name="invoiceId" class="invoiceId" value="">
           <input
-            type="number"
-            value="${hut?.potongan || ""}"
-            id="potongan-${rowCount}"
-            class="potongan w-full rounded-md border-gray-300"
+            type="text"
+            id="no_invoice"
+            data-netto="netto"
+            placeholder="Pilih Invoice"
+            value=""
+            disabled
+            class="block border w-36 border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue"
           />
-        </td>
-        <td>
-          <input
-            type="number"
-            value="${hut?.nilai_byr || ""}"
-            id="nilaiBayar-${rowCount}"
-            class="nilaiBayar w-full rounded-md border-gray-300"
-          />
-        </td>
-        <td class="text-center">
-          <button type="button" onclick="submitDetail()" class="btn-submit">
-            <i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
+          <button
+            type="button"
+            onclick="openModalInv(this)"
+            class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none"
+          >
+            <i class="fas fa-ellipsis-h mr-1"></i>
           </button>
-        </td>
-        <td class="text-center">
-          <button onclick="hapusRow(this)">
-            <i class="fa-regular fa-trash-can text-2xl text-red-500"></i>
-          </button>
-        </td>
-    `
+        </div>
+      </td>
+      <td class="nettoCell">Rp 0</td>
+      <td>
+        <input
+          type="number"
+          value=""
+          id="potongan"
+          class="potongan w-full rounded-md border-gray-300"
+        />
+      </td>
+      <td>
+        <input
+          type="number"
+          value=""
+          id="nilaiBayar"
+          class="nilaiBayar w-full rounded-md border-gray-300"
+        />
+      </td>
+      <td class="text-center">
+        <button type="button" onclick="submitDetail()" class="btn-submit">
+          <i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
+        </button>
+      </td>
+      <td class="text-center">
+        <button onclick="hapusRow(this)">
+          <i class="fa-regular fa-trash-can text-2xl text-red-500"></i>
+        </button>
+      </td>
+    </tr>
+  `;
+  tbody.appendChild(tr);
+  // attach listeners
+  tr.querySelector(".potongan").addEventListener("input", recalcTotals);
+  tr.querySelector(".nilaiBayar").addEventListener("input", recalcTotals);
+}
 
-    tbody.appendChild(newRow);
+function recalcTotals() {
+  // total invoice
+  let sumInv = 0;
+  document.querySelectorAll(".nettoCell").forEach(td => {
+    sumInv += parseInt(td.textContent.replace(/\D/g, '')) || 0;
+  });
+  document.getElementById("tot_inv").value = formatRupiah(sumInv);
 
-    setTimeout(() => {
-        pilihInvoice(invoiceId, noInv)
-    }, 0);
+  // total potongan
+  let sumPot = 0;
+  document.querySelectorAll(".potongan").forEach(i => sumPot += parseFloat(i.value) || 0);
+  document.getElementById("tot_pot").value = formatRupiah(sumPot);
 
-    newRow.querySelector(".nilaiBayar").addEventListener("input", callListener)
-    newRow.querySelector(".potongan").addEventListener("input", callListener)
+  // total bayar
+  let sumByr = 0;
+  document.querySelectorAll(".nilaiBayar").forEach(i => sumByr += parseFloat(i.value) || 0);
+  document.getElementById("tot_lunas").value = formatRupiah(sumByr);
 }
 
 function hapusRow(btn) {
-    const row = btn.closest("tr")
-    row.classList.add("fade-out")
-    setTimeout(() => row.remove(), 400)
+  const row = btn.closest("tr")
+  row.classList.add("fade-out")
+  setTimeout(() => row.remove(), 400)
 }
 
 function minusCheck() {
-    const allInput = document.querySelectorAll("input")
-    allInput.forEach(input => {
-        if (input.type == "number" && input.value < 0) {
-            const headWarn = "Peringatan Input Minus"
-            const parWarn = "Harga, diskon dan tanggal tidak bisa minus"
-            showWarningToast(headWarn, parWarn)
-            input.value = null
-            return
-        }
-    })
+  const allInput = document.querySelectorAll("input")
+  allInput.forEach(input => {
+    if (input.type == "number" && input.value < 0) {
+      const headWarn = "Peringatan Input Minus"
+      const parWarn = "Harga, diskon dan tanggal tidak bisa minus"
+      showWarningToast(headWarn, parWarn)
+      input.value = null
+      return
+    }
+  })
 }
 
 function showWarningToast(head, msg) {
-    const toast = document.getElementById("toastWarning");
+  const toast = document.getElementById("toastWarning");
 
-    toast.innerHTML = `
+  toast.innerHTML = `
     <div class="toast flex items-start p-4 bg-yellow-50 rounded-lg border border-yellow-100 shadow-lg">
         <div class="flex-shrink-0">
           <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
@@ -419,19 +425,19 @@ function showWarningToast(head, msg) {
     </div>
   `
 
-    toast.classList.remove("hidden");
+  toast.classList.remove("hidden");
 
-    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
 
-    toast.toastTimeout = setTimeout(() => {
-        toast.classList.add("hidden");
-    }, 2000);
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
 }
 
 function showSuccessToast(head, msg) {
-    const toast = document.getElementById("toastSuccess");
+  const toast = document.getElementById("toastSuccess");
 
-    toast.innerHTML = `
+  toast.innerHTML = `
       <div class="toast flex items-start p-4 bg-green-50 rounded-lg border border-green-100 shadow-lg">
         <div class="flex-shrink-0">
           <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
@@ -450,15 +456,15 @@ function showSuccessToast(head, msg) {
       </div>
   `
 
-    toast.classList.remove("hidden");
+  toast.classList.remove("hidden");
 
-    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
 
-    toast.toastTimeout = setTimeout(() => {
-        toast.classList.add("hidden");
-    }, 2000);
+  toast.toastTimeout = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 2000);
 }
 
 function callListener() {
-    minusCheck()
+  minusCheck()
 }

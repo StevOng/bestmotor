@@ -18,28 +18,44 @@ class HutangSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        list_data = validated_data.pop("list_invoice")
+        arr = validated_data.pop("list_invoice",[])
         with transaction.atomic():
-            hutang = Hutang.objects.create(**validated_data)
+            hut = Hutang.objects.create(**validated_data)
+            for it in arr:
+                hi = HutangInvoice.objects.create(hutang=hut, **it)
+                inv = hi.invoice
+                inv.sisa_bayar = max(inv.sisa_bayar - hi.nilai_bayar, 0)
+                inv.status = "lunas" if inv.sisa_bayar==0 else "belum_lunas"
+                inv.save(update_fields=["sisa_bayar","status"])
+            # recalc totals di header
+            hut.total_potongan  = hut.potongan_total()
+            hut.total_pelunasan = hut.pelunasan_total()
+            hut.save(update_fields=["total_potongan","total_pelunasan"])
+        return hut
 
-            for item in list_data:
-                HutangInvoice.objects.create(hutang=hutang, **item)
-
-            hutang.total_potongan = hutang.potongan_total()
-            hutang.total_pelunasan = hutang.pelunasan_total()
-            hutang.save()
-
-        return hutang
-    
     def update(self, instance, validated_data):
-        list_data = validated_data.pop("list_invoice")
+        arr = validated_data.pop("list_invoice",None)
         with transaction.atomic():
-            for attr, value in validated_data.items():
-                setattr(instance, attr, value)
+            for k,v in validated_data.items():
+                setattr(instance,k,v)
             instance.save()
-
-            HutangInvoice.objects.filter(hutang=instance).delete()
-
-            for item in list_data:
-                HutangInvoice.objects.create(hutang=instance, **item)
+            if arr is not None:
+                # rollback old
+                for old in HutangInvoice.objects.filter(hutang=instance):
+                    inv = old.invoice
+                    inv.sisa_bayar += old.nilai_bayar
+                    inv.status = "belum_lunas"
+                    inv.save(update_fields=["sisa_bayar","status"])
+                HutangInvoice.objects.filter(hutang=instance).delete()
+                # apply new
+                for it in arr:
+                    hi = HutangInvoice.objects.create(hutang=instance, **it)
+                    inv = hi.invoice
+                    inv.sisa_bayar = max(inv.netto - hi.nilai_bayar, 0)
+                    inv.status = "lunas" if inv.sisa_bayar==0 else "belum_lunas"
+                    inv.save(update_fields=["sisa_bayar","status"])
+            # recalc totals
+            instance.total_potongan  = instance.potongan_total()
+            instance.total_pelunasan = instance.pelunasan_total()
+            instance.save(update_fields=["total_potongan","total_pelunasan"])
         return instance

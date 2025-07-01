@@ -3,7 +3,7 @@ from ...models.hutang import *
 from .serializer import *
 
 class HutangViewSet(viewsets.ModelViewSet):
-    queryset = Hutang.objects.all()
+    queryset = Hutang.objects.all().select_related("supplier_id")
     serializer_class = HutangSerializer
 
 class HutangInvoiceViewSet(viewsets.ModelViewSet):

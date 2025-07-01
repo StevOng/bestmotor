@@ -65,7 +65,7 @@ class PiutangSerializer(serializers.ModelSerializer):
                 for item in list_data:
                     pf = PiutangFaktur.objects.create(piutang=instance, **item)
                     faktur = pf.faktur
-                    faktur.sisa_bayar -= pf.nilai_bayar
+                    faktur.sisa_bayar = faktur.total - pf.nilai_bayar
                     print(faktur.sisa_bayar, pf.nilai_bayar)
                     faktur.status = "lunas" if faktur.sisa_bayar == 0 else "belum_lunas"
                     faktur.save(update_fields=["sisa_bayar", "status"])

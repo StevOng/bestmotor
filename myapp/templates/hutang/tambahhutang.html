@@ -94,7 +94,7 @@
             <th>No. HP</th>
             <th>Lokasi Supplier</th>
             <th>Jenis Barang</th>
-            <th>Pilih</th>
+            <th>open </th>
           </tr>
         </thead>
         <tbody>
@@ -309,36 +309,37 @@
             <th>Hapus</th>
           </tr>
         </thead>
-        <tbody>
-          {% for hut in hutang %}
+        <tbody id="allpesanan-body">
+          {% if data_hi %}
+            {% for hi in data_hi %}
             <tr>
               <td>{{ forloop.counter|default:"1" }}</td>
               <td>
                 <div class="relative">
-                  <input type="hidden" name="invoiceId" class="invoiceId" value="{{ invoices.id|default:"" }}">
+                  <input type="hidden" name="invoiceId" class="invoiceId" value="{{ hi.invoice.id|default:"" }}">
                   <input
                     type="text"
                     id="no_invoice-{{ forloop.counter }}"
                     data-netto="netto-{{ forloop.counter }}"
                     placeholder="Pilih Invoice"
-                    value="{{ invoices.no_invoice|default:"" }}"
+                    value="{{ hi.invoice.no_invoice|default:"" }}"
                     disabled
                     class="block border w-36 border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue"
                   />
                   <button
                     type="button"
-                    onclick="openModalInv()"
+                    onclick="openModalInv(this)"
                     class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none"
                   >
                     <i class="fas fa-ellipsis-h mr-1"></i>
                   </button>
                 </div>
               </td>
-              <td id="netto-{{ forloop.counter }}">{{ invoices.netto|floatformat:0|intcomma|default:"" }}</td>
+              <td class="nettoCell">{{ hi.invoice.netto|floatformat:0|intcomma|default:"" }}</td>
               <td>
                 <input
                   type="number"
-                  value="{{ hut.potongan|default:"" }}"
+                  value="{{ hi.invoice.potongan|default:"" }}"
                   id="potongan-{{ forloop.counter }}"
                   class="potongan w-full rounded-md border-gray-300"
                 />
@@ -346,7 +347,7 @@
               <td>
                 <input
                   type="number"
-                  value="{{ hut.nilai_byr|default:"" }}"
+                  value="{{ hi.nilai_bayar|default:"" }}"
                   id="nilaiBayar-{{ forloop.counter }}"
                   class="nilaiBayar w-full rounded-md border-gray-300"
                 />
@@ -362,44 +363,45 @@
                 </button>
               </td>
             </tr>
-          {% empty %}
+            {% endfor %}
+          {% else %}
             <tr>
-              <td>{{ forloop.counter|default:"1" }}</td>
+              <td>1</td>
               <td>
                 <div class="relative">
-                  <input type="hidden" name="invoiceId" class="invoiceId" value="{{ invoices.id|default:"" }}">
+                  <input type="hidden" name="invoiceId" class="invoiceId" value="">
                   <input
                     type="text"
-                    id="no_invoice-{{ forloop.counter }}"
-                    data-netto="netto-{{ forloop.counter }}"
+                    id="no_invoice"
+                    data-netto="netto"
                     placeholder="Pilih Invoice"
-                    value="{{ invoices.no_invoice|default:"" }}"
+                    value=""
                     disabled
                     class="block border w-36 border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue"
                   />
                   <button
                     type="button"
-                    onclick="openModalInv()"
+                    onclick="openModalInv(this)"
                     class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none"
                   >
                     <i class="fas fa-ellipsis-h mr-1"></i>
                   </button>
                 </div>
               </td>
-              <td id="netto-{{ forloop.counter }}">{{ invoices.netto|floatformat:0|intcomma|default:"" }}</td>
+              <td class="nettoCell">Rp 0</td>
               <td>
                 <input
                   type="number"
-                  value="{{ hut.potongan|default:"" }}"
-                  id="potongan-{{ forloop.counter }}"
+                  value=""
+                  id="potongan"
                   class="potongan w-full rounded-md border-gray-300"
                 />
               </td>
               <td>
                 <input
                   type="number"
-                  value="{{ hut.nilai_byr|default:"" }}"
-                  id="nilaiBayar-{{ forloop.counter }}"
+                  value=""
+                  id="nilaiBayar"
                   class="nilaiBayar w-full rounded-md border-gray-300"
                 />
               </td>
@@ -414,7 +416,7 @@
                 </button>
               </td>
             </tr>
-          {% endfor %}
+          {% endif %}
         </tbody>
       </table>
    </form>

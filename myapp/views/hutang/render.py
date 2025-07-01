@@ -20,15 +20,14 @@ def tambah_bayarhutang(request, id=None):
         status__in=['belum_lunas', 'jatuh_tempo']
     ).prefetch_related('detailinvoice_set').select_related('supplier_id')
 
+    data_hi = []
     if id:
-        hutang = get_object_or_404(Hutang.objects.select_related('supplier_id'), id=id)
-        hutang.total_invoice = hutang.invoice.aggregate(total=Sum('netto'))['total'] or 0
-        hutang.nilai_byr = list(
-            HutangInvoice.objects.filter(hutang=hutang).values_list('nilai_bayar', flat=True)
-        )
-
+        hutang = get_object_or_404(Hutang, id=id)
+        data_hi = HutangInvoice.objects.filter(hutang=hutang)\
+                   .select_related('invoice')
     return render(request, 'hutang/tambahhutang.html', {
         'hutang': hutang,
+        'data_hi': data_hi,
         'invoices': invoices,
         'supplier_list': supplier_list
     })
