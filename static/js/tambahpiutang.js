@@ -10,31 +10,39 @@ document.addEventListener('DOMContentLoaded', () => {
     tanggal.value = formatDate
 })
 
-document.querySelector(".nilaiByr").addEventListener("input", callListener)
-document.querySelector(".potongan").addEventListener("input", callListener)
-
 function getCSRFToken() {
     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
 $(document).ready(function () {
-    $("#allpesanan").DataTable({
-        pageLength: 20,
-        lengthChange: false, // Hilangkan "Show entries"
+    window.piutangTable = $("#allpesanan").DataTable({
+        paging: false,
+        lengthChange: false,
         ordering: false,
         scrollX: true,
+        info: false,
+        searching: false,
+        language: {
+            emptyTable: "Tidak ada data faktur."
+        }
     });
     $(".dt-search").remove();
     $(".dt-info").remove();
 });
 
-document.querySelectorAll(".potongan").forEach(input => {
-    input.addEventListener("input", totalPotongan)
-})
+const ptgn = document.querySelectorAll(".potongan")
+if (ptgn) {
+    ptgn.forEach(input => {
+        input.addEventListener("input", callListener)
+    })
+}
 
-document.querySelectorAll(".nilaiByr").forEach(input => {
-    input.addEventListener("input", totalPelunasan)
-})
+const nbyr = document.querySelectorAll(".nilaiByr")
+if (nbyr) {
+    nbyr.forEach(input => {
+        input.addEventListener("input", callListener)
+    })
+}
 
 //PopupModal Customer
 function openModalSales() {
@@ -122,10 +130,6 @@ $(document).ready(function () {
     });
 });
 
-document.getElementById("toggleCheck")?.addEventListener("click", function () {
-    document.getElementById("checkIcon").classList.toggle("hidden");
-});
-
 function confirmPopupBtn(attr) {
     const modal = document.getElementById("popupModalConfirm");
     modal.classList.remove("hidden"); // Tampilkan modal
@@ -154,68 +158,76 @@ function closeModalConfirm() {
     modal.style.display = "none"; // Pastikan modal benar-benar hilang
 }
 
-function pilihCustomer(id, nama) {
-    let displayText = `${nama}`
-
-    document.getElementById("customer").value = displayText
-
-    let hiddenInput = document.getElementById("custId")
-    if (hiddenInput) {
-        hiddenInput.value = id
-    }
-    closeModalSales()
-}
-
 function pilihSales(id, nama) {
-    let displayText = `${nama}`
-
-    document.getElementById("sales").value = displayText
-
-    let hiddenInput = document.getElementById("salesId")
-    if (hiddenInput) {
-        hiddenInput.value = id
-    }
-    closeModalSales()
+    document.getElementById("salesId").value = id;
+    document.getElementById("sales").value = nama;
+    closeModalSales();
+    fetchFakturBySales(id);
 }
 
-function pilihFaktur(id, nomor) {
-    const fakturInputs = document.querySelectorAll("[id^='noFaktur-']")
-    fakturInputs.forEach(faktur => {
-        const displayText = `${nomor}`
-        const row = faktur.closest('tr')
-        const noFaktur = row.querySelector("[id^='noFaktur-']")
-        noFaktur.value = displayText
-        const hiddenInput = row.querySelector(".fakturId")
-        if (hiddenInput) {
-            hiddenInput.value = id
-        }
-        const namaCust = faktur.dataset.namaCust
-        const nilaiFaktur = faktur.dataset.nilaiFaktur
+async function fetchFakturBySales(salesId) {
+    const res = await fetch(`/api/faktur/by_sales/${salesId}/`);
+    const fakturList = await res.json();
 
-        faktur.addEventListener('change', async () => {
-            const fakturId = faktur.value
+    const tbody = document.querySelector("#modalFaktur tbody");
+    tbody.innerHTML = "";
+    fakturList.forEach(faktur => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+      <td>${faktur.no_faktur}</td>
+      <td>${faktur.tanggal_faktur}</td>
+      <td>${faktur.no_referensi}</td>
+      <td>${faktur.customer}</td>
+      <td>${formatRupiah(faktur.total)}</td>
+      <td class="text-center">
+        <button onclick="pilihFaktur('${faktur.id}','${faktur.no_faktur}', '${faktur.customer_id}')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
+              <path d="M9.72217 11L12.7222 14L22.7222 4M16.7222 3H8.52217C6.84201 3 6.00193 3 5.3602 3.32698C4.79571 3.6146 4.33677 4.07354 4.04915 4.63803C3.72217 5.27976 3.72217 6.11984 3.72217 7.8V16.2C3.72217 17.8802 3.72217 18.7202 4.04915 19.362C4.33677 19.9265 4.79571 20.3854 5.3602 20.673C6.00193 21 6.84201 21 8.52217 21H16.9222C18.6023 21 19.4424 21 20.0841 20.673C20.6486 20.3854 21.1076 19.9265 21.3952 19.362C21.7222 18.7202 21.7222 17.8802 21.7222 16.2V12" stroke="#3D5A80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+      </td>
+    `;
+        tbody.appendChild(tr);
+    });
+}
 
-            const response = await fetch(`/api/faktur/${fakturId}/`)
-            const data = await response.json()
+async function pilihFaktur(id, nomor) {
+    const inputFaktur = document.querySelector("input[name='fakturId']");
+    const noFakturInput = document.querySelector("[id^='noFaktur-']");
+    const nilaiFakturCell = document.querySelector("[id^='nilaiFaktur-']");
+    const custInput = document.getElementById("custId");
 
-            const namaCustEl = document.getElementById(namaCust)
-            if (namaCustEl && data.pesanan_id.customer_id.nama) {
-                namaCustEl.textContent = data.pesanan_id.customer_id.nama
-            }
-            const nilaiFakturEl = document.getElementById(nilaiFaktur)
-            if (nilaiFakturEl && data.total) {
-                nilaiFakturEl.textContent = data.total
-            }
+    let res, data;
+    res = await fetch(`/api/faktur/${id}/`, {
+        headers: { 'Accept': 'application/json' }
+    });
+    // baca body sekali saja sebagai string
+    data = await res.json();
 
-            // Cek apakah ini baris terakhir → baru tambahkan baris baru
-            const allRows = document.querySelectorAll("tbody tr");
-            const isLast = row === allRows[allRows.length - 1];
-            if (isLast) {
-                addNewRow();
-            }
-        })
-    })
-    closeModalFaktur()
+    // —— jika sampai sini, `data` valid JSON & res.ok === true —— //
+
+    // isi form & tabel
+    inputFaktur.value = id;
+    noFakturInput.value = data.no_faktur ?? nomor;
+    nilaiFakturCell.textContent = formatRupiah(data.sisa_bayar ?? data.total);
+
+    if (custInput && data.customer_id != null) {
+        custInput.value = data.customer_id;
+    }
+
+    // update ringkasan total faktur (jika ada)
+    const totFakturInput = document.getElementById("tot_faktur");
+    if (totFakturInput) {
+        totFakturInput.value = formatRupiah(data.sisa_bayar ?? data.total);
+    }
+
+    // jika baris ini adalah terakhir, tambahkan baris baru
+    const allRows = document.querySelectorAll("#allpesanan tbody tr");
+    if (noFakturInput.closest("tr") === allRows[allRows.length - 1]) {
+        addNewRow();
+    }
+
+    closeModalFaktur();
 }
 
 async function submitDetail() {
@@ -310,60 +322,73 @@ function totalPelunasan() {
     document.getElementById("tot_lunas").value = total
 }
 
-function formatRupiah(angka){
+function formatRupiah(angka) {
     if (isNaN(angka)) return "";
     angka = Math.floor(angka);
     return angka.toLocaleString("en-EN");
 }
 
-function addNewRow(piutang = null, data_faktur = null) {
+function addNewRow(faktur) {
     const tbody = document.querySelector("#allpesanan tbody");
-    const newRow = document.createElement("tr");
-    const rowCount = tbody.querySelectorAll("tr").length + 1;
+    // Hapus baris placeholder jika itu satu-satunya dan fakturId nya kosong
+    if (tbody.children.length === 1) {
+        const firstHidden = tbody.querySelector("tr .fakturId");
+        if (firstHidden && !firstHidden.value) {
+            tbody.innerHTML = "";
+        }
+    }
 
-    const fakturId = data_faktur?.id || ""
-    const noFaktur = `noFaktur-${rowCount}`
-
-
-    newRow.classList.add("new-row-added"); // untuk mencegah nambah berkali-kali
-    newRow.innerHTML = `
-        <td>${rowCount}</td>
+    const rowNum = tbody.children.length + 1;
+    const fakturId = faktur?.id || "";
+    const noFaktur = faktur?.no_faktur || "";
+    const nilaiFaktur = faktur?.total || 0;
+    const custId = faktur?.pesanan_id?.customer_id || ""
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+        <td>${rowNum}</td>
         <td>
             <div class="relative mt-1">
-              <input type="hidden" name="fakturId-${rowCount}" class="fakturId" value="${fakturId}">
-              <input type="text" id="${noFaktur}" placeholder="Pilih Faktur" value="${data_faktur?.no_faktur || ""}" disabled
-                class="mt-1 block w-36 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" data-nama-cust="namaCust-${rowCount}" data-nilai-faktur="nilaiFaktur-${rowCount}">
+              <input type="hidden" name="fakturId" class="fakturId" value="${fakturId}">
+              <input type="text" id="noFaktur-{{ forloop.counter }}" placeholder="Pilih Faktur" value="${noFaktur}" disabled
+                class="noFaktur mt-1 block w-36 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" data-nama-cust="namaCust-{{ forloop.counter }}" data-nilai-faktur="nilaiFaktur-{{ forloop.counter }}">
                 <button type="button" onclick="openModalFaktur()"
                 class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none">
                 <i class="fas fa-ellipsis-h"></i>
               </button>
             </div>
         </td>
-        <td id="namaCust-${rowCount}">
-          <input type="hidden" name="custId-${rowCount}" class="custId" value="${piutang?.customer_id || ""}">
-          ${piutang?.customer_id.nama || ""}
+        <td id="nilaiFaktur-${rowNum}">Rp ${formatRupiah(nilaiFaktur)},-</td>
+        <td><input type="number" value="0" class="potongan"></td>
+        <td><input type="number" value="0" class="nilaiByr"></td>
+        <td class="text-center">
+            <button type="button" onclick="submitDetail()">
+                <i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
+            </button>
         </td>
-        <td id="nilaiFaktur-${rowCount}">Rp ${formatRupiah(piutang?.total_faktur) || ""},-</td>
-        <td><input type="number" value="${piutang?.potongan || ""}" id="potongan-${rowCount}" class="potongan w-full rounded-md border-gray-300" /></td>
-        <td><input type="number" value="${piutang?.nilai_bayar || ""}" id="nilaiByr-${rowCount}" class="nilaiByr w-full rounded-md border-gray-300" /></td>
-        <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-        <tdclass="text-center"><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
-    `
-
-    tbody.appendChild(newRow);
+        <td class="text-center">
+            <button onclick="hapusRow(this)">
+                <i class="fa-regular fa-trash-can text-2xl text-red-500"></i>
+            </button>
+        </td>
+    `;
+    tbody.appendChild(tr)
 
     setTimeout(() => {
-        pilihFaktur(fakturId, noFaktur)
-    }, 0);
+        pilihFaktur(fakturId, noFaktur, custId)
+    }, 0)
 
-    newRow.querySelector(".nilaiByr").addEventListener("input", callListener)
-    newRow.querySelector(".potongan").addEventListener("input", callListener)
+    tr.querySelector(".nilaiByr").addEventListener("input", callListener);
+    tr.querySelector(".potongan").addEventListener("input", callListener);
 }
 
 function hapusRow(btn) {
     const row = btn.closest("tr")
     row.classList.add("fade-out")
     setTimeout(() => row.remove(), 400)
+}
+
+function hapusRow(btn) {
+    piutangTable.row($(btn).parents('tr')).remove().draw();
 }
 
 function minusCheck() {
@@ -380,9 +405,9 @@ function minusCheck() {
 }
 
 function showWarningToast(head, msg) {
-  const toast = document.getElementById("toastWarning");
+    const toast = document.getElementById("toastWarning");
 
-  toast.innerHTML = `
+    toast.innerHTML = `
     <div class="toast flex items-start p-4 bg-yellow-50 rounded-lg border border-yellow-100 shadow-lg">
         <div class="flex-shrink-0">
           <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
@@ -401,30 +426,30 @@ function showWarningToast(head, msg) {
     </div>
   `
 
-  toast.classList.remove("hidden");
+    toast.classList.remove("hidden");
 
-  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
 
-  toast.toastTimeout = setTimeout(() => {
-    toast.classList.add("hidden");
-  }, 2000);
+    toast.toastTimeout = setTimeout(() => {
+        toast.classList.add("hidden");
+    }, 2000);
 }
 
 function showSuccessToast(head, msg) {
-  const toast = document.getElementById("toastSuccess");
+    const toast = document.getElementById("toastSuccess");
 
-  toast.innerHTML =`
-      <div class="toast flex items-start p-4 bg-yellow-50 rounded-lg border border-yellow-100 shadow-lg">
+    toast.innerHTML = `
+      <div class="toast flex items-start p-4 bg-green-50 rounded-lg border border-green-100 shadow-lg">
         <div class="flex-shrink-0">
-          <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 10-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
           </svg>
         </div>
         <div class="ml-3">
-          <h3 id="toastScs" class="text-sm font-medium text-yellow-800">${head}</h3>
-          <p id="toastScsp" class="mt-1 text-sm text-yellow-600">${msg}</p>
+          <h3 id="toastScs" class="text-sm font-medium text-green-800">${head}</h3>
+          <p id="toastScsp" class="mt-1 text-sm text-green-600">${msg}</p>
         </div>
-        <button onclick="document.getElementById('toastSuccess').classList.add('hidden')"  class="ml-auto text-yellow-400 hover:text-yellow-500">
+        <button onclick="document.getElementById('toastSuccess').classList.add('hidden')"  class="ml-auto text-green-400 hover:text-green-500">
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
           </svg>
@@ -432,13 +457,13 @@ function showSuccessToast(head, msg) {
       </div>
   `
 
-  toast.classList.remove("hidden");
+    toast.classList.remove("hidden");
 
-  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
 
-  toast.toastTimeout = setTimeout(() => {
-    toast.classList.add("hidden");
-  }, 2000);
+    toast.toastTimeout = setTimeout(() => {
+        toast.classList.add("hidden");
+    }, 2000);
 }
 
 function callListener() {
