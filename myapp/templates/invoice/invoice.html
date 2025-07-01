@@ -75,10 +75,10 @@
         <tbody>
             {% for invoice in invoice_list %}
                 <tr data-id="{{ invoice.id }}">
-                    <td>{{ invoice.no_invoice}}</td>
-                    <td>{{ invoicet.tanggal }}</td>
+                    <td style="text-transform: uppercase;">{{ invoice.no_invoice }}</td>
+                    <td>{{ invoice.tanggal }}</td>
                     {% if not request.GET.status %}
-                        <td>{{ invoice.no_referensi }}</td>
+                        <td style="text-transform: uppercase;">{{ invoice.no_referensi }}</td>
                     {% else %}
                         <td>{{ invoice.jatuh_tempo }}</td>
                     {% endif %}

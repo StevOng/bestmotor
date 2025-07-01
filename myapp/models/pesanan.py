@@ -10,11 +10,11 @@ class Pesanan(models.Model):
     barang = models.ManyToManyField(Barang, through='DetailPesanan')
     no_pesanan = models.CharField(max_length=20, unique=True)
     no_referensi = models.CharField(max_length=50, blank=True)
-    bruto = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
+    bruto = models.DecimalField(max_digits=10, decimal_places=0, default=Decimal('0.00'))
     ppn = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('0.00'))
-    ongkir = models.DecimalField(max_digits=19, decimal_places=2, default=Decimal('0.00'))
-    diskon_pesanan = models.DecimalField(max_digits=19, decimal_places=2, default=Decimal('0.00'))
-    netto = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
+    ongkir = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0.00'))
+    diskon_pesanan = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0.00'))
+    netto = models.DecimalField(max_digits=10, decimal_places=0, default=Decimal('0.00'))
     KURIR = [
         ('staff','Staff'),
         ('penangkutan','Pengangkutan'),
@@ -55,7 +55,7 @@ class Pesanan(models.Model):
         return self.bruto
 
     def hitung_total_netto(self):
-        self.netto = self.bruto + (self.bruto * self.ppn) + self.ongkir - self.diskon_pesanan
+        self.netto = self.bruto + (self.bruto * (self.ppn / Decimal('100'))) + self.ongkir - self.diskon_pesanan
         return self.netto
     
     def set_jatuh_tempo(self):
@@ -81,14 +81,16 @@ class DetailPesanan(models.Model):
         return f"{self.id}"
     
     def total_diskon_barang(self):
-        return self.qty_pesan * self.diskon_barang
+        harga = self.barang_id.get_harga_berdasarkan_qty(self.qty_pesan)
+        return harga *  self.qty_pesan * (self.diskon_barang / Decimal('100'))
     
     def total_harga_barang(self):
         harga = self.barang_id.get_harga_berdasarkan_qty(self.qty_pesan)
-        return (harga - self.total_diskon_barang()) * self.qty_pesan
+        total_diskon = self.total_diskon_barang()
+        return (harga * self.qty_pesan) - total_diskon
     
     def nilai_ppn(self):
-        return self.total_harga_barang() * self.pesanan_id.ppn
+        return self.total_harga_barang() * (self.pesanan_id.ppn / Decimal('100'))
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

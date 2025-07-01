@@ -26,4 +26,4 @@ def tambah_invoice(request, id=None):
         invoice = Invoice.objects.get(id=id)
         detailinvoice = invoice.detailinvoice_set.all()
 
-    return render(request, 'invoice/tambahinvoice.html', {'suppliers': supplier, 'detailinvoice': detailinvoice })
+    return render(request, 'invoice/tambahinvoice.html', {'suppliers': supplier, 'detailinvoice': detailinvoice, 'invoice': invoice })

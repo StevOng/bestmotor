@@ -262,9 +262,11 @@ function hapusRow(btn) {
     setTimeout(() => row.remove(), 400)
 }
 
-function pilihInvoice(id, nomor, supplier) {
+function pilihInvoice(id, nomor, supplier, ppn, diskon) {
     let displayTextNomor = `${nomor}`;
     let displayTextSupplier = `${supplier}`;
+    let displayPpn = `${ppn}`;
+    let displayDiskon = `${diskon}`;
 
     let hiddenInput = document.getElementById("invId");
 
@@ -274,6 +276,8 @@ function pilihInvoice(id, nomor, supplier) {
         // Isi input tampilan
         document.getElementById("no_invoice").value = displayTextNomor;
         document.getElementById("supplier").value = displayTextSupplier;
+        document.getElementById("ppn").value = displayPpn;
+        document.getElementById("discount").value = displayDiskon;
 
         // Setelah invoice diisi → ambil pilihan barang yang tersedia
         getOptionBrg(); 

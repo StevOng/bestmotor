@@ -72,5 +72,5 @@ class PesananSerializer(serializers.ModelSerializer):
             instance.hitung_total_bruto()
             instance.hitung_total_netto()
             instance.set_jatuh_tempo()
-            instance.save(update_fields=["bruto", "netto", "jatuh_tempo"])
+            instance.save()
         return instance

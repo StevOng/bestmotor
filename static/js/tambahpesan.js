@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     getKurir()
     getOptionBrg()
+    updateDetailBiaya()
 
     const tanggal = document.getElementById("tanggal")
     const today = new Date()
