@@ -19,26 +19,46 @@ class PiutangSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        list_data = validated_data.pop("list_faktur")
+        list_data = validated_data.pop("list_faktur", [])
         with transaction.atomic():
             piutang = Piutang.objects.create(**validated_data)
             for item in list_data:
-                PiutangFaktur.objects.create(piutang=piutang, **item)
+                pf = PiutangFaktur.objects.create(piutang=piutang, **item)
 
-            piutang.total_potongan  = piutang.potongan_total()
+                Faktur.objects.filter(pk=pf.faktur).update(
+                    sisa_bayar=F('sisa_bayar') - pf.nilai_bayar
+                )
+                faktur = Faktur.objects.get(pk=pf.faktur.id)
+                faktur.status = 'lunas' if faktur.sisa_bayar <= 0 else 'belum_lunas'
+                faktur.save(update_fields=['status'])
+
             piutang.total_pelunasan = piutang.pelunasan_total()
-            piutang.save(update_fields=['total_potongan','total_pelunasan'])
+            piutang.save(update_fields=['total_pelunasan'])
         return piutang
     
     def update(self, instance, validated_data):
-        list_data = validated_data.pop("list_faktur")
+        list_data = validated_data.pop("list_faktur", None)
         with transaction.atomic():
-            for attr, value in validated_data.items():
-                setattr(instance, attr, value)
+            for attr, val in validated_data.items():
+                setattr(instance, attr, val)
             instance.save()
+            if list_data is not None:
+                old = PiutangFaktur.objects.filter(piutang=instance)
 
-            PiutangFaktur.objects.filter(piutang=instance).delete()
+                for pf in old:
+                    Faktur.objects.filter(pk=pf.faktur.id).update(
+                        sisa_bayar=F('sisa_bayar') + pf.nilai_bayar
+                    )
+                old.delete()
 
-            for item in list_data:
-                PiutangFaktur.objects.create(piutang=instance, **item)
+                for item in list_data:
+                    pf = PiutangFaktur.objects.create(piutang=instance, **item)
+                    Faktur.objects.filter(pk=pf.faktur.id).update(
+                        sisa_bayar=F('sisa_bayar') - pf.nilai_bayar
+                    )
+                    faktur = Faktur.objects.get(pk=pf.faktur.id)
+                    faktur.status = 'lunas' if faktur.sisa_bayar <= 0 else 'belum_lunas'
+                    faktur.save(update_fields=['status'])
+                instance.total_pelunasan = instance.pelunasan_total()
+                instance.save(update_fields=['total_pelunasan'])
         return instance

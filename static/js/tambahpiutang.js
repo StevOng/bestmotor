@@ -8,6 +8,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatDate = `${day}/${month}/${year}`
 
     tanggal.value = formatDate
+
+    let sumFaktur = 0
+    document.querySelectorAll("[id^='nilaiFaktur-']").forEach(cell => {
+        // buang semua non-digit dari teks, parse jadi angka
+        const num = parseInt(cell.textContent.replace(/[^\d]/g, ''), 10) || 0
+        sumFaktur += num
+    })
+    document.getElementById("tot_faktur").value = formatRupiah(sumFaktur)
+
+    // — hitung Total Potongan & Pelunasan awalnya juga —
+    totalPotongan()
+    totalPelunasan()
 })
 
 function getCSRFToken() {
@@ -31,27 +43,18 @@ $(document).ready(function () {
 });
 
 const ptgn = document.querySelectorAll(".potongan")
-if (ptgn) {
-    ptgn.forEach(input => {
-        input.addEventListener("input", callListener)
-    })
-}
-
+ptgn.forEach(input => input.addEventListener("input", callListener))
 const nbyr = document.querySelectorAll(".nilaiByr")
-if (nbyr) {
-    nbyr.forEach(input => {
-        input.addEventListener("input", callListener)
-    })
-}
+nbyr.forEach(input => input.addEventListener("input", callListener))
 
 //PopupModal Customer
-window.openModalSales = function() {
-  const modal = document.getElementById("popupModalSales");
-  modal.classList.replace("hidden","flex");
+window.openModalSales = function () {
+    const modal = document.getElementById("popupModalSales");
+    modal.classList.replace("hidden", "flex");
 };
-window.closeModalSales = function() {
-  const modal = document.getElementById("popupModalSales");
-  modal.classList.replace("flex","hidden");
+window.closeModalSales = function () {
+    const modal = document.getElementById("popupModalSales");
+    modal.classList.replace("flex", "hidden");
 };
 
 $(document).ready(function () {
@@ -187,27 +190,29 @@ async function fetchFakturBySales(salesId) {
     });
 }
 
-async function pilihFaktur(id, noFaktur, customer) {
-    // 1) ambil hanya elemen di row yg dipilih
+async function pilihFaktur(id, nomor) {
+    // 1) ambil baris & elemen ringkasan
     const row = currentFakturRow;
-    const hiddenId = row.querySelector(".fakturId");
+    const hiddenSel = row.querySelector(".fakturId");
     const txtNo = row.querySelector(".noFaktur");
-    const cellNilai = row.querySelector("[id^='nilaiFaktur-']");
-    const custId = document.querySelector("#custId")
+    const nilaiCell = row.querySelector("[id^='nilaiFaktur-']");
+    const totForm = document.getElementById("tot_faktur");
 
-    // 2) (fetch detail jika perlu)
-    const res = await fetch(`/api/faktur/${id}/?format=json`);
+    // 2) fetch JSON murni
+    const res = await fetch(`/api/faktur/${id}/?format=json`, {
+        headers: { 'Accept': 'application/json' }
+    });
     const data = await res.json();
 
-    // 3) isi field di row itu
-    custId.value = customer
-    hiddenId.value = id;
-    txtNo.value = data.no_faktur || noFaktur;
-    cellNilai.textContent = formatRupiah(data.sisa_bayar ?? data.total);
+    // 3) isi kolom row + ringkasan summary
+    hiddenSel.value = id;
+    txtNo.value = data.no_faktur || nomor;
+    nilaiCell.textContent = formatRupiah(data.total);
+    totForm.value = formatRupiah(data.total);
 
-    // 4) kalau row ini adalah terakhir, tambahkan baris baru
-    const all = Array.from(document.querySelectorAll("#allpesanan tbody tr"));
-    if (row === all[all.length - 1]) addNewRow();
+    // 4) kalau ini row terakhir, tambahkan baris baru dgn data
+    const all = document.querySelectorAll("#allpesanan tbody tr");
+    if (row === all[all.length - 1]) addNewRow(data);
 
     closeModalFaktur();
 }
@@ -270,6 +275,7 @@ async function submitDetail() {
                 }
             }))
             console.log("Piutang berhasil disimpan:", result);
+            showSuccessToast("Berhasil", "Berhasil menyimpan data")
             setTimeout(() => {
                 location.replace(`/penjualan/pembayaran/piutang/`);
             }, 1000);
@@ -354,10 +360,6 @@ function addNewRow(faktur) {
         </td>
     `;
     tbody.appendChild(tr)
-
-    setTimeout(() => {
-        pilihFaktur(fakturId, noFaktur)
-    }, 0)
 
     tr.querySelector(".nilaiByr").addEventListener("input", callListener);
     tr.querySelector(".potongan").addEventListener("input", callListener);
@@ -446,4 +448,6 @@ function showSuccessToast(head, msg) {
 
 function callListener() {
     minusCheck()
+    totalPelunasan()
+    totalPotongan()
 }
