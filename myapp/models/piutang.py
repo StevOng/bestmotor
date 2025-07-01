@@ -28,16 +28,18 @@ class Piutang(models.Model):
         return self.no_bukti
 
     def potongan_total(self):
-        total_potongan = self.faktur.aggregate(
-            potongan=Sum('potongan')
-        )['potongan'] or 0
-        return total_potongan or 0
-    
+        return (
+            self.faktur
+                .aggregate(pot=Sum('potongan'))  # Sum field potongan di Faktur
+                .get('pot') or 0
+        )
+
     def pelunasan_total(self):
-        total_pelunasan = self.faktur.aggregate(
-            pelunasan=Sum(F('total')-F('sisa_bayar'))
-        )['pelunasan']
-        return total_pelunasan or 0
+        return (
+            self.faktur
+                .aggregate(pay=Sum(F('total') - F('sisa_bayar')))
+                .get('pay') or 0
+        )
     
     def save(self, *args, **kwargs):
         if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum

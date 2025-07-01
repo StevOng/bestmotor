@@ -19,25 +19,22 @@ def piutang(request):
 
 @admin_required
 def tambah_bayarpiutang(request, id=None):
-    piutang = None
     sales   = User.objects.all()
     faktur  = Faktur.objects.filter(
         status__in=['belum_lunas', 'jatuh_tempo']
     ).select_related('pesanan_id__customer_id__user_id')
 
     piutang_obj = None
+    daftar_pf = []
+
     if id:
-        try:
-            piutang_obj = Piutang.objects.select_related("customer_id__user_id").get(id=id)
-            # hitung total_faktur & nilai_byr …
-        except Piutang.DoesNotExist:
-            piutang_obj = None
-
-    # buat list yang bisa di-iter
-    data_piutang = [piutang_obj] if piutang_obj else []
-
+        piutang_obj = Piutang.objects.select_related("customer_id__user_id").get(id=id)
+        # ambil semua baris PiutangFaktur, sekaligus kostumisasi prefetch Faktur
+        daftar_pf = PiutangFaktur.objects.filter(piutang=piutang_obj)\
+                         .select_related("faktur__pesanan_id__customer_id")
     return render(request, 'piutang/tambahpiutang.html', {
-        'data_piutang': data_piutang,
-        'data_faktur':  faktur,
-        'list_sales':   sales,
+        'data_piutang': piutang_obj,
+        'data_pf':       daftar_pf, 
+        'data_faktur':   faktur,
+        'list_sales':    sales,
     })

@@ -37,8 +37,12 @@ class PiutangSerializer(serializers.ModelSerializer):
                 setattr(instance, attr, value)
             instance.save()
 
-            PiutangFaktur.objects.filter(piutang=instance).delete()
+            if list_data is not None:
+                PiutangFaktur.objects.filter(piutang=instance).delete()
+                for item in list_data:
+                    PiutangFaktur.objects.create(piutang=instance, **item)
 
-            for item in list_data:
-                PiutangFaktur.objects.create(piutang=instance, **item)
+                instance.total_potongan  = instance.potongan_total()
+                instance.total_pelunasan = instance.pelunasan_total()
+                instance.save(update_fields=['total_potongan','total_pelunasan'])
         return instance
