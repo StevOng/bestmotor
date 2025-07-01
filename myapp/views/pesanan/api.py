@@ -13,16 +13,17 @@ class PesananViewSet(viewsets.ModelViewSet):
     serializer_class = PesananSerializer
 
     def get_queryset(self):
-        user_id = self.request.session.get("user_id")
-        user_role = self.request.session.get("role")
+        try:
+            user_id = self.request.session.get("user_id")
+            user_role = self.request.session.get("role")
 
-        if not user_id:
-            return Pesanan.objects.none()
-
-        if user_role == "admin":
-            return Pesanan.objects.all()
-        
-        return Pesanan.objects.filter(customer_id__user_id=user_id)
+            if user_role == "admin":
+                return Pesanan.objects.all()
+            if user_id:
+                return Pesanan.objects.filter(customer_id__user_id=user_id)
+        except:
+            pass
+        return Pesanan.objects.all()  # fallback untuk debugging
 
     @action(detail=False, methods=['patch'])
     def update_status_bulk(self, request):

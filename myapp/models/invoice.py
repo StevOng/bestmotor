@@ -14,7 +14,7 @@ class Invoice(models.Model):
     top = models.IntegerField()
     jatuh_tempo = models.DateTimeField(blank=True, null=True)
     bruto = models.DecimalField(max_digits=10, decimal_places=0, default=Decimal('0'))
-    ppn = models.DecimalField(max_digits=5, decimal_places=0)
+    ppn = models.DecimalField(max_digits=5, decimal_places=2)
     ongkir = models.DecimalField(max_digits=19, decimal_places=0)
     diskon_invoice = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0'))
     netto = models.DecimalField(max_digits=10, decimal_places=0, default=Decimal('0'))
@@ -39,7 +39,7 @@ class Invoice(models.Model):
         return self.bruto
     
     def hitung_total_netto(self):
-        self.netto = self.bruto + (self.bruto * self.ppn) + self.ongkir - self.diskon_invoice
+        self.netto = self.bruto + (self.bruto * (self.ppn / Decimal('100'))) + self.ongkir - self.diskon_invoice
         return self.netto
     
     def set_sisa_bayar(self):
@@ -62,7 +62,7 @@ class DetailInvoice(models.Model):
     qty_beli = models.IntegerField()
     qty_retur = models.IntegerField(default=0)
     harga_beli = models.DecimalField(max_digits=19, decimal_places=0)
-    diskon_barang = models.DecimalField(max_digits=19, decimal_places=0)
+    diskon_barang = models.DecimalField(max_digits=19, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -70,13 +70,16 @@ class DetailInvoice(models.Model):
         return f"{self.id}"
     
     def total_diskon_barang(self):
-        return self.qty_beli * self.diskon_barang
+        harga = self.harga_beli
+        return harga *  self.qty_beli * (self.diskon_barang / Decimal('100'))
     
     def total_harga_barang(self):
-        return (self.qty_beli * self.harga_beli) - self.total_diskon_barang()
+        harga = self.harga_beli
+        total_diskon = self.total_diskon_barang()
+        return (harga * self.qty_beli) - total_diskon
     
     def nilai_ppn(self):
-        return self.total_harga_barang() * self.invoice_id.ppn
+        return self.total_harga_barang() * (self.invoice_id.ppn / Decimal('100'))
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
