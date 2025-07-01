@@ -13,13 +13,22 @@ class HutangSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hutang
         fields = '__all__'
+        extra_kwargs = {
+            'no_bukti': {'required': False, 'allow_blank': True}
+        }
 
     def create(self, validated_data):
         list_data = validated_data.pop("list_invoice")
         with transaction.atomic():
             hutang = Hutang.objects.create(**validated_data)
+
             for item in list_data:
                 HutangInvoice.objects.create(hutang=hutang, **item)
+
+            hutang.total_potongan = hutang.potongan_total()
+            hutang.total_pelunasan = hutang.pelunasan_total()
+            hutang.save()
+
         return hutang
     
     def update(self, instance, validated_data):

@@ -102,7 +102,7 @@ async function submitDetail() {
     const id = document.getElementById("hutId")?.value
     const supplierId = document.getElementById("supplierId")?.value
     const potongan = Array.from(document.querySelectorAll(".potongan")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
-    const nilaiByrs = Array.from(document.querySelectorAll(".nilaiByr")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
+    const nilaiByrs = Array.from(document.querySelectorAll(".nilaiBayar")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
     const invoiceIds = Array.from(document.querySelectorAll(".invoiceId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
 
     if (!supplierId || !invoiceIds) {
