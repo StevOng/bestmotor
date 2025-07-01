@@ -3,7 +3,7 @@ from ...models.piutang import *
 from .serializer import *
 
 class PiutangViewSet(viewsets.ModelViewSet):
-    queryset = Piutang.objects.all()
+    queryset = Piutang.objects.all().select_related("customer_id__user_id")
     serializer_class = PiutangSerializer
 
 class PiutangFakturViewSet(viewsets.ModelViewSet):
