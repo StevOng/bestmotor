@@ -10,31 +10,39 @@ document.addEventListener('DOMContentLoaded', () => {
     tanggal.value = formatDate
 })
 
-document.querySelector(".nilaiByr").addEventListener("input", callListener)
-document.querySelector(".potongan").addEventListener("input", callListener)
-
 function getCSRFToken() {
     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
 $(document).ready(function () {
-    $("#allpesanan").DataTable({
-        pageLength: 20,
-        lengthChange: false, // Hilangkan "Show entries"
+    window.piutangTable = $("#allpesanan").DataTable({
+        paging: false,
+        lengthChange: false,
         ordering: false,
         scrollX: true,
+        info: false,
+        searching: false,
+        language: {
+            emptyTable: "Tidak ada data faktur."
+        }
     });
     $(".dt-search").remove();
     $(".dt-info").remove();
 });
 
-document.querySelectorAll(".potongan").forEach(input => {
-    input.addEventListener("input", totalPotongan)
-})
+const ptgn = document.querySelectorAll(".potongan")
+if (ptgn) {
+    ptgn.forEach(input => {
+        input.addEventListener("input", callListener)
+    })
+}
 
-document.querySelectorAll(".nilaiByr").forEach(input => {
-    input.addEventListener("input", totalPelunasan)
-})
+const nbyr = document.querySelectorAll(".nilaiByr")
+if (nbyr) {
+    nbyr.forEach(input => {
+        input.addEventListener("input", callListener)
+    })
+}
 
 //PopupModal Customer
 function openModalSales() {
@@ -122,10 +130,6 @@ $(document).ready(function () {
     });
 });
 
-document.getElementById("toggleCheck")?.addEventListener("click", function () {
-    document.getElementById("checkIcon").classList.toggle("hidden");
-});
-
 function confirmPopupBtn(attr) {
     const modal = document.getElementById("popupModalConfirm");
     modal.classList.remove("hidden"); // Tampilkan modal
@@ -176,7 +180,7 @@ async function fetchFakturBySales(salesId) {
       <td>${faktur.customer}</td>
       <td>${formatRupiah(faktur.total)}</td>
       <td class="text-center">
-        <button onclick="pilihFaktur('${faktur.id}','${faktur.no_faktur}')">
+        <button onclick="pilihFaktur('${faktur.id}','${faktur.no_faktur}', '${faktur.customer_id}')">
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
               <path d="M9.72217 11L12.7222 14L22.7222 4M16.7222 3H8.52217C6.84201 3 6.00193 3 5.3602 3.32698C4.79571 3.6146 4.33677 4.07354 4.04915 4.63803C3.72217 5.27976 3.72217 6.11984 3.72217 7.8V16.2C3.72217 17.8802 3.72217 18.7202 4.04915 19.362C4.33677 19.9265 4.79571 20.3854 5.3602 20.673C6.00193 21 6.84201 21 8.52217 21H16.9222C18.6023 21 19.4424 21 20.0841 20.673C20.6486 20.3854 21.1076 19.9265 21.3952 19.362C21.7222 18.7202 21.7222 17.8802 21.7222 16.2V12" stroke="#3D5A80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -187,46 +191,43 @@ async function fetchFakturBySales(salesId) {
     });
 }
 
-function pilihFaktur(id, no_faktur) {
-    if (document.querySelector(`.fakturId[value='${id}']`)) {
-        closeModalFaktur();
-        return;
+async function pilihFaktur(id, nomor) {
+    const inputFaktur = document.querySelector("input[name='fakturId']");
+    const noFakturInput = document.querySelector("[id^='noFaktur-']");
+    const nilaiFakturCell = document.querySelector("[id^='nilaiFaktur-']");
+    const custInput = document.getElementById("custId");
+
+    let res, data;
+    res = await fetch(`/api/faktur/${id}/`, {
+        headers: { 'Accept': 'application/json' }
+    });
+    // baca body sekali saja sebagai string
+    data = await res.json();
+
+    // —— jika sampai sini, `data` valid JSON & res.ok === true —— //
+
+    // isi form & tabel
+    inputFaktur.value = id;
+    noFakturInput.value = data.no_faktur ?? nomor;
+    nilaiFakturCell.textContent = formatRupiah(data.sisa_bayar ?? data.total);
+
+    if (custInput && data.customer_id != null) {
+        custInput.value = data.customer_id;
     }
 
-    fetch(`/api/faktur/${id}/`)
-        .then(res => res.json())
-        .then(data => {
-            addNewRow(data);
-            closeModalFaktur();
-        });
-}
+    // update ringkasan total faktur (jika ada)
+    const totFakturInput = document.getElementById("tot_faktur");
+    if (totFakturInput) {
+        totFakturInput.value = formatRupiah(data.sisa_bayar ?? data.total);
+    }
 
-function addNewRow(faktur) {
-    const tbody = document.querySelector("#allpesanan tbody");
-    const rowNum = tbody.children.length + 1;
-    const tr = document.createElement("tr");
+    // jika baris ini adalah terakhir, tambahkan baris baru
+    const allRows = document.querySelectorAll("#allpesanan tbody tr");
+    if (noFakturInput.closest("tr") === allRows[allRows.length - 1]) {
+        addNewRow();
+    }
 
-    tr.innerHTML = `
-    <td>${rowNum}</td>
-    <td>
-      <input type="hidden" name="fakturId" class="fakturId" value="${faktur.id}">
-      <input type="text" class="noFaktur" value="${faktur.no_faktur}" disabled>
-    </td>
-    <td id="nilaiFaktur-${rowNum}">Rp ${formatRupiah(faktur.total)},-</td>
-    <td><input type="number" value="0" class="potongan"></td>
-    <td><input type="number" value="0" class="nilaiByr"></td>
-    <td class="text-center">
-      <button type="button" onclick="submitDetail()">
-        <i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
-      </button>
-    </td>
-    <td class="text-center">
-      <button onclick="hapusRow(this)">
-        <i class="fa-regular fa-trash-can text-2xl text-red-500"></i>
-      </button>
-    </td>
-  `;
-    tbody.appendChild(tr);
+    closeModalFaktur();
 }
 
 async function submitDetail() {
@@ -327,54 +328,67 @@ function formatRupiah(angka) {
     return angka.toLocaleString("en-EN");
 }
 
-// function addNewRow(piutang = null, data_faktur = null) {
-//     const tbody = document.querySelector("#allpesanan tbody");
-//     const newRow = document.createElement("tr");
-//     const rowCount = tbody.querySelectorAll("tr").length + 1;
+function addNewRow(faktur) {
+    const tbody = document.querySelector("#allpesanan tbody");
+    // Hapus baris placeholder jika itu satu-satunya dan fakturId nya kosong
+    if (tbody.children.length === 1) {
+        const firstHidden = tbody.querySelector("tr .fakturId");
+        if (firstHidden && !firstHidden.value) {
+            tbody.innerHTML = "";
+        }
+    }
 
-//     const fakturId = data_faktur?.id || ""
-//     const noFaktur = `noFaktur-${rowCount}`
+    const rowNum = tbody.children.length + 1;
+    const fakturId = faktur?.id || "";
+    const noFaktur = faktur?.no_faktur || "";
+    const nilaiFaktur = faktur?.total || 0;
+    const custId = faktur?.pesanan_id?.customer_id || ""
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+        <td>${rowNum}</td>
+        <td>
+            <div class="relative mt-1">
+              <input type="hidden" name="fakturId" class="fakturId" value="${fakturId}">
+              <input type="text" id="noFaktur-{{ forloop.counter }}" placeholder="Pilih Faktur" value="${noFaktur}" disabled
+                class="noFaktur mt-1 block w-36 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" data-nama-cust="namaCust-{{ forloop.counter }}" data-nilai-faktur="nilaiFaktur-{{ forloop.counter }}">
+                <button type="button" onclick="openModalFaktur()"
+                class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none">
+                <i class="fas fa-ellipsis-h"></i>
+              </button>
+            </div>
+        </td>
+        <td id="nilaiFaktur-${rowNum}">Rp ${formatRupiah(nilaiFaktur)},-</td>
+        <td><input type="number" value="0" class="potongan"></td>
+        <td><input type="number" value="0" class="nilaiByr"></td>
+        <td class="text-center">
+            <button type="button" onclick="submitDetail()">
+                <i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
+            </button>
+        </td>
+        <td class="text-center">
+            <button onclick="hapusRow(this)">
+                <i class="fa-regular fa-trash-can text-2xl text-red-500"></i>
+            </button>
+        </td>
+    `;
+    tbody.appendChild(tr)
 
+    setTimeout(() => {
+        pilihFaktur(fakturId, noFaktur, custId)
+    }, 0)
 
-//     newRow.classList.add("new-row-added"); // untuk mencegah nambah berkali-kali
-//     newRow.innerHTML = `
-//         <td>${rowCount}</td>
-//         <td>
-//             <div class="relative mt-1">
-//               <input type="hidden" name="fakturId-${rowCount}" class="fakturId" value="${fakturId}">
-//               <input type="text" id="${noFaktur}" placeholder="Pilih Faktur" value="${data_faktur?.no_faktur || ""}" disabled
-//                 class="mt-1 block w-36 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" data-nama-cust="namaCust-${rowCount}" data-nilai-faktur="nilaiFaktur-${rowCount}">
-//                 <button type="button" onclick="openModalFaktur()"
-//                 class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none">
-//                 <i class="fas fa-ellipsis-h"></i>
-//               </button>
-//             </div>
-//         </td>
-//         <td id="namaCust-${rowCount}">
-//           <input type="hidden" name="custId-${rowCount}" class="custId" value="${piutang?.customer_id || ""}">
-//           ${piutang?.customer_id.nama || ""}
-//         </td>
-//         <td id="nilaiFaktur-${rowCount}">Rp ${formatRupiah(piutang?.total_faktur) || ""},-</td>
-//         <td><input type="number" value="${piutang?.potongan || ""}" id="potongan-${rowCount}" class="potongan w-full rounded-md border-gray-300" /></td>
-//         <td><input type="number" value="${piutang?.nilai_bayar || ""}" id="nilaiByr-${rowCount}" class="nilaiByr w-full rounded-md border-gray-300" /></td>
-//         <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-//         <tdclass="text-center"><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
-//     `
-
-//     tbody.appendChild(newRow);
-
-//     setTimeout(() => {
-//         pilihFaktur(fakturId, noFaktur)
-//     }, 0);
-
-//     newRow.querySelector(".nilaiByr").addEventListener("input", callListener)
-//     newRow.querySelector(".potongan").addEventListener("input", callListener)
-// }
+    tr.querySelector(".nilaiByr").addEventListener("input", callListener);
+    tr.querySelector(".potongan").addEventListener("input", callListener);
+}
 
 function hapusRow(btn) {
     const row = btn.closest("tr")
     row.classList.add("fade-out")
     setTimeout(() => row.remove(), 400)
+}
+
+function hapusRow(btn) {
+    piutangTable.row($(btn).parents('tr')).remove().draw();
 }
 
 function minusCheck() {

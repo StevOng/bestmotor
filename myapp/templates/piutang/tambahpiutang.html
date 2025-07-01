@@ -155,6 +155,7 @@
           <div>
             <label for="sales" class="block text-sm font-medium text-gray-700">Sales</label>
             <div class="relative mt-1">
+              <input type="hidden" name="custId" id="custId" value="{{ data_piutang.customer_id|default:"" }}">
               <input type="hidden" name="salesId" id="salesId" value="{{ data_piutang.customer_id.user_id|default:"" }}">
               <input type="text" id="sales" placeholder="Pilih Sales" value="{{ data_piutang.customer_id.user_id.nama|default:"" }}" disabled
                 class="block w-full border border-gray-300 rounded-md py-2 px-3 text-gray-700">

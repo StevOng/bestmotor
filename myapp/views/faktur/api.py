@@ -29,6 +29,7 @@ class FakturViewSet(viewsets.ModelViewSet):
                 "tanggal_faktur": f.tanggal_faktur,
                 "no_referensi": f.pesanan_id.no_referensi,
                 "customer": f.pesanan_id.customer_id.nama,
+                "customer_id": f.pesanan_id.customer_id.id,
                 "total": float(f.total),
                 "sisa_bayar": float(f.sisa_bayar),
             }
