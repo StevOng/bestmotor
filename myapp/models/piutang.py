@@ -36,15 +36,20 @@ class Piutang(models.Model):
 
     def pelunasan_total(self):
         return (
-            self.faktur
-                .aggregate(pay=Sum(F('total') - F('sisa_bayar')))
-                .get('pay') or 0
+            self.piutangfaktur_set
+                .aggregate(jumlah=Sum('nilai_bayar'))
+                .get('jumlah') or 0
         )
     
     def save(self, *args, **kwargs):
         if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum
             self.generate_no_bukti() # jika belum berarti baru maka generate
         super().save(*args, **kwargs)
+
+        Piutang.objects.filter(pk=self.pk).update(
+            total_potongan=self.potongan_total(),
+            total_pelunasan=self.pelunasan_total() 
+        )
 
 class PiutangFaktur(models.Model):
     piutang = models.ForeignKey(Piutang, on_delete=models.CASCADE)
