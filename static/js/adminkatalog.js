@@ -116,9 +116,6 @@ async function getTipe() {
 function showWarningToast(head, msg) {
   const toast = document.getElementById("toastWarning");
 
-  title.innerText = head;
-  paragraph.innerText = msg;
-
   toast.innerHTML = `
     <div class="toast flex items-start p-4 bg-yellow-50 rounded-lg border border-yellow-100 shadow-lg">
         <div class="flex-shrink-0">
@@ -149,9 +146,6 @@ function showWarningToast(head, msg) {
 
 function showSuccessToast(head, msg) {
   const toast = document.getElementById("toastSuccess");
-
-  title.innerText = head;
-  paragraph.innerText = msg;
 
   toast.innerHTML =`
       <div class="toast flex items-start p-4 bg-yellow-50 rounded-lg border border-yellow-100 shadow-lg">

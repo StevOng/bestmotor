@@ -38,7 +38,6 @@ function confirmPopupBtn(returId) {
                 method: "DELETE"
             })
             if (response.ok) {
-                const result = await response.json()
                 showSuccessToast("Berhasil", "Berhasil menghapus retur")
                 const row = document.querySelector(`tr[data-id="${returId}"]`)
                 row.classList.add("fade-out")
@@ -64,9 +63,6 @@ function closeModalConfirm() {
 
 function showWarningToast(head, msg) {
   const toast = document.getElementById("toastWarning");
-
-  title.innerText = head;
-  paragraph.innerText = msg;
 
   toast.innerHTML = `
     <div class="toast flex items-start p-4 bg-yellow-50 rounded-lg border border-yellow-100 shadow-lg">
@@ -98,9 +94,6 @@ function showWarningToast(head, msg) {
 
 function showSuccessToast(head, msg) {
   const toast = document.getElementById("toastSuccess");
-
-  title.innerText = head;
-  paragraph.innerText = msg;
 
   toast.innerHTML =`
       <div class="toast flex items-start p-4 bg-yellow-50 rounded-lg border border-yellow-100 shadow-lg">

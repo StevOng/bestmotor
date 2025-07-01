@@ -396,6 +396,7 @@ async function qtyCheck() {
         const rowQty = parseInt(inputQty.value) || 0;
         const rowBarangId = row.querySelector(".barangId").value;
         const dataAwal = parseInt(inputQty.dataset.qtyAwal) || 0;
+        console.log("Qty Awal:", inputQty.dataset.qtyAwal, "Parsed:", dataAwal);
 
         if (!rowBarangId || !pesananId) {
             console.warn("Lewati baris karena barangId atau pesananId kosong:", rowBarangId, pesananId);
@@ -429,9 +430,6 @@ async function qtyCheck() {
 function showWarningToast(head, msg) {
   const toast = document.getElementById("toastWarning");
 
-  title.innerText = head;
-  paragraph.innerText = msg;
-
   toast.innerHTML = `
     <div class="toast flex items-start p-4 bg-yellow-50 rounded-lg border border-yellow-100 shadow-lg">
         <div class="flex-shrink-0">
@@ -462,9 +460,6 @@ function showWarningToast(head, msg) {
 
 function showSuccessToast(head, msg) {
   const toast = document.getElementById("toastSuccess");
-
-  title.innerText = head;
-  paragraph.innerText = msg;
 
   toast.innerHTML =`
       <div class="toast flex items-start p-4 bg-yellow-50 rounded-lg border border-yellow-100 shadow-lg">

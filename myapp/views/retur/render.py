@@ -14,7 +14,7 @@ def retur_jual(request):
 @both_required
 def tambah_returjual(request, id=None):
     faktur = Faktur.objects.select_related("pesanan_id__customer_id").filter(status__in=['belum_lunas','jatuh_tempo'])
-    returan = None
+    returan = None  
     barang_data_dict = {}
 
     if id:

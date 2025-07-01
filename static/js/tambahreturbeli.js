@@ -138,47 +138,80 @@ async function loadBarangOptions(selectId, selectedId = null, invId = null) {
         }
         select.appendChild(option);
     });
+
+    return data;
 }
 
 async function getOptionBrg() {
     const selects = document.querySelectorAll("[id^='kodebrg-dropdown-']")
     const invId = document.getElementById("invId")?.value
-    selects.forEach(select => {
-        const selectedId = select.dataset.selectedId
-        const namaBrgId = select.dataset.namaBarangId
-        console.log("selectedId: ", selectedId)
-        console.log("select value: ", select.value)
-        loadBarangOptions(select.id, select.value, invId)
 
-        select.addEventListener("change", async () => {
-            const barangId = select.value
-            const row = select.closest('tr')
-            const hiddenInput = row.querySelector(".barangId")
-            if (hiddenInput) {
-                hiddenInput.value = barangId
-            }
+    // 1. Ambil semua value yang sudah dipilih
+    const selectedBarangIds = Array.from(selects)
+        .map(s => s.value)
+        .filter(val => val !== "");
 
-            const response = await fetch(`/api/barang/${barangId}/`)
-            const data = await response.json()
+    for (const select of selects) {
+        const selectedId = select.dataset.selectedId;
+        const namaBrgId = select.dataset.namaBarangId;
 
-            const namaBrgEl = document.getElementById(namaBrgId)
-            if (namaBrgEl && data.nama_barang) {
-                namaBrgEl.textContent = data.nama_barang
-            }
-            const hargaInput = row.querySelector(".input_hrgbrg")
-            if (hargaInput) {
-                hargaInput.value = data.harga_jual
-            }
-            updateDetailBiaya()
+        // 1. Load ulang option untuk dropdown ini
+        await loadBarangOptions(select.id, selectedId || select.value, invId);
 
-            // Cek apakah ini baris terakhir → baru tambahkan baris baru
-            const allRows = document.querySelectorAll("tbody tr");
-            const isLast = row === allRows[allRows.length - 1];
-            if (isLast) {
-                addNewRow();
+        // 2. Disable option yang sudah dipilih di dropdown lain
+        const currentValue = select.value;
+        Array.from(select.options).forEach(option => {
+            if (option.value === "" || option.value === currentValue) {
+                option.disabled = false;
+            } else {
+                option.disabled = selectedBarangIds.includes(option.value);
             }
-        })
-    })
+        });
+
+        // 3. Tambah event listener satu kali
+        if (!select.dataset.listenerAttached) {
+            select.addEventListener("change", async () => {
+                const barangId = select.value;
+                const row = select.closest("tr");
+                const hiddenInput = row.querySelector(".barangId");
+                if (hiddenInput) {
+                    hiddenInput.value = barangId;
+                }
+
+                const response = await fetch(`/api/barang/${barangId}/`);
+                const data = await response.json();
+
+                const namaBrgEl = document.getElementById(namaBrgId);
+                if (namaBrgEl && data.nama_barang) {
+                    namaBrgEl.textContent = data.nama_barang;
+                }
+
+                const hargaInput = row.querySelector(".input_hrgbrg");
+                if (hargaInput) {
+                    hargaInput.value = data.harga_jual;
+                }
+
+                const diskonInput = row.querySelector(".disc");
+                if (diskonInput && data.diskon_barang !== undefined) {
+                    diskonInput.value = data.diskon_barang;
+                }
+
+                updateDetailBiaya();
+
+                // Tambah baris baru jika ini baris terakhir
+                const allRows = document.querySelectorAll("tbody tr");
+                const isLast = row === allRows[allRows.length - 1];
+                if (isLast) {
+                    addNewRow();
+                }
+
+                // Panggil ulang untuk update disable
+                getOptionBrg();
+            });
+
+            select.dataset.listenerAttached = "true";
+        }
+    }
 }
 
 function addNewRow(inv = null) {
@@ -195,7 +228,7 @@ function addNewRow(inv = null) {
         <td>${rowCount}</td>
         <td>
           <input type="hidden" name="barangId" class="barangId" value="${barangId}">
-          <select id="${selectId}" class="kodebrg-dropdown" data-namaBrg="namaBrg-${rowCount}" data-selected-id="${barangId}">
+          <select id="${selectId}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-${rowCount}" data-selected-id="${barangId}">
             <option value="${barangId}" selected>${inv?.barang_id?.kode_barang || ""} - ${inv?.barang_id?.nama_barang || ""}</option>
           </select>
         </td>
@@ -386,10 +419,20 @@ async function qtyCheck() {
 
             const qtyBeli = parseInt(data.qty_beli);
             const qtyRetur = parseInt(data.qty_retur);
+            const stokBarang = parseInt(data.stok_barang);
             let maxRetur = qtyBeli - qtyRetur;
+            console.log(data);
+            console.log(stokBarang);
 
             if (isEdit) {
                 maxRetur += dataAwal;  // tambahkan kembali jika sedang edit
+            }
+
+            if (rowQty > stokBarang) {
+                showWarningToast("Stok Tidak Cukup", `Stok barang tersisa hanya ${stokBarang}.`);
+                inputQty.value = stokBarang;
+                updateDetailBiaya();
+                continue;
             }
 
             if (rowQty > maxRetur) {
@@ -408,9 +451,6 @@ async function qtyCheck() {
 
 function showWarningToast(head, msg) {
   const toast = document.getElementById("toastWarning");
-
-  title.innerText = head;
-  paragraph.innerText = msg;
 
   toast.innerHTML = `
     <div class="toast flex items-start p-4 bg-yellow-50 rounded-lg border border-yellow-100 shadow-lg">
@@ -442,9 +482,6 @@ function showWarningToast(head, msg) {
 
 function showSuccessToast(head, msg) {
   const toast = document.getElementById("toastSuccess");
-
-  title.innerText = head;
-  paragraph.innerText = msg;
 
   toast.innerHTML =`
       <div class="toast flex items-start p-4 bg-yellow-50 rounded-lg border border-yellow-100 shadow-lg">

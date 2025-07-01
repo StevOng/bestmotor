@@ -221,7 +221,7 @@
                   {{ re.barang.nama_barang|default:"" }}
                 </td>
                 <td><input type="number" value="{{ re.barang.harga_beli|default:0 }}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
-                <td><input type="number" value="{{ re.qty|default:0 }}" data-qty-awal={{inv.invoice_id.qty_beli|default:0}} class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
+                <td><input type="number" value="{{ re.qty|default:0 }}" data-qty-awal={{re.qty|default:0}} class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
                 <td><input type="number" value="{{ re.barang.diskon_barang|default:0 }}" class="disc w-20 rounded-md border-gray-300" /></td>
                 <td class="totalDisc">{{ re.total_diskon_barang|default:"" }}</td>
                 <td class="total">{{ re.total_harga_barang|default:"" }}</td>
@@ -241,7 +241,7 @@
                   {{ re.barang.nama_barang|default:"" }}
                 </td>
                 <td><input type="number" value="{{ re.barang.harga_beli|default:0 }}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
-                <td><input type="number" value="{{ re.qty|default:0 }}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
+                <td><input type="number" value="{{ re.qty|default:0 }}" data-qty-awal={{re.qty|default:0}} class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
                 <td><input type="number" value="{{ re.barang.diskon_barang|default:0 }}" class="disc w-20 rounded-md border-gray-300" /></td>
                 <td class="totalDisc">{{ re.total_diskon_barang|default:"" }}</td>
                 <td class="total">{{ re.total_harga_barang|default:"" }}</td>

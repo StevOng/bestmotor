@@ -30,30 +30,42 @@ class ReturBeliSerializer(serializers.ModelSerializer):
                 barang = item['barang']
                 barang.stok -= item['qty']
                 barang.save()
+                
+                # Update qty_retur di DetailInvoice
+                invoice = retur.invoice_id
+                try:
+                    detail_invoice = DetailInvoice.objects.get(
+                        invoice_id=invoice,
+                        barang_id=barang
+                    )
+                    detail_invoice.qty_retur += item['qty']
+                    detail_invoice.save()
+                except DetailInvoice.DoesNotExist:
+                    raise serializers.ValidationError(f"DetailInvoice tidak ditemukan untuk barang: {barang.nama_barang}")
 
         return retur
 
-    def update(self, instance, validated_data):
-        detail_data = validated_data.pop('detail_barang')
-        with transaction.atomic():
-            # Rollback stok sebelumnya
-            old_details = ReturBeliBarang.objects.filter(retur=instance)
-            for old in old_details:
-                old.barang.stok += old.qty
-                old.barang.save()
+    # def update(self, instance, validated_data):
+    #     detail_data = validated_data.pop('detail_barang')
+    #     with transaction.atomic():
+    #         # Rollback stok sebelumnya
+    #         old_details = ReturBeliBarang.objects.filter(retur=instance)
+    #         for old in old_details:
+    #             old.barang.stok += old.qty
+    #             old.barang.save()
 
-            for attr, value in validated_data.items():
-                setattr(instance, attr, value)
-            instance.save()
+    #         for attr, value in validated_data.items():
+    #             setattr(instance, attr, value)
+    #         instance.save()
 
-            old_details.delete()
+    #         old_details.delete()
 
-            for item in detail_data:
-                ReturBeliBarang.objects.create(retur=instance, **item)
-                item['barang'].stok -= item['qty']
-                item['barang'].save()
+    #         for item in detail_data:
+    #             ReturBeliBarang.objects.create(retur=instance, **item)
+    #             item['barang'].stok -= item['qty']
+    #             item['barang'].save()
 
-        return instance
+    #     return instance
 
 class ReturJualBarangSerializer(serializers.ModelSerializer):
     class Meta:
@@ -82,7 +94,6 @@ class ReturJualSerializer(serializers.ModelSerializer):
                 qty_retur = item['qty']
                 detail_pesanan = DetailPesanan.objects.get(pesanan_id=retur.faktur_id.pesanan_id, barang_id=barang_id)
 
-                detail_pesanan.qty_pesan -= qty_retur
                 detail_pesanan.qty_retur += qty_retur
                 detail_pesanan.save()
                 
@@ -90,47 +101,48 @@ class ReturJualSerializer(serializers.ModelSerializer):
                 barang.save()
         return retur
     
-    def update(self, instance, validated_data):
-        detail_data = validated_data.pop('detail_barang')
-        with transaction.atomic():
-            # Rollback stok dan qty_retur sebelumnya
-            old_details = ReturJualBarang.objects.filter(retur=instance)
-            for old in old_details:
-                # Kembalikan stok & qty_retur
-                barang = old.barang
-                barang.stok -= old.qty
-                barang.save()
+    # def update(self, instance, validated_data):
+    #     detail_data = validated_data.pop('detail_barang')
+    #     with transaction.atomic():
+    #         # Rollback stok dan qty_retur sebelumnya
+    #         old_details = ReturJualBarang.objects.filter(retur=instance)
+    #         # 1. Simpan qty lama sebelum dihapus
+    #         qty_lama_map = {}
+    #         for old in old_details:
+    #             barang = old.barang
+    #             qty_lama_map[barang.id] = qty_lama_map.get(barang.id, 0) + old.qty
 
-                detail_pesanan = DetailPesanan.objects.get(
-                    pesanan_id=instance.faktur_id.pesanan_id,
-                    barang_id=barang.id
-                )
-                detail_pesanan.qty_pesan += old.qty
-                detail_pesanan.qty_retur -= old.qty
-                detail_pesanan.save()
+    #             # rollback stok & qty_retur
+    #             barang.stok -= old.qty
+    #             barang.save()
 
-            # Update data ReturJual
-            for attr, value in validated_data.items():
-                setattr(instance, attr, value)
-            instance.save()
+    #             detail_pesanan = DetailPesanan.objects.get(
+    #                 pesanan_id=instance.faktur_id.pesanan_id,
+    #                 barang_id=barang.id
+    #             )
+    #             detail_pesanan.qty_retur -= old.qty
+    #             detail_pesanan.save()
 
-            # Hapus dan buat ulang detail retur baru
-            old_details.delete()
-            for item in detail_data:
-                ReturJualBarang.objects.create(retur=instance, **item)
+    #         # 2. Hapus setelah rollback
+    #         old_details.delete()
+    #         for item in detail_data:
+    #             ReturJualBarang.objects.create(retur=instance, **item)
 
-                barang = item['barang']
-                qty_retur = item['qty']
+    #             barang = item['barang']
+    #             qty_baru = item['qty']
+    #             qty_lama = qty_lama_map.get(barang.id, 0)
+    #             selisih = qty_baru  # default kalau tidak ada qty lama
 
-                barang.stok += qty_retur
-                barang.save()
+    #             # 3. Update stok berdasarkan selisih
+    #             selisih = qty_baru - qty_lama
+    #             barang.stok += selisih
+    #             barang.save()
 
-                detail_pesanan = DetailPesanan.objects.get(
-                    pesanan_id=instance.faktur_id.pesanan_id,
-                    barang_id=barang.id
-                )
-                detail_pesanan.qty_pesan -= qty_retur
-                detail_pesanan.qty_retur += qty_retur
-                detail_pesanan.save()
-
-        return instance
+    #             detail_pesanan = DetailPesanan.objects.get(
+    #                 pesanan_id=instance.faktur_id.pesanan_id,
+    #                 barang_id=barang.id
+    #             )
+    #             detail_pesanan.qty_retur += qty_baru
+    #             detail_pesanan.save()
+    
+        # return instance

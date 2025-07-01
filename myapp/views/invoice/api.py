@@ -126,7 +126,8 @@ class DetailInvoiceViewSet(viewsets.ModelViewSet):
             detail = DetailInvoice.objects.get(invoice_id=invoice_id, barang_id=barang_id)
             return Response({
                 "qty_beli": detail.qty_beli,
-                "qty_retur": detail.qty_retur
+                "qty_retur": detail.qty_retur,
+                "stok_barang": detail.barang_id.stok
             })
         except DetailInvoice.DoesNotExist:
             return Response({"error": "Data tidak ditemukan"}, status=404)

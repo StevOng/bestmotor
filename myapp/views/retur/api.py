@@ -1,6 +1,8 @@
 from rest_framework import viewsets
+from django.db import transaction
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from ...models.retur import *
 from .serializer import *
 
@@ -29,13 +31,44 @@ class ReturBeliViewSet(viewsets.ModelViewSet):
                     "qty": d.qty_beli,
                     "diskon": d.diskon_barang,
                     "total_diskon_barang": d.total_diskon_barang(),
-                    "total_harga_barang": d.total_harga_barang()
+                    "total_harga_barang": d.total_harga_barang(),
                 })
 
             return Response(data)
 
         # default jika tidak ada invId → tetap pakai bawaan ModelViewSet
         return super().list(request)
+    
+    @transaction.atomic
+    def perform_destroy(self, instance):
+        details = ReturBeliBarang.objects.filter(retur=instance)
+
+        for detail in details:
+            qty = detail.qty
+            barang = detail.barang
+
+            # Tambahkan kembali stok barang
+            barang.stok += qty
+            barang.save()
+
+            # Rollback qty_retur di DetailInvoice
+            try:
+                detail_invoice = DetailInvoice.objects.get(
+                    invoice_id=instance.invoice_id,
+                    barang_id=barang.id
+                )
+            except DetailInvoice.DoesNotExist:
+                raise ValidationError("Detail invoice tidak ditemukan.")
+
+            if detail_invoice.qty_retur < qty:
+                raise ValidationError("Qty retur melebihi yang tercatat di invoice.")
+
+            detail_invoice.qty_retur -= qty
+            detail_invoice.save()
+
+        # Hapus semua detail dan objek retur
+        details.delete()
+        instance.delete()
 
 class ReturBeliBarangViewSet(viewsets.ModelViewSet):
     queryset = ReturBeliBarang.objects.all()
@@ -72,6 +105,32 @@ class ReturJualViewSet(viewsets.ModelViewSet):
 
         return Response(data)
     
+    @transaction.atomic
+    def perform_destroy(self, instance):
+        details = ReturJualBarang.objects.filter(retur=instance)
+
+        for detail in details:
+            qty = detail.qty
+            barang = detail.barang
+
+            if barang.stok < qty:
+                raise ValidationError("Stok tidak mencukupi untuk rollback retur.")
+            barang.stok -= qty
+            barang.save()
+
+            detail_pesanan = DetailPesanan.objects.get(
+                pesanan_id=instance.faktur_id.pesanan_id,
+                barang_id=barang.id
+            )
+            if detail_pesanan.qty_retur < qty:
+                raise ValidationError("Qty retur tidak valid.")
+            detail_pesanan.qty_retur -= qty
+            detail_pesanan.save()
+
+        details.delete()
+        instance.delete()
+    
 class ReturJualBarangViewSet(viewsets.ModelViewSet):
     queryset = ReturJualBarang.objects.all()
     serializer_class = ReturJualBarangSerializer
+    
