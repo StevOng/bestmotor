@@ -3,9 +3,17 @@ from .log_utils import log_user_action
 from ..models.pesanan import Pesanan
 from ..models.user import User
 
-def control_access(request, id=None):
+def pesanan_control_access(request, id=None):
     user_id = request.session.get("user_id")
     user = User.objects.get(id=user_id)
+
+    if not user:
+        return None
+    
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return None
 
     status = request.GET.get('status', None)
     view_name = request.resolver_match.view_name
@@ -16,7 +24,7 @@ def control_access(request, id=None):
             id=id
         )
         self_pesanan = pesanan.customer_id.user_id.id
-        log_user_action(request, action="Masuk Area Terlarang", detail=f"{user.role} {user.username} {"mencoba masuk pesanan sales lain" if self_pesanan != user.id else None}")
+        log_user_action(request, action="Masuk Area Terlarang", detail=f"{user.role} {user.username} {'mencoba masuk pesanan sales lain' if self_pesanan != user.id else None}")
         return redirect("403") if self_pesanan != user.id else None
 
     if status in ["pending", "ready"] and user.role == "sales":

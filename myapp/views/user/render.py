@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from myapp.utils.decorators import admin_required
+from myapp.utils.activity_logs import activity_logs
 from ...models.user import User
 from ...models.pesanan import *
 from ...models.invoice import *
 
+@activity_logs
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -31,11 +33,13 @@ def login_view(request):
 
     return render(request, 'base/login.html')
 
+@activity_logs
 def logout_user(request):
     request.session.flush()
     return redirect('login')
 
 @admin_required
+@activity_logs
 def dashboard(request):
     total_produk = Barang.objects.all().count()
     return render(request, "user/dashboard.html", {"total_produk": total_produk})

@@ -1,15 +1,23 @@
 from django.shortcuts import render
 from django.core.serializers.json import DjangoJSONEncoder
 from myapp.utils.decorators import both_required
+from myapp.utils.control_access import pesanan_control_access
+from myapp.utils.activity_logs import activity_logs
 from ...models.pesanan import *
 from ...models.customer import Customer
 import json
 
 @both_required
+@activity_logs
 def pesanan(request):
     status = request.GET.get('status', None)
     role = request.session.get('role')
     user_id = request.session.get('user_id')
+
+    response = pesanan_control_access(request, None)
+    if response:
+        return response
+
     pesanan_list = Pesanan.objects.prefetch_related('detailpesanan_set').select_related('customer_id__user_id')
 
     if role == 'sales':
@@ -23,7 +31,9 @@ def pesanan(request):
 
     return render(request, 'pesanan/pesanan.html', {'pesanan_list':pesanan_list, 'total_pending':total_pending, 'total_ready':total_ready})
 
+
 @both_required
+@activity_logs
 def tambah_pesanan(request, id=None):
     pesanan = None
     is_shipped = None
@@ -31,6 +41,10 @@ def tambah_pesanan(request, id=None):
     role = request.session.get("role")
     user_id = request.session.get("user_id")
     customers = Customer.objects.all()
+
+    response = pesanan_control_access(request, id)
+    if response:
+        return response
 
     if role == "sales":
         customers = Customer.objects.filter(user_id=user_id)

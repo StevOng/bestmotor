@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Sum
 from myapp.utils.decorators import admin_required
+from myapp.utils.activity_logs import activity_logs
 from ...models.hutang import *
 from ...models.invoice import *
 
 @admin_required
+@activity_logs
 def hutang(request):
     hutang = Hutang.objects.select_related('supplier_id')
 
@@ -13,6 +15,7 @@ def hutang(request):
     return render(request, 'hutang/hutang.html', {'hutang': hutang})
 
 @admin_required
+@activity_logs
 def tambah_bayarhutang(request, id=None):
     hutang = None
     supplier_list = Supplier.objects.all()

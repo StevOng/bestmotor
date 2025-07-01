@@ -1,17 +1,20 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.serializers.json import DjangoJSONEncoder
 from myapp.utils.decorators import admin_required, both_required
+from myapp.utils.activity_logs import activity_logs
 from ...models.retur import *
 from ...models.invoice import *
 from ...models.faktur import Faktur
 import json
 
 @both_required
+@activity_logs
 def retur_jual(request):
     returan = ReturJual.objects.select_related("faktur_id__pesanan_id__customer_id")
     return render(request, 'retur/returjual.html', {'returan': returan})
 
 @both_required
+@activity_logs
 def tambah_returjual(request, id=None):
     faktur = Faktur.objects.select_related("pesanan_id__customer_id").filter(status__in=['belum_lunas','jatuh_tempo'])
     returan = None  
@@ -55,11 +58,13 @@ def tambah_returjual(request, id=None):
     return render(request, 'retur/tambahreturjual.html', {'returan': returan, 'faktur': faktur, 'barang_data_json': barang_data_json})
 
 @admin_required
+@activity_logs
 def retur_beli(request):
     returan = ReturBeli.objects.select_related("invoice_id__supplier_id")
     return render(request, 'retur/returbeli.html', {'returan': returan})
 
 @admin_required
+@activity_logs
 def tambah_returbeli(request, id=None):
     invoice = Invoice.objects.select_related("supplier_id").filter(status__in=['belum_lunas','jatuh_tempo'])
     print(invoice)

@@ -1,18 +1,22 @@
 from django.shortcuts import render, get_object_or_404
 from myapp.utils.decorators import admin_required
+from myapp.utils.activity_logs import activity_logs
 from ...models.distribusi import *
 
 @admin_required
+@activity_logs
 def transaksi_masuk(request):
     barang_masuk = TransaksiMasuk.objects.all().order_by('-tanggal_pembuatan')
     return render(request, 'distribusi/transaksi.html', {'jenis':'masuk', 'data_transaksi':barang_masuk})
 
 @admin_required
+@activity_logs
 def transaksi_keluar(request):
     barang_keluar = TransaksiKeluar.objects.all().order_by('-tanggal_pembuatan')
     return render(request, 'distribusi/transaksi.html', {'jenis':'keluar', 'data_transaksi':barang_keluar})
 
 @admin_required
+@activity_logs
 def tambah_transaksi(request, jenis):
     if jenis not in ['masuk','keluar']:
         return render(request, '404.html')

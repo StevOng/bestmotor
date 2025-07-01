@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from myapp.utils.decorators import admin_required
+from myapp.utils.activity_logs import activity_logs
 from ...models.invoice import *
 from ...models.supplier import Supplier
 
 @admin_required
+@activity_logs
 def invoice(request):
     status = request.GET.get("status", None)
     per_tgl = request.GET.get("per_tgl")
@@ -17,6 +19,7 @@ def invoice(request):
     return render(request, 'invoice/invoice.html', {'invoice_list': invoice_list})
 
 @admin_required
+@activity_logs
 def tambah_invoice(request, id=None):
     invoice = None
     detailinvoice = None

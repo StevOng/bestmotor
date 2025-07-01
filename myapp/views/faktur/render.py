@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from myapp.utils.decorators import admin_required, both_required
+from myapp.utils.activity_logs import activity_logs
 from myapp.views.barang.tipe_choices import TIPE
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
@@ -16,6 +17,7 @@ import os
 from io import BytesIO
 
 @both_required
+@activity_logs
 def faktur(request):
     status = request.GET.get("status", None)
     per_tgl = request.GET.get("per_tgl")
@@ -56,6 +58,7 @@ def faktur(request):
     return render(request, 'faktur/faktur.html', {'list_faktur': list_faktur})
 
 @admin_required
+@activity_logs
 def export_faktur(request, id):
     faktur = get_object_or_404(Faktur, pk=id)
     pesanan = faktur.pesanan_id

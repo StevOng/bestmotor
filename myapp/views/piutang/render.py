@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.db.models import Sum
 from myapp.utils.decorators import admin_required, both_required
+from myapp.utils.activity_logs import activity_logs
 from ...models.piutang import *
 from ...models.faktur import Faktur
 from ...models.user import User
 
 @both_required
+@activity_logs
 def piutang(request):
     list_piutang = Piutang.objects.select_related("customer_id__user_id")
 
@@ -18,6 +20,7 @@ def piutang(request):
     return render(request, 'piutang/piutang.html', {'list_piutang': list_piutang})
 
 @admin_required
+@activity_logs
 def tambah_bayarpiutang(request, id=None):
     sales   = User.objects.all()
     faktur  = Faktur.objects.filter(

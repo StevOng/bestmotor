@@ -7,9 +7,11 @@ from django.utils.dateparse import parse_date
 from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce #filter none or null dan ubah menjadi 0
 from myapp.utils.decorators import admin_required, both_required
+from myapp.utils.activity_logs import activity_logs
 from ...models.barang import *
 
 @both_required
+@activity_logs
 def barang(request):
     filter = request.GET.get('filter')
     dari = request.GET.get('dari_tgl')
@@ -41,6 +43,7 @@ def barang(request):
     return render(request, 'barang/barang.html', {'barang': barang,'filter': filter})
 
 @admin_required
+@activity_logs
 def tambah_barang(request, id=None):
     barang = None
     tier_harga = []
@@ -50,6 +53,7 @@ def tambah_barang(request, id=None):
         tier_harga = TierHarga.objects.filter(barang_id=barang.id)
     return render(request, 'barang/tambahbrg.html', {'detail_barang': barang, 'tier_harga': tier_harga})
 
+@activity_logs
 def get_barang_laku(dari, sampe):
     dari = parse_date(dari)
     sampe = parse_date(sampe)
@@ -62,6 +66,7 @@ def get_barang_laku(dari, sampe):
         ), 0)
     ).filter(total_terjual__gt=100)
 
+@activity_logs
 def export_excel(request):
     work_book = openpyxl.Workbook()
 

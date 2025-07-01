@@ -9,6 +9,7 @@ from ...models.barang import *
 import json
 
 @admin_required
+@activity_logs
 def admin_katalog(request):
     data = Katalog.objects.prefetch_related("promosi_barang__barang")
     return render(request, 'katalog/adminkatalog.html', {"data_katalog": data})
@@ -25,6 +26,7 @@ def get_label_tipe(input):
             return label
     return input
 
+@activity_logs
 def katalog(request):
     katalog_list = Katalog.objects.prefetch_related("promosi_barang__barang").filter(is_katalog_utama=True)
 
@@ -52,6 +54,7 @@ def katalog(request):
         })
     return render(request, "katalog/katalog.html", {'tipe_katalog': dict(tipe_katalog)})
 
+@activity_logs
 def katalogbrg(request, tipe):
     data = []
     title = tipe
@@ -86,6 +89,7 @@ def katalogbrg(request, tipe):
     })
 
 @admin_required
+@activity_logs
 def tambah_brgkatalog(request, id=None):
     katalog = None
     barang = None
@@ -96,6 +100,7 @@ def tambah_brgkatalog(request, id=None):
         barang = katalog.barang.first()
     return render(request, 'katalog/tambahkatalog.html', {"katalog": katalog, "barang": barang, "katalogbrg": katalogbrg})
 
+@activity_logs
 def deskripsi(request, katalog_id):
     katalog = get_object_or_404(Katalog, id=katalog_id)
     katalogbrg = KatalogBarang.objects.filter(katalog=katalog).select_related("barang","katalog")
