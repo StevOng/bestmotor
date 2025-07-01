@@ -10,17 +10,34 @@ def piutang(request):
     list_piutang = Piutang.objects.select_related("customer_id__user_id")
 
     for p in list_piutang:
-        p.total_faktur = p.faktur_set.aggregate(total=Sum('total'))['total'] or 0
+        p.total_faktur = (
+            p.piutangfaktur_set
+             .aggregate(total=Sum('faktur__total'))['total']
+            or 0
+        )
     return render(request, 'piutang/piutang.html', {'list_piutang': list_piutang})
 
 @admin_required
 def tambah_bayarpiutang(request, id=None):
     piutang = None
-    sales = User.objects.all()
-    faktur = Faktur.objects.filter(status__in=['belum_lunas', 'jatuh_tempo']).select_related('pesanan_id__customer_id__user_id')
+    sales   = User.objects.all()
+    faktur  = Faktur.objects.filter(
+        status__in=['belum_lunas', 'jatuh_tempo']
+    ).select_related('pesanan_id__customer_id__user_id')
 
+    piutang_obj = None
     if id:
-        piutang = Piutang.objects.select_related('customer_id__user_id').get(id=id)
-        piutang.total_faktur = piutang.faktur_set.aggregate(total=Sum('total'))['total'] or 0
-        piutang.nilai_byr = PiutangFaktur.objects.filter(piutang=piutang).values_list('nilai_bayar', flat=True)
-    return render(request, 'piutang/tambahpiutang.html', {'data_piutang':piutang, 'data_faktur': faktur, "list_sales": sales})
+        try:
+            piutang_obj = Piutang.objects.select_related("customer_id__user_id").get(id=id)
+            # hitung total_faktur & nilai_byr …
+        except Piutang.DoesNotExist:
+            piutang_obj = None
+
+    # buat list yang bisa di-iter
+    data_piutang = [piutang_obj] if piutang_obj else []
+
+    return render(request, 'piutang/tambahpiutang.html', {
+        'data_piutang': data_piutang,
+        'data_faktur':  faktur,
+        'list_sales':   sales,
+    })

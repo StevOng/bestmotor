@@ -28,13 +28,13 @@ class Piutang(models.Model):
         return self.no_bukti
 
     def potongan_total(self):
-        total_potongan = self.faktur_set.aggregate(
+        total_potongan = self.faktur.aggregate(
             potongan=Sum('potongan')
         )['potongan'] or 0
         return total_potongan or 0
     
     def pelunasan_total(self):
-        total_pelunasan = self.faktur_set.aggregate(
+        total_pelunasan = self.faktur.aggregate(
             pelunasan=Sum(F('total')-F('sisa_bayar'))
         )['pelunasan']
         return total_pelunasan or 0
@@ -42,8 +42,6 @@ class Piutang(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum
             self.generate_no_bukti() # jika belum berarti baru maka generate
-        self.potongan_total()
-        self.pelunasan_total()
         super().save(*args, **kwargs)
 
 class PiutangFaktur(models.Model):

@@ -20,10 +20,14 @@ class PiutangSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         list_data = validated_data.pop("list_faktur")
-        with transaction.atomic:
+        with transaction.atomic():
             piutang = Piutang.objects.create(**validated_data)
             for item in list_data:
                 PiutangFaktur.objects.create(piutang=piutang, **item)
+
+            piutang.total_potongan  = piutang.potongan_total()
+            piutang.total_pelunasan = piutang.pelunasan_total()
+            piutang.save(update_fields=['total_potongan','total_pelunasan'])
         return piutang
     
     def update(self, instance, validated_data):
