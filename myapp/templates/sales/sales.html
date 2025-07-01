@@ -89,8 +89,8 @@
             <div class="m-2">
                 <label for="merk" class="block text-sm font-medium text-gray-700">Merk</label>
                 <select id="merk"
-                onchange="setSelectedMerk(this)"
-                data-selected-merk="{{ persentase.first.barang_id.merk|default:'' }}"
+                onchange=""
+                data-selected-merk="{{ persentase.first.merk_nama|default:'' }}"
                     class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm bg-white focus:outline-none focus:ring-customBlue focus:border-customBlue">
                     <option value="" disabled selected>Masukkan merek barang</option>
                 </select>

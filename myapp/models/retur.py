@@ -1,4 +1,5 @@
 from django.db import models
+from decimal import Decimal
 from .invoice import Invoice
 from .barang import Barang
 from .faktur import Faktur
@@ -34,6 +35,7 @@ class ReturBeliBarang(models.Model):
     retur = models.ForeignKey(ReturBeli, on_delete=models.CASCADE)
     barang = models.ForeignKey(Barang, on_delete=models.CASCADE)
     qty = models.IntegerField()
+    diskon_barang = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0'))
 
 class ReturJual(models.Model):
     id = models.AutoField(primary_key=True)
@@ -66,3 +68,5 @@ class ReturJualBarang(models.Model):
     retur = models.ForeignKey(ReturJual, on_delete=models.CASCADE)
     barang = models.ForeignKey(Barang, on_delete=models.CASCADE)
     qty = models.IntegerField()
+    diskon_barang = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0'))
+

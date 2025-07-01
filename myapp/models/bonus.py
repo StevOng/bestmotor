@@ -6,7 +6,6 @@ from decimal import Decimal
 
 class PersenBonus(models.Model):
     id = models.AutoField(primary_key=True)
-    barang_id = models.ForeignKey(Barang, on_delete=models.CASCADE)
     merk_nama = models.CharField(max_length=20)
     persenan = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=Decimal('0'))
 

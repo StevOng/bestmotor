@@ -37,7 +37,7 @@ function showWarningToast(head, msg) {
 function showSuccessToast(head, msg) {
   const toast = document.getElementById("toastSuccess");
 
-  toast.innerHTML =`
+  toast.innerHTML = `
       <div class="toast flex items-start p-4 bg-yellow-50 rounded-lg border border-yellow-100 shadow-lg">
         <div class="flex-shrink-0">
           <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
@@ -274,7 +274,7 @@ async function getMerk(id) {
 
   select.innerHTML = '<option value="" disabled>Masukkan merek barang</option>';
   select.disabled = false;
-  input.value = "";
+  input.value = ""
 
   try {
     if (id) {
@@ -312,8 +312,48 @@ async function getMerk(id) {
   } catch (err) {
     console.error("Gagal ambil data merk atau bonus:", err);
   }
-}
 
+  const bonusBtn = document.getElementById("bonusBtn");
+  bonusBtn.onclick = async function () {
+    const merk = select.value
+    const bonus = input.value
+    const csrfToken = getCSRFToken()
+
+    if (!merk || !bonus) {
+      showWarningToast("Data Tidak Lengkap", "Lengkapi merek dan bonus")
+      return;
+    }
+
+    try {
+      let response, data;
+      if (id) {
+        response = await fetch(`/api/persenbonus/${id}/`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+          body: JSON.stringify({ "persenan": bonus })
+        });
+        data = await response.json();
+      } else {
+        response = await fetch('/api/persenbonus/', {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+          body: JSON.stringify({ "merk_nama": merk, "persenan": bonus })
+        });
+        data = await response.json();
+      }
+
+      if (response.ok) {
+        showSuccessToast("Berhasil", "Data berhasil disimpan")
+        location.reload()
+      } else {
+        showWarningToast("Gagal", "Gagal menyimpan data")
+      }
+    } catch (err) {
+      console.error("Gagal submit bonus:", err);
+      showWarningToast("Gagal", "Terjadi kesalahan")
+    }
+  }
+}
 function validate() {
   const tanggal = document.querySelectorAll(".tanggal-cair")
   tanggal.forEach(tgl => {

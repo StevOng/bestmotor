@@ -27,5 +27,5 @@ def bonus(request):
 
 @admin_required
 def bonus_merek(request):
-    persentase = PersenBonus.objects.select_related("barang_id")
+    persentase = PersenBonus.objects.all()
     return render(request, 'sales/sales.html', {"list":"merek", "persentase": persentase})

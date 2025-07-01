@@ -44,7 +44,7 @@ class BarangViewSet(viewsets.ModelViewSet):
         queryset = self.get_queryset().order_by('qty_terjual')[:10]
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
+    
 class TierHargaViewSet(viewsets.ModelViewSet):
     queryset = TierHarga.objects.all()
     serializer_class = TierHargaSerializer
