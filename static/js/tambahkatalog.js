@@ -111,91 +111,93 @@ searchKode.addEventListener("input", async (event) => {
     }
 })
 
-document.getElementById("formKatalog").addEventListener("submit", async (event) => {
-    event.preventDefault()
+document.addEventListener('DOMContentLoaded', () => {
+    window.oldKatalogImages = window.oldKatalogImages || [];
+    document.getElementById('formKatalog').addEventListener('submit', handleSubmit);
+});
 
-    const id = document.getElementById("katalogId")?.value
-    const hargaTertera = document.getElementById("hrgbrg").value
-    const hargaDiskon = document.getElementById("hrgdsc").value
-    const gambarPelengkap = Array.from(document.getElementById("upload_gambar").files)
-    const inKatalogUtama = isKatalogUtama.value
+async function handleSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const files = Array.from(form.querySelector('#upload_gambar').files);
 
-    const method = id ? "PUT" : "POST"
-    const apiKatalog = id ? `/api/katalog/${id}/` : `/api/katalog/`
-    const csrfToken = getCSRFToken()
+    // 1) Build a base FormData from the form itself so it includes
+    //    all your <input name="…"> fields (like barang, tipe, dll.)
+    const baseFD = new FormData(form);
 
-    const katalog = new FormData()
-    katalog.append("harga_tertera", hargaTertera)
-    katalog.append("harga_diskon", hargaDiskon)
-    katalog.append("is_katalog_utama", inKatalogUtama)
-    try {
-        const response = await fetch(apiKatalog, {
-            method: method,
-            headers: {
-                'X-CSRFToken': csrfToken
-            },
-            body: katalog
-        })
-        if (response.ok) {
-            const result = await response.json()
-            console.log("Berhasil: ", result);
-
-            const cekJumlah = await fetch(`/api/katalogbarang/?katalog=${result.id}/`);
-            const data = await cekJumlah.json();
-            let detailAPI = `/api/katalogbarang/`
-            let detailMethod = "POST"
-            if (id && data[index]) {
-                detailAPI = `/api/katalogbarang/${data[index].id}/`
-                detailMethod = "PATCH"
-            }
-            if (data.length + gambarPelengkap.length > 5) {
-                alert("Total gambar melebihi batas maksimum (5).");
-                return;
-            }
-            gambarPelengkap.forEach(async (gambar, index) => {
-                const detail = new FormData()
-                detail.append("katalog", result.id)
-                detail.append("barang", barangId.value)
-                detail.append("gambar_pelengkap", gambar)
-
-                const detailAPI = id ? `/api/katalogbarang/${data[index].id}/` : `/api/katalogbarang/`
-                const detailResp = await fetch(detailAPI, {
-                    method: detailMethod,
-                    headers: {
-                        'X-CSRFToken': csrfToken
-                    },
-                    body: detail
-                })
-                const detailRes = await detailResp.json()
-                if (!detailResp.ok) {
-                    console.log("error: ", detailRes)
-                    console.log("result id: ", result.id)
-                } else {
-                    console.log("success: ", detailRes)
-                }
-            })
-            const headScs = "Berhasil"
-            const parScs = "Data berhasil ditambah"
-            showSuccessToast(headScs, parScs)
-            setTimeout(() => {
-                location.replace('/katalog/admin/');
-            }, 1000);
-        } else {
-            const error = await response.json()
-            const headScs = "Gagal"
-            const parScs = "Gagal menambahkan data"
-            showWarningToast(headScs, parScs)
-            console.error("Gagal: ", error);
-        }
-    } catch (error) {
-        console.error(error);
+    // 2) Validate max-5 images
+    if ((baseFD.getAll('gambar_pelengkap').length + files.length) > 5) {
+        showWarningToast("Perhatian!", "Total gambar tidak boleh lebih dari 5");
+        return;
     }
-})
+
+    // 3) Create or update the katalog header
+    const katalogId = form.dataset.katalogId;
+    const url = katalogId ? `/api/katalog/${katalogId}/` : '/api/katalog/';
+    const method = katalogId ? 'PUT' : 'POST';
+    const headerResp = await fetch(url, {
+        method,
+        headers: { 'X-CSRFToken': getCSRFToken() },
+        body: baseFD
+    });
+    if (!headerResp.ok) {
+        console.error(await headerResp.json());
+        showWarningToast("Gagal", "Gagal menyimpan header katalog");
+        return;
+    }
+    const { id } = await headerResp.json();
+
+    // 4) Delete old images on edit
+    if (katalogId) {
+        await fetch(`/api/katalog/${id}/reset_images/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({})
+        });
+    }
+
+    // 5) Now upload each file — _including_ the katalog ID
+    const uploads = files.map(file => {
+        const fd = new FormData();
+        for (let [key, val] of baseFD.entries()) {
+            if (key !== 'gambar_pelengkap') fd.append(key, val);
+        }
+        fd.append('katalog', id);              // ← make sure this is here
+        fd.append('gambar_pelengkap', file);
+
+        // debug check:
+        if (!/^\d+$/.test(fd.get('katalog'))) {
+            throw new Error("Invalid katalog PK: " + fd.get('katalog'));
+        }
+
+        return fetch('/api/katalogbarang/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCSRFToken() },
+            body: fd
+        });
+    });
+    // 6) Wait for all uploads & catch any failures
+    const results = await Promise.all(uploads);
+    for (let r of results) {
+        if (!r.ok) {
+            console.error(await r.text());
+            showWarningToast("Gagal", "Beberapa gambar gagal diupload");
+            return;
+        }
+    }
+
+    // 7) Success!
+    showSuccessToast("Berhasil", "Katalog dan gambar berhasil disimpan");
+    window.location = '/katalog/admin/';
+}
 
 function showWarningToast(head, msg) {
-  const toast = document.getElementById("toastWarning");
+    const toast = document.getElementById("toastWarning");
 
-  toast.innerHTML = `
+    toast.innerHTML = `
     <div class="toast flex items-start p-4 bg-yellow-50 rounded-lg border border-yellow-100 shadow-lg">
         <div class="flex-shrink-0">
           <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
@@ -214,19 +216,19 @@ function showWarningToast(head, msg) {
     </div>
   `
 
-  toast.classList.remove("hidden");
+    toast.classList.remove("hidden");
 
-  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
 
-  toast.toastTimeout = setTimeout(() => {
-    toast.classList.add("hidden");
-  }, 2000);
+    toast.toastTimeout = setTimeout(() => {
+        toast.classList.add("hidden");
+    }, 2000);
 }
 
 function showSuccessToast(head, msg) {
-  const toast = document.getElementById("toastSuccess");
+    const toast = document.getElementById("toastSuccess");
 
-  toast.innerHTML =`
+    toast.innerHTML = `
       <div class="toast flex items-start p-4 bg-green-50 rounded-lg border border-green-100 shadow-lg">
         <div class="flex-shrink-0">
           <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
@@ -245,11 +247,11 @@ function showSuccessToast(head, msg) {
       </div>
   `
 
-  toast.classList.remove("hidden");
+    toast.classList.remove("hidden");
 
-  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
 
-  toast.toastTimeout = setTimeout(() => {
-    toast.classList.add("hidden");
-  }, 2000);
+    toast.toastTimeout = setTimeout(() => {
+        toast.classList.add("hidden");
+    }, 2000);
 }
