@@ -165,7 +165,7 @@ function closeModalConfirm() {
 
 async function updateBulkStatus(newStatus) {
     const checkboxes = document.querySelectorAll("[id^='checkbox-']")
-    const ids = Array.from(checkboxes).map(cb => cb.checked)
+    const ids = Array.from(checkboxes).filter(cb => cb.checked).map(cb => parseInt(cb.value, 10))
     const csrfToken = getCSRFToken()
 
     if (ids.length === 0) {

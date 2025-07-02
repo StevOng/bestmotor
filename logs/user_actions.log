@@ -110,3 +110,17 @@
 2025-07-02 15:13:38,908 INFO [userlog] admin admin - GET /pembelian/pembayaran/hutang/ - Mengelola Pembelian - admin admin mengecek pembelian di halaman /pembelian/pembayaran/hutang/
 2025-07-02 15:13:40,793 INFO [userlog] admin admin - GET /pembelian/pembayaran/hutang/tambah/1/ - Mengelola Pembelian - admin admin mengecek pembelian di halaman /pembelian/pembayaran/hutang/tambah/1/
 2025-07-02 15:19:17,188 INFO [userlog] admin admin - GET /pembelian/pembayaran/hutang/tambah/1/ - Mengelola Pembelian - admin admin mengecek pembelian di halaman /pembelian/pembayaran/hutang/tambah/1/
+2025-07-02 15:20:31,527 INFO [userlog] admin admin - GET /pesanan/ - Mengelola Pesanan - admin admin mengecek pesanan di halaman /pesanan/
+2025-07-02 15:50:20,921 INFO [userlog] admin admin - GET /katalog/admin/ - Mengelola Katalog - admin admin mengecek katalog di halaman /katalog/admin/
+2025-07-02 15:50:42,620 INFO [userlog] admin admin - GET /katalog/tambah/ - Mengelola Katalog - admin admin mengecek katalog di halaman /katalog/tambah/
+2025-07-02 15:56:36,039 INFO [userlog] admin admin - GET /katalog/tambah/ - Mengelola Katalog - admin admin mengecek katalog di halaman /katalog/tambah/
+2025-07-02 15:57:22,789 INFO [userlog] admin admin - GET /katalog/tambah/ - Mengelola Katalog - admin admin mengecek katalog di halaman /katalog/tambah/
+2025-07-02 16:01:22,745 INFO [userlog] admin admin - GET /katalog/tambah/ - Mengelola Katalog - admin admin mengecek katalog di halaman /katalog/tambah/
+2025-07-02 16:04:04,982 INFO [userlog] admin admin - GET /katalog/tambah/ - Mengelola Katalog - admin admin mengecek katalog di halaman /katalog/tambah/
+2025-07-02 16:08:39,984 INFO [userlog] admin admin - GET /katalog/tambah/ - Mengelola Katalog - admin admin mengecek katalog di halaman /katalog/tambah/
+2025-07-02 16:09:52,631 INFO [userlog] admin admin - GET /katalog/tambah/ - Mengelola Katalog - admin admin mengecek katalog di halaman /katalog/tambah/
+2025-07-02 16:11:53,589 INFO [userlog] admin admin - GET /katalog/tambah/ - Mengelola Katalog - admin admin mengecek katalog di halaman /katalog/tambah/
+2025-07-02 16:12:17,496 INFO [userlog] admin admin - GET /katalog/admin/ - Mengelola Katalog - admin admin mengecek katalog di halaman /katalog/admin/
+2025-07-02 16:17:32,952 INFO [userlog] admin admin - GET /katalog/tambah/4/ - Mengelola Katalog - admin admin mengecek katalog di halaman /katalog/tambah/4/
+2025-07-02 16:18:22,022 INFO [userlog] admin admin - GET /katalog/admin/ - Mengelola Katalog - admin admin mengecek katalog di halaman /katalog/admin/
+2025-07-02 16:18:58,692 INFO [userlog] admin admin - GET /katalog/beat-fi/ - Mengelola Katalog - admin admin mengecek katalog di halaman /katalog/beat-fi/
