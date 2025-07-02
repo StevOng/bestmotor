@@ -3,6 +3,7 @@ from datetime import timedelta
 from decimal import Decimal
 from .barang import *
 from .supplier import Supplier
+from django.db.models import Sum
 
 class Invoice(models.Model):
     id = models.AutoField(primary_key=True)

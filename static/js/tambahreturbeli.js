@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    getOptionBrg()
-
     const tanggal = document.getElementById("tanggal_inv")
     const today = new Date()
     const year = String(today.getFullYear())
@@ -63,10 +61,6 @@ document.querySelectorAll(".disc").forEach(input => {
 })
 
 document.getElementById("ppn").addEventListener("input", callListener)
-
-document.getElementById("ongkir").addEventListener("input", callListener)
-
-document.getElementById("discount").addEventListener("input", callListener)
 
 function confirmPopupBtn(attr) {
     const modal = document.getElementById("popupModalConfirm");
@@ -132,7 +126,7 @@ async function loadBarangOptions(selectId, selectedId = null, invId = null) {
     data.forEach(barang => {
         let option = document.createElement("option");
         option.value = barang.id;
-        option.text = barang.kode_barang;
+        option.text = barang.kode_barang + "-" + barang.nama_barang;
         if (barang.id == selectedId) {
             option.selected = true;
         }
@@ -178,7 +172,7 @@ async function getOptionBrg() {
                     hiddenInput.value = barangId;
                 }
 
-                const response = await fetch(`/api/barang/${barangId}/`);
+                const response = await fetch(`/api/detailinvoice/by_invoice/${invId}/${barangId}/`);
                 const data = await response.json();
 
                 const namaBrgEl = document.getElementById(namaBrgId);
@@ -262,11 +256,10 @@ function hapusRow(btn) {
     setTimeout(() => row.remove(), 400)
 }
 
-function pilihInvoice(id, nomor, supplier, ppn, diskon) {
+function pilihInvoice(id, nomor, supplier, ppn) {
     let displayTextNomor = `${nomor}`;
     let displayTextSupplier = `${supplier}`;
     let displayPpn = `${ppn}`;
-    let displayDiskon = `${diskon}`;
 
     let hiddenInput = document.getElementById("invId");
 
@@ -277,7 +270,6 @@ function pilihInvoice(id, nomor, supplier, ppn, diskon) {
         document.getElementById("no_invoice").value = displayTextNomor;
         document.getElementById("supplier").value = displayTextSupplier;
         document.getElementById("ppn").value = displayPpn;
-        document.getElementById("discount").value = displayDiskon;
 
         // Setelah invoice diisi → ambil pilihan barang yang tersedia
         getOptionBrg(); 
@@ -291,8 +283,10 @@ async function submitDetail() {
     const id = document.getElementById("hiddenId")?.value
     const barangIds = Array.from(document.querySelectorAll(".barangId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))//filter utk buang null
     const qtyReturs = Array.from(document.querySelectorAll(".input_qtybrg")).map(input => parseInt(input.value)).filter(val => !isNaN(val))//filter utk buang null
+    const diskonBrgs = Array.from(document.querySelectorAll(".disc")).map(input => parseInt(input.value)).filter(val => !isNaN(val))//filter utk buang null
     const invId = document.getElementById("invId")?.value
     const bruto = document.getElementById("bruto").value
+    const ongkir = document.getElementById("ongkir")?.value
     const check = await fetch(`/api/detailinvoice/${invId}/`)
     const data = await check.json()
 
@@ -306,7 +300,8 @@ async function submitDetail() {
     try {
         const detail_barang = barangIds.map((barangId, index) => ({
             barang: barangId,
-            qty: qtyReturs[index]
+            qty: qtyReturs[index],
+            diskon_barang: diskonBrgs[index]
         }))
         const response = await fetch(apiUrl, {
             method: method,
@@ -317,6 +312,7 @@ async function submitDetail() {
             body: JSON.stringify({
                 "invoice_id": invId,
                 "subtotal": bruto,
+                "ongkir": ongkir,
                 "detail_barang": detail_barang
             })
         })
@@ -340,8 +336,6 @@ function updateDetailBiaya() {
     let bruto = 0
     const brutoEl = document.getElementById("bruto")
     const ppnInput = document.getElementById("ppn")
-    const ongkirInput = document.getElementById("ongkir")
-    const discInvInput = document.getElementById("discount")
     const niliaPpnEl = document.getElementById("nilai_ppn")
     const nettoEl = document.getElementById("netto")
     document.querySelectorAll("tr").forEach(row => {
@@ -380,7 +374,7 @@ function updateDetailBiaya() {
     });
     brutoEl.value = bruto
     const nilaiPpn = bruto * (ppnInput.value / 100)
-    const netto = bruto + nilaiPpn + Number(ongkirInput.value) - discInvInput.value
+    const netto = bruto + nilaiPpn
 
     niliaPpnEl.value = nilaiPpn
     nettoEl.value = netto
@@ -422,9 +416,8 @@ async function qtyCheck() {
             const data = await res.json();
 
             const qtyBeli = parseInt(data.qty_beli);
-            const qtyRetur = parseInt(data.qty_retur);
             const stokBarang = parseInt(data.stok_barang);
-            let maxRetur = qtyBeli - qtyRetur;
+            let maxRetur = qtyBeli;
             console.log(data);
             console.log(stokBarang);
 

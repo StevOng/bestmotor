@@ -7,7 +7,7 @@ from ...models.invoice import *
 class ReturBeliBarangSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReturBeliBarang
-        fields = ['barang', 'qty']
+        fields = ['barang', 'qty', 'diskon_barang']
 
 class ReturBeliSerializer(serializers.ModelSerializer):
     detail_barang = ReturBeliBarangSerializer(many=True, write_only=True)
@@ -33,12 +33,16 @@ class ReturBeliSerializer(serializers.ModelSerializer):
                 
                 # Update qty_retur di DetailInvoice
                 invoice = retur.invoice_id
+                invoice.netto -= retur.subtotal
+                invoice.bruto -= retur.subtotal
+                invoice.save(update_fields=["netto", "bruto"])
                 try:
                     detail_invoice = DetailInvoice.objects.get(
                         invoice_id=invoice,
                         barang_id=barang
                     )
                     detail_invoice.qty_retur += item['qty']
+                    detail_invoice.qty_beli -= item['qty']
                     detail_invoice.save()
                 except DetailInvoice.DoesNotExist:
                     raise serializers.ValidationError(f"DetailInvoice tidak ditemukan untuk barang: {barang.nama_barang}")
@@ -70,7 +74,7 @@ class ReturBeliSerializer(serializers.ModelSerializer):
 class ReturJualBarangSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReturJualBarang
-        fields = ['barang', 'qty']
+        fields = ['barang', 'qty', 'diskon_barang']
 
 class ReturJualSerializer(serializers.ModelSerializer):
     detail_barang = ReturJualBarangSerializer(many=True, write_only=True)
@@ -93,8 +97,13 @@ class ReturJualSerializer(serializers.ModelSerializer):
                 barang = item['barang']
                 qty_retur = item['qty']
                 detail_pesanan = DetailPesanan.objects.get(pesanan_id=retur.faktur_id.pesanan_id, barang_id=barang_id)
+                faktur = retur.faktur_id
+                faktur.pesanan_id.netto = faktur.pesanan_id.netto - retur.subtotal
+                faktur.pesanan_id.bruto = faktur.pesanan_id.bruto - retur.subtotal
+                faktur.pesanan_id.save(update_fields=["netto", "bruto"])
 
                 detail_pesanan.qty_retur += qty_retur
+                detail_pesanan.qty_pesan -= qty_retur
                 detail_pesanan.save()
                 
                 barang.stok += qty_retur

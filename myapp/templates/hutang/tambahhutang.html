@@ -347,7 +347,7 @@
               <td>
                 <input
                   type="number"
-                  value="{{ hi.nilai_bayar|default:"" }}"
+                  value="{{ hi.nilai_bayar|floatformat:0|default:"" }}"
                   id="nilaiBayar-{{ forloop.counter }}"
                   class="nilaiBayar w-full rounded-md border-gray-300"
                 />

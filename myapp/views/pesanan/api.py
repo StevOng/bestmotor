@@ -6,6 +6,7 @@ from django.db.models.functions import ExtractWeekDay
 from datetime import date
 from calendar import monthrange
 from ...models.pesanan import *
+from ...models.faktur import *
 from .serializer import *
 
 class PesananViewSet(viewsets.ModelViewSet):
@@ -159,3 +160,21 @@ class DetailPesananViewSet(viewsets.ModelViewSet):
             "qty_retur": detail.qty_retur or 0
         }
         return Response(data)
+    
+    @action(detail=False, methods=["get"], url_path="by_faktur/(?P<faktur_id>\d+)/(?P<barang_id>\d+)")
+    def by_faktur(self, request, faktur_id=None, barang_id=None):
+        try:
+            faktur = Faktur.objects.get(id=faktur_id)
+            pesanan = faktur.pesanan_id
+            detail = DetailPesanan.objects.select_related("barang_id").get(pesanan_id=pesanan, barang_id=barang_id)
+            data = {
+                "nama_barang": detail.barang_id.nama_barang,
+                "harga_jual": detail.barang_id.harga_jual,
+                "diskon_barang": float(detail.diskon_barang),
+                "qty_retur": detail.qty_retur or 0,
+                "total_diskon_barang": float(detail.total_diskon_barang()),
+                "total_harga_barang": float(detail.total_harga_barang())
+            }
+            return Response(data)
+        except DetailPesanan.DoesNotExist:
+            return Response({"error": "Detail tidak ditemukan"}, status=404)
