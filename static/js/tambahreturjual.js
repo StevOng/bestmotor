@@ -63,10 +63,6 @@ document.querySelectorAll(".disc").forEach(input => {
 
 document.getElementById("ppn").addEventListener("input", callListener)
 
-document.getElementById("ongkir").addEventListener("input", callListener)
-
-document.getElementById("discount").addEventListener("input", callListener)
-
 //PopupModal
 function openModal() {
     let modal = document.getElementById("popupModal");
@@ -161,8 +157,8 @@ async function getOptionBrg() {
                 hiddenInput.value = barangId
             }
 
-            const response = await fetch(`/api/barang/${barangId}/`)
-            const data = await response.json()
+            const response = await fetch(`/api/detailpesanan/by_faktur/${fakturId}/${barangId}/`);
+            const data = await response.json();
 
             const namaBrgEl = document.getElementById(namaBrgId)
             if (namaBrgEl && data.nama_barang) {
@@ -172,25 +168,10 @@ async function getOptionBrg() {
             if (hargaInput) {
                 hargaInput.value = data.harga_jual
             }
-            // Tambahan pengisian field lainnya (jika ada di API)
-            const qtyInput = row.querySelector(".input_qtybrg");
-            if (qtyInput && data.qty_retur) {
-                qtyInput.value = data.qty_retur;
-            }
 
             const discInput = row.querySelector(".disc");
-            if (discInput && data.diskon_barang) {
+            if (discInput) {
                 discInput.value = data.diskon_barang;
-            }
-
-            const totalDiscTd = row.querySelector(".totalDisc");
-            if (totalDiscTd && data.total_diskon_barang) {
-                totalDiscTd.textContent = data.total_diskon_barang;
-            }
-
-            const totalTd = row.querySelector(".total");
-            if (totalTd && data.total_harga_barang) {
-                totalTd.textContent = data.total_harga_barang;
             }
 
             updateDetailBiaya();
@@ -219,7 +200,7 @@ function addNewRow(re = null) {
         <td>${rowCount}</td>
         <td>
           <input type="hidden" name="barangId" class="barangId" value="${barangId}">
-          <select id="${selectId}" class="kodebrg-dropdown" data-namaBrg="namaBrg-${rowCount}" data-selected-id="${barangId}">
+          <select id="${selectId}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-${rowCount}" data-selected-id="${barangId}">
             <option value="${barangId}" selected>${re?.barang_id.kode_barang || ""} - ${re?.barang_id.nama_barang || ""}</option>
           </select>
         </td>
@@ -253,17 +234,19 @@ function hapusRow(btn) {
     setTimeout(() => row.remove(), 400)
 }
 
-function pilihFaktur(id, nomor, cust, pesanan_id) {
+function pilihFaktur(id, nomor, cust, pesanan_id, ppn) {
     let displayTextNomor = `${nomor}`
     let displayTextSupplier = `${cust}`
+    let displayPpn = `${ppn}`;
 
     let hiddenInput = document.getElementById("fakturId")
     let hiddenPesananId = document.getElementById("pesananId")
     if (hiddenInput) {
         hiddenInput.value = id
         hiddenPesananId.value = pesanan_id
-        document.getElementById("no_faktur").value = displayTextNomor
-        document.getElementById("customer").value = displayTextSupplier
+        document.getElementById("no_faktur").value = displayTextNomor;
+        document.getElementById("customer").value = displayTextSupplier;
+        document.getElementById("ppn").value = displayPpn;
 
         // baru setelah faktur diisi → ambil option barang
         getOptionBrg();
@@ -275,9 +258,11 @@ async function submitDetail() {
     const id = document.getElementById("hiddenId")?.value
     const barangIds = Array.from(document.querySelectorAll(".barangId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))//filter utk buang null
     const qtyReturs = Array.from(document.querySelectorAll(".input_qtybrg")).map(input => parseInt(input.value)).filter(val => !isNaN(val))//filter utk buang null
+    const diskonBrgs = Array.from(document.querySelectorAll(".disc")).map(input => parseInt(input.value)).filter(val => !isNaN(val))//filter utk buang null
     const fakturId = document.getElementById("fakturId")?.value
     const pesananId = document.getElementById("pesananId")?.value
     const bruto = document.getElementById("bruto").value
+    const ongkir = document.getElementById("ongkir").value
     const check = await fetch(`/api/detailpesanan/${pesananId}/`)
     const data = await check.json()
 
@@ -292,7 +277,8 @@ async function submitDetail() {
     try {
         const detail_barang = barangIds.map((barangId, index) => ({
             barang: barangId,
-            qty: qtyReturs[index]
+            qty: qtyReturs[index],
+            diskon_barang: diskonBrgs[index]
         }))
         const response = await fetch(apiUrl, {
             method: method,
@@ -303,6 +289,7 @@ async function submitDetail() {
             body: JSON.stringify({
                 "faktur_id": fakturId,
                 "subtotal": bruto,
+                "ongkir": ongkir,
                 "detail_barang": detail_barang
             })
         })
@@ -326,7 +313,6 @@ function updateDetailBiaya() {
     let bruto = 0
     const brutoEl = document.getElementById("bruto")
     const ppnInput = document.getElementById("ppn")
-    const ongkirInput = document.getElementById("ongkir")
     const niliaPpnEl = document.getElementById("nilai_ppn")
     const nettoEl = document.getElementById("netto")
     console.log("BarangData global:", window.barangData)
@@ -366,7 +352,7 @@ function updateDetailBiaya() {
     });
     brutoEl.value = bruto
     const nilaiPpn = bruto * (ppnInput.value / 100)
-    const netto = bruto + nilaiPpn + Number(ongkirInput.value)
+    const netto = bruto + nilaiPpn
 
     niliaPpnEl.value = nilaiPpn
     nettoEl.value = netto
@@ -409,8 +395,7 @@ async function qtyCheck() {
 
             const data = await res.json();
             const qtyPesan = parseInt(data.qty_pesan);
-            const qtyRetur = parseInt(data.qty_retur);
-            let maxRetur = qtyPesan - qtyRetur;
+            let maxRetur = qtyPesan;
 
             if (isEdit) {
                 maxRetur += dataAwal;

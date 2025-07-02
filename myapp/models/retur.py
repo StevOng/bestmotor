@@ -11,6 +11,7 @@ class ReturBeli(models.Model):
     no_bukti = models.CharField(max_length=10, unique=True)
     tanggal = models.DateTimeField(auto_now_add=True)
     terakhir_edit = models.DateTimeField(auto_now=True)
+    ongkir = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0.00'))
     subtotal = models.DecimalField(max_digits=19, decimal_places=0)
 
     def __str__(self):
@@ -35,7 +36,7 @@ class ReturBeliBarang(models.Model):
     retur = models.ForeignKey(ReturBeli, on_delete=models.CASCADE)
     barang = models.ForeignKey(Barang, on_delete=models.CASCADE)
     qty = models.IntegerField()
-    diskon_barang = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0'))
+    diskon_barang = models.DecimalField(max_digits=5, decimal_places=0, default=Decimal('0'))
 
 class ReturJual(models.Model):
     id = models.AutoField(primary_key=True)
@@ -44,6 +45,7 @@ class ReturJual(models.Model):
     no_bukti = models.CharField(max_length=10, unique=True)
     tanggal = models.DateTimeField(auto_now_add=True)
     terakhir_edit = models.DateTimeField(auto_now=True)
+    ongkir = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0.00'))
     subtotal = models.DecimalField(max_digits=19, decimal_places=0)
 
     def __str__(self):
@@ -68,5 +70,5 @@ class ReturJualBarang(models.Model):
     retur = models.ForeignKey(ReturJual, on_delete=models.CASCADE)
     barang = models.ForeignKey(Barang, on_delete=models.CASCADE)
     qty = models.IntegerField()
-    diskon_barang = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0'))
+    diskon_barang = models.DecimalField(max_digits=5, decimal_places=0, default=Decimal('0'))
 

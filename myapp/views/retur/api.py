@@ -46,7 +46,6 @@ class ReturBeliViewSet(viewsets.ModelViewSet):
         for detail in details:
             qty = detail.qty
             barang = detail.barang
-
             # Tambahkan kembali stok barang
             barang.stok += qty
             barang.save()
@@ -64,7 +63,13 @@ class ReturBeliViewSet(viewsets.ModelViewSet):
                 raise ValidationError("Qty retur melebihi yang tercatat di invoice.")
 
             detail_invoice.qty_retur -= qty
+            detail_invoice.qty_beli += qty
             detail_invoice.save()
+            
+        invoice = instance.invoice_id
+        invoice.netto += instance.subtotal
+        invoice.bruto += instance.subtotal
+        invoice.save(update_fields=["netto", "bruto"])
 
         # Hapus semua detail dan objek retur
         details.delete()
@@ -125,7 +130,13 @@ class ReturJualViewSet(viewsets.ModelViewSet):
             if detail_pesanan.qty_retur < qty:
                 raise ValidationError("Qty retur tidak valid.")
             detail_pesanan.qty_retur -= qty
+            detail_pesanan.qty_pesan += qty
             detail_pesanan.save()
+        
+        faktur = instance.faktur_id.pesanan_id
+        faktur.netto += instance.subtotal
+        faktur.bruto += instance.subtotal
+        faktur.save()
 
         details.delete()
         instance.delete()

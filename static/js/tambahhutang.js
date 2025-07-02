@@ -213,7 +213,11 @@ async function pilihInvoice(id, nomor) {
 
     inputInvoice.value = id;
     noInvoiceInput.value = data.no_invoice || nomor;
-    nilaiInvoiceCell.textContent = `Rp ${formatRupiah(data.netto)},-`;
+    if (data.netto_after_retur){
+      nilaiInvoiceCell.textContent = `Rp ${formatRupiah(data.netto_after_retur)},-`;
+    } else {
+      nilaiInvoiceCell.textContent = `Rp ${formatRupiah(data.netto)},-`;
+    }
 
     recalcTotals();
 
