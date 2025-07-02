@@ -100,3 +100,13 @@
 2025-07-02 05:25:14,564 INFO [userlog] admin admin - GET /bantuan/ - Mencari Bantuan - admin admin mengecek bantuan di halaman /bantuan/
 2025-07-02 05:25:25,139 INFO [userlog] admin admin - GET /logout/ - Telah Keluar - admin admin mengecek logout di halaman /logout/
 2025-07-02 05:25:25,154 INFO [userlog] Guest Guest - GET /login/ - Mencoba Masuk - Guest Bestmotor mengecek login di halaman /login/
+2025-07-02 15:12:04,685 INFO [userlog] Guest Guest - GET /login/ - Mencoba Masuk - Guest Bestmotor mengecek login di halaman /login/
+2025-07-02 15:12:41,257 INFO [userlog] Guest Guest - POST /login/ - Mencoba Masuk - Guest Bestmotor membuat login di halaman /login/
+2025-07-02 15:12:41,606 INFO [userlog] admin admin - GET /dashboard/ - Mengelola Dashboard - admin admin mengecek dashboard di halaman /dashboard/
+2025-07-02 15:13:08,114 INFO [userlog] admin admin - GET /pembelian/pembayaran/hutang/ - Mengelola Pembelian - admin admin mengecek pembelian di halaman /pembelian/pembayaran/hutang/
+2025-07-02 15:13:15,910 INFO [userlog] admin admin - GET /pembelian/pembayaran/hutang/tambah/1/ - Mengelola Pembelian - admin admin mengecek pembelian di halaman /pembelian/pembayaran/hutang/tambah/1/
+2025-07-02 15:13:30,383 INFO [userlog] admin admin - GET /penjualan/pembayaran/piutang/ - Mengelola Penjualan - admin admin mengecek penjualan di halaman /penjualan/pembayaran/piutang/
+2025-07-02 15:13:33,413 INFO [userlog] admin admin - GET /penjualan/pembayaran/piutang/tambah/1/ - Mengelola Penjualan - admin admin mengecek penjualan di halaman /penjualan/pembayaran/piutang/tambah/1/
+2025-07-02 15:13:38,908 INFO [userlog] admin admin - GET /pembelian/pembayaran/hutang/ - Mengelola Pembelian - admin admin mengecek pembelian di halaman /pembelian/pembayaran/hutang/
+2025-07-02 15:13:40,793 INFO [userlog] admin admin - GET /pembelian/pembayaran/hutang/tambah/1/ - Mengelola Pembelian - admin admin mengecek pembelian di halaman /pembelian/pembayaran/hutang/tambah/1/
+2025-07-02 15:19:17,188 INFO [userlog] admin admin - GET /pembelian/pembayaran/hutang/tambah/1/ - Mengelola Pembelian - admin admin mengecek pembelian di halaman /pembelian/pembayaran/hutang/tambah/1/
