@@ -73,11 +73,12 @@ $(document).ready(function () {
     });
 });
 
-//PopupModal Customer
-function openModalFaktur(btn) {
-    currentFakturRow = btn.closest("tr");
-    const modal = document.getElementById("popupModalFaktur");
-    modal.classList.remove("hidden"); modal.classList.add("flex");
+let currentFakturRow = null;
+
+function openModalFaktur(button) {
+    currentFakturRow = button.closest("tr");
+    document.getElementById("popupModalFaktur")
+        .classList.replace("hidden", "flex");
 }
 
 function closeModalFaktur() {
@@ -190,102 +191,91 @@ async function fetchFakturBySales(salesId) {
     });
 }
 
-async function pilihFaktur(id, nomor) {
-    // 1) ambil baris & elemen ringkasan
+async function pilihFaktur(id, noFaktur, custIdValue) {
+    // 1) only touch the row you originally opened the modal from:
     const row = currentFakturRow;
-    const hiddenSel = row.querySelector(".fakturId");
-    const txtNo = row.querySelector(".noFaktur");
-    const nilaiCell = row.querySelector("[id^='nilaiFaktur-']");
-    const totForm = document.getElementById("tot_faktur");
+    const hiddenFaktur = row.querySelector("input.fakturId");
+    const txtNo = row.querySelector("input.noFaktur");
+    const nilaiCell = row.querySelector("td.nilaiCell");
+    const inputCust = document.getElementById("custId");
+    const inputSales = document.getElementById("salesId");
 
-    // 2) fetch JSON murni
+    // 2) fetch the full faktur data
     const res = await fetch(`/api/faktur/${id}/?format=json`, {
-        headers: { 'Accept': 'application/json' }
+        headers: { Accept: "application/json" }
     });
     const data = await res.json();
 
-    // 3) isi kolom row + ringkasan summary
-    hiddenSel.value = id;
-    txtNo.value = data.no_faktur || nomor;
+    // 3) fill only that one row + summary fields
+    hiddenFaktur.value = id
+    txtNo.value = data.no_faktur;
     nilaiCell.textContent = formatRupiah(data.total);
-    totForm.value = formatRupiah(data.total);
+    inputCust.value = custIdValue;     // from your button’s 3rd arg
 
-    // 4) kalau ini row terakhir, tambahkan baris baru dgn data
-    const all = document.querySelectorAll("#allpesanan tbody tr");
-    if (row === all[all.length - 1]) addNewRow(data);
+    recalcTotals();  // update your three summary boxes
+
+    // 4) if you’re on the last row *and* you just populated it, make a fresh blank row
+    const allRows = Array.from(
+        document.querySelectorAll("#allpesanan tbody tr")
+    );
+    if (row === allRows[allRows.length - 1]) {
+        addNewRow();   // no args: it will render an empty row
+    }
 
     closeModalFaktur();
 }
 
 async function submitDetail() {
-    const id = document.getElementById("piutangId")?.value
-    const fakturIds = Array.from(document.querySelectorAll(".fakturId")).map(input => parseInt(input.value)).filter(val => !isNaN(val))
-    const nilaiByrs = Array.from(document.querySelectorAll(".nilaiByr")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
-    const custId = document.getElementById("custId").value
-    const potongan = Array.from(document.querySelectorAll(".potongan")).map(input => parseFloat(input.value)).filter(val => !isNaN(val))
-    const sales = document.getElementById("sales").value
+    const piutangId = document.getElementById("piutangId")?.value;
+    const custId = document.getElementById("custId").value;
+    const salesId = document.getElementById("salesId").value;
 
-    if (!sales || !fakturIds) {
-        showWarningToast("Data Penting", "Lengkapi data seperti sales dan faktur")
-        return
+    // gather per-row payloads
+    const detailRows = Array.from(
+        document.querySelectorAll("#allpesanan tbody tr")
+    ).map(tr => {
+        const fid = parseInt(tr.querySelector(".fakturId").value, 10);
+        const bayar = parseFloat(tr.querySelector(".nilaiByr").value) || 0;
+        const potong = parseFloat(tr.querySelector(".potongan").value) || 0;
+        return { faktur: fid, nilai_bayar: bayar, potongan: potong };
+    }).filter(r => r.faktur); // drop any still-empty rows
+
+    if (!custId || !salesId || detailRows.length === 0) {
+        return showWarningToast("Data Kurang",
+            "Pastikan Anda memilih Sales, Customer, dan setidaknya satu Faktur.");
     }
 
-    const method = id ? "PUT" : "POST" // jika ada id edit, tidak? tambah
-    const apiUrl = id ? `/api/piutang/${id}/` : `/api/piutang/`
-    const csrfToken = getCSRFToken()
-    try {
-        const list_faktur = fakturIds.map((fakturId, index) => ({
-            faktur: fakturId,
-            nilai_bayar: nilaiByrs[index]
+    const url = piutangId
+        ? `/api/piutang/${piutangId}/`
+        : `/api/piutang/`;
+    const method = piutangId ? "PUT" : "POST";
 
-        }))
-        const response = await fetch(apiUrl, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
-            body: JSON.stringify({
-                "customer_id": custId,
-                "list_faktur": list_faktur
-            })
-        })
-        const result = await response.json()
-        if (response.ok) {
-            await Promise.all(fakturIds.map(async (fakturId, index) => {
-                const nilaiPotongan = potongan[index]
-                if (nilaiPotongan && nilaiPotongan > 0) {
-                    try {
-                        const patchRes = await fetch(`/api/faktur/${fakturId}/`, {
-                            method: "PATCH",
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRFToken': csrfToken
-                            },
-                            body: JSON.stringify({
-                                potongan: nilaiPotongan
-                            })
-                        })
-                        if (!patchRes.ok) {
-                            console.warn(`Gagal PATCH potongan faktur ${fakturId}`)
-                        }
-                    } catch (err) {
-                        console.error(`Error saat PATCH faktur ${fakturId}`, err)
-                    }
-                }
-            }))
-            console.log("Piutang berhasil disimpan:", result);
-            showSuccessToast("Berhasil", "Berhasil menyimpan data")
-            setTimeout(() => {
-                location.replace(`/penjualan/pembayaran/piutang/`);
-            }, 1000);
-        } else {
-            console.error("Gagal:", result);
-            showWarningToast("Gagal", "Terjadi kesalahan saat menyimpan data");
-        }
-    } catch (error) {
-        console.error("Terjadi kesalahan: ", error)
+    const body = {
+        customer_id: custId,
+        sales_id: salesId,
+        list_faktur: detailRows
+    };
+
+    const res = await fetch(url, {
+        method: method,
+        headers: {
+            "Content-Type": "application/json",
+            'Accept': 'application/json',
+            "X-CSRFToken": getCSRFToken()
+        },
+        body: JSON.stringify(body)
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+        const err = await res.text()
+        console.error("Gagal simpan piutang:", err);
+        return showWarningToast("Error Simpan",
+            (data.detail || "Periksa console untuk detail."));
     }
+
+    showSuccessToast("Berhasil", "Pembayaran piutang tersimpan");
+    setTimeout(() => location.replace("/penjualan/pembayaran/piutang/"), 1000);
 }
 
 function totalPotongan() {
@@ -316,53 +306,49 @@ function formatRupiah(angka) {
     return angka.toLocaleString("en-EN");
 }
 
-function addNewRow(faktur) {
+function addNewRow() {
     const tbody = document.querySelector("#allpesanan tbody");
-    // Hapus baris placeholder jika itu satu-satunya dan fakturId nya kosong
+    // if there’s exactly one row and it’s still blank, don’t duplicate it
     if (tbody.children.length === 1) {
-        const firstHidden = tbody.querySelector("tr .fakturId");
-        if (firstHidden && !firstHidden.value) {
-            tbody.innerHTML = "";
-        }
+        const onlyHidden = tbody.querySelector("input.fakturId").value === "";
+        if (onlyHidden) return;
     }
 
     const rowNum = tbody.children.length + 1;
-    const fakturId = faktur?.id || "";
-    const noFaktur = faktur?.no_faktur || "";
-    const nilaiFaktur = faktur?.total || 0;
-    const custId = faktur?.pesanan_id?.customer_id || ""
     const tr = document.createElement("tr");
     tr.innerHTML = `
-        <td>${rowNum}</td>
-        <td>
-            <div class="relative mt-1">
-              <input type="hidden" name="fakturId" class="fakturId" value="${fakturId}">
-              <input type="text" id="noFaktur-{{ forloop.counter }}" placeholder="Pilih Faktur" value="${noFaktur}" disabled
-                class="noFaktur mt-1 block w-36 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" data-nama-cust="namaCust-{{ forloop.counter }}" data-nilai-faktur="nilaiFaktur-{{ forloop.counter }}">
-                <button type="button" onclick="openModalFaktur(this)"
-                class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none">
-                <i class="fas fa-ellipsis-h"></i>
-              </button>
-            </div>
-        </td>
-        <td id="nilaiFaktur-${rowNum}">Rp ${formatRupiah(nilaiFaktur)},-</td>
-        <td><input type="number" value="0" class="potongan"></td>
-        <td><input type="number" value="0" class="nilaiByr"></td>
-        <td class="text-center">
-            <button type="button" onclick="submitDetail()">
-                <i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
-            </button>
-        </td>
-        <td class="text-center">
-            <button type="button" onclick="hapusRow(this)">
-                <i class="fa-regular fa-trash-can text-2xl text-red-500"></i>
-            </button>
-        </td>
-    `;
-    tbody.appendChild(tr)
+    <td>${rowNum}</td>
+    <td>
+      <div class="relative">
+        <input type="hidden" class="fakturId" value="">
+        <input type="text" class="noFaktur block w-36" value="" placeholder="Pilih Faktur" disabled>
+        <button type="button" onclick="openModalFaktur(this)"
+          class="absolute inset-y-0 right-0 pr-2 text-gray-500">
+          <i class="fas fa-ellipsis-h"></i>
+        </button>
+      </div>
+    </td>
+    <td class="nilaiCell">Rp 0,-</td>
+    <td><input type="number" class="potongan w-full" value="0"></td>
+    <td><input type="number" class="nilaiByr w-full" value="0"></td>
+    <td class="text-center">
+      <button type="button" onclick="submitDetail()">
+        <i class="fa-regular text-2xl fa-floppy-disk"></i>
+      </button>
+    </td>
+    <td class="text-center">
+      <button type="button" onclick="this.closest('tr').remove(); recalcTotals()">
+        <i class="fa-regular fa-trash-can text-2xl text-red-500"></i>
+      </button>
+    </td>
+  `;
+    // wire up listeners so totals recalc on edit
+    tr.querySelector("input.potongan")
+        .addEventListener("input", recalcTotals);
+    tr.querySelector("input.nilaiByr")
+        .addEventListener("input", recalcTotals);
 
-    tr.querySelector(".nilaiByr").addEventListener("input", callListener);
-    tr.querySelector(".potongan").addEventListener("input", callListener);
+    tbody.appendChild(tr);
 }
 
 function hapusRow(btn) {
@@ -444,6 +430,29 @@ function showSuccessToast(head, msg) {
     toast.toastTimeout = setTimeout(() => {
         toast.classList.add("hidden");
     }, 2000);
+}
+
+function recalcTotals() {
+    let sumFaktur = 0,
+        sumPotong = 0,
+        sumBayar = 0;
+
+    document.querySelectorAll("#allpesanan tbody tr").forEach(tr => {
+        const valF = parseInt(
+            tr.querySelector("td.nilaiCell").textContent.replace(/\D/g, ""),
+            10
+        ) || 0;
+        const valP = parseFloat(tr.querySelector("input.potongan").value) || 0;
+        const valB = parseFloat(tr.querySelector("input.nilaiByr").value) || 0;
+
+        sumFaktur += valF;
+        sumPotong += valP;
+        sumBayar += valB;
+    });
+
+    document.getElementById("tot_faktur").value = formatRupiah(sumFaktur);
+    document.getElementById("tot_pot").value = sumPotong;
+    document.getElementById("tot_lunas").value = sumBayar;
 }
 
 function callListener() {

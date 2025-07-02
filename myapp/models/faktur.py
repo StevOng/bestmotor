@@ -18,7 +18,7 @@ class Faktur(models.Model):
     terakhir_edit = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.no_faktur
+        return f"{self.id}"
     
     def generate_no_faktur(self):
         if not self.no_faktur:

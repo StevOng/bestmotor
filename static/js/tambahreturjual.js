@@ -213,7 +213,7 @@ function addNewRow(re = null) {
         <td class="totalDisc">${re?.total_diskon_barang || ""}</td>
         <td class="total">${re?.total_harga_barang || ""}</td>
         <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-        <td class="text-center"><button onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+        <td class="text-center"><button type="button" onclick="hapusRow(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
 
     tbody.appendChild(newRow);

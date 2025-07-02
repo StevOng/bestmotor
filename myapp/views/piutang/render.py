@@ -27,16 +27,22 @@ def tambah_bayarpiutang(request, id=None):
         status__in=['belum_lunas', 'jatuh_tempo']
     ).select_related('pesanan_id__customer_id__user_id')
 
-    piutang_obj = None
+    data_piutang = None
     daftar_pf = []
 
     if id:
-        piutang_obj = Piutang.objects.select_related("customer_id__user_id").get(id=id)
+        data_piutang = Piutang.objects.select_related("customer_id__user_id").get(id=id)
         # ambil semua baris PiutangFaktur, sekaligus kostumisasi prefetch Faktur
-        daftar_pf = PiutangFaktur.objects.filter(piutang=piutang_obj)\
+        daftar_pf = PiutangFaktur.objects.filter(piutang=data_piutang)\
                          .select_related("faktur__pesanan_id__customer_id")
+        
+        total_faktur = daftar_pf.aggregate(
+            total=Sum('total')
+        )['total'] or 0
+
+        data_piutang.total_faktur = total_faktur
     return render(request, 'piutang/tambahpiutang.html', {
-        'data_piutang': piutang_obj,
+        'data_piutang': data_piutang,
         'data_pf':       daftar_pf, 
         'data_faktur':   faktur,
         'list_sales':    sales,

@@ -26,7 +26,7 @@ class PiutangSerializer(serializers.ModelSerializer):
             for item in list_data:
                 pf = PiutangFaktur.objects.create(
                     piutang=piutang,
-                    faktur_id=item["faktur"],      # pakai faktur_id langsung
+                    faktur=item["faktur"],      # pakai faktur_id langsung
                     nilai_bayar=item["nilai_bayar"]
                 )
 

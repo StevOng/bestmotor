@@ -155,8 +155,8 @@
           <div>
             <label for="sales" class="block text-sm font-medium text-gray-700">Sales</label>
             <div class="relative mt-1">
-              <input type="hidden" name="custId" id="custId" value="{{ data_piutang.customer_id|default:"" }}">
-              <input type="hidden" name="salesId" id="salesId" value="{{ data_piutang.customer_id.user_id|default:"" }}">
+              <input type="hidden" name="customer_id" id="custId" value="{{ data_piutang.customer_id|default:"" }}">
+              <input type="hidden" name="sales_id" id="salesId" value="{{ data_piutang.customer_id.user_id|default:"" }}">
               <input type="text" id="sales" placeholder="Pilih Sales" value="{{ data_piutang.customer_id.user_id.nama|default:"" }}" disabled
                 class="block w-full border border-gray-300 rounded-md py-2 px-3 text-gray-700">
               <button type="button" onclick="openModalSales()"
@@ -222,7 +222,7 @@
                         </button>
                       </div>
                     </td>
-                    <td id="nilaiFaktur-{{ forloop.counter }}">Rp {{ pf.faktur.total|floatformat:0|intcomma|default:"" }},-</td>
+                    <td class="nilaiCell">Rp {{ pf.faktur.total|floatformat:0|intcomma|default:"" }},-</td>
                     <td><input type="number" value="{{ pf.faktur.potongan|default:"" }}" id="potongan" class="potongan w-full rounded-md border-gray-300" /></td>
                     <td><input type="number" value="{{ pf.nilai_bayar|default:"" }}" id="nilaiByr" class="nilaiByr w-full rounded-md border-gray-300" /></td>
                     <td class="text-center"><button type="button" class="btn-submit" onclick="submitDetail()"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
@@ -243,7 +243,7 @@
                       </button>
                     </div>
                   </td>
-                  <td id="nilaiFaktur">Rp,-</td>
+                  <td class="nilaiCell">Rp,-</td>
                   <td><input type="number" value="" id="potongan" class="potongan w-full rounded-md border-gray-300" /></td>
                   <td><input type="number" value="" id="nilaiByr" class="nilaiByr w-full rounded-md border-gray-300" /></td>
                   <td class="text-center"><button type="button" class="btn-submit" onclick="submitDetail()"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
