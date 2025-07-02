@@ -1,11 +1,3 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const now = new Date();
-  const currentMonth = now.getMonth() + 1; // getMonth() dari 0 → 6 = Juli
-  const currentWeek = 1; // default ke minggu pertama, atau sesuaikan
-
-  fetchIncomeData(getNamaBulan(currentMonth), currentWeek);
-});
-
 let incomeChart = null
 let expenseChart = null
 
@@ -116,14 +108,6 @@ if (document.getElementById("income-chart") && typeof ApexCharts !== 'undefined'
 
 function formatRupiah(angka) {
     return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-}
-
-function getNamaBulan(monthNumber) {
-    const bulan = [
-        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-    ];
-    return bulan[monthNumber - 1] || "Tidak diketahui";
 }
 
 
