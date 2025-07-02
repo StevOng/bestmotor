@@ -28,6 +28,12 @@ def tambah_bayarhutang(request, id=None):
         hutang = get_object_or_404(Hutang, id=id)
         data_hi = HutangInvoice.objects.filter(hutang=hutang)\
                    .select_related('invoice')
+
+        total_inv = data_hi.aggregate(
+            total=Sum('invoice__netto')
+        )['total'] or 0
+
+        hutang.total_invoice = total_inv
     return render(request, 'hutang/tambahhutang.html', {
         'hutang': hutang,
         'data_hi': data_hi,
