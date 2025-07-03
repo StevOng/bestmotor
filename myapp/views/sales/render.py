@@ -22,11 +22,11 @@ def bonus(request):
     else:
         bonus = Bonus.objects.filter(user_id__role="sales").order_by("tanggal_cair")
     bonus_detail = BonusDetail.objects.select_related("bonus_id", "persen_bonus", "pesanan_id", "detail_pesanan_id").filter(bonus_id__in=bonus)
-    total = bonus_detail.aggregate(
-        total_pesanan = Count("pesanan_id"),
-        total_penjualan = Sum("pesanan_id__netto")
-    )
-    return render(request, 'sales/sales.html', {"list":"bonus","bonus": bonus, "bonus_detail": bonus_detail, "total_pesanan": total["total_pesanan"], "total_penjualan": total["total_penjualan"]})
+    total_pesanan = bonus_detail.values("pesanan_id").distinct().count()
+    total_penjualan = Pesanan.objects.filter(id__in=bonus_detail.values_list("pesanan_id", flat=True).distinct()).aggregate(
+        total_penjualan=Sum("netto")
+    )["total_penjualan"] or 0
+    return render(request, 'sales/sales.html', {"list":"bonus","bonus": bonus, "bonus_detail": bonus_detail, "total_pesanan": total_pesanan, "total_penjualan": total_penjualan})
 
 @admin_required
 @activity_logs

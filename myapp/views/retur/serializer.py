@@ -29,7 +29,7 @@ class ReturBeliSerializer(serializers.ModelSerializer):
                 # Update stok
                 barang = item['barang']
                 barang.stok -= item['qty']
-                barang.save()
+                barang.save(update_fields=["stok"])
                 
                 # Update qty_retur di DetailInvoice
                 invoice = retur.invoice_id
@@ -107,7 +107,7 @@ class ReturJualSerializer(serializers.ModelSerializer):
                 detail_pesanan.save()
                 
                 barang.stok += qty_retur
-                barang.save()
+                barang.save(update_fields=["stok"])
         return retur
     
     # def update(self, instance, validated_data):

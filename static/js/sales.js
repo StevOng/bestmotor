@@ -356,10 +356,11 @@ async function getMerk(id) {
     }
   }
 }
+
 function validate() {
   const tanggal = document.querySelectorAll(".tanggal-cair")
   tanggal.forEach(tgl => {
-    if (tgl.textContent.trim() !== "") {
+    if (tgl.textContent.trim().toLowerCase() !== "" && tgl.textContent.trim().toLowerCase() !== "none") {
       const row = tgl.closest("tr")
       let buttonByr = row.querySelector(".bayar")
       if (buttonByr) {
