@@ -1492,3 +1492,7 @@
 2025-07-03 15:04:56,167 INFO [userlog] sales andi - GET /sales/bonus/ - Mengelola Sales - sales andi mengecek sales di halaman /sales/bonus/
 2025-07-03 15:08:27,317 INFO [userlog] sales andi - GET /sales/bonus/ - Mengelola Sales - sales andi mengecek sales di halaman /sales/bonus/
 2025-07-03 15:08:46,030 INFO [userlog] sales andi - GET /sales/bonus/ - Mengelola Sales - sales andi mengecek sales di halaman /sales/bonus/
+2025-07-04 07:46:43,144 INFO [userlog] Guest Guest - GET /login/ - Mencoba Masuk - Guest Bestmotor mengecek login di halaman /login/
+2025-07-04 07:46:46,766 INFO [userlog] Guest Guest - POST /login/ - Mencoba Masuk - Guest Bestmotor membuat login di halaman /login/
+2025-07-04 07:46:46,853 INFO [userlog] admin admin - GET /dashboard/ - Mengelola Dashboard - admin admin mengecek dashboard di halaman /dashboard/
+2025-07-04 07:47:37,536 INFO [userlog] admin admin - GET /dashboard/ - Mengelola Dashboard - admin admin mengecek dashboard di halaman /dashboard/
