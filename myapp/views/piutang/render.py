@@ -36,12 +36,8 @@ def tambah_bayarpiutang(request, id=None):
         daftar_pf = PiutangFaktur.objects.filter(piutang=data_piutang)\
                          .select_related("faktur__pesanan_id__customer_id")
         
-        print("Faktur yang terhubung:")
-        for f in data_piutang.faktur.all():
-            print(f"{f.no_faktur} - Total: {f.total}")
-        
-        total_faktur = data_piutang.faktur.aggregate(
-            total=Sum('total')
+        total_faktur = daftar_pf.aggregate(
+            total=Sum('faktur__total')
         )['total'] or 0
 
         data_piutang.total_faktur = total_faktur

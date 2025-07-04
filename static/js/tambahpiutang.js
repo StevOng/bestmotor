@@ -9,6 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     tanggal.value = formatDate
 
+    let sumFaktur = 0
+    document.querySelectorAll("[id^='nilaiFaktur-']").forEach(cell => {
+        // buang semua non-digit dari teks, parse jadi angka
+        const num = parseInt(cell.textContent.replace(/[^\d]/g, ''), 10) || 0
+        sumFaktur += num
+    })
+    const hiddenId = document.getElementById("piutangId")
+    if (!hiddenId) {
+        document.getElementById("tot_faktur").value = formatRupiah(sumFaktur)
+    }
+
     // — hitung Total Potongan & Pelunasan awalnya juga —
     totalPotongan()
     totalPelunasan()
