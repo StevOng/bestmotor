@@ -16,7 +16,7 @@ def retur_jual(request):
 @both_required
 @activity_logs
 def tambah_returjual(request, id=None):
-    faktur = Faktur.objects.select_related("pesanan_id__customer_id").filter(status__in=['belum_lunas','jatuh_tempo'])
+    faktur = Faktur.objects.select_related("pesanan_id__customer_id").filter(status__in=['belum_lunas','jatuh_tempo']).exclude(piutangfaktur__isnull=False)
     returan = None  
     barang_data_dict = {}
 
@@ -66,7 +66,7 @@ def retur_beli(request):
 @admin_required
 @activity_logs
 def tambah_returbeli(request, id=None):
-    invoice = Invoice.objects.select_related("supplier_id").filter(status__in=['belum_lunas','jatuh_tempo'])
+    invoice = Invoice.objects.select_related("supplier_id").filter(status__in=['belum_lunas','jatuh_tempo']).exclude(hutanginvoice__isnull=False)
     print(invoice)
     returan = None
     barang_data_dict = {}

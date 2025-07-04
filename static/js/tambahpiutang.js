@@ -9,14 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     tanggal.value = formatDate
 
-    let sumFaktur = 0
-    document.querySelectorAll("[id^='nilaiFaktur-']").forEach(cell => {
-        // buang semua non-digit dari teks, parse jadi angka
-        const num = parseInt(cell.textContent.replace(/[^\d]/g, ''), 10) || 0
-        sumFaktur += num
-    })
-    document.getElementById("tot_faktur").value = formatRupiah(sumFaktur)
-
     // — hitung Total Potongan & Pelunasan awalnya juga —
     totalPotongan()
     totalPelunasan()
@@ -319,21 +311,21 @@ function addNewRow() {
     tr.innerHTML = `
     <td>${rowNum}</td>
     <td>
-      <div class="relative">
+      <div class="relative mt-1">
         <input type="hidden" class="fakturId" value="">
-        <input type="text" class="noFaktur block w-36" value="" placeholder="Pilih Faktur" disabled>
+        <input type="text" class="noFaktur mt-1 block w-36 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" value="" placeholder="Pilih Faktur" disabled>
         <button type="button" onclick="openModalFaktur(this)"
-          class="absolute inset-y-0 right-0 pr-2 text-gray-500">
+          class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none">
           <i class="fas fa-ellipsis-h"></i>
         </button>
       </div>
     </td>
     <td class="nilaiCell">Rp 0,-</td>
-    <td><input type="number" class="potongan w-full" value="0"></td>
-    <td><input type="number" class="nilaiByr w-full" value="0"></td>
+    <td><input type="number" class="potongan w-full rounded-md border-gray-300" value="0"></td>
+    <td><input type="number" class="nilaiByr w-full rounded-md border-gray-300" value="0"></td>
     <td class="text-center">
       <button type="button" onclick="submitDetail()">
-        <i class="fa-regular text-2xl fa-floppy-disk"></i>
+        <i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
       </button>
     </td>
     <td class="text-center">
