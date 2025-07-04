@@ -37,7 +37,7 @@ def tambah_bayarpiutang(request, id=None):
                          .select_related("faktur__pesanan_id__customer_id")
         
         total_faktur = daftar_pf.aggregate(
-            total=Sum('total')
+            total=Sum('faktur__total')
         )['total'] or 0
 
         data_piutang.total_faktur = total_faktur

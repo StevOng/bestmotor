@@ -15,7 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const num = parseInt(cell.textContent.replace(/[^\d]/g, ''), 10) || 0
         sumFaktur += num
     })
-    document.getElementById("tot_faktur").value = formatRupiah(sumFaktur)
+    const hiddenId = document.getElementById("piutangId")
+    if (!hiddenId) {
+        document.getElementById("tot_faktur").value = formatRupiah(sumFaktur)
+    }
 
     // — hitung Total Potongan & Pelunasan awalnya juga —
     totalPotongan()
