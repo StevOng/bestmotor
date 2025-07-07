@@ -53,7 +53,6 @@ def tambah_barang(request, id=None):
         tier_harga = TierHarga.objects.filter(barang_id=barang.id)
     return render(request, 'barang/tambahbrg.html', {'detail_barang': barang, 'tier_harga': tier_harga})
 
-@activity_logs
 def get_barang_laku(dari, sampe):
     dari = parse_date(dari)
     sampe = parse_date(sampe)

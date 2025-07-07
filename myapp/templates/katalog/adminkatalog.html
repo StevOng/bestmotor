@@ -105,4 +105,7 @@
 
 {% block script %}
 <script src="{% static 'js/adminkatalog.js' %}"></script>
+<script>
+    const existingCodes = {{ data_katalog|safe }};
+</script>
 {% endblock %}

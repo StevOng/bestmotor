@@ -67,10 +67,13 @@ function getCSRFToken() {
 
 searchKode.addEventListener("input", async (event) => {
     const query = event.target.value.trim()
+    const submitBtn = document.getElementById("submitBtn")
+    const warningText = document.getElementById("warningText")
 
     if (query.length === 0) {
         dropdownList.classList.add("hidden")
         dropdownList.innerHTML = ""
+        submitBtn.disabled = false
         return
     }
 
@@ -86,13 +89,30 @@ searchKode.addEventListener("input", async (event) => {
                 li.textContent = `${item.kode_barang} - ${item.nama_barang}`
                 li.className = "px-4 py-2 hover:bg-gray-100 cursor-pointer"
 
-                li.addEventListener("click", () => {
+                li.addEventListener("click", async () => {
                     barangId.value = item.id
                     searchKode.value = item.kode_barang
                     nama_barang.value = item.nama_barang
                     harga_barang.value = item.harga_jual
                     tipe.value = item.tipe
                     dropdownList.classList.add("hidden")
+
+                    try {
+                        const res = await fetch(`/api/katalogbarang/cek_barang/?barang_id=${item.id}`);
+                        const data = await res.json();
+
+                        if (data.sudah_ada) {
+                            showWarningToast("Kode Barang", "Barang ini sudah ada di katalog");
+                            warningText.classList.remove("hidden");
+                            submitBtn.disabled = true;
+                        } else {
+                            warningText.classList.add("hidden");
+                            submitBtn.disabled = false;
+                        }
+                    } catch (err) {
+                        console.error("Gagal cek ke database:", err);
+                        showWarningToast("Error", "Gagal cek data katalog");
+                    }
                 })
 
                 dropdownList.appendChild(li)

@@ -428,6 +428,12 @@ function hapusRow(btn) {
   const row = btn.closest("tr")
   row.classList.add("fade-out")
   setTimeout(() => row.remove(), 400)
+  const supplierId = document.getElementById("supplierId").value;
+  const supplierNama = document.getElementById("supplier").value;
+
+  if (supplierId) {
+    pilihSupplier(supplierId, supplierNama);
+  }
 }
 
 function minusCheck() {

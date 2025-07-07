@@ -26,3 +26,9 @@ class KatalogViewSet(viewsets.ModelViewSet):
 class KatalogBarangViewSet(viewsets.ModelViewSet):
     queryset = KatalogBarang.objects.all()
     serializer_class = KatalogBarangSerializer
+    
+    @action(detail=False, methods=['get'], url_path='cek_barang')
+    def cek_barang(self, request):
+        barang_id = request.query_params.get("barang_id")
+        exists = KatalogBarang.objects.filter(barang_id=barang_id).exists()
+        return Response({"sudah_ada": exists})

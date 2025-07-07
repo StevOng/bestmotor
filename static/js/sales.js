@@ -294,7 +294,7 @@ async function getMerk(id) {
       input.value = data.persenan;
 
     } else {
-      const response = await fetch('/api/barang/merk_choices/');
+      const response = await fetch('/api/barang/merk_choices_listmerek/');
       const choices = await response.json();
 
       const selectedMerk = select.dataset.selectedMerk;
@@ -303,6 +303,9 @@ async function getMerk(id) {
         let option = document.createElement("option");
         option.value = choice.value;
         option.textContent = choice.label;
+        if (choice.disabled) {
+          option.disabled = true;
+        }
         if (choice.value === selectedMerk) {
           option.selected = true;
           if (placeholder) placeholder.removeAttribute('selected');

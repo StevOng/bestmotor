@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.db.models import F
 from ...models.barang import *
+from ...models.bonus import *
 from .serializer import *
 from .tipe_choices import TIPE
 from .merk_choices import MERK
@@ -26,6 +27,31 @@ class BarangViewSet(viewsets.ModelViewSet):
         choices = [{'value': value, 'label': label} for value, label in MERK]
         sorted_choices = sorted(choices, key=lambda x: x['value'].lower())
         return Response(sorted_choices)
+    
+    @action(detail=False, methods=['get'])
+    def merk_choices_listmerek(self, request):
+        used_merks = PersenBonus.objects.values_list("merk_nama", flat=True)
+
+        aktif = []
+        nonaktif = []
+
+        for value, label in MERK:
+            option = {
+                'value': value,
+                'label': label,
+            }
+
+            if value in used_merks:
+                option['disabled'] = True
+                nonaktif.append(option)
+            else:
+                aktif.append(option)
+
+        # Urutkan masing-masing grup berdasarkan label
+        aktif = sorted(aktif, key=lambda x: x['label'].lower())
+        nonaktif = sorted(nonaktif, key=lambda x: x['label'].lower())
+
+        return Response(aktif + nonaktif)
     
     @action(detail=False, methods=['get'])
     def low_stock(self, request):

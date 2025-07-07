@@ -29,6 +29,10 @@
             
             <!-- Dropdown List -->
             <ul id="dropdownList" class="absolute w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg hidden z-50 max-h-40 overflow-y-auto">   </ul>
+
+            <p id="warningText" class="text-sm text-red-600 hidden mt-1">
+              Barang dengan kode ini sudah ada di katalog.
+            </p>
         </div>
 
         <!-- Nama Barang -->
@@ -98,7 +102,7 @@
             <input type="hidden" name="is_katalog_utama" id="isKatalogUtama" value="{{ katalog.is_katalog_utama|default:"false" }}">
         </div>
         <div class="md:col-span-2 flex justify-end">
-          <button type="submit" class="mt-5 ml-auto text-center">
+          <button type="submit" id="submitBtn" class="mt-5 ml-auto text-center">
             <p class="text-sm font-medium text-gray-700">Simpan</p>
             <i class="mt-1 fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
           </button>
