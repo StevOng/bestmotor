@@ -74,6 +74,18 @@ function openModalInv(btn) {
   currentRow = btn.closest("tr");
   const modal = document.getElementById("popupModalInv")
   modal.classList.replace("hidden", "flex");
+
+  // Ambil supplier ID & nama dari input (hidden/input teks)
+  const supplierId = document.getElementById("supplierId").value;
+  const supplierNama = document.getElementById("supplier").value;
+
+  // Jika supplier sudah dipilih, langsung load daftar invoice-nya
+  if (supplierId) {
+    pilihSupplier(supplierId, supplierNama);
+  } else {
+    // Bisa kasih warning atau clear invoice list
+    return showWarningToast("Supplier Kosong","Supplier belum dipilih");
+  }
 }
 
 function closeModalInv() {
@@ -203,6 +215,13 @@ async function pilihInvoice(id, nomor) {
   const inputInvoice = row.querySelector(".invoiceId");
   const noInvoiceInput = row.querySelector("#no_invoice");
   const nilaiInvoiceCell = row.querySelector(".nettoCell");
+  const sudahDipakai = Array.from(document.querySelectorAll("input.invoiceId"))
+  .some(input => input.value === id);
+
+  if (sudahDipakai) {
+    alert("Invoice ini sudah dipakai di baris lain!");
+    return;
+  }
 
   try {
     const res = await fetch(`/api/invoice/${id}/data/?format=json`, {
@@ -248,10 +267,27 @@ async function pilihSupplier(id, perusahaan) {
     const tbody = document.getElementById("invoiceTbody");
     tbody.innerHTML = "";
 
+    // Ambil semua invoice ID yang sudah dipakai di input.invoiceId di semua baris
+    const selectedInvoiceIds = Array.from(
+      document.querySelectorAll("input.invoiceId")
+    )
+    .map(input => input.value)
+    .filter(val => val !== "");
+
     if (invoices.length === 0) {
       tbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500">Tidak ada invoice</td></tr>`;
     } else {
-      invoices.forEach(invoice => {
+      // Filter hanya invoice yang belum dipilih
+      const invoicesToRender = invoices.filter(invoice =>
+        !selectedInvoiceIds.includes(String(invoice.id))
+      );
+
+      if (invoicesToRender.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500">Semua invoice sudah dipilih</td></tr>`;
+        return;
+      }
+
+      invoicesToRender.forEach(invoice => {
         tbody.innerHTML += `
           <tr>
             <td>${invoice.no_invoice}</td>

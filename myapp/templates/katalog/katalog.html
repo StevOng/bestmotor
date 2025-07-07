@@ -90,37 +90,39 @@
       {% endfor %}
       </div>
     </div>
+    {% endfor%}
     <hr />
     <div class="py-6">
       <p class="text-lg font-semibold">Lihat Katalog Lainnya</p>
       <div class="my-4 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {% for item in items %}
-          <div class="flex flex-row justify-between border shadow rounded-md">
-            <div class="flex flex-col justify-between p-4 w-[45%]">
-              <span>
-                <p>Katalog {{ item.title }}</p>
-                <p class="pb-2 text-gray-500 text-sm">Tersedia {{ items|length }}+ produk</p>
-              </span>
-              <a href="{% url 'katalogbrg' tipe %}">
-                <button
-                  class="p-2 w-full border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-                >
-                  Lihat Sekarang
-                </button>
-              </a>
+        {% for tipe, items in tipe_katalog.items %}
+          {% for item in items %}
+            <div class="flex flex-row justify-between border shadow rounded-md">
+              <div class="flex flex-col justify-between p-4 w-[45%]">
+                <span>
+                  <p>Katalog {{ item.title }}</p>
+                  <p class="pb-2 text-gray-500 text-sm">Tersedia {{ items|length }}+ produk</p>
+                </span>
+                <a href="{% url 'katalogbrg' tipe %}">
+                  <button
+                    class="p-2 w-full border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
+                  >
+                    Lihat Sekarang
+                  </button>
+                </a>
+              </div>
+              {% with items.0 as first_item %}
+                {% if first_item.gambar %}
+                  <img src="{{ first_item.gambar }}" class="w-[55%] h-[219px] object-cover" />
+                {% else %}
+                  <img src="{% static 'images/logo.png' %}" class="w-[55%] h-auto" />
+                {% endif %}
+              {% endwith %}
             </div>
-            {% with items.0 as first_item %}
-              {% if first_item.gambar %}
-                <img src="{{ first_item.gambar }}" class="w-[55%] h-auto" />
-              {% else %}
-                <img src="{% static 'images/logo.png' %}" class="w-[55%] h-auto" />
-              {% endif %}
-            {% endwith %}
-          </div>
-        {% endfor %}
+          {% endfor %}
+        {% endfor%}
       </div>
     </div>
-  {% endfor %}
 </div>
 {% endblock %}
 

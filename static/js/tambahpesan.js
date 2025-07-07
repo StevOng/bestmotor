@@ -312,41 +312,66 @@ async function loadBarangOptions(selectId, selectedId) {
 
 async function getOptionBrg() {
     const selects = document.querySelectorAll("[id^='kodebrg-dropdown-']")
+    // Ambil semua ID barang yang sedang dipilih (kecuali kosong)
+    const selectedBarangIds = Array.from(selects)
+        .map(s => s.value)
+        .filter(val => val !== "");
+
     selects.forEach(select => {
-        console.log("selectedId: ", select.id)
-        console.log("select value: ", select.value)
         const namaBrgId = select.dataset.namaBarangId
-        loadBarangOptions(select.id, select.value)
+        const currentValue = select.value
 
-        select.addEventListener("change", async () => {
-            const barangId = select.value
-            const row = select.closest('tr')
-            const hiddenInput = row.querySelector(".barangId")
-            if (hiddenInput) {
-                hiddenInput.value = barangId
-            }
+        // Load ulang options untuk dropdown ini
+        loadBarangOptions(select.id, currentValue).then(() => {
+            // Setelah options dimuat, disable yang sudah dipilih di dropdown lain
+            Array.from(select.options).forEach(option => {
+                if (option.value === "" || option.value === currentValue) {
+                    option.disabled = false;
+                } else {
+                    option.disabled = selectedBarangIds.includes(option.value);
+                }
+            });
+        });
 
-            const response = await fetch(`/api/barang/${barangId}/`)
-            const data = await response.json()
+        // Hindari penambahan event listener berkali-kali
+        if (!select.dataset.listenerAttached) {
+            select.addEventListener("change", async () => {
+                const barangId = select.value
+                const row = select.closest('tr')
+                const hiddenInput = row.querySelector(".barangId")
+                if (hiddenInput) {
+                    hiddenInput.value = barangId
+                }
 
-            const namaBrgEl = document.getElementById(namaBrgId)
-            if (namaBrgEl && data.nama_barang) {
-                namaBrgEl.textContent = data.nama_barang
-            }
-            const hargaInput = row.querySelector(".input_hrgbrg")
-            if (hargaInput) {
-                hargaInput.value = data.harga_jual
-            }
-            updateDetailBiaya()
+                const response = await fetch(`/api/barang/${barangId}/`)
+                const data = await response.json()
 
-            // Cek apakah ini baris terakhir → baru tambahkan baris baru
-            const allRows = document.querySelectorAll("tbody tr");
-            const isLast = row === allRows[allRows.length - 1];
-            if (isLast) {
-                addNewRow();
-            }
-        })
-    })
+                const namaBrgEl = document.getElementById(namaBrgId)
+                if (namaBrgEl && data.nama_barang) {
+                    namaBrgEl.textContent = data.nama_barang
+                }
+
+                const hargaInput = row.querySelector(".input_hrgbrg")
+                if (hargaInput) {
+                    hargaInput.value = data.harga_jual
+                }
+
+                updateDetailBiaya()
+
+                // Tambahkan baris baru jika ini baris terakhir
+                const allRows = document.querySelectorAll("tbody tr");
+                const isLast = row === allRows[allRows.length - 1];
+                if (isLast) {
+                    addNewRow();
+                }
+
+                // Panggil ulang untuk update disable option
+                getOptionBrg();
+            });
+
+            select.dataset.listenerAttached = "true";
+        }
+    });
 }
 
 function addNewRow(detail = null) {

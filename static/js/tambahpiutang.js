@@ -82,6 +82,13 @@ function openModalFaktur(button) {
     currentFakturRow = button.closest("tr");
     document.getElementById("popupModalFaktur")
         .classList.replace("hidden", "flex");
+
+    const salesId = document.getElementById("salesId").value;
+    if (!salesId) {
+        return showWarningToast("Sales Kosong","Pilih Sales terlebih dahulu!");
+    }
+
+    fetchFakturBySales(salesId);
 }
 
 function closeModalFaktur() {
@@ -174,11 +181,28 @@ async function fetchFakturBySales(salesId) {
 
     const tbody = document.querySelector("#modalFaktur tbody");
     tbody.innerHTML = "";
-    fakturList.forEach(faktur => {
+
+    // Ambil semua faktur ID yang sudah dipakai di input.fakturId di semua baris
+    const selectedFakturIds = Array.from(
+        document.querySelectorAll("input.fakturId")
+    )
+    .map(input => input.value)
+    .filter(val => val !== "");
+
+    // Debug log (boleh dihapus nanti)
+    console.log("Faktur yang sudah dipilih:", selectedFakturIds);
+
+    if (fakturList.length === 0){
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500">Tidak ada Faktur</td></tr>`;
+    } else {
+        fakturList.forEach(faktur => {
+
+        if (selectedFakturIds.includes(String(faktur.id))) return;
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
       <td>${faktur.no_faktur}</td>
-      <td>${faktur.tanggal_faktur}</td>
+      <td>${new Date(faktur.tanggal_faktur).toLocaleDateString()}</td>
       <td>${faktur.no_referensi}</td>
       <td>${faktur.customer}</td>
       <td>${formatRupiah(faktur.total)}</td>
@@ -192,9 +216,19 @@ async function fetchFakturBySales(salesId) {
     `;
         tbody.appendChild(tr);
     });
+    }
 }
 
 async function pilihFaktur(id, noFaktur, custIdValue) {
+
+    const allFakturInputs = Array.from(document.querySelectorAll("input.fakturId"));
+    const sudahDipakai = allFakturInputs.some(input => input.value === id);
+
+    if (sudahDipakai) {
+        showWarningToast("Faktur","Faktur ini sudah dipakai di baris lain!");
+        return;
+    }
+
     // 1) only touch the row you originally opened the modal from:
     const row = currentFakturRow;
     const hiddenFaktur = row.querySelector("input.fakturId");
@@ -358,6 +392,10 @@ function hapusRow(btn) {
     const row = btn.closest("tr")
     row.classList.add("fade-out")
     setTimeout(() => row.remove(), 400)
+    const salesId = document.getElementById("salesId").value;
+    if (salesId) {
+        fetchFakturBySales(salesId);
+    }
 }
 
 function minusCheck() {

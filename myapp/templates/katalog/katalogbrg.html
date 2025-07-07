@@ -48,12 +48,19 @@
           <p class="text-gray-500">{{ item.tipe }}</p>
           <p>{{ item.nama }}</p>
           <p class="py-2 font-semibold text-orange-400">Rp {{ item.harga_diskon|floatformat:0|intcomma }},-</p>
-          <button
-            onclick="window.location.href='{% url 'deskripsi' item.katalog_id %}'"
-            class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]"
-          >
-            Deskripsi
-          </button>
+          {% if item.katalog_id %}
+            <button
+              onclick="window.location.href='{% url 'deskripsi' item.katalog_id %}'"
+              class="py-1 border rounded-md text-sm text-center text-white bg-customBlue hover:bg-[#243F6B]">
+              Deskripsi
+            </button>
+          {% else %}
+            <button
+              disabled
+              class="py-1 border rounded-md text-sm text-center text-gray-400 bg-gray-200 cursor-not-allowed">
+              Tidak Ada Deskripsi
+            </button>
+          {% endif %}
         </div>
       {% endfor %}
       </div>

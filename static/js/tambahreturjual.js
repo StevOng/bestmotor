@@ -143,47 +143,71 @@ async function loadBarangOptions(selectId, selectedId = null, fakturId = null) {
 async function getOptionBrg() {
     const selects = document.querySelectorAll("[id^='kodebrg-dropdown-']")
     const fakturId = document.getElementById("fakturId")?.value
+    // Ambil semua value yang sudah dipilih
+    const selectedBarangIds = Array.from(selects)
+        .map(s => s.value)
+        .filter(val => val !== "");
+
     selects.forEach(select => {
         const namaBrgId = select.dataset.namaBarangId
-        console.log("selectedId: ", select.id)
-        console.log("select value: ", select.value)
-        loadBarangOptions(select.id, select.value, fakturId)
+        const currentValue = select.value
 
-        select.addEventListener("change", async () => {
-            const barangId = select.value
-            const row = select.closest('tr')
-            const hiddenInput = row.querySelector(".barangId")
-            if (hiddenInput) {
-                hiddenInput.value = barangId
-            }
+        // Load ulang option untuk dropdown ini
+        loadBarangOptions(select.id, currentValue, fakturId).then(() => {
+            // Disable option yang sudah dipilih di dropdown lain
+            Array.from(select.options).forEach(option => {
+                if (option.value === "" || option.value === currentValue) {
+                    option.disabled = false;
+                } else {
+                    option.disabled = selectedBarangIds.includes(option.value);
+                }
+            });
+        });
 
-            const response = await fetch(`/api/detailpesanan/by_faktur/${fakturId}/${barangId}/`);
-            const data = await response.json();
+        // Hindari menambahkan event listener berkali-kali
+        if (!select.dataset.listenerAttached) {
+            select.addEventListener("change", async () => {
+                const barangId = select.value
+                const row = select.closest('tr')
+                const hiddenInput = row.querySelector(".barangId")
+                if (hiddenInput) {
+                    hiddenInput.value = barangId
+                }
 
-            const namaBrgEl = document.getElementById(namaBrgId)
-            if (namaBrgEl && data.nama_barang) {
-                namaBrgEl.textContent = data.nama_barang
-            }
-            const hargaInput = row.querySelector(".input_hrgbrg")
-            if (hargaInput) {
-                hargaInput.value = data.harga_jual
-            }
+                const response = await fetch(`/api/detailpesanan/by_faktur/${fakturId}/${barangId}/`)
+                const data = await response.json()
 
-            const discInput = row.querySelector(".disc");
-            if (discInput) {
-                discInput.value = data.diskon_barang;
-            }
+                const namaBrgEl = document.getElementById(namaBrgId)
+                if (namaBrgEl && data.nama_barang) {
+                    namaBrgEl.textContent = data.nama_barang
+                }
 
-            updateDetailBiaya();
+                const hargaInput = row.querySelector(".input_hrgbrg")
+                if (hargaInput) {
+                    hargaInput.value = data.harga_jual
+                }
 
-            // Cek apakah ini baris terakhir → baru tambahkan baris baru
-            const allRows = document.querySelectorAll("tbody tr");
-            const isLast = row === allRows[allRows.length - 1];
-            if (isLast) {
-                addNewRow();
-            }
-        })
-    })
+                const discInput = row.querySelector(".disc")
+                if (discInput) {
+                    discInput.value = data.diskon_barang
+                }
+
+                updateDetailBiaya()
+
+                // Cek apakah ini baris terakhir → baru tambahkan baris baru
+                const allRows = document.querySelectorAll("tbody tr")
+                const isLast = row === allRows[allRows.length - 1]
+                if (isLast) {
+                    addNewRow()
+                }
+
+                // Panggil ulang untuk update disable option
+                getOptionBrg()
+            });
+
+            select.dataset.listenerAttached = "true";
+        }
+    });
 }
 
 function addNewRow(re = null) {
@@ -209,7 +233,7 @@ function addNewRow(re = null) {
         </td>
         <td><input type="number" value="${re?.harga_beli || ""}" id="input_hrgbrg-${rowCount}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
         <td><input type="number" value="${re?.qty_retur || ""}" id="input_qtybrg-${rowCount}" class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
-        <td><input type="number" value="${re?.diskon_barang || ""}" id="disc-${rowCount}" class="disc w-20 rounded-md border-gray-300" /></td>
+        <td><input type="number" value="${re?.diskon_barang || ""}" id="disc-${rowCount}" class="disc w-20 rounded-md bg-gray-200 border-gray-300 text-gray-400" disabled /></td>
         <td class="totalDisc">${re?.total_diskon_barang || ""}</td>
         <td class="total">${re?.total_harga_barang || ""}</td>
         <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>

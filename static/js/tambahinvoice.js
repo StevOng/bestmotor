@@ -136,41 +136,61 @@ async function loadBarangOptions(selectId, selectedId) {
 
 async function getOptionBrg() {
     const selects = document.querySelectorAll("[id^='kodebrg-dropdown-']")
+    // Ambil semua value barang yang sudah dipilih (selain kosong)
+    const selectedBarangIds = Array.from(selects)
+        .map(s => s.value)
+        .filter(val => val !== "");
+
     selects.forEach(select => {
-        const namaBrgId = select.dataset.namaBarangId
-        console.log("selectedId: ", select.id)
-        console.log("select value: ", select.value)
-        loadBarangOptions(select.id, select.value)
+        const namaBrgId = select.dataset.namaBarangId;
+        const currentValue = select.value;
 
-        select.addEventListener("change", async () => {
-            const barangId = select.value
-            const row = select.closest('tr')
-            let hiddenInput = row.querySelector(".barangId")
-            if (hiddenInput) {
-                hiddenInput.value = barangId
-            }
+        loadBarangOptions(select.id, currentValue).then(() => {
+            Array.from(select.options).forEach(option => {
+                if (option.value === "" || option.value === currentValue) {
+                    option.disabled = false;
+                } else {
+                    option.disabled = selectedBarangIds.includes(option.value);
+                }
+            });
+        });
 
-            const response = await fetch(`/api/barang/${barangId}/`)
-            const data = await response.json()
+        if (!select.dataset.listenerAttached) {
+            select.addEventListener("change", async () => {
+                const barangId = select.value;
+                const row = select.closest("tr");
+                let hiddenInput = row.querySelector(".barangId");
+                if (hiddenInput) {
+                    hiddenInput.value = barangId;
+                }
 
-            const namaBrgEl = document.getElementById(namaBrgId)
-            if (namaBrgEl && data.nama_barang) {
-                namaBrgEl.textContent = data.nama_barang
-            }
-            const hargaInput = row.querySelector(".input_hrgbrg")
-            if (hargaInput) {
-                hargaInput.value = data.harga_modal
-            }
-            updateDetailBiaya()
+                const response = await fetch(`/api/barang/${barangId}/`);
+                const data = await response.json();
 
-            // Cek apakah ini baris terakhir → baru tambahkan baris baru
-            const allRows = document.querySelectorAll("tbody tr");
-            const isLast = row === allRows[allRows.length - 1];
-            if (isLast) {
-                addNewRow();
-            }
-        })
-    })
+                const namaBrgEl = document.getElementById(namaBrgId);
+                if (namaBrgEl && data.nama_barang) {
+                    namaBrgEl.textContent = data.nama_barang;
+                }
+
+                const hargaInput = row.querySelector(".input_hrgbrg");
+                if (hargaInput) {
+                    hargaInput.value = data.harga_modal;
+                }
+
+                updateDetailBiaya();
+
+                const allRows = document.querySelectorAll("tbody tr");
+                const isLast = row === allRows[allRows.length - 1];
+                if (isLast) {
+                    addNewRow();
+                }
+
+                getOptionBrg();
+            });
+
+            select.dataset.listenerAttached = "true";
+        }
+    });
 }
 
 function addNewRow(detail = null) {

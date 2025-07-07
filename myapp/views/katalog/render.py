@@ -61,7 +61,7 @@ def katalogbrg(request, tipe):
     tipe_label = get_label_tipe(tipe)
 
     # Ambil semua barang bertipe tertentu, termasuk relasi ke KatalogBarang
-    barang_list = Barang.objects.filter(tipe=tipe_label).prefetch_related("katalogbarang_set", "katalog_set")
+    barang_list = Barang.objects.filter(tipe=tipe_label, katalog__isnull=False).prefetch_related("katalogbarang_set", "katalog_set").distinct()
 
     for barang in barang_list:
         # Ambil satu entri katalog terkait barang
@@ -70,14 +70,13 @@ def katalogbrg(request, tipe):
         # Ambil satu gambar dari KatalogBarang (jika ada)
         katalog_barang = barang.katalogbarang_set.first()
         gambar_url = katalog_barang.gambar_pelengkap.url if katalog_barang and katalog_barang.gambar_pelengkap else None
-        tipe = tipe_label
 
         data.append({
             "nama": barang.nama_barang,
             "merk": barang.merk,
             "harga_diskon": float(katalog.harga_diskon) if katalog else 0.0,
             "katalog_id": katalog.id if katalog else None,
-            "tipe": tipe,
+            "tipe": tipe_label,
             "gambar": gambar_url,
         })
     all_items = json.dumps(data, cls=DjangoJSONEncoder)
