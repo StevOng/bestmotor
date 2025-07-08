@@ -27,7 +27,7 @@ class ReturBeliViewSet(viewsets.ModelViewSet):
                     "id": b.id,
                     "kode_barang": b.kode_barang,
                     "nama_barang": b.nama_barang,
-                    "harga_jual": b.harga_jual,
+                    "harga_modal": d.harga_beli,
                     "qty": d.qty_beli,
                     "diskon": d.diskon_barang,
                     "total_diskon_barang": d.total_diskon_barang(),
