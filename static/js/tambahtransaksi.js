@@ -10,7 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     tanggal.value = formatDate
 })
 
-document.querySelector(".input_qtybrg").addEventListener("input", callListener)
+document.querySelectorAll(".input_qtybrg").forEach(input => {
+  input.addEventListener("input", callListener);
+});
 
 function getCSRFToken() {
     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -319,5 +321,7 @@ function showSuccessToast(head, msg) {
 
 function callListener() {
     minusCheck()
-    qtyCheck()
+    if (jenisTransaksi !== 'masuk') {
+        qtyCheck();
+    }
 }

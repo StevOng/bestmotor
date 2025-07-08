@@ -134,5 +134,9 @@
 {% endblock %}
 
 {% block script %}
+<script>
+  const jenisTransaksi = "{{ jenis }}";
+</script>
+
 <script src="{% static 'js/tambahtransaksi.js' %}"></script>
 {% endblock %}

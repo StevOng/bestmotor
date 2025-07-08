@@ -89,7 +89,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 "no_referensi": inv.no_referensi,
                 "tanggal": inv.tanggal,
                 "netto": float(inv.netto),
-                "status": inv.status
+                "status": inv.status,
+                "sisa_bayar": inv.sisa_bayar
             }
             for inv in invoices
         ]
@@ -107,10 +108,15 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 "bruto": float(invoice.bruto),
                 "diskon_invoice": float(invoice.diskon_invoice or 0),
                 "ongkir": float(invoice.ongkir or 0),
-                "ppn": float(invoice.ppn or 0)
+                "ppn": float(invoice.ppn or 0),
+                "sisa_bayar": float(invoice.sisa_bayar)
             })
         except Invoice.DoesNotExist:
             return Response({"error": "Invoice tidak ditemukan"}, status=404)
+    
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True  # Penting agar serializer bisa menerima PATCH parsial
+        return super().update(request, *args, **kwargs)
 
 class DetailInvoiceViewSet(viewsets.ModelViewSet):
     queryset = DetailInvoice.objects.all()
@@ -137,14 +143,14 @@ class DetailInvoiceViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path='by_invoice/(?P<invoice_id>[^/.]+)/(?P<barang_id>[^/.]+)')
     def by_invoice_barang(self, request, invoice_id=None, barang_id=None):
         detail = get_object_or_404(DetailInvoice, invoice_id=invoice_id, barang_id=barang_id)
-        harga = detail.barang_id.harga_jual
+        harga = detail.harga_beli
         qty = detail.qty_beli
         diskon = detail.diskon_barang
         total_diskon = harga * qty * (diskon / 100)
         total_harga = (harga * qty) - total_diskon
         return Response({
             "nama_barang": detail.barang_id.nama_barang,
-            "harga_jual": harga,
+            "harga_beli": harga,
             "diskon_barang": float(diskon),
             "qty_retur": detail.qty_retur,
             "total_diskon_barang": float(total_diskon),

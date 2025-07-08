@@ -178,7 +178,6 @@ async function submitDetail() {
     }
   } catch (error) {
     console.error("Terjadi kesalahan: ", error)
-    showWarningToast("Gagal", "Terjadi kesalahan")
   }
 }
 
@@ -232,11 +231,7 @@ async function pilihInvoice(id, nomor) {
 
     inputInvoice.value = id;
     noInvoiceInput.value = data.no_invoice || nomor;
-    if (data.netto_after_retur){
-      nilaiInvoiceCell.textContent = `Rp ${formatRupiah(data.netto_after_retur)},-`;
-    } else {
-      nilaiInvoiceCell.textContent = `Rp ${formatRupiah(data.netto)},-`;
-    }
+    nilaiInvoiceCell.textContent = `Rp ${formatRupiah(data.sisa_bayar)},-`;
 
     recalcTotals();
 
@@ -294,7 +289,7 @@ async function pilihSupplier(id, perusahaan) {
             <td>${new Date(invoice.tanggal).toLocaleDateString()}</td>
             <td>${invoice.no_referensi ?? '-'}</td>
             <td>${perusahaan}</td>
-            <td>Rp ${invoice.netto.toLocaleString()}</td>
+            <td>Rp ${formatRupiah(invoice.sisa_bayar)},-</td>
             <td class="text-center">
               <button onclick="pilihInvoice('${invoice.id}', '${invoice.no_invoice}')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">

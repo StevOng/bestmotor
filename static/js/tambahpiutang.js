@@ -205,7 +205,7 @@ async function fetchFakturBySales(salesId) {
       <td>${new Date(faktur.tanggal_faktur).toLocaleDateString()}</td>
       <td>${faktur.no_referensi}</td>
       <td>${faktur.customer}</td>
-      <td>${formatRupiah(faktur.total)}</td>
+      <td>${formatRupiah(faktur.sisa_bayar)},-</td>
       <td class="text-center">
         <button onclick="pilihFaktur('${faktur.id}','${faktur.no_faktur}', '${faktur.customer_id}')">
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
@@ -246,7 +246,7 @@ async function pilihFaktur(id, noFaktur, custIdValue) {
     // 3) fill only that one row + summary fields
     hiddenFaktur.value = id
     txtNo.value = data.no_faktur;
-    nilaiCell.textContent = formatRupiah(data.total);
+    nilaiCell.textContent = formatRupiah(data.sisa_bayar);
     inputCust.value = custIdValue;     // from your button’s 3rd arg
 
     recalcTotals();  // update your three summary boxes
