@@ -139,10 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
 async function handleSubmit(e) {
     e.preventDefault();
     const form = e.target;
+    const katalogId = parseInt(form.dataset.katalogId, 10) || null;
     const files = Array.from(form.querySelector('#upload_gambar').files);
 
-    // 1) Build a base FormData from the form itself so it includes
-    //    all your <input name="…"> fields (like barang, tipe, dll.)
     const baseFD = new FormData(form);
 
     // 2) Validate max-5 images
@@ -152,7 +151,7 @@ async function handleSubmit(e) {
     }
 
     // 3) Create or update the katalog header
-    const katalogId = form.dataset.katalogId;
+    console.log("katalog id: ", katalogId)
     const url = katalogId ? `/api/katalog/${katalogId}/` : '/api/katalog/';
     const method = katalogId ? 'PUT' : 'POST';
     const headerResp = await fetch(url, {
@@ -161,23 +160,12 @@ async function handleSubmit(e) {
         body: baseFD
     });
     if (!headerResp.ok) {
-        console.error(await headerResp.json());
-        showWarningToast("Gagal", "Gagal menyimpan header katalog");
+        const err = await headerResp.json().catch(() => null);
+        console.error("Header save failed", err);
+        showWarningToast("Gagal", "Gagal menyimpan data utama");
         return;
     }
     const { id } = await headerResp.json();
-
-    // 4) Delete old images on edit
-    if (katalogId) {
-        await fetch(`/api/katalog/${id}/reset_images/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken()
-            },
-            body: JSON.stringify({})
-        });
-    }
 
     // 5) Now upload each file — _including_ the katalog ID
     const uploads = files.map(file => {

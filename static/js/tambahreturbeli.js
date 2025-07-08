@@ -174,6 +174,7 @@ async function getOptionBrg() {
 
                 const response = await fetch(`/api/detailinvoice/by_invoice/${invId}/${barangId}/`);
                 const data = await response.json();
+                console.log(`inv: ${invId} barang: ${barangId}`)
 
                 const namaBrgEl = document.getElementById(namaBrgId);
                 if (namaBrgEl && data.nama_barang) {
@@ -182,7 +183,7 @@ async function getOptionBrg() {
 
                 const hargaInput = row.querySelector(".input_hrgbrg");
                 if (hargaInput) {
-                    hargaInput.value = data.harga_jual;
+                    hargaInput.value = data.harga_modal;
                 }
 
                 const diskonInput = row.querySelector(".disc");
@@ -356,17 +357,10 @@ function updateDetailBiaya() {
 
         if (!barang) return;
 
-        let harga = barang.harga_jual;
-        if (qty >= barang.min_qty_grosir) {
-            harga = barang.harga_satuan;
-        } else {
-            harga = barang.harga_jual;
-        }
+        inputHarga.value = barang.harga_modal;
 
-        inputHarga.value = harga;
-
-        const totalDiskon = harga * qty * (diskon / 100);
-        const totalHarga = harga * qty - totalDiskon;
+        const totalDiskon = barang.harga_modal * qty * (diskon / 100);
+        const totalHarga = barang.harga_modal * qty - totalDiskon;
 
         totalDiscEl.textContent = "Rp" + totalDiskon.toLocaleString("en-EN") + ",-";
         totalHargaEl.textContent = "Rp" + totalHarga.toLocaleString("en-EN") + ",-";
@@ -425,9 +419,9 @@ async function qtyCheck() {
                 maxRetur += dataAwal;  // tambahkan kembali jika sedang edit
             }
 
-            if (rowQty > stokBarang) {
-                showWarningToast("Stok Tidak Cukup", `Stok barang tersisa hanya ${stokBarang}.`);
-                inputQty.value = stokBarang;
+            if (rowQty > qtyBeli) {
+                showWarningToast("Stok Tidak Cukup", `Pembelian hanya ${qtyBeli}.`);
+                inputQty.value = qtyBeli;
                 updateDetailBiaya();
                 continue;
             }
