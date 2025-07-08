@@ -1557,3 +1557,6 @@
 2025-07-08 19:46:13,711 INFO [userlog] admin admin - GET /retur/pembelian/ - Mengelola Pembelian - admin admin mengecek pembelian di halaman /retur/pembelian/
 2025-07-08 19:46:15,330 INFO [userlog] admin admin - GET /retur/pembelian/tambah/ - Mengelola Pembelian - admin admin mengecek pembelian di halaman /retur/pembelian/tambah/
 2025-07-08 19:46:32,628 INFO [userlog] admin admin - GET /retur/pembelian/ - Mengelola Pembelian - admin admin mengecek pembelian di halaman /retur/pembelian/
+2025-07-08 19:54:28,618 INFO [userlog] admin admin - GET /katalog/admin/ - Mengelola Katalog - admin admin mengecek katalog di halaman /katalog/admin/
+2025-07-08 20:01:17,067 INFO [userlog] admin admin - GET /katalog/admin/ - Mengelola Katalog - admin admin mengecek katalog di halaman /katalog/admin/
+2025-07-08 20:02:05,048 INFO [userlog] admin admin - GET /katalog/admin/ - Mengelola Katalog - admin admin mengecek katalog di halaman /katalog/admin/

@@ -1,116 +1,153 @@
 document.addEventListener('DOMContentLoaded', () => {
-    getTipe()
-    const rows = document.querySelectorAll("#isKatalogUtama");
+  getTipe()
+  const isUtama = document.querySelectorAll("#isKatalogUtama");
 
-    rows.forEach((input, index) => {
-        const icon = input.closest("td").querySelector("#checkIcon");
-        if (input.value === "true" || input.value === "True") {
-            icon.classList.remove("hidden");
-        }
+  isUtama.forEach((input, index) => {
+    const icon = input.closest("td").querySelector("#checkIcon");
+    if (input.value === "true" || input.value === "True") {
+      icon.classList.remove("hidden");
+    }
+  });
+
+  const select = document.getElementById('tipe-mtr');
+  const table = document.getElementById('tabelKatalog');
+  const tbody = table.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+
+  // 1) Gather all distinct tipe values from column 4 (0-based index 3)
+  const tipeSet = new Set();
+  rows.forEach(row => {
+    const tipe = row.children[3].textContent.trim();
+    if (tipe) tipeSet.add(tipe);
+  });
+
+  // 2) Add an "All" option so user can reset filter
+  const allOpt = document.createElement('option');
+  allOpt.value = '';          // empty == show all
+  allOpt.textContent = 'All';
+  select.appendChild(allOpt);
+
+  // 3) Add one <option> per tipe
+  tipeSet.forEach(tipe => {
+    const opt = document.createElement('option');
+    opt.value = tipe;
+    opt.textContent = tipe;
+    select.appendChild(opt);
+  });
+
+  // 4) When the user picks a tipe, filter rows
+  select.addEventListener('change', () => {
+    const chosen = select.value;  // '' means all
+    rows.forEach(row => {
+      const tipe = row.children[3].textContent.trim();
+      row.style.display = (chosen === '' || tipe === chosen)
+        ? ''   // show
+        : 'none'; // hide
     });
-})
+  });
+});
 
 //   {% comment %} tabel katalog {% endcomment %}
 $(document).ready(function () {
-    let table = $('#tabelKatalog').DataTable({
-        pageLength: 20,
-        lengthChange: false, // Hilangkan "Show entries"
-        autoWidth: false,
-        ordering: false,
-        scrollX: true,
-        responsive: true,
-    });
-    $('.dt-search').remove();
-    $('.dt-info').remove();
+  let table = $('#tabelKatalog').DataTable({
+    pageLength: 20,
+    lengthChange: false, // Hilangkan "Show entries"
+    autoWidth: false,
+    ordering: false,
+    scrollX: true,
+    responsive: true,
+  });
+  $('.dt-search').remove();
+  $('.dt-info').remove();
 
-    $('#tableSearch').on('keyup', function () { //search
-        let searchValue = $(this).val();
-        table.search(searchValue).draw();
-    });
+  $('#tableSearch').on('keyup', function () { //search
+    let searchValue = $(this).val();
+    table.search(searchValue).draw();
+  });
 });
 
 //   {% comment %} copy link {% endcomment %}
 document.getElementById("copyButton").addEventListener("click", function () {
-    const linkText = document.getElementById("linkText").textContent;
-    navigator.clipboard.writeText(linkText).then(() => {
-        const tooltip = document.getElementById("copyTooltip");
-        tooltip.classList.remove("opacity-0");
-        setTimeout(() => {
-            tooltip.classList.add("opacity-0");
-        }, 1500);
-    }).catch(err => {
-        console.error("Gagal menyalin teks: ", err);
-    });
+  const linkText = document.getElementById("linkText").textContent;
+  navigator.clipboard.writeText(linkText).then(() => {
+    const tooltip = document.getElementById("copyTooltip");
+    tooltip.classList.remove("opacity-0");
+    setTimeout(() => {
+      tooltip.classList.add("opacity-0");
+    }, 1500);
+  }).catch(err => {
+    console.error("Gagal menyalin teks: ", err);
+  });
 });
 
 document.getElementById("toggleCheck")?.addEventListener("click", function () {
-    document.getElementById("checkIcon").classList.toggle("hidden");
+  document.getElementById("checkIcon").classList.toggle("hidden");
 });
 
 function getCSRFToken() {
-    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
 function confirmPopupBtn(id) {
-    const modal = document.getElementById("popupModalConfirm");
-    modal.classList.remove("hidden"); // Tampilkan modal
-    modal.style.display = "flex"; // Pastikan tampil dengan flexbox
+  const modal = document.getElementById("popupModalConfirm");
+  modal.classList.remove("hidden"); // Tampilkan modal
+  modal.style.display = "flex"; // Pastikan tampil dengan flexbox
 
-    const confirmButton = document.getElementById("confirmAction");
-    const csrfToken = getCSRFToken()
+  const confirmButton = document.getElementById("confirmAction");
+  const csrfToken = getCSRFToken()
 
-    confirmButton.onclick = async function () {
-        try {
-            const response = await fetch(`/api/katalog/${id}/`, {
-                method: "DELETE",
-                headers: {
-                    'X-CSRFToken': csrfToken
-                },
-                credentials: 'same-origin'
-            })
-            if (response.ok) {
-                console.log("Katalog berhasil dihapus");
-                showSuccessToast("Berhasil", "Berhasil menghapus data")
-                document.querySelector(`button[onclick="confirmPopupBtn(${id})"]`).closest("tr").remove()
-            } else {
-                console.error("Gagal menghapus Katalog");
-                showWarningToast("Gagal", "Gagal menghapus data")
-            }
-        } catch (error) {
-            console.error("Terjadi kesalahan: ", error);
-            showWarningToast("Gagal", "Terjadi kesalahan")
-        }
-        closeModalConfirm();
-    };
+  confirmButton.onclick = async function () {
+    try {
+      const response = await fetch(`/api/katalog/${id}/`, {
+        method: "DELETE",
+        headers: {
+          'X-CSRFToken': csrfToken
+        },
+        credentials: 'same-origin'
+      })
+      if (response.ok) {
+        console.log("Katalog berhasil dihapus");
+        showSuccessToast("Berhasil", "Berhasil menghapus data")
+        document.querySelector(`button[onclick="confirmPopupBtn(${id})"]`).closest("tr").remove()
+      } else {
+        console.error("Gagal menghapus Katalog");
+        showWarningToast("Gagal", "Gagal menghapus data")
+      }
+    } catch (error) {
+      console.error("Terjadi kesalahan: ", error);
+      showWarningToast("Gagal", "Terjadi kesalahan")
+    }
+    closeModalConfirm();
+  };
 }
 
 function closeModalConfirm() {
-    const modal = document.getElementById("popupModalConfirm");
-    modal.classList.add("hidden"); // Sembunyikan modal
-    modal.style.display = "none"; // Pastikan modal benar-benar hilang
+  const modal = document.getElementById("popupModalConfirm");
+  modal.classList.add("hidden"); // Sembunyikan modal
+  modal.style.display = "none"; // Pastikan modal benar-benar hilang
 }
 
 async function getTipe() {
-    try {
-        const response = await fetch('/api/barang/tipe_choices/')
-        const choices = await response.json()
+  try {
+    const response = await fetch('/api/barang/tipe_choices/')
+    const choices = await response.json()
 
-        const select = document.getElementById("tipe-mtr")
-        let selectedTipe = select.dataset.selectedTipe
-        choices.forEach(choice => {
-            let option = document.createElement("option")
-            option.value = choice.value
-            option.textContent = choice.label
-            if (choice.value === selectedTipe.toLowerCase()) {
-                option.selected = true
-                const placeholder = select.querySelector('option[value=""]')
-                if (placeholder) placeholder.removeAttribute('selected')
-            }
-            select.appendChild(option)
-        })
-    } catch (err) {
-        console.error(err);
-    }
+    const select = document.getElementById("tipe-mtr")
+    let selectedTipe = select.dataset.selectedTipe
+    choices.forEach(choice => {
+      let option = document.createElement("option")
+      option.value = choice.value
+      option.textContent = choice.label
+      if (choice.value === selectedTipe.toLowerCase()) {
+        option.selected = true
+        const placeholder = select.querySelector('option[value=""]')
+        if (placeholder) placeholder.removeAttribute('selected')
+      }
+      select.appendChild(option)
+    })
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 function showWarningToast(head, msg) {
@@ -147,7 +184,7 @@ function showWarningToast(head, msg) {
 function showSuccessToast(head, msg) {
   const toast = document.getElementById("toastSuccess");
 
-  toast.innerHTML =`
+  toast.innerHTML = `
       <div class="toast flex items-start p-4 bg-green-50 rounded-lg border border-green-100 shadow-lg">
         <div class="flex-shrink-0">
           <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
