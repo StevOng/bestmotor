@@ -18,11 +18,6 @@ class KatalogViewSet(viewsets.ModelViewSet):
             ).distinct()
         return queryset
     
-    @action(detail=True, methods=['post'])
-    def reset_images(self, request, pk=None):
-        KatalogBarang.objects.filter(katalog_id=pk).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    
 class KatalogBarangViewSet(viewsets.ModelViewSet):
     queryset = KatalogBarang.objects.all()
     serializer_class = KatalogBarangSerializer

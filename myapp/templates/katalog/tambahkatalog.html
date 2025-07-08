@@ -16,7 +16,7 @@
         <button type="button" onclick="window.history.back()"><i class="fa-solid fa-x w-8 text-gray-500"></i></button>
       </div>
     <hr class="border-gray-300 pb-3">
-    <form class="grid grid-cols-1 md:grid-cols-2 gap-6" id="formKatalog">
+    <form class="grid grid-cols-1 md:grid-cols-2 gap-6" id="formKatalog" data-katalog-id="{{ katalog.id|default:"" }}">
         <input type="hidden" id="katalogId" value="{{ katalog.id|default:"" }}">
         <!-- Kode Barang -->
         <div class="relative">
