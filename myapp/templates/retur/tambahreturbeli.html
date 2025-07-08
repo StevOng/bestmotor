@@ -207,40 +207,40 @@
                 <td>{{ forloop.counter|default:"1" }}</td>
                 <td>
                   <input type="hidden" name="barangId" class="barangId" value="{{ re.barang.id|default:"" }}">
-                  <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ re.barang.id|default:"" }}">
+                  <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ re.barang.id|default:"" }}" {% if returan.id %}disabled{% endif %}>
                     <option value="{{ re.barang.id|default:"" }}" selected>{{ re.barang.kode_barang|default:"" }} - {{ re.barang.nama_barang|default:"" }}</option>
                   </select>
                 </td>
                 <td id="namaBrg-{{ forloop.counter }}">
                   {{ re.barang.nama_barang|default:"" }}
                 </td>
-                <td><input type="number" value="{{ re.barang.harga_beli|default:0 }}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
-                <td><input type="number" value="{{ re.qty|default:0 }}" data-qty-awal={{re.qty|default:0}} class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
+                <td><input type="number" value="{{ re.barang.harga_beli|default:0 }}" class="input_hrgbrg w-full rounded-md border-gray-300" {% if returan.id %}disabled{% endif %} /></td>
+                <td><input type="number" value="{{ re.qty|default:0 }}" data-qty-awal={{re.qty|default:0}} class="input_qtybrg w-20 rounded-md border-gray-300" {% if returan.id %}disabled{% endif %} /></td>
                 <td><input type="number" value="{{ re.diskon_barang|default:0 }}" class="disc w-20 rounded-md border-gray-300" disabled /></td>
                 <td class="totalDisc">Rp {{ re.total_diskon_barang|floatformat:0|intcomma|default:"" }},-</td>
                 <td class="total">Rp {{ re.total_harga_barang|floatformat:0|intcomma|default:"" }}</td>
-                <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-                <td class="text-center"><button type="button" onclick="confirmPopupBtn(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+                <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit" {% if returan.id %}disabled{% endif %}><i class="fa-regular fa-floppy-disk text-2xl text-customBlue {% if returan.id %}text-gray-500{% endif %}"></i></button></td>
+                <td class="text-center"><button type="button" onclick="confirmPopupBtn(this)" {% if returan.id %}disabled{% endif %}><i class="fa-regular fa-trash-can text-2xl text-red-500 {% if returan.id %}text-gray-500{% endif %}"></i></button></td>
               </tr>
             {% empty %}
               <tr>
                 <td>{{ forloop.counter|default:"1" }}</td>
                 <td>
                   <input type="hidden" name="barangId" class="barangId" value="{{ re.barang.id|default:"" }}">
-                  <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ re.barang.id|default:"" }}">
+                  <select id="kodebrg-dropdown-{{ forloop.counter }}" class="kodebrg-dropdown" data-nama-barang-id="namaBrg-{{ forloop.counter }}" data-selected-id="{{ re.barang.id|default:"" }}" {% if returan.id %}disabled{% endif %}>
                     <option value="{{ re.barang.id|default:"" }}" selected>{{ re.barang.kode_barang|default:"" }} - {{ re.barang.nama_barang|default:"" }}</option>
                   </select>
                 </td>
                 <td id="namaBrg-{{ forloop.counter }}">
                   {{ re.barang.nama_barang|default:"" }}
                 </td>
-                <td><input type="number" value="{{ re.barang.harga_beli|default:0 }}" class="input_hrgbrg w-full rounded-md border-gray-300" /></td>
-                <td><input type="number" value="{{ re.qty|default:0 }}" data-qty-awal={{re.qty|default:0}} class="input_qtybrg w-20 rounded-md border-gray-300" /></td>
+                <td><input type="number" value="{{ re.barang.harga_beli|default:0 }}" class="input_hrgbrg w-full rounded-md border-gray-300" {% if returan.id %}disabled{% endif %} /></td>
+                <td><input type="number" value="{{ re.qty|default:0 }}" data-qty-awal={{re.qty|default:0}} class="input_qtybrg w-20 rounded-md border-gray-300" {% if returan.id %}disabled{% endif %} /></td>
                 <td><input type="number" value="{{ re.diskon_barang|default:0 }}" class="disc w-20 rounded-md border-gray-300" disabled /></td>
                 <td class="totalDisc">Rp {{ re.total_diskon_barang|floatformat:0|intcomma|default:"" }},-</td>
                 <td class="total">Rp {{ re.total_harga_barang|floatformat:0|intcomma|default:"" }},-</td>
-                <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-                <td class="text-center"><button type="button" onclick="confirmPopupBtn(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+                <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit" {% if returan.id %}disabled{% endif %}><i class="fa-regular fa-floppy-disk text-2xl text-customBlue {% if returan.id %}text-gray-500{% endif %}"></i></button></td>
+                <td class="text-center"><button type="button" onclick="confirmPopupBtn(this)" {% if returan.id %}disabled{% endif %}><i class="fa-regular fa-trash-can text-2xl text-red-500 {% if returan.id %}text-gray-500{% endif %}"></i></button></td>
               </tr>
             {% endfor %}
           </tbody>

@@ -249,7 +249,7 @@
                 <td><input type="number" value="{{ re.diskon_barang|default:0 }}" class="disc w-20 rounded-md bg-gray-200 border-gray-300 text-gray-400" disabled /></td>
                 <td class="totalDisc">Rp {{ re.total_diskon_barang|floatformat:0|intcomma|default:"" }},-</td>
                 <td class="total">Rp {{ re.total_harga_barang|floatformat:0|intcomma|default:"" }},-</td>
-                <td class="text-center"><button type="button" class="btn-submit" onclick="submitDetail() {% if returan.id %}disabled{% endif %}"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue {% if returan.id %}text-gray-500{% endif %}"></i></button></td>
+                <td class="text-center"><button type="button" class="btn-submit" onclick="submitDetail()" {% if returan.id %}disabled{% endif %}><i class="fa-regular fa-floppy-disk text-2xl text-customBlue {% if returan.id %}text-gray-500{% endif %}"></i></button></td>
                 <td class="text-center"><button type="button" onclick="confirmPopupBtn(this)" {% if returan.id %}disabled{% endif %}><i class="fa-regular fa-trash-can text-2xl text-red-500 {% if returan.id %}text-gray-500{% endif %}"></i></button></td>
               </tr>
             {% endfor %}

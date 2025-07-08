@@ -24,7 +24,7 @@ function getCSRFToken() {
 
 $(document).ready(function () {
     let table = $('#modalReturJual').DataTable({
-        pageLength: 20,
+        pageLength: 5,
         lengthChange: false, // Hilangkan "Show entries"
         ordering: false,
         scrollX: true,

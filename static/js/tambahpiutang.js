@@ -62,7 +62,7 @@ window.closeModalSales = function () {
 
 $(document).ready(function () {
     let table = $('#modalSales').DataTable({
-        pageLength: 20,
+        pageLength: 5,
         lengthChange: false, // Hilangkan "Show entries"
         ordering: false,
         scrollX: true,
@@ -98,7 +98,7 @@ function closeModalFaktur() {
 
 $(document).ready(function () {
     let table = $('#modalFaktur').DataTable({
-        pageLength: 20,
+        pageLength: 5,
         lengthChange: false, // Hilangkan "Show entries"
         ordering: false,
         scrollX: true,

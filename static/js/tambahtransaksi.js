@@ -219,6 +219,42 @@ function minusCheck() {
     })
 }
 
+function qtyCheck() {
+    const id = document.getElementById("id")?.value
+    console.log(`id: ${id}`)
+    const row = document.querySelectorAll("#detailBrg tbody tr")
+    row.forEach(async (input) => {
+        const inputQty = input.querySelector(".input_qtybrg")
+        const rowQty = inputQty.value
+        const rowId = input.querySelector(".barang-id").value
+        const dataAwal = parseInt(inputQty.dataset.qtyAwal)
+        const data = await fetch(`/api/barang/${rowId}/`)
+        const res = await data.json()
+
+        if (!id) {
+            if (rowQty > res.stok) {
+                const headWarn = "Peringatan Stok Kurang"
+                const parWarn = `Stok tidak mencukupi untuk transaksi, sisa stok tinggal ${res.stok}`
+                showWarningToast(headWarn, parWarn)
+                inputQty.value = res.stok
+                updateDetailBiaya()
+                return
+            }
+        } else {
+            const balikStok = res.stok + dataAwal
+            console.log(`stok: ${balikStok}`)
+            if (rowQty > balikStok) {
+                const headWarn = "Peringatan Stok Kurang"
+                const parWarn = `Stok tidak mencukupi untuk transaksi, sisa stok tinggal ${res.stok}`
+                showWarningToast(headWarn, parWarn)
+                inputQty.value = balikStok
+                updateDetailBiaya()
+                return
+            }
+        }
+    })
+}
+
 function showWarningToast(head, msg) {
   const toast = document.getElementById("toastWarning");
 
@@ -283,4 +319,5 @@ function showSuccessToast(head, msg) {
 
 function callListener() {
     minusCheck()
+    qtyCheck()
 }

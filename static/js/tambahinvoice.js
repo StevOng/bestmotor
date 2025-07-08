@@ -75,7 +75,7 @@ function closeModal() {
 
 $(document).ready(function () {
     let table = $('#modalSupplier').DataTable({
-        pageLength: 20,
+        pageLength: 5,
         lengthChange: false, // Hilangkan "Show entries"
         ordering: false,
         scrollX: true,

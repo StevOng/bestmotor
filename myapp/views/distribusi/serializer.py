@@ -28,7 +28,7 @@ class TransaksiMasukSerializer(serializers.ModelSerializer):
                 barang_masuk = item['qty']
                 barang = Barang.objects.get(id=barang_id)
                 barang.stok += barang_masuk
-                barang.save()
+                barang.save(update_fields=['stok'])
         return transaksi
     
     def update(self, instance, validated_data):
@@ -70,7 +70,7 @@ class TransaksiKeluarSerializer(serializers.ModelSerializer):
                 barang_keluar = item['qty']
                 barang = Barang.objects.get(id=barang_id)
                 barang.stok -= barang_keluar
-                barang.save()
+                barang.save(update_fields=['stok'])
         return transaksi
     
     def update(self, instance, validated_data):

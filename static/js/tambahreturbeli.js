@@ -34,7 +34,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
     let table = $('#modalInvoice').DataTable({
-        pageLength: 20,
+        pageLength: 5,
         lengthChange: false, // Hilangkan "Show entries"
         ordering: false,
         scrollX: true,
