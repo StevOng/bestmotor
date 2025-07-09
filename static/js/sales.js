@@ -153,6 +153,38 @@ function openModalAkun() {
   }
 }
 
+function openDetailModal(bonusId) {
+  fetch(`/api/bonus/bonus-detail/?bonus_id=${bonusId}`)
+    .then(res => res.json())
+    .then(res => {
+      if (res.success) {
+        const tbody = document.getElementById("detailBody");
+        tbody.innerHTML = ""; // Kosongkan
+
+        res.data.forEach((item, index) => {
+          const row = `
+            <tr>
+              <td>${index + 1}</td>
+              <td>${item.nama_barang}</td>
+              <td>${item.merk}</td>
+              <td>${item.persen_bonus || 0}%</td>
+              <td>${item.qty}</td>
+              <td>Rp ${parseInt(item.harga).toLocaleString("en-EN")},-</td>
+              <td>Rp ${parseInt(item.nilai_bonus).toLocaleString("en-EN")},-</td>
+            </tr>
+          `;
+          tbody.innerHTML += row;
+        });
+
+        // Tampilkan modal
+        document.getElementById("popupModal").classList.remove("hidden");
+        document.getElementById("popupModal").classList.add("flex");
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching bonus detail:", error);
+    });
+}
 
 //PopupModal
 function openModal(id) {

@@ -70,18 +70,8 @@
                         <th>Total Bonus</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {% for detail in bonus_detail %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ detail.nama_barang }}</td>
-                            <td>{{ detail.merk }}</td>
-                            <td>{{ detail.persen_bonus.persenan }}</td>
-                            <td>{{ detail.qty }}</td>
-                            <td>Rp {{ detail.harga|intcomma }},-</td>
-                            <td>Rp {{ detail.nilai_bonus|intcomma }},-</td>
-                        </tr>
-                    {% endfor %}
+                <tbody id="detailBody">
+                    <!-- isi dinamis -->
                 </tbody>
             </table>
             {% elif list == 'merek' %}
@@ -226,10 +216,14 @@
                     <tr>
                         <td>{{ forloop.counter }}</td>
                         <td>{{ b.user_id.nama }}</td>
-                        <td>{{ total_pesanan }}</td>
-                        <td>Rp {{ total_penjualan|intcomma }},-</td>
+                        <td>{{ b.total_pesanan }}</td>
+                        <td>Rp {{ b.total_penjualan|intcomma }},-</td>
                         <td>Rp {{ b.total_bonus|intcomma }},-</td>
-                        <td class="text-center"><button onclick="openModal({{ b.id }})"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></td>
+                        <td class="text-center">
+                            <button onclick="openDetailModal({{ b.id }})">
+                                <i class="fa-regular fa-eye text-2xl text-customBlue"></i>
+                            </button>
+                        </td>
                         <td class="tanggal-cair">{{ b.tanggal_cair|default:"" }}</td>
                         {% if role == "admin" %}
                             <td class="text-center">
@@ -242,7 +236,6 @@
                         {% endif %}
                     </tr>
                 {% endfor %}
-            {% else %}
                 {% for persen in persentase %}
                     <tr>
                         <td>{{ forloop.counter }}</td>

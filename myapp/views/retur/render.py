@@ -7,13 +7,13 @@ from ...models.invoice import *
 from ...models.faktur import Faktur
 import json
 
-@both_required
+@admin_required
 @activity_logs
 def retur_jual(request):
     returan = ReturJual.objects.select_related("faktur_id__pesanan_id__customer_id")
     return render(request, 'retur/returjual.html', {'returan': returan})
 
-@both_required
+@admin_required
 @activity_logs
 def tambah_returjual(request, id=None):
     faktur = Faktur.objects.select_related("pesanan_id__customer_id").filter(status__in=['belum_lunas','jatuh_tempo']).exclude(piutangfaktur__isnull=False)
