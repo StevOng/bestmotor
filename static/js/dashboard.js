@@ -85,10 +85,13 @@ document.getElementById("dropdownbtn").addEventListener("click", async (e) => {
 
 document.getElementById("monthDropdownbtn").addEventListener("click", async (e) => {
     if (e.target.tagName === "A") {
-        const month = e.target.dataset.month;
+        const month = e.target.textContent
         const week = document.getElementById("incomeDropdownButton").dataset.week;
         document.getElementById("incomeMonthDropdownButton").textContent = e.target.textContent;
         document.getElementById("incomeMonthDropdownButton").dataset.month = month;
+        const btn = document.getElementById("incomeMonthDropdownButton");
+        btn.textContent = month;
+        btn.dataset.month = month;
         updateIncomeChart(month, week)
     }
 });
@@ -176,10 +179,13 @@ document.getElementById("dropdown").addEventListener("click", async (e) => {
 
 document.getElementById("monthDropdown").addEventListener("click", async (e) => {
     if (e.target.tagName === "A") {
-        const selectedMonth = e.target.dataset.month;
+        const selectedMonth = e.target.textContent
         const selectedWeek = document.getElementById("dropdownButton").dataset.week;
         document.getElementById("monthDropdownButton").textContent = selectedMonth;
         document.getElementById("monthDropdownButton").dataset.month = selectedMonth;
+        const btn = document.getElementById("monthDropdownButton");
+        btn.textContent = selectedMonth;
+        btn.dataset.month = selectedMonth;
         updateExpenseChart(selectedMonth, selectedWeek);
     }
 });
