@@ -27,7 +27,7 @@ def pesanan_control_access(request, id=None):
             log_user_action(request, action="Masuk Area Terlarang", detail=f"{user.role} {user.username} {'mencoba masuk pesanan sales lain' if self_pesanan != user.id else None}")
             return redirect("403") if self_pesanan != user.id else None
 
-    if status in ["pending", "ready"] and user.role == "sales":
-        log_user_action(request, action="Masuk Area Terlarang", detail=f"{user.role} {user.username} mencoba masuk ke {status} pesanan")
-        return redirect("403")
+    # if status in ["pending", "ready"] and user.role == "sales":
+    #     log_user_action(request, action="Masuk Area Terlarang", detail=f"{user.role} {user.username} mencoba masuk ke {status} pesanan")
+    #     return redirect("403")
     return

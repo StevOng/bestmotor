@@ -644,7 +644,6 @@
               </li>
             </ul>
           </li>
-          {% endif %}
           <li>
             <button
               type="button"
@@ -711,6 +710,32 @@
               </li>
             </ul>
           </li>
+          {% else %}
+          <li>
+            <a
+              href="{% url 'faktur' %}"
+              class="flex items-center p-2 rounded-lg group text-gray-500 hover:text-white hover:bg-customBlue focus:text-white focus:bg-customBlue {% if '/penjualan' in request.path %}text-white bg-customBlue {% endif %}"
+            >
+              <svg
+                class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-white group-focus:text-white {% if '/penjualan' in request.path %}text-white {% endif %}"
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="21"
+                viewBox="0 0 20 21"
+                fill="none"
+              >
+                <path
+                  d="M17.6757 13.7416C17.1455 14.9954 16.3163 16.1002 15.2606 16.9594C14.2048 17.8186 12.9546 18.4062 11.6194 18.6706C10.2841 18.9351 8.90435 18.8684 7.60078 18.4765C6.29722 18.0845 5.10952 17.3792 4.14151 16.4222C3.17351 15.4652 2.45467 14.2856 2.04786 12.9866C1.64104 11.6876 1.55863 10.3087 1.80783 8.9705C2.05702 7.63229 2.63024 6.3755 3.47737 5.31C4.32449 4.2445 5.41973 3.40274 6.66733 2.85831M17.6997 7.31095C18.0333 8.11633 18.2379 8.96778 18.3073 9.83401C18.3245 10.048 18.3331 10.155 18.2906 10.2514C18.2551 10.3319 18.1848 10.4081 18.1073 10.4499C18.0147 10.5 17.8989 10.5 17.6673 10.5H10.6673C10.434 10.5 10.3173 10.5 10.2282 10.4546C10.1498 10.4146 10.086 10.3509 10.0461 10.2725C10.0007 10.1833 10.0007 10.0667 10.0007 9.83331V2.83331C10.0007 2.60175 10.0007 2.48598 10.0507 2.3933C10.0925 2.31588 10.1687 2.24555 10.2492 2.21005C10.3456 2.16756 10.4526 2.17614 10.6666 2.1933C11.5329 2.26274 12.3843 2.46738 13.1897 2.80098C14.2007 3.21977 15.1194 3.8336 15.8932 4.60742C16.667 5.38124 17.2809 6.2999 17.6997 7.31095Z"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span class="flex-1 ms-3 whitespace-nowrap">Faktur</span>
+            </a>
+          </li>
+          {% endif %}
           <li>
             <a
               href="{% url 'bantuan' %}"

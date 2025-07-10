@@ -265,6 +265,7 @@ async function submitDetail() {
     const ppn = document.getElementById("ppn").value
     const ongkir = document.getElementById("ongkir").value
     const diskon = document.getElementById("discount").value
+    const netto = document.getElementById("netto").value
     console.log("Nilai supplierId sebelum submit:", supplier)
 
     if (!supplier || barangIds.length == 0) {
@@ -299,7 +300,8 @@ async function submitDetail() {
                 "ppn": ppn,
                 "ongkir": ongkir,
                 "diskon_invoice": diskon,
-                "detail_barang": detail_barang
+                "detail_barang": detail_barang,
+                "sisa_bayar": netto,
             })
         })
         const result = await response.json()
@@ -356,7 +358,7 @@ function updateDetailBiaya() {
     const netto = bruto + nilaiPpn + Number(ongkirInput.value) - discInvInput.value
 
     niliaPpnEl.value = nilaiPpn
-    nettoEl.value = netto
+    nettoEl.value = parseInt(netto)
 }
 
 function minusCheck() {

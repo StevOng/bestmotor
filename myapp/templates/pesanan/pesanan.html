@@ -74,8 +74,11 @@
     <a href="{% url 'pesanan' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if not request.GET.status %} text-white bg-customBlue border-customBlue {% endif %}">
         Semua Pesanan
     </a>
-    <a href="{% url 'pesanan' %}?status=shipped" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.GET.status == "shipped" %} text-white bg-customBlue border-customBlue {% endif %}">
-        Pesanan Terkirim
+    <a href="{% url 'pesanan' %}?status=pending" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.GET.status == "pending" %} text-white bg-customBlue border-customBlue {% endif %}">
+        Pesanan Tertunda
+    </a>
+    <a href="{% url 'pesanan' %}?status=ready" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.GET.status == "ready" %} text-white bg-customBlue border-customBlue {% endif %}">
+        Pesanan Siap Kirim
     </a>
   {% endif %}
   </div>

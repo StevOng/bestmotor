@@ -21,6 +21,8 @@ from io import BytesIO
 def faktur(request):
     status = request.GET.get("status", None)
     per_tgl = request.GET.get("per_tgl")
+    role = request.session.get('role')
+    user_id = request.session.get('user_id')
 
     def get_label_tipe(input):
         for value, label in TIPE:
@@ -29,6 +31,9 @@ def faktur(request):
         return input
 
     list_faktur = Faktur.objects.prefetch_related('pesanan_id__detailpesanan_set').select_related("pesanan_id")
+    
+    if role == "sales" :
+        list_faktur = list_faktur.filter(pesanan_id__customer_id__user_id=user_id)
     
     today = date.today()
     for faktur in list_faktur:
@@ -44,20 +49,13 @@ def faktur(request):
         ).distinct()
 
     if status == "belum_lunas":
-        list_faktur = Faktur.objects.prefetch_related('pesanan_id__detailpesanan_set') \
-            .select_related("pesanan_id") \
-            .filter(status__in=["belum_lunas", "jatuh_tempo"])
+        list_faktur = list_faktur.filter(status__in=["belum_lunas", "jatuh_tempo"])
     elif status:  # jika status != None dan != kosong string
-        list_faktur = Faktur.objects.prefetch_related('pesanan_id__detailpesanan_set') \
-            .select_related("pesanan_id") \
-            .filter(status=status)
-    else:  # tidak ada filter status, tampilkan semua
-        list_faktur = Faktur.objects.prefetch_related('pesanan_id__detailpesanan_set') \
-            .select_related("pesanan_id")
+        list_faktur = list_faktur.filter(status=status)
     
     return render(request, 'faktur/faktur.html', {'list_faktur': list_faktur})
 
-@admin_required
+@both_required
 @activity_logs
 def export_faktur(request, id):
     faktur = get_object_or_404(Faktur, pk=id)

@@ -1,5 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from django.shortcuts import get_object_or_404
 from .serializer import *
 from ...models.bonus import *
 from decimal import Decimal
@@ -72,6 +75,31 @@ class BonusViewSet(viewsets.ModelViewSet):
         bonus.save()
 
         return bonus
+    
+    @action(detail=False, methods=['get'], url_path='bonus-detail')
+    def bonus_detail(self, request):
+        bonus_id = request.query_params.get("bonus_id")
+
+        if not bonus_id:
+            return Response({"success": False, "message": "bonus_id is required"}, status=400)
+
+        print("Request received for bonus_id:", bonus_id)
+        bonus = get_object_or_404(Bonus, id=bonus_id)
+
+        bonus_detail_qs = BonusDetail.objects.filter(bonus_id=bonus).select_related("persen_bonus")
+        data = []
+
+        for d in bonus_detail_qs:
+            data.append({
+                "nama_barang": d.nama_barang,
+                "merk": d.merk,
+                "persen_bonus": d.persen_bonus.persenan if d.persen_bonus else None,
+                "qty": d.qty,
+                "harga": d.harga,
+                "nilai_bonus": d.nilai_bonus,
+            })
+
+        return Response({"success": True, "data": data})
 
 class BonusDetailViewSet(viewsets.ModelViewSet):
     queryset = BonusDetail.objects.all()

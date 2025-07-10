@@ -11,7 +11,7 @@
 <!-- Overlay & Modal -->
 <div id="popupModalExp" class="fixed inset-0 hidden items-center justify-center z-50 bg-gray-500/50">
     <div class="bg-white w-full p-6 rounded-lg shadow-lg flex flex-col md:w-1/2">
-        <div class="flex flex-col p-2 h-auto mb-4 rounded border-2 border-gray-200 bg-gray-50">    
+        <div class="flex flex-col p-2 h-auto mb-4 rounded border-2 border-gray-200 bg-gray-50">
             <div class="flex flex-row ml-2 mb-3 justify-between">
                 <p class="font-semibold text-lg">Filter Export Faktur</p>
                 <button onclick="closeModalExp()" class="flex justify-end"><i class="fa-solid fa-x m-2 text-gray-500"></i></button>
@@ -70,12 +70,14 @@
             </button>
         </div>
         {% if not request.GET.status %}
-            <button type="button" onclick="openModalExp()" class="p-2 justify-end border-2 rounded-lg border-gray-200">
-                <div class="flex flex-row justify-center items-center">
-                    <p class="hidden lg:block p-1 lg:text-gray-400">Export</p>
-                    <i class="fa-solid fa-arrow-up-from-bracket p-1 text-customBlue"></i>
-                </div>
-            </button>
+            {% if role == "admin" %}
+                <button type="button" onclick="openModalExp()" class="p-2 justify-end border-2 rounded-lg border-gray-200">
+                    <div class="flex flex-row justify-center items-center">
+                        <p class="hidden lg:block p-1 lg:text-gray-400">Export</p>
+                        <i class="fa-solid fa-arrow-up-from-bracket p-1 text-customBlue"></i>
+                    </div>
+                </button>
+            {% endif %}
         {% elif request.GET.status == 'jatuh_tempo' %}
             <form action="{% url 'faktur' %}" method="GET">
                 <div class="mt-5 flex">

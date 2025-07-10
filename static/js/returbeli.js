@@ -38,6 +38,7 @@ function confirmPopupBtn(returId) {
                 method: "DELETE"
             })
             if (response.ok) {
+                const result = await response.json()
                 showSuccessToast("Berhasil", "Berhasil menghapus retur")
                 const row = document.querySelector(`tr[data-id="${returId}"]`)
                 row.classList.add("fade-out")

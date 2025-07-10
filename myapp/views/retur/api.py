@@ -16,7 +16,7 @@ class ReturBeliViewSet(viewsets.ModelViewSet):
             try:
                 invoice = Invoice.objects.get(id=inv_id)
             except Invoice.DoesNotExist:
-                return Response([], status=404)
+                return Response([], status=200)
 
             detail_qs = invoice.detailinvoice_set.select_related('barang_id')
 
@@ -40,7 +40,8 @@ class ReturBeliViewSet(viewsets.ModelViewSet):
         return super().list(request)
     
     @transaction.atomic
-    def perform_destroy(self, instance):
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
         details = ReturBeliBarang.objects.filter(retur=instance)
 
         for detail in details:
@@ -48,7 +49,7 @@ class ReturBeliViewSet(viewsets.ModelViewSet):
             barang = detail.barang
             # Tambahkan kembali stok barang
             barang.stok += qty
-            barang.save()
+            barang.save(update_fields=["stok"])
 
             # Rollback qty_retur di DetailInvoice
             try:
@@ -69,11 +70,14 @@ class ReturBeliViewSet(viewsets.ModelViewSet):
         invoice = instance.invoice_id
         invoice.netto += instance.subtotal
         invoice.bruto += instance.subtotal
-        invoice.save(update_fields=["netto", "bruto"])
+        invoice.sisa_bayar += instance.subtotal
+        invoice.save(update_fields=["netto", "bruto", "sisa_bayar"])
 
         # Hapus semua detail dan objek retur
         details.delete()
         instance.delete()
+        
+        return Response({"success": True, "message": "Retur beli berhasil dihapus."}, status=200)
 
 class ReturBeliBarangViewSet(viewsets.ModelViewSet):
     queryset = ReturBeliBarang.objects.all()
@@ -111,7 +115,8 @@ class ReturJualViewSet(viewsets.ModelViewSet):
         return Response(data)
     
     @transaction.atomic
-    def perform_destroy(self, instance):
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
         details = ReturJualBarang.objects.filter(retur=instance)
 
         for detail in details:
@@ -121,7 +126,7 @@ class ReturJualViewSet(viewsets.ModelViewSet):
             if barang.stok < qty:
                 raise ValidationError("Stok tidak mencukupi untuk rollback retur.")
             barang.stok -= qty
-            barang.save()
+            barang.save(update_fields=["stok"])
 
             detail_pesanan = DetailPesanan.objects.get(
                 pesanan_id=instance.faktur_id.pesanan_id,
@@ -133,13 +138,19 @@ class ReturJualViewSet(viewsets.ModelViewSet):
             detail_pesanan.qty_pesan += qty
             detail_pesanan.save()
         
-        faktur = instance.faktur_id.pesanan_id
-        faktur.netto += instance.subtotal
-        faktur.bruto += instance.subtotal
-        faktur.save()
+        faktur = instance.faktur_id
+        faktur.pesanan_id.netto += instance.subtotal
+        faktur.pesanan_id.bruto += instance.subtotal
+        faktur.pesanan_id.save(update_fields=["netto", "bruto"])
+        
+        faktur.total += instance.subtotal
+        faktur.sisa_bayar += instance.subtotal
+        faktur.save(update_fields=["total", "sisa_bayar"])
 
         details.delete()
         instance.delete()
+        
+        return Response({"success": True, "message": "Retur jual berhasil dihapus."}, status=200)
     
 class ReturJualBarangViewSet(viewsets.ModelViewSet):
     queryset = ReturJualBarang.objects.all()

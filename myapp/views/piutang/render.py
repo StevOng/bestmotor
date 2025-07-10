@@ -6,7 +6,7 @@ from ...models.piutang import *
 from ...models.faktur import Faktur
 from ...models.user import User
 
-@both_required
+@admin_required
 @activity_logs
 def piutang(request):
     list_piutang = Piutang.objects.select_related("customer_id__user_id")
