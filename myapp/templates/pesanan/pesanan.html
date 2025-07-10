@@ -147,8 +147,10 @@
                 <th>Total</th>
                 <th>Status</th>
                 <th>Edit</th>
+                {% if role == "admin" %}
                 <th>Terima Pesanan</th>
                 <th>Tolak</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -174,8 +176,8 @@
                   </svg>
                 </button>
               </td>
-              {% endif %}
               <td class="text-center"><button onclick="confirmPopupBtn({{ pesanan.id }})"><i class="fa-solid fa-x text-2xl text-red-500"></i></button></td>
+              {% endif %}
             </tr>
           {% endfor %}
         </tbody>
@@ -196,7 +198,9 @@
                 <th>Total</th>
                 <th>Status</th>
                 <th>Lihat</th>
+                {% if role == "admin" %}
                 <th>Kirim</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
