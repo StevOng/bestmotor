@@ -1,3 +1,9 @@
+const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+const now = new Date();
+const currentMonth = monthNames[now.getMonth()];
+const currentWeek = Math.ceil(now.getDate() / 7);
+
 let incomeChart = null
 let expenseChart = null
 
@@ -101,9 +107,11 @@ async function updateIncomeChart(month, week) {
 if (document.getElementById("income-chart") && typeof ApexCharts !== 'undefined') {
     incomeChart = new ApexCharts(document.querySelector("#income-chart"), income_options);
     incomeChart.render();
-    document.getElementById("incomeDropdownButton").dataset.week = "1";
-    document.getElementById("incomeMonthDropdownButton").dataset.month = "Januari";
-    updateIncomeChart("Januari", "1");  // Default: Januari minggu ke-1
+    document.getElementById("incomeDropdownButton").dataset.week = currentWeek;
+    document.getElementById("incomeDropdownButton").textContent = `Minggu ke-${currentWeek}`;
+    document.getElementById("incomeMonthDropdownButton").dataset.month = currentMonth;
+    document.getElementById("incomeMonthDropdownButton").textContent = currentMonth;
+    updateIncomeChart(currentMonth, currentWeek);
 }
 
 function formatRupiah(angka) {
@@ -180,9 +188,11 @@ document.getElementById("monthDropdown").addEventListener("click", async (e) => 
 if (document.getElementById("expense-chart") && typeof ApexCharts !== 'undefined') {
     expenseChart = new ApexCharts(document.getElementById("expense-chart"), expense_options);
     expenseChart.render();
-    document.getElementById("dropdown").dataset.week = "1";
-    document.getElementById("monthDropdown").dataset.month = "Januari";
-    updateExpenseChart("Januari", "1");
+    document.getElementById("dropdownButton").dataset.week = currentWeek;
+    document.getElementById("dropdownButton").textContent = `Minggu ke-${currentWeek}`;
+    document.getElementById("monthDropdownButton").dataset.month = currentMonth;
+    document.getElementById("monthDropdownButton").textContent = currentMonth;
+    updateExpenseChart(currentMonth, currentWeek);
 }
 
 // {% comment %} Pie Chart Laku {% endcomment %}

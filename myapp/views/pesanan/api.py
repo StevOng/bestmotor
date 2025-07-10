@@ -117,10 +117,12 @@ class PesananViewSet(viewsets.ModelViewSet):
         data_dict = {day: 0 for day in weekday_map}
 
         for item in queryset:
-            index = (item['weekday'] + 5) % 7  # 1=Sunday → index 6
-            data_dict[weekday_map[index]] = float(item['netto']) / 1_000_000  # juta
+            # ExtractWeekDay: 1=Sunday ... 7=Saturday
+            index = (item['weekday'] + 5) % 7 # convert to 0=Senin, 6=Minggu
+            # gunakan 'total' sesuai alias annotate(...)
+            data_dict[weekday_map[index]] = float(item['total']) / 1_000_000
 
-        total_income = sum(item['netto'] for item in queryset)
+        total_income  = sum(item['total'] for item in queryset)
         total_orders = sum(item['count'] for item in queryset)
 
         return Response({
