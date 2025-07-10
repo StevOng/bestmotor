@@ -3,6 +3,34 @@ document.addEventListener("DOMContentLoaded", () => {
   validate()
 })
 
+const modalTemplates = {};
+document.querySelectorAll('.fixed.inset-0').forEach(modal => {
+  modalTemplates[modal.id] = modal.innerHTML;
+});
+
+function resetModal(modal) {
+  const clone = modal.cloneNode(true);
+  modal.parentNode.replaceChild(clone, modal);
+  clone.innerHTML = modalTemplates[modal.id];
+  return clone;
+}
+
+function closeModalById(id) {
+  let modal = document.getElementById(id);
+  if (!modal) return;
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+  modal = resetModal(modal);
+}
+
+document.body.addEventListener('click', e => {
+  const btn = e.target.closest('[data-close]');
+  if (btn) {
+    const modal = btn.closest('.fixed.inset-0');
+    if (modal && modal.id) closeModalById(modal.id);
+  }
+});
+
 function showWarningToast(head, msg) {
   const toast = document.getElementById("toastWarning");
 
@@ -250,6 +278,7 @@ function closeModal() {
   let modal = document.getElementById("popupModal");
   modal.classList.remove("flex");
   modal.classList.add("hidden");
+  resetModal(modal)
 }
 
 function openModalConfirm(id) {
@@ -297,6 +326,7 @@ function closeModalConfirm() {
   let modal = document.getElementById("popup-modal");
   modal.classList.remove("flex");
   modal.classList.add("hidden");
+  resetModal(modal)
 }
 
 async function getMerk(id) {

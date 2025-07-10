@@ -39,6 +39,8 @@ def notifications(request):
                     "msg": f"Invoice '{push_notif.no_invoice}' sudah jatuh tempo"
                 })
     else:
+        sales_id = request.session.get("user_id")
+        faktur_jto = Faktur.objects.filter(status="jatuh_tempo", pesanan_id__customer_id__user_id=sales_id)
         if faktur_jto:
             for push_notif in faktur_jto:
                 notifikasi.append({

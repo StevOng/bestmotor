@@ -17,7 +17,7 @@
         <div class="flex flex-col p-2 h-auto mb-4 rounded border-2 border-gray-200 bg-gray-50">    
             <div class="flex flex-row ml-2 mb-3 justify-between">
                 <p class="font-semibold text-lg">Konfirmasi Pencairan Bonus Sales</p>
-                <button onclick="closeModalConfirm()" class="flex justify-end"><i class="fa-solid fa-x m-2 text-gray-500"></i></button>
+                <button onclick="closeModalConfirm()" data-close class="flex justify-end"><i class="fa-solid fa-x m-2 text-gray-500"></i></button>
             </div>
             <div class="p-4 md:p-5 text-center">
                 <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
@@ -37,7 +37,7 @@
         <div class="flex flex-col p-2 h-auto mb-4 rounded border-2 border-gray-200 bg-gray-50">    
             <div class="flex flex-row ml-2 mb-3 justify-between">
                 <p class="font-semibold text-lg">{% if not list %}Tambah Akun Sales{% elif list == 'bonus' %}Detail Bonus Sales{% else %}Tambah Bonus Per Merek{% endif %}</p>
-                <button onclick="closeModal()" class="flex justify-end"><i class="fa-solid fa-x m-2 text-gray-500"></i></button>
+                <button onclick="closeModal()" data-close class="flex justify-end"><i class="fa-solid fa-x m-2 text-gray-500"></i></button>
             </div>
             {% if not list %}
             <span class="ml-3 mt-4">Username : <input id="username" name="username" class="p-2 rounded-lg border-gray-200 border-2 focus:border-customBlue md:60 lg:w-80 lg:max-w-full" placeholder="Masukkan Username Sales" /></span>
@@ -236,6 +236,7 @@
                         {% endif %}
                     </tr>
                 {% endfor %}
+            {% else %}
                 {% for persen in persentase %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
@@ -251,5 +252,5 @@
 {% endblock %}
 
 {% block script %}
-<script src="{% static 'js/sales.js' %}">
+<script src="{% static 'js/sales.js' %}"></script>
 {% endblock %}

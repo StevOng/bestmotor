@@ -68,7 +68,7 @@
         <div class="p-2 mb-4 h-full">
           <div class="grid grid-cols-3 mb-3 items-center w-full">
             <button
-              onclick="closeModalAkun()"
+              onclick="closeModalAkunBestMotor()"
               class="flex text-xl justify-start"
             >
               <i class="fa-solid fa-arrow-left fa-sm m-2 text-gray-500"></i>
@@ -267,7 +267,7 @@
                 >
                   <li>
                     <button
-                      onclick="openModalAkun()"
+                      onclick="openModalAkunBestMotor()"
                       class="flex w-full items-start px-4 py-2 hover:bg-gray-100"
                     >
                       Account
@@ -818,7 +818,7 @@
     {% block script %}{% endblock %}
     <script>
         //PopupModal Akun
-      function openModalAkun() {
+      function openModalAkunBestMotor() {
           let modal = document.getElementById("popupModalAkun");
           let dropdownAvatar = document.getElementById("dropdownAvatarName");
           dropdownAvatar.classList.remove("block");
@@ -827,7 +827,7 @@
           modal.classList.add("flex");
       }
 
-      function closeModalAkun() {
+      function closeModalAkunBestMotor() {
           let modal = document.getElementById("popupModalAkun");
           modal.classList.remove("flex");
           modal.classList.add("hidden");
