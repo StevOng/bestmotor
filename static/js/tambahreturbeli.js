@@ -112,6 +112,8 @@ async function loadBarangOptions(selectId, selectedId = null, invId = null) {
     let response = await fetch(url);
     let data = await response.json();
 
+    data = data.filter(barang => barang.qty > 0);
+
     if (!window.barangData) {
         window.barangData = {};
     }
@@ -183,7 +185,7 @@ async function getOptionBrg() {
 
                 const hargaInput = row.querySelector(".input_hrgbrg");
                 if (hargaInput) {
-                    hargaInput.value = data.harga_modal;
+                    hargaInput.value = data.harga_beli;
                 }
 
                 const diskonInput = row.querySelector(".disc");
@@ -286,7 +288,7 @@ async function submitDetail() {
     const qtyReturs = Array.from(document.querySelectorAll(".input_qtybrg")).map(input => parseInt(input.value)).filter(val => !isNaN(val))//filter utk buang null
     const diskonBrgs = Array.from(document.querySelectorAll(".disc")).map(input => parseInt(input.value)).filter(val => !isNaN(val))//filter utk buang null
     const invId = document.getElementById("invId")?.value
-    const bruto = document.getElementById("bruto").value
+    const netto = document.getElementById("netto").value
     const ongkir = document.getElementById("ongkir")?.value
     const check = await fetch(`/api/detailinvoice/${invId}/`)
     const data = await check.json()
@@ -312,7 +314,7 @@ async function submitDetail() {
             },
             body: JSON.stringify({
                 "invoice_id": invId,
-                "subtotal": bruto,
+                "subtotal": parseInt(netto),
                 "ongkir": ongkir,
                 "detail_barang": detail_barang
             })

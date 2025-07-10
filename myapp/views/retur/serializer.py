@@ -35,7 +35,9 @@ class ReturBeliSerializer(serializers.ModelSerializer):
                 invoice = retur.invoice_id
                 invoice.netto -= retur.subtotal
                 invoice.bruto -= retur.subtotal
-                invoice.save(update_fields=["netto", "bruto"])
+                invoice.sisa_bayar -= retur.subtotal
+                invoice.save(update_fields=["netto", "bruto", "sisa_bayar"])
+                
                 try:
                     detail_invoice = DetailInvoice.objects.get(
                         invoice_id=invoice,
@@ -98,9 +100,13 @@ class ReturJualSerializer(serializers.ModelSerializer):
                 qty_retur = item['qty']
                 detail_pesanan = DetailPesanan.objects.get(pesanan_id=retur.faktur_id.pesanan_id, barang_id=barang_id)
                 faktur = retur.faktur_id
-                faktur.pesanan_id.netto = faktur.pesanan_id.netto - retur.subtotal
-                faktur.pesanan_id.bruto = faktur.pesanan_id.bruto - retur.subtotal
+                faktur.pesanan_id.netto -= retur.subtotal
+                faktur.pesanan_id.bruto -= retur.subtotal
                 faktur.pesanan_id.save(update_fields=["netto", "bruto"])
+                
+                faktur.total -= retur.subtotal
+                faktur.sisa_bayar -= retur.subtotal
+                faktur.save(update_fields=["total", "sisa_bayar"])
 
                 detail_pesanan.qty_retur += qty_retur
                 detail_pesanan.qty_pesan -= qty_retur

@@ -125,7 +125,7 @@
           <input type="hidden" name="invId" id="invId" value="{{ returan.invoice_id|default:"" }}">
           <input type="text" id="no_invoice" placeholder="-" value="{{ returan.invoice_id.no_invoice|default:"" }}" disabled
             class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue">
-            <button onclick="openModal()" type="button" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none">
+            <button onclick="openModal()" type="button" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 focus:outline-none" {% if returan.id %}disabled{% endif %}>
             <i class="fas fa-ellipsis-h"></i>
           </button>
         </div>
@@ -214,13 +214,13 @@
                 <td id="namaBrg-{{ forloop.counter }}">
                   {{ re.barang.nama_barang|default:"" }}
                 </td>
-                <td><input type="number" value="{{ re.barang.harga_beli|default:0 }}" class="input_hrgbrg w-full rounded-md border-gray-300" {% if returan.id %}disabled{% endif %} /></td>
+                <td><input type="number" value="{{ re.barang.harga_modal|default:0 }}" class="input_hrgbrg w-full rounded-md border-gray-300" {% if returan.id %}disabled{% endif %} /></td>
                 <td><input type="number" value="{{ re.qty|default:0 }}" data-qty-awal={{re.qty|default:0}} class="input_qtybrg w-20 rounded-md border-gray-300" {% if returan.id %}disabled{% endif %} /></td>
                 <td><input type="number" value="{{ re.diskon_barang|default:0 }}" class="disc w-20 rounded-md border-gray-300" disabled /></td>
                 <td class="totalDisc">Rp {{ re.total_diskon_barang|floatformat:0|intcomma|default:"" }},-</td>
                 <td class="total">Rp {{ re.total_harga_barang|floatformat:0|intcomma|default:"" }}</td>
                 <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit" {% if returan.id %}disabled{% endif %}><i class="fa-regular fa-floppy-disk text-2xl text-customBlue {% if returan.id %}text-gray-500{% endif %}"></i></button></td>
-                <td class="text-center"><button type="button" onclick="confirmPopupBtn(this)" {% if returan.id %}disabled{% endif %}><i class="fa-regular fa-trash-can text-2xl text-red-500 {% if returan.id %}text-gray-500{% endif %}"></i></button></td>
+                <td class="text-center"><button type="button" onclick="confirmPopupBtn(this)" {% if returan.id %}disabled{% endif %}><i class="fa-regular fa-trash-can text-2xl {% if returan.id %}text-gray-500{% else %} text-red-500 {% endif %}"></i></button></td>
               </tr>
             {% empty %}
               <tr>
@@ -240,7 +240,7 @@
                 <td class="totalDisc">Rp {{ re.total_diskon_barang|floatformat:0|intcomma|default:"" }},-</td>
                 <td class="total">Rp {{ re.total_harga_barang|floatformat:0|intcomma|default:"" }},-</td>
                 <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit" {% if returan.id %}disabled{% endif %}><i class="fa-regular fa-floppy-disk text-2xl text-customBlue {% if returan.id %}text-gray-500{% endif %}"></i></button></td>
-                <td class="text-center"><button type="button" onclick="confirmPopupBtn(this)" {% if returan.id %}disabled{% endif %}><i class="fa-regular fa-trash-can text-2xl text-red-500 {% if returan.id %}text-gray-500{% endif %}"></i></button></td>
+                <td class="text-center"><button type="button" onclick="confirmPopupBtn(this)" {% if returan.id %}disabled{% endif %}><i class="fa-regular fa-trash-can text-2xl {% if returan.id %}text-gray-500{% else %} text-red-500 {% endif %}"></i></button></td>
               </tr>
             {% endfor %}
           </tbody>
@@ -250,5 +250,9 @@
 {% endblock %}
 
 {% block script %}
+<script>
+  window.barangData = JSON.parse('{{ barang_data_json|escapejs }}')
+</script>
+
 <script src="{% static 'js/tambahreturbeli.js' %}"></script>
 {% endblock %}

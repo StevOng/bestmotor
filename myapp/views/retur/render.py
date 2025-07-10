@@ -72,12 +72,12 @@ def tambah_returbeli(request, id=None):
 
     if id:
         returan = ReturBeli.objects.select_related(
-            "invoice_id__supplier_id"  # untuk ambil supplier langsung
+            "invoice_id__supplier_id"
         ).prefetch_related(
             "invoice_id__detailinvoice_set__barang_id"
         ).get(id=id)
         pembelian = returan.invoice_id
-        supplier = pembelian.supplier_id  # karena field di Invoice adalah supplier_id
+        supplier = pembelian.supplier_id
     else:
         invoice_id = request.POST.get("invId")
         if invoice_id:
@@ -90,11 +90,32 @@ def tambah_returbeli(request, id=None):
 
     detail_barang_qs = DetailInvoice.objects.filter(invoice_id=pembelian).select_related('barang_id')
 
+    barang_data_dict = {
+        d.barang_id.id: {
+            "harga_modal": float(d.harga_beli),
+            "qty": d.qty_beli,
+            "diskon": d.diskon_barang,
+            "total_diskon_barang": d.total_diskon_barang(),
+            "total_harga_barang": d.total_harga_barang(),
+            "tier_harga": [
+                {
+                    "harga_satuan": float(tier.harga_satuan),
+                    "min_qty_grosir": tier.min_qty_grosir,
+                }
+                for tier in d.barang_id.tierharga_set.all().order_by('min_qty_grosir')
+            ]
+        }
+        for d in detail_barang_qs
+    }
+    
+    barang_data_json = json.dumps(barang_data_dict, cls=DjangoJSONEncoder)
+    
     print(returan)
     return render(request, 'retur/tambahreturbeli.html', {
         'returan': returan, 
         'invoice': invoice, 
         "supplier": supplier,
         "pembelian": pembelian,
-        "detail_barang_lis": detail_barang_qs
+        "detail_barang_lis": detail_barang_qs,
+        "barang_data_json": barang_data_json
     })

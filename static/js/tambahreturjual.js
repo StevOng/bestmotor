@@ -118,6 +118,8 @@ async function loadBarangOptions(selectId, selectedId = null, fakturId = null) {
         return; // atau tampilkan warning
     }
 
+    data = data.filter(barang => barang.qty > 0);
+
     if (!window.barangData) {
         window.barangData = {};
     }
@@ -285,7 +287,7 @@ async function submitDetail() {
     const diskonBrgs = Array.from(document.querySelectorAll(".disc")).map(input => parseInt(input.value)).filter(val => !isNaN(val))//filter utk buang null
     const fakturId = document.getElementById("fakturId")?.value
     const pesananId = document.getElementById("pesananId")?.value
-    const bruto = document.getElementById("bruto").value
+    const netto = document.getElementById("netto").value
     const ongkir = document.getElementById("ongkir").value
     const check = await fetch(`/api/detailpesanan/${pesananId}/`)
     const data = await check.json()
@@ -312,7 +314,7 @@ async function submitDetail() {
             },
             body: JSON.stringify({
                 "faktur_id": fakturId,
-                "subtotal": bruto,
+                "subtotal": parseInt(netto),
                 "ongkir": ongkir,
                 "detail_barang": detail_barang
             })
