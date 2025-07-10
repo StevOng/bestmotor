@@ -19,7 +19,6 @@ class Invoice(models.Model):
     ongkir = models.DecimalField(max_digits=19, decimal_places=0)
     diskon_invoice = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0'))
     netto = models.DecimalField(max_digits=10, decimal_places=0, default=Decimal('0'))
-    potongan = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0'))
     sisa_bayar = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0'))
     CHOICES = [
         ('lunas','Lunas'),

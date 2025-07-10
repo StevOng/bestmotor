@@ -5,7 +5,7 @@ from ...models.hutang import *
 class HutangInvoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = HutangInvoice
-        fields = ['invoice', 'nilai_bayar']
+        fields = ['invoice', 'nilai_bayar', 'potongan']
 
 class HutangSerializer(serializers.ModelSerializer):
     list_invoice = HutangInvoiceSerializer(many=True, write_only=True)
@@ -22,9 +22,15 @@ class HutangSerializer(serializers.ModelSerializer):
         with transaction.atomic():
             hut = Hutang.objects.create(**validated_data)
             for it in arr:
-                hi = HutangInvoice.objects.create(hutang=hut, **it)
+                hi = HutangInvoice.objects.create(
+                    hutang=hut,
+                    invoice=it["invoice"],
+                    nilai_bayar=it["nilai_bayar"],
+                    potongan=it.get("potongan", 0)
+                )
                 inv = hi.invoice
-                inv.sisa_bayar = max(inv.sisa_bayar - hi.nilai_bayar, 0)
+                total_diterima = hi.nilai_bayar + hi.potongan
+                inv.sisa_bayar = max(inv.sisa_bayar - total_diterima, 0)
                 inv.status = "lunas" if inv.sisa_bayar==0 else "belum_lunas"
                 inv.save(update_fields=["sisa_bayar","status"])
             # recalc totals di header
@@ -49,9 +55,15 @@ class HutangSerializer(serializers.ModelSerializer):
                 HutangInvoice.objects.filter(hutang=instance).delete()
                 # apply new
                 for it in arr:
-                    hi = HutangInvoice.objects.create(hutang=instance, **it)
+                    hi = HutangInvoice.objects.create(
+                        hutang=instance,
+                        invoice=it["invoice"],
+                        nilai_bayar=it["nilai_bayar"],
+                        potongan=it.get("potongan", 0)
+                    )
                     inv = hi.invoice
-                    inv.sisa_bayar = max(inv.netto - hi.nilai_bayar, 0)
+                    total_diterima = hi.nilai_bayar + hi.potongan
+                    inv.sisa_bayar = max(inv.sisa_bayar - total_diterima, 0)
                     inv.status = "lunas" if inv.sisa_bayar==0 else "belum_lunas"
                     inv.save(update_fields=["sisa_bayar","status"])
             # recalc totals

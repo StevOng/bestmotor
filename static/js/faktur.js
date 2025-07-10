@@ -1,86 +1,131 @@
 document.addEventListener('DOMContentLoaded', function () {
-    getSales()
+  getSales()
 })
 
 $(document).ready(function () {
-    let table = $('#allpesanan').DataTable({
-        pageLength: 20,
-        lengthChange: false, // Hilangkan "Show entries"
-        ordering: false,
-        scrollX: true,
-    });
-    $('.dt-search').remove();
-    $('.dt-info').remove();
+  let table = $('#allpesanan').DataTable({
+    pageLength: 20,
+    lengthChange: false, // Hilangkan "Show entries"
+    ordering: false,
+    scrollX: true,
+  });
+  $('.dt-search').remove();
+  $('.dt-info').remove();
 
-    $('#tableSearch').on('keyup', function () { //search
-      let searchValue = $(this).val();
-      table.search(searchValue).draw();
-    });
+  $('#tableSearch').on('keyup', function () { //search
+    let searchValue = $(this).val();
+    table.search(searchValue).draw();
+  });
+  // 1) Pasang custom filter
+  $.fn.dataTable.ext.search.push(function (settings, data) {
+    if (settings.nTable.id !== 'allpesanan') return true;
+
+    const perVal = $('#per_tgl').val();        // bisa "2025-07-03" atau "07/03/2025"
+    if (!perVal) return true;                  // kosong → tampilkan semua
+
+    const txt = data[1].trim();
+    let rowISO;
+    // 1) normalisasi perVal → perISO = "YYYY-MM-DD"
+    let perISO;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(perVal)) {
+      perISO = perVal;
+    } else if (/^\d{2}\/\d{2}\/\d{4}$/.test(perVal)) {
+      const [mo, da, yr] = perVal.split('/');
+      perISO = `${yr}-${mo.padStart(2, '0')}-${da.padStart(2, '0')}`;
+    } else {
+      const dt = new Date(perVal);
+      if (isNaN(dt.getTime())) return true;
+      perISO = dt.toISOString().slice(0, 10);
+    }
+
+    // 2) parse teks tanggal faktur di kolom ke-2 (index 1)
+    let datePart = txt;
+    const parts = txt.split(',');
+    if (parts.length >= 2) {
+      // join dua segmen pertama: ["July 3", " 2025"] → "July 3, 2025"
+      datePart = parts.slice(0, 2).join(',');
+    }
+    const d = new Date(datePart.trim());
+    if (isNaN(d.getTime())) {
+      // kalau tetap gagal parse, skip baris ini
+      return false;
+    }
+    rowISO = [
+      d.getFullYear(),
+      String(d.getMonth() + 1).padStart(2, '0'),
+      String(d.getDate()).padStart(2, '0')
+    ].join('-');
+
+    // 3) bandingkan
+    return rowISO === perISO;
+  });
+
+  $('#per_tgl').on('change', () => table.draw());
 });
 
 //PopupModal
 function openModalExp() {
-    let modal = document.getElementById("popupModalExp");
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
+  let modal = document.getElementById("popupModalExp");
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
 }
 
 function closeModalExp() {
-    let modal = document.getElementById("popupModalExp");
-    modal.classList.remove("flex");
-    modal.classList.add("hidden");
+  let modal = document.getElementById("popupModalExp");
+  modal.classList.remove("flex");
+  modal.classList.add("hidden");
 }
 
 async function getSales() {
-    console.log("panggil getSales")
-    try {
-        const response = await fetch('/api/user/list_sales/')
-        console.log(response)
-        const choices = await response.json()
-        console.log(`data user: ${choices}`)
+  console.log("panggil getSales")
+  try {
+    const response = await fetch('/api/user/list_sales/')
+    console.log(response)
+    const choices = await response.json()
+    console.log(`data user: ${choices}`)
 
-        const select = document.getElementById("sales-bestmtr")
-        const selectedSales = select.dataset.selectedSales
-        const inputSalesId = document.getElementById("salesId")
+    const select = document.getElementById("sales-bestmtr")
+    const selectedSales = select.dataset.selectedSales
+    const inputSalesId = document.getElementById("salesId")
 
-        choices.forEach(choice => {
-            const option = document.createElement("option")
-            option.value = choice.value
-            option.textContent = choice.label
+    choices.forEach(choice => {
+      const option = document.createElement("option")
+      option.value = choice.value
+      option.textContent = choice.label
 
-            if (String(choice.value) === String(selectedSales)) {
-                option.selected = true
-                inputSalesId.value = choice.value
-                const placeholder = select.querySelector('option[value=""]')
-                if (placeholder) placeholder.removeAttribute('selected')
-            }
+      if (String(choice.value) === String(selectedSales)) {
+        option.selected = true
+        inputSalesId.value = choice.value
+        const placeholder = select.querySelector('option[value=""]')
+        if (placeholder) placeholder.removeAttribute('selected')
+      }
 
-            select.appendChild(option)
-        })
-        select.addEventListener("change", (e) => {
-            inputSalesId.value = e.target.value
-            console.log("User memilih sales dengan ID:", e.target.value)
-        })
+      select.appendChild(option)
+    })
+    select.addEventListener("change", (e) => {
+      inputSalesId.value = e.target.value
+      console.log("User memilih sales dengan ID:", e.target.value)
+    })
 
-    } catch (err) {
-        console.error("Error:", err)
-    }
+  } catch (err) {
+    console.error("Error:", err)
+  }
 }
 
 function exportLaporanPDF() {
-    const salesId = document.getElementById("salesId").value;
-    const dariTgl = document.getElementById("dari_tgl").value;
-    const smpeTgl = document.getElementById("smpe_tgl").value;
-    const urlBase = document.getElementById("exportBtn").dataset.url;
+  const salesId = document.getElementById("salesId").value;
+  const dariTgl = document.getElementById("dari_tgl").value;
+  const smpeTgl = document.getElementById("smpe_tgl").value;
+  const urlBase = document.getElementById("exportBtn").dataset.url;
 
-    if (!salesId || !dariTgl || !smpeTgl) {
-        showWarningToast("Data Kurang", "Mohon untuk mengisi semua filter terlebih dahulu")
-        return;
-    }
+  if (!salesId || !dariTgl || !smpeTgl) {
+    showWarningToast("Data Kurang", "Mohon untuk mengisi semua filter terlebih dahulu")
+    return;
+  }
 
-    const url = `${urlBase}?salesId=${salesId}&dari_tgl=${dariTgl}&smpe_tgl=${smpeTgl}`;
-    console.log("Navigating to:", url);
-    window.open(url, "_blank");
+  const url = `${urlBase}?salesId=${salesId}&dari_tgl=${dariTgl}&smpe_tgl=${smpeTgl}`;
+  console.log("Navigating to:", url);
+  window.open(url, "_blank");
 }
 
 function showWarningToast(head, msg) {
@@ -117,7 +162,7 @@ function showWarningToast(head, msg) {
 function showSuccessToast(head, msg) {
   const toast = document.getElementById("toastSuccess");
 
-  toast.innerHTML =`
+  toast.innerHTML = `
       <div class="toast flex items-start p-4 bg-green-50 rounded-lg border border-green-100 shadow-lg">
         <div class="flex-shrink-0">
           <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">

@@ -335,12 +335,11 @@
                   </button>
                 </div>
               </td>
-              <td class="nettoCell">Rp {{ hi.invoice.sisa_bayar|floatformat:0|intcomma|default:"" }},-</td>
+              <td class="nettoCell">Rp {{ hi.invoice.netto|floatformat:0|intcomma|default:"" }},-</td>
               <td>
                 <input
                   type="number"
-                  value="{{ hi.invoice.potongan|default:"" }}"
-                  id="potongan-{{ forloop.counter }}"
+                  value="{{ hi.potongan|default:"" }}"
                   class="potongan w-full rounded-md border-gray-300"
                 />
               </td>

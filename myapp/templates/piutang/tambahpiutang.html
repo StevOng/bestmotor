@@ -223,7 +223,7 @@
                       </div>
                     </td>
                     <td class="nilaiCell">Rp {{ pf.faktur.total|floatformat:0|intcomma|default:"" }},-</td>
-                    <td><input type="number" value="{{ pf.faktur.potongan|default:"" }}" id="potongan" class="potongan w-full rounded-md border-gray-300" /></td>
+                    <td><input type="number" value="{{ pf.potongan|default:"" }}" class="potongan w-full rounded-md border-gray-300" /></td>
                     <td><input type="number" value="{{ pf.nilai_bayar|default:"" }}" id="nilaiByr" class="nilaiByr w-full rounded-md border-gray-300" /></td>
                     <td class="text-center"><button type="button" class="btn-submit" onclick="submitDetail()"><i class="fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
                     <td class="text-center"><button type="button" onclick="confirmPopupBtn(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>

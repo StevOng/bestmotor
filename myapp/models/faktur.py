@@ -7,7 +7,6 @@ class Faktur(models.Model):
     no_faktur = models.CharField(max_length=50, unique=True)
     sisa_bayar = models.DecimalField(max_digits=19, decimal_places=0)
     tanggal_faktur = models.DateTimeField(auto_now_add=True)
-    potongan = models.DecimalField(max_digits=19, decimal_places=0, null=True, blank=True)
     total = models.DecimalField(max_digits=19, decimal_places=0)
     CHOICES = [
         ('belum_lunas','Belum Lunas'),
