@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-
+    recalcTotals()
     const tanggal = document.getElementById("tgl_byrhutang")
     const today = new Date()
     const year = String(today.getFullYear())
@@ -8,21 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatDate = `${day}/${month}/${year}`
 
     tanggal.value = formatDate
-
-    let sumFaktur = 0
-    document.querySelectorAll("[id^='nilaiFaktur-']").forEach(cell => {
-        // buang semua non-digit dari teks, parse jadi angka
-        const num = parseInt(cell.textContent.replace(/[^\d]/g, ''), 10) || 0
-        sumFaktur += num
-    })
-    const hiddenId = document.getElementById("piutangId")
-    if (!hiddenId) {
-        document.getElementById("tot_faktur").value = formatRupiah(sumFaktur)
-    }
-
-    // — hitung Total Potongan & Pelunasan awalnya juga —
-    totalPotongan()
-    totalPelunasan()
 })
 
 function getCSRFToken() {
@@ -85,7 +70,7 @@ function openModalFaktur(button) {
 
     const salesId = document.getElementById("salesId").value;
     if (!salesId) {
-        return showWarningToast("Sales Kosong","Pilih Sales terlebih dahulu!");
+        return showWarningToast("Sales Kosong", "Pilih Sales terlebih dahulu!");
     }
 
     fetchFakturBySales(salesId);
@@ -186,21 +171,21 @@ async function fetchFakturBySales(salesId) {
     const selectedFakturIds = Array.from(
         document.querySelectorAll("input.fakturId")
     )
-    .map(input => input.value)
-    .filter(val => val !== "");
+        .map(input => input.value)
+        .filter(val => val !== "");
 
     // Debug log (boleh dihapus nanti)
     console.log("Faktur yang sudah dipilih:", selectedFakturIds);
 
-    if (fakturList.length === 0){
+    if (fakturList.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500">Tidak ada Faktur</td></tr>`;
     } else {
         fakturList.forEach(faktur => {
 
-        if (selectedFakturIds.includes(String(faktur.id))) return;
+            if (selectedFakturIds.includes(String(faktur.id))) return;
 
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
       <td>${faktur.no_faktur}</td>
       <td>${new Date(faktur.tanggal_faktur).toLocaleDateString()}</td>
       <td>${faktur.no_referensi}</td>
@@ -214,8 +199,8 @@ async function fetchFakturBySales(salesId) {
         </button>
       </td>
     `;
-        tbody.appendChild(tr);
-    });
+            tbody.appendChild(tr);
+        });
     }
 }
 
@@ -225,7 +210,7 @@ async function pilihFaktur(id, noFaktur, custIdValue) {
     const sudahDipakai = allFakturInputs.some(input => input.value === id);
 
     if (sudahDipakai) {
-        showWarningToast("Faktur","Faktur ini sudah dipakai di baris lain!");
+        showWarningToast("Faktur", "Faktur ini sudah dipakai di baris lain!");
         return;
     }
 
@@ -381,9 +366,9 @@ function addNewRow() {
   `;
     // wire up listeners so totals recalc on edit
     tr.querySelector("input.potongan")
-        .addEventListener("input", recalcTotals);
+        .addEventListener("input", callListener);
     tr.querySelector("input.nilaiByr")
-        .addEventListener("input", recalcTotals);
+        .addEventListener("input", callListener);
 
     tbody.appendChild(tr);
 }
@@ -479,10 +464,13 @@ function recalcTotals() {
         sumBayar = 0;
 
     document.querySelectorAll("#allpesanan tbody tr").forEach(tr => {
+        // baca nilai faktur dari cell (angka saja)
         const valF = parseInt(
             tr.querySelector("td.nilaiCell").textContent.replace(/\D/g, ""),
             10
         ) || 0;
+
+        // baca potongan & bayar dari input (angka saja)
         const valP = parseFloat(tr.querySelector("input.potongan").value) || 0;
         const valB = parseFloat(tr.querySelector("input.nilaiByr").value) || 0;
 
@@ -491,13 +479,13 @@ function recalcTotals() {
         sumBayar += valB;
     });
 
-    document.getElementById("tot_faktur").value = formatRupiah(sumFaktur);
+    const netFaktur = sumFaktur - sumPotong
+    document.getElementById("tot_faktur").value = formatRupiah(netFaktur)
     document.getElementById("tot_pot").value = sumPotong;
     document.getElementById("tot_lunas").value = sumBayar;
 }
 
 function callListener() {
     minusCheck()
-    totalPelunasan()
-    totalPotongan()
+    recalcTotals()
 }

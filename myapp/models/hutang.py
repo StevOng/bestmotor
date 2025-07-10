@@ -27,14 +27,14 @@ class Hutang(models.Model):
         return self.no_bukti
     
     def potongan_total(self):
-        total_potongan = self.invoice.aggregate(
+        total_potongan = self.hutanginvoice_set.aggregate(
             potongan=Sum('potongan')
         )['potongan'] or 0
         return total_potongan or 0
     
     def pelunasan_total(self):
-        total_pelunasan = self.invoice.aggregate(
-            pelunasan=Sum(F('netto')-F('sisa_bayar'))
+        total_pelunasan = self.hutanginvoice_set.aggregate(
+            pelunasan=Sum('nilai_bayar')
         )['pelunasan']
         return total_pelunasan or 0
     
@@ -47,3 +47,4 @@ class HutangInvoice(models.Model):
     hutang = models.ForeignKey(Hutang, on_delete=models.CASCADE)
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
     nilai_bayar = models.DecimalField(max_digits=19, decimal_places=2)
+    potongan = models.DecimalField(max_digits=19, decimal_places=0, default=Decimal('0'))

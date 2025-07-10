@@ -54,9 +54,9 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         for item in queryset:
             # ExtractWeekDay: 1=Sunday ... 7=Saturday
             index = (item['weekday'] + 5) % 7  # convert to 0=Senin, 6=Minggu
-            data_dict[weekday_map[index]] = float(item['netto']) / 1_000_000  # juta
+            data_dict[weekday_map[index]] = float(item['total']) / 1_000_000  # juta
 
-        total_pengeluaran = sum(item['netto'] for item in queryset)
+        total_pengeluaran = sum(item['total'] for item in queryset)
         total_transaksi = sum(item['count'] for item in queryset)
 
         return Response({

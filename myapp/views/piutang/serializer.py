@@ -6,7 +6,7 @@ from ...models.piutang import *
 class PiutangFakturSerializer(serializers.ModelSerializer):
     class Meta:
         model = PiutangFaktur
-        fields = ['faktur', 'nilai_bayar']
+        fields = ['faktur', 'nilai_bayar', 'potongan']
 
 class PiutangSerializer(serializers.ModelSerializer):
     list_faktur = PiutangFakturSerializer(many=True, write_only=True)
@@ -27,11 +27,13 @@ class PiutangSerializer(serializers.ModelSerializer):
                 pf = PiutangFaktur.objects.create(
                     piutang=piutang,
                     faktur=item["faktur"],      # pakai faktur_id langsung
-                    nilai_bayar=item["nilai_bayar"]
+                    nilai_bayar=item["nilai_bayar"],
+                    potongan=item.get("potongan", 0)
                 )
 
                 faktur = pf.faktur
-                faktur.sisa_bayar = max(faktur.sisa_bayar - pf.nilai_bayar, 0)
+                total_diterima = pf.nilai_bayar + pf.potongan
+                faktur.sisa_bayar = max(faktur.sisa_bayar - total_diterima, 0)
                 faktur.status = "lunas" if faktur.sisa_bayar == 0 else "belum_lunas"
                 faktur.save(update_fields=["sisa_bayar", "status"])
 
@@ -63,10 +65,15 @@ class PiutangSerializer(serializers.ModelSerializer):
 
                 # 3) simpan pembayaran baru & update Faktur
                 for item in list_data:
-                    pf = PiutangFaktur.objects.create(piutang=instance, **item)
+                    pf = PiutangFaktur.objects.create(
+                        piutang=instance,
+                        faktur=item["faktur"],
+                        nilai_bayar=item["nilai_bayar"],
+                        potongan=item.get("potongan", 0)
+                    )
                     faktur = pf.faktur
-                    faktur.sisa_bayar = faktur.total - pf.nilai_bayar
-                    print(faktur.sisa_bayar, pf.nilai_bayar)
+                    total_diterima = pf.nilai_bayar + pf.potongan
+                    faktur.sisa_bayar = max(faktur.total - total_diterima, 0)
                     faktur.status = "lunas" if faktur.sisa_bayar == 0 else "belum_lunas"
                     faktur.save(update_fields=["sisa_bayar", "status"])
 

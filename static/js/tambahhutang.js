@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-
+  recalcTotals()
   const tanggal = document.getElementById("tgl_byrhutang")
   const today = new Date()
   const year = String(today.getFullYear())
@@ -10,8 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
   tanggal.value = formatDate
 })
 
-document.querySelector(".nilaiBayar").addEventListener("input", callListener)
-document.querySelector(".potongan").addEventListener("input", callListener)
+const ptgn = document.querySelectorAll(".potongan")
+ptgn.forEach(input => input.addEventListener("input", callListener))
+const nbyr = document.querySelectorAll(".nilaiBayar")
+nbyr.forEach(input => input.addEventListener("input", callListener))
 
 function getCSRFToken() {
   return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -84,7 +86,7 @@ function openModalInv(btn) {
     pilihSupplier(supplierId, supplierNama);
   } else {
     // Bisa kasih warning atau clear invoice list
-    return showWarningToast("Supplier Kosong","Supplier belum dipilih");
+    return showWarningToast("Supplier Kosong", "Supplier belum dipilih");
   }
 }
 
@@ -130,7 +132,8 @@ async function submitDetail() {
   try {
     const list_invoice = invoiceIds.map((invoiceId, index) => ({
       invoice: invoiceId,
-      nilai_bayar: nilaiByrs[index]
+      nilai_bayar: nilaiByrs[index],
+      potongan: potongan[index]
     }))
     const response = await fetch(apiUrl, {
       method: method,
@@ -145,28 +148,6 @@ async function submitDetail() {
     })
     const result = await response.json()
     if (response.ok) {
-      await Promise.all(invoiceIds.map(async (invoiceId, index) => {
-        const nilaiPotongan = potongan[index]
-        if (nilaiPotongan && nilaiPotongan > 0) {
-          try {
-            const patchRes = await fetch(`/api/invoice/${invoiceId}/`, {
-              method: "PATCH",
-              headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-              },
-              body: JSON.stringify({
-                potongan: nilaiPotongan
-              })
-            })
-            if (!patchRes.ok) {
-              console.warn(`Gagal PATCH potongan invoice ${invoiceId}`)
-            }
-          } catch (err) {
-            console.error(`Error saat PATCH invoice ${invoiceId}`, err)
-          }
-        }
-      }))
       console.log("Piutang berhasil disimpan:", result);
       showSuccessToast("Berhasil", "Berhasil menyimpan data")
       setTimeout(() => {
@@ -215,7 +196,7 @@ async function pilihInvoice(id, nomor) {
   const noInvoiceInput = row.querySelector("#no_invoice");
   const nilaiInvoiceCell = row.querySelector(".nettoCell");
   const sudahDipakai = Array.from(document.querySelectorAll("input.invoiceId"))
-  .some(input => input.value === id);
+    .some(input => input.value === id);
 
   if (sudahDipakai) {
     alert("Invoice ini sudah dipakai di baris lain!");
@@ -231,7 +212,7 @@ async function pilihInvoice(id, nomor) {
 
     inputInvoice.value = id;
     noInvoiceInput.value = data.no_invoice || nomor;
-    nilaiInvoiceCell.textContent = `Rp ${formatRupiah(data.sisa_bayar)},-`;
+    nilaiInvoiceCell.textContent = `Rp ${formatRupiah(data.netto)},-`;
 
     recalcTotals();
 
@@ -266,8 +247,8 @@ async function pilihSupplier(id, perusahaan) {
     const selectedInvoiceIds = Array.from(
       document.querySelectorAll("input.invoiceId")
     )
-    .map(input => input.value)
-    .filter(val => val !== "");
+      .map(input => input.value)
+      .filter(val => val !== "");
 
     if (invoices.length === 0) {
       tbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500">Tidak ada invoice</td></tr>`;
@@ -289,7 +270,7 @@ async function pilihSupplier(id, perusahaan) {
             <td>${new Date(invoice.tanggal).toLocaleDateString()}</td>
             <td>${invoice.no_referensi ?? '-'}</td>
             <td>${perusahaan}</td>
-            <td>Rp ${formatRupiah(invoice.sisa_bayar)},-</td>
+            <td>Rp ${formatRupiah(invoice.netto)},-</td>
             <td class="text-center">
               <button onclick="pilihInvoice('${invoice.id}', '${invoice.no_invoice}')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
@@ -396,27 +377,35 @@ function addNewRow() {
   `;
   tbody.appendChild(tr);
   // attach listeners
-  tr.querySelector(".potongan").addEventListener("input", recalcTotals);
-  tr.querySelector(".nilaiBayar").addEventListener("input", recalcTotals);
+  tr.querySelector(".potongan").addEventListener("input", callListener);
+  tr.querySelector(".nilaiBayar").addEventListener("input", callListener);
 }
 
 function recalcTotals() {
-  // total invoice
-  let sumInv = 0;
-  document.querySelectorAll(".nettoCell").forEach(td => {
-    sumInv += parseInt(td.textContent.replace(/\D/g, '')) || 0;
+  let sumFaktur = 0,
+    sumPotong = 0,
+    sumBayar = 0;
+
+  document.querySelectorAll("#allpesanan tbody tr").forEach(tr => {
+    // baca nilai faktur dari cell (angka saja)
+    const valF = parseInt(
+      tr.querySelector("td.nettoCell").textContent.replace(/\D/g, ""),
+      10
+    ) || 0;
+
+    // baca potongan & bayar dari input (angka saja)
+    const valP = parseFloat(tr.querySelector("input.potongan").value) || 0;
+    const valB = parseFloat(tr.querySelector("input.nilaiBayar").value) || 0;
+
+    sumFaktur += valF;
+    sumPotong += valP;
+    sumBayar += valB;
   });
-  document.getElementById("tot_inv").value = formatRupiah(sumInv);
 
-  // total potongan
-  let sumPot = 0;
-  document.querySelectorAll(".potongan").forEach(i => sumPot += parseFloat(i.value) || 0);
-  document.getElementById("tot_pot").value = formatRupiah(sumPot);
-
-  // total bayar
-  let sumByr = 0;
-  document.querySelectorAll(".nilaiBayar").forEach(i => sumByr += parseFloat(i.value) || 0);
-  document.getElementById("tot_lunas").value = formatRupiah(sumByr);
+  const netFaktur = sumFaktur - sumPotong
+  document.getElementById("tot_inv").value = formatRupiah(netFaktur)
+  document.getElementById("tot_pot").value = sumPotong;
+  document.getElementById("tot_lunas").value = sumBayar;
 }
 
 function hapusRow(btn) {
@@ -508,4 +497,5 @@ function showSuccessToast(head, msg) {
 
 function callListener() {
   minusCheck()
+  recalcTotals()
 }

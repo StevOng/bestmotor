@@ -29,7 +29,7 @@ class Piutang(models.Model):
 
     def potongan_total(self):
         return (
-            self.faktur
+            self.piutangfaktur_set
                 .aggregate(pot=Sum('potongan'))  # Sum field potongan di Faktur
                 .get('pot') or 0
         )
@@ -55,3 +55,4 @@ class PiutangFaktur(models.Model):
     piutang = models.ForeignKey(Piutang, on_delete=models.CASCADE)
     faktur = models.ForeignKey(Faktur, on_delete=models.CASCADE)
     nilai_bayar = models.DecimalField(max_digits=19, decimal_places=0)
+    potongan = models.DecimalField(max_digits=19, decimal_places=0, null=True, blank=True)
