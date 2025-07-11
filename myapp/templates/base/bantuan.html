@@ -1,10 +1,18 @@
 {% extends 'base/base.html' %}
+{% load static %}
 
 {% block title %}Bantuan{% endblock %}
 
 {% block page_title %}Bantuan{% endblock %} 
 
 {% block content %}
-<p>Support Online<p>
+<p class="text-lg font-semibold">Panduan Penggunaan Website BestMotor</p>
+<p>Dapat diakses disini:</p>
+
+<a href="{% if role == "admin" %}{% static 'pdf/panduan_bestmotor.pdf' %}{% else %}{% static 'pdf/panduan_bestmotor_sales.pdf' %}{% endif %}" target="_blank" class="inline-block mt-2 px-4 py-2 bg-customBlue text-white font-medium rounded hover:bg-blue-900 transition">
+  Lihat Panduan PDF
+</a>
+
+<p class="mt-6 font-semibold">Support Online<p>
 <p class="mt-2">Contact Whatsapp : Fanny, Jowie Ardinata, Steven Ongki</p>
 {% endblock %}
