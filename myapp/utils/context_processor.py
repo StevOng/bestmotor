@@ -13,6 +13,7 @@ def user_context(request):
 def notifications(request):
     notifikasi = []
     role = request.session.get('role')
+    sales_id = request.session.get("user_id")
     low_stocks = Barang.objects.filter(stok__lte=F("stok_minimum")).all()
     faktur_jto = Faktur.objects.filter(status="jatuh_tempo").all()
     invoice_jto = Invoice.objects.filter(status="jatuh_tempo").all()
@@ -39,7 +40,6 @@ def notifications(request):
                     "msg": f"Invoice '{push_notif.no_invoice}' sudah jatuh tempo"
                 })
     else:
-        sales_id = request.session.get("user_id")
         faktur_jto = Faktur.objects.filter(status="jatuh_tempo", pesanan_id__customer_id__user_id=sales_id)
         if faktur_jto:
             for push_notif in faktur_jto:
