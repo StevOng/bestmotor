@@ -21,6 +21,17 @@
       input:-webkit-autofill {
           caret-color: white !important;
       }
+
+      .toast {
+        animation: slideIn 1s forwards, fadeOut 1s forwards 3s;
+      }
+      @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes fadeOut {
+        to { opacity: 0; }
+      }
     </style>
   </head>
   <body>
@@ -47,6 +58,8 @@
           {% block content %}{% endblock %}
       </div>
     </div>
+    <div id="toastSuccess" class="fixed top-6 right-5 space-y-3 z-50 hidden"></div>
+    <div id="toastWarning" class="fixed top-6 right-5 space-y-3 z-50 hidden"></div>
     <script>
       document.getElementById("togglePassword").addEventListener("click", function (e) {
         e.preventDefault()

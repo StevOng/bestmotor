@@ -8,7 +8,7 @@ let incomeChart = null
 let expenseChart = null
 
 const income_options = {
-    chart: { type: "area", height: "100%" },
+    chart: { type: "area", height: "100%", toolbar: {show: false} },
     series: [],
     xaxis: {
         categories: [],
@@ -25,7 +25,7 @@ const income_options = {
 };
 
 const expense_options = {
-    chart: { type: "area", height: "100%" },
+    chart: { type: "area", height: "100%", toolbar: {show: false} },
     series: [],
     xaxis: {
         categories: [],
@@ -201,7 +201,7 @@ if (document.getElementById("expense-chart") && typeof ApexCharts !== 'undefined
     updateExpenseChart(currentMonth, currentWeek);
 }
 
-// {% comment %} Pie Chart Laku {% endcomment %}
+// {% comment %} Pie Chart Kurang Laku {% endcomment %}
 const getPieBarangTidakLaku = async () => {
     try {
         const response = await fetch("/api/barang/least_sold/");
@@ -259,7 +259,7 @@ const getPieBarangTidakLaku = async () => {
     }
 })();
 
-// {% comment %} Pie Chart Tak Laku {% endcomment %}
+// {% comment %} Pie Chart Laku {% endcomment %}
 const getPieBarangLaku = async () => {
     try {
         const response = await fetch("/api/barang/top_sold/");
@@ -369,7 +369,7 @@ const getPieHabis = async () => {
     }
 })()
 
-// {% comment %} Pie Chart Tak Laku {% endcomment %}
+// {% comment %} Pie Chart Customer {% endcomment %}
 const getPieCustomer = async () => {
     try {
         const response = await fetch("/api/pesanan/top_customer/");

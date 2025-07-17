@@ -21,8 +21,10 @@ def login_view(request):
                 request.session['role'] = user.role
                 request.session['user_id'] = user.id
                 if user.role == 'admin':
+                    messages.success(request, "Berhasil Login!")
                     return redirect('dashboard')
                 elif user.role == 'sales':
+                    messages.success(request, "Berhasil Login!")
                     return redirect('bonus')
             else:
                 messages.error(request, "Password salah")
@@ -36,6 +38,7 @@ def login_view(request):
 @activity_logs
 def logout_user(request):
     request.session.flush()
+    messages.success(request, "Berhasil Logout!")
     return redirect('login')
 
 @admin_required
