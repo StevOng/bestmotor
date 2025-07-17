@@ -460,7 +460,7 @@ function showSuccessToast(head, msg) {
 
 function callListener() {
     minusCheck()
-    qtyCheck()
+    // qtyCheck()
     updateDetailBiaya()
     tanggalTop()
 }

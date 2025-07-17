@@ -26,8 +26,8 @@ def pesanan(request):
     if status:
         pesanan_list = pesanan_list.filter(status=status)
 
-    total_pending = Pesanan.objects.filter(status='pending').count()
-    total_ready = Pesanan.objects.filter(status='ready').count()
+    total_pending = Pesanan.objects.filter(status='pending', customer_id__user_id=user_id).count()
+    total_ready = Pesanan.objects.filter(status='ready', customer_id__user_id=user_id).count()
 
     return render(request, 'pesanan/pesanan.html', {'pesanan_list':pesanan_list, 'total_pending':total_pending, 'total_ready':total_ready})
 

@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatDate = `${day}/${month}/${year}`
 
     tanggal.value = formatDate
+
+    // document.querySelectorAll(".input_qtybrg").forEach(qtyEl => {
+    //     qtyEl.dispatchEvent(new Event("input"));
+    // });
 })
 console.log("BarangData global:", window.barangData)
 
@@ -163,12 +167,11 @@ function updateDetailBiaya() {
         if (!barang) return;
 
         let harga = barang.harga_jual;
-        if (qty >= barang.min_qty_grosir) {
-            harga = barang.harga_satuan;
-        } else {
-            harga = barang.harga_jual;
-        }
-
+        barang.tier_harga.forEach(tier => {
+            if (qty >= tier.min_qty_grosir) {
+                harga = tier.harga_satuan
+            }
+        })
         inputHarga.value = harga;
 
         const totalDiskon = harga * qty * (diskon / 100);
@@ -462,7 +465,7 @@ function qtyCheck() {
             console.log(`stok: ${balikStok}`)
             if (rowQty > balikStok) {
                 const headWarn = "Peringatan Stok Kurang"
-                const parWarn = `Stok tidak mencukupi untuk pesanan, sisa stok tinggal ${res.stok}`
+                const parWarn = `Stok tidak mencukupi untuk pesanan, sisa stok tinggal ${balikStok}`
                 showWarningToast(headWarn, parWarn)
                 inputQty.value = balikStok
                 updateDetailBiaya()
@@ -473,9 +476,9 @@ function qtyCheck() {
 }
 
 function showWarningToast(head, msg) {
-  const toast = document.getElementById("toastWarning");
+    const toast = document.getElementById("toastWarning");
 
-  toast.innerHTML = `
+    toast.innerHTML = `
     <div class="toast flex items-start p-4 bg-yellow-50 rounded-lg border border-yellow-100 shadow-lg">
         <div class="flex-shrink-0">
           <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
@@ -494,19 +497,19 @@ function showWarningToast(head, msg) {
     </div>
   `
 
-  toast.classList.remove("hidden");
+    toast.classList.remove("hidden");
 
-  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
 
-  toast.toastTimeout = setTimeout(() => {
-    toast.classList.add("hidden");
-  }, 2000);
+    toast.toastTimeout = setTimeout(() => {
+        toast.classList.add("hidden");
+    }, 2000);
 }
 
 function showSuccessToast(head, msg) {
-  const toast = document.getElementById("toastSuccess");
+    const toast = document.getElementById("toastSuccess");
 
-  toast.innerHTML =`
+    toast.innerHTML = `
       <div class="toast flex items-start p-4 bg-green-50 rounded-lg border border-green-100 shadow-lg">
         <div class="flex-shrink-0">
           <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
@@ -525,13 +528,13 @@ function showSuccessToast(head, msg) {
       </div>
   `
 
-  toast.classList.remove("hidden");
+    toast.classList.remove("hidden");
 
-  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
 
-  toast.toastTimeout = setTimeout(() => {
-    toast.classList.add("hidden");
-  }, 2000);
+    toast.toastTimeout = setTimeout(() => {
+        toast.classList.add("hidden");
+    }, 2000);
 }
 
 function callListener() {

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from myapp.utils.decorators import both_required
 from myapp.utils.activity_logs import activity_logs
+from myapp.utils.control_access import customer_control_access
 from ...models.customer import Customer
 
 @both_required
@@ -18,6 +19,10 @@ def customer(request):
 @both_required
 @activity_logs
 def tambah_customer(request, id=None):
+    response = customer_control_access(request, id)
+    if response:
+        return response
+    
     customer = None
     if id:
         customer = Customer.objects.select_related('user_id').get(id=id)
