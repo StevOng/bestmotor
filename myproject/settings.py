@@ -32,11 +32,18 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filename': os.path.join(BASE_DIR, 'logs', 'user_actions.log'),
             'formatter': 'verbose',
+            'maxBytes': 5*1024*1024,
+            'backupCount': 5,
         },
+        'hosting_log': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        }
     },
     'loggers': {
         'userlog': {
-            'handlers': ['file_userlog'],
+            'handlers': ['file_userlog', 'hosting_log'],
             'level': 'INFO',
             'propagate': False,
         },
