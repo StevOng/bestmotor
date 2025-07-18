@@ -127,7 +127,10 @@ function confirmPopupBtn(attr) {
             }
         })
         row.querySelectorAll("td").forEach((td, i) => {
-            if (i == 2) td.textContent = ""
+            const toClear = [2,6,7]
+            if (toClear.includes(i)) {
+                td.textContent = ""
+            }
         })
         closeModalConfirm();
     };
@@ -402,7 +405,7 @@ function addNewRow(detail = null) {
       <td class="totalDisc">${detail?.total_diskon_barang || ""}</td>
       <td class="totalHarga">${detail?.total_harga_barang || ""}</td>
       <td class="text-center"><button type="button" onclick="submitDetail()" class="btn-submit"><i class="btn-simpan fa-regular fa-floppy-disk text-2xl text-customBlue"></i></button></td>
-      <td class="text-center"><button type="button" onclick="hapusRow(this)"><i class="btn-hapus fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+      <td class="text-center"><button type="button" onclick="hapusRow(this)" class="btn-hapus"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
     `
 
     tbody.appendChild(newRow);
@@ -417,7 +420,6 @@ function addNewRow(detail = null) {
     newRow.querySelector(".input_qtybrg").addEventListener("input", callListener)
     newRow.querySelector(".disc").addEventListener("input", callListener)
 }
-
 
 function hapusRow(btn) {
     const row = btn.closest("tr")

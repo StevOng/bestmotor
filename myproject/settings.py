@@ -29,7 +29,7 @@ LOGGING = {
     'handlers': {
         'file_userlog': {
             'level': 'INFO',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR, 'logs', 'user_actions.log'),
             'formatter': 'verbose',
             'maxBytes': 5*1024*1024,

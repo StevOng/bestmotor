@@ -55,7 +55,7 @@ class BarangViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def low_stock(self, request):
-        queryset = self.get_queryset().filter(stok__lte=F('stok_minimum')).order_by('stok')[:10]
+        queryset = self.get_queryset().filter(stok__gt=0,stok__lte=F('stok_minimum')).order_by('stok')[:10]
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
     
@@ -67,7 +67,7 @@ class BarangViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def least_sold(self, request):
-        queryset = self.get_queryset().order_by('qty_terjual')[:10]
+        queryset = self.get_queryset().filter(qty_terjual__gt=0,qty_terjual__lte=5).order_by('qty_terjual')[:10]
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
     

@@ -105,7 +105,10 @@ function confirmPopupBtn(attr) {
             }
         })
         row.querySelectorAll("td").forEach((td, i) => {
-            if (i == 2) td.textContent = ""
+            const toClear = [2,6,7]
+            if (toClear.includes(i)) {
+                td.textContent = ""
+            }
         })
         closeModalConfirm();
     };
