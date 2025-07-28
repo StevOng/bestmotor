@@ -44,7 +44,7 @@
   {% for tipe, items in tipe_katalog.items %}
     <div class="listCard py-2">
       <div class="flex flex-row justify-between items-center">
-        <p class="font-semibold">Rekomendasi {{ tipe.title }}</p>
+        <p class="font-semibold">Rekomendasi {{ items.0.title }}</p>
         <div class="flex gap-4">
           <button
             id="scrollLeft{{ forloop.counter }}"
@@ -65,7 +65,7 @@
         class="flex flex-row py-2 overflow-x-auto gap-4 scroll-smooth no-scrollbar"
       >
       {% for item in items %}
-        <div class="katalog-item flex flex-col justify-between p-2 min-w-44 border shadow rounded-md" data-nama="{{ item.barang.nama_barang|lower }}">
+        <div class="katalog-item flex flex-col justify-between p-2 min-w-44 border shadow rounded-md" data-nama="{{ item.barang.nama_barang|lower }}" data-merk="{{ item.barang.merk|lower }}" data-tipe="{{ items.0.title|lower }}">
           {% if item.gambar %}
             <img
             src="{{ item.gambar }}"

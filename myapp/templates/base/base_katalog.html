@@ -218,8 +218,10 @@
 
           items.forEach((item) => {
             const nama = item.dataset.nama;
+            const tipe = item.dataset.tipe;
+            const merk = item.dataset.merk;
 
-            if (nama.includes(keyword)) {
+            if (nama.includes(keyword) || tipe.includes(keyword) || merk.includes(keyword)) {
               item.style.display = "flex";
               visibleCount++;
             } else {
