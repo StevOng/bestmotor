@@ -8,17 +8,25 @@
   .apexcharts-legend {
     display: grid !important;
     grid-template-columns: 1fr; /* Ubah menjadi 1 kolom */
+    width: 200px;
+    whitespace: normal;
+    overflow-wrap: break-word;
   }
 
   @media (max-width: 768px) {
     .apexcharts-legend {
       grid-template-columns: 1fr; /* Ubah menjadi 1 kolom */
+      width: 150px;
+      whitespace: normal;
+      overflow-wrap: break-word;
     }
   }
 
   @media (max-width: 1246px) and (min-width: 1024px) {
     .apexcharts-legend {
       grid-template-columns: 1fr; /* Ubah menjadi 1 kolom */
+      whitespace: normal;
+      overflow-wrap: break-word;
     }
   }
 </style>

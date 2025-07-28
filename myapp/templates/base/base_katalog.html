@@ -90,9 +90,7 @@
               <a href="{% url 'katalogbrg' tipe %}"
                 class="flex items-center text-gray-700 hover:text-blue-500 text-sm md:text-base"
               >
-              {% for item in items %}
-                {{ item.title }}
-              {% endfor %}
+              {{ items.0.title }}
               </a>
             </div>
           {% endfor %}
@@ -104,9 +102,7 @@
               <div x-show="open" @click.away="open = false" x-transition class="fixed bg-white border rounded shadow-lg min-w-[150px] z-50 max-h-80 overflow-y-auto">
                 {% for tipe, items in tipe_katalog.items|slice:"7:" %}
                   <a href="{% url 'katalogbrg' tipe %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                    {% for item in items %}
-                      {{ item.title }}
-                    {% endfor %}
+                    {{ items.0.title }}
                   </a>
                 {% endfor %}
               </div>
@@ -212,6 +208,30 @@
     </div>
     {% block content %}{% endblock %} {% block script %}{% endblock %}
     <script>
+      document.getElementById("productSearch").addEventListener("input", function (){
+        const keyword = this.value.trim().toLowerCase();
+        const listCard = document.querySelectorAll(".listCard");
+
+        listCard.forEach((list) => {
+          const items = list.querySelectorAll(".katalog-item");
+          let visibleCount = 0;
+
+          items.forEach((item) => {
+            const nama = item.dataset.nama;
+
+            if (nama.includes(keyword)) {
+              item.style.display = "flex";
+              visibleCount++;
+            } else {
+              item.style.display = "none";
+            }
+          });
+
+          // Sembunyikan container jika tidak ada item cocok
+          list.style.display = visibleCount > 0 ? "" : "none";
+        });
+      });
+
       document.addEventListener("DOMContentLoaded", () => {
         document
           .getElementById("scrollLeft")
