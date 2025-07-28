@@ -208,32 +208,6 @@
     </div>
     {% block content %}{% endblock %} {% block script %}{% endblock %}
     <script>
-      document.getElementById("productSearch").addEventListener("input", function (){
-        const keyword = this.value.trim().toLowerCase();
-        const listCard = document.querySelectorAll(".listCard");
-
-        listCard.forEach((list) => {
-          const items = list.querySelectorAll(".katalog-item");
-          let visibleCount = 0;
-
-          items.forEach((item) => {
-            const nama = item.dataset.nama;
-            const tipe = item.dataset.tipe;
-            const merk = item.dataset.merk;
-
-            if (nama.includes(keyword) || tipe.includes(keyword) || merk.includes(keyword)) {
-              item.style.display = "flex";
-              visibleCount++;
-            } else {
-              item.style.display = "none";
-            }
-          });
-
-          // Sembunyikan container jika tidak ada item cocok
-          list.style.display = visibleCount > 0 ? "" : "none";
-        });
-      });
-
       document.addEventListener("DOMContentLoaded", () => {
         document
           .getElementById("scrollLeft")
