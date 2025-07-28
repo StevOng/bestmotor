@@ -13,6 +13,37 @@ function getItemsPerPage() {
     }
 }
 
+const searchInput = document.getElementById("productSearch");
+const searchBtn = document.querySelector("button[type=button] i.fa-search").closest("button");
+const banner = document.querySelector(".catalog-banner")
+
+searchInput.addEventListener("input", filterCatalog);
+searchBtn.addEventListener("click", filterCatalog);
+
+function filterCatalog() {
+  const term = searchInput.value.trim().toLowerCase();
+  if (term) {
+    banner.style.display = "none"
+  } else {
+    banner.style.display = ""
+  }
+
+  document.querySelectorAll(".catalog-item").forEach(card => {
+    const name = card.querySelector(".catalog-name").textContent.toLowerCase();
+    const merk = card.querySelector(".catalog-merk").textContent.toLowerCase();
+
+    // show if either field contains the term
+    if (!term || name.includes(term) || merk.includes(term)) {
+      card.style.display = "";    // un-hide
+    } else {
+      card.style.display = "none"; // hide
+      document.querySelectorAll(".catalog-tipe-title").forEach(title => {
+        title.style.display = "none"
+      })
+    }
+  });
+}
+
 function updatePagination(page) {
     const pageNumbers = document.getElementById("pageNumbers");
     pageNumbers.innerHTML = "";

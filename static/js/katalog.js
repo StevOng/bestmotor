@@ -71,9 +71,6 @@ function filterCatalog() {
     // show if either field contains the term
     if (!term || name.includes(term) || merk.includes(term)) {
       card.style.display = "";    // un-hide
-      document.querySelectorAll(".catalog-tipe-title").forEach(title => {
-        title.style.display = ""
-      })
     } else {
       card.style.display = "none"; // hide
       document.querySelectorAll(".catalog-tipe-title").forEach(title => {
