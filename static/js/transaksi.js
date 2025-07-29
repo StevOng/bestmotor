@@ -36,13 +36,13 @@ function confirmPopupBtnMasuk(id) {
             })
             if (response.ok) {
                 console.log("Transaksi masuk dihapus!");
-                showSuccessToast("Berhasil", "Berhasil menyimpan data")
+                showSuccessToast("Berhasil", "Berhasil menghapus data")
                 const row = document.querySelector(`tr[data-id="${id}"]`)
                 row.classList.add("fade-out")
                 setTimeout(() => row.remove(), 400)
             } else {
                 console.error("Gagal menghapus objek");
-                showWarningToast("Gagal", "Gagal menyimpan data")
+                showWarningToast("Gagal", "Gagal menghapus data")
             }
         } catch (error) {
             console.error("error: ", error);
@@ -70,13 +70,13 @@ function confirmPopupBtnKeluar(id) {
             })
             if (response.ok) {
                 console.log("Transaksi keluar dihapus!");
-                showSuccessToast("Berhasil", "Berhasil mengubah data")
+                showSuccessToast("Berhasil", "Berhasil menghapus data")
                 const row = document.querySelector(`tr[data-id="${id}"]`)
                 row.classList.add("fade-out")
                 setTimeout(() => row.remove(), 400)
             } else {
                 console.error("Gagal menghapus objek");
-                showWarningToast("Gagal", "Gagal menyimpan data")
+                showWarningToast("Gagal", "Gagal menghapus data")
             }
         } catch (error) {
             console.error("error: ", error);
