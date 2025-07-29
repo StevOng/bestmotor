@@ -42,7 +42,7 @@ def barang(request):
 
     return render(request, 'barang/barang.html', {'barang': barang,'filter': filter})
 
-@admin_required
+@both_required
 @activity_logs
 def tambah_barang(request, id=None):
     barang = None

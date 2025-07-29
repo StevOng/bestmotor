@@ -21,7 +21,7 @@
         <div>
           <input type="hidden" name="barangId" id="barangId" value="{{ detail_barang.id|default:"" }}">
           <label for="nama-brg" class="block text-sm font-medium text-gray-700">Nama Barang</label>
-          <input type="text" id="nama-brg" placeholder="Masukkan nama barang"
+          <input type="text" id="nama-brg" placeholder="Masukkan nama barang" {% if role == "sales"%}disabled{% endif %}
             class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700" value="{{ detail_barang.nama_barang|default:""}}">
         </div>
         
@@ -29,7 +29,7 @@
         <div>
           <input type="hidden" name="barangId" id="barangId" value="{{ detail_barang.id|default:"" }}">
           <label for="kode-brg" class="block text-sm font-medium text-gray-700">Kode Barang</label>
-          <input type="text" id="kode-brg" placeholder="Masukkan kode barang"
+          <input type="text" id="kode-brg" placeholder="Masukkan kode barang" {% if role == "sales"%}disabled{% endif %}
             class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700" value="{{ detail_barang.kode_barang|default:""}}">
         </div>
         
@@ -37,7 +37,7 @@
         <div>
           <label for="tipe-mtr" class="block text-sm font-medium text-gray-700">Tipe Motor</label>
           <select id="tipe-mtr"
-            data-selected-tipe="{{ detail_barang.tipe|default:'' }}"
+            data-selected-tipe="{{ detail_barang.tipe|default:'' }}" {% if role == "sales"%}disabled{% endif %}
             class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm bg-white focus:outline-none focus:ring-customBlue focus:border-customBlue">
             <option value="" disabled selected hidden>Masukkan tipe motor</option>
           </select>
@@ -47,7 +47,7 @@
         <div>
           <label for="merk" class="block text-sm font-medium text-gray-700">Merk</label>
           <select id="merk"
-           data-selected-merk="{{ detail_barang.merk|default:'' }}"
+           data-selected-merk="{{ detail_barang.merk|default:'' }}" {% if role == "sales"%}disabled{% endif %}
             class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm bg-white focus:outline-none focus:ring-customBlue focus:border-customBlue">
             <option value="" disabled selected hidden>Masukkan merek barang</option>
           </select>
@@ -56,7 +56,7 @@
         <!-- Harga Barang -->
         <div class="md:col-span-2">
           <label for="input-hrgbrg" class="block text-sm font-medium text-gray-700">Harga Jual</label>
-            <input type="text" id="input-hrgbrg" placeholder="Masukkan harga barang"
+            <input type="text" id="input-hrgbrg" placeholder="Masukkan harga barang" {% if role == "sales"%}disabled{% endif %}
                 class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700" value="{{ detail_barang.harga_jual|default:""}}">
         </div>
         
@@ -64,7 +64,7 @@
         <div>
           <label for="stok-minimum" class="block text-sm font-medium text-gray-700">Stok Minimum</label>
           <div class="flex items-center">
-            <input type="text" id="stok-minimum" placeholder="Masukkan stok minimum barang"
+            <input type="text" id="stok-minimum" placeholder="Masukkan stok minimum barang" {% if role == "sales"%}disabled{% endif %}
               class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm focus:outline-none focus:ring-customBlue focus:border-customBlue" value="{{ detail_barang.stok_minimum|default:""}}">
           </div>
         </div>
@@ -83,22 +83,22 @@
                 <div
                   class="block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400 whitespace-nowrap overflow-hidden text-ellipsis"> Harga Grosir
                 </div>
-                <input type="number" 
+                <input type="number" {% if role == "sales"%}disabled{% endif %}
                   class="min-qty block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ tier.min_qty_grosir|default:""}}"/>
-                <input type="number"
+                <input type="number" {% if role == "sales"%}disabled{% endif %}
                   class="harga-satuan block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ tier.harga_satuan|default:""}}" />
-                <div class="mt-1 mx-2 text-left"><button type="button" onclick="hapusVal(this)" class="mt-1 mx-2 text-left"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></div>
+                <div class="mt-1 mx-2 text-left"><button type="button" onclick="hapusVal(this)" {% if role == "sales"%}disabled{% endif %} class="mt-1 mx-2 text-left"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></div>
               </div>
             {% empty %}
               <div class="harga-tier grid grid-cols-[1fr_1fr_1fr_24px] gap-2 items-center mt-1" data-id="{{ tier.id|default:"" }}">
                 <div
                   class="block w-full bg-gray-200 border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-400 whitespace-nowrap overflow-hidden text-ellipsis"> Harga Grosir
                 </div>
-                <input type="number" 
+                <input type="number" {% if role == "sales"%}disabled{% endif %}
                   class="min-qty block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ tier.min_qty_grosir|default:""}}"/>
-                <input type="number"
+                <input type="number" {% if role == "sales"%}disabled{% endif %}
                   class="harga-satuan block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-center text-gray-400"  oninput="addTier(this)" value="{{ tier.harga_satuan|default:""}}" />
-                <div class="mt-1 mx-2 text-left"><button type="button" onclick="hapusVal(this)"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></div>
+                <div class="mt-1 mx-2 text-left"><button type="button" onclick="hapusVal(this)" {% if role == "sales"%}disabled{% endif %}><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></div>
               </div>           
             {% endfor %}
           </div>
@@ -129,7 +129,7 @@
                       <path d="M5 16L5 17C5 18.1046 5.89543 19 7 19L17 19C18.1046 19 19 18.1046 19 17V16" stroke="#222222"/>
                     </svg>
                   </label>
-                  <input type="file" id="upload_gambar" class="hidden">
+                  <input type="file" id="upload_gambar" class="hidden" {% if role == "sales"%}disabled{% endif %}>
               </div>
             </label>
         </div>
@@ -137,11 +137,11 @@
         <!-- Keterangan -->
         <div class="md:col-span-2">
           <label for="keterangan" class="block text-sm font-medium text-gray-700">Keterangan</label>
-          <textarea id="keterangan" rows="3" placeholder="Masukkan keterangan"
+          <textarea id="keterangan" rows="3" placeholder="Masukkan keterangan" {% if role == "sales"%}disabled{% endif %}
             class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue">{{ detail_barang.keterangan|default:""}}</textarea>
         </div>
         <div class="md:col-span-4 flex justify-end">
-          <button type="submit" class="text-center">
+          <button type="submit" class="text-center" {% if role == "sales"%}disabled{% endif %}>
             <p class="text-sm font-medium text-gray-700">Simpan</p>
             <i class="mt-1 fa-regular fa-floppy-disk text-2xl text-customBlue"></i>
           </button>
