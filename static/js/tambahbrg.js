@@ -3,6 +3,18 @@ document.addEventListener("DOMContentLoaded", () => {
   getMerk()
 })
 
+document.getElementById("input-hrgbrg").addEventListener("input", minusCheck)
+
+document.getElementById("stok-minimum").addEventListener("input", minusCheck)
+
+document.querySelectorAll(".min-qty").forEach(input => {
+  input.addEventListener("input", minusCheck)
+})
+
+document.querySelectorAll("harga-satuan").forEach(input => {
+  input.addEventListener("input", minusCheck)
+})
+
 function getCSRFToken() {
   return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
@@ -87,6 +99,7 @@ document.getElementById("tambahbrgform").addEventListener("submit", async (event
           });
         });
       }
+      showSuccessToast("Berhasil", "Berhasil menyimpan data barang")
       setTimeout(() => {
         location.replace("/barang/");
       }, 1000);
@@ -265,4 +278,15 @@ function showSuccessToast(head, msg) {
   toast.toastTimeout = setTimeout(() => {
     toast.classList.add("hidden");
   }, 2000);
+}
+
+function minusCheck() {
+    const allInput = document.querySelectorAll("input")
+    allInput.forEach(input => {
+        if (input.type == "number" && input.value < 0) {
+            showWarningToast("Nilai Minus", "Isi harga, kuantiti dan diskon tidak boleh minus")
+            input.value = null
+            return
+        }
+    })
 }

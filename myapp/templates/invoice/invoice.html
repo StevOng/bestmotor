@@ -11,6 +11,16 @@
 
 {% block page_title %}Pembelian{% endblock %} 
 
+{% block style %}
+<style>
+    .disabled {
+        pointer-events: none;
+        cursor: not-allowed;
+        color: #6b7280;
+    }
+</style>
+{% endblock style %}
+
 {% block content %}
 <div class="flex flex-row gap-3 justify-start mb-3">
     <a href="{% url 'invoice' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if not request.GET.status %} text-white bg-customBlue border-customBlue {% endif %}">
@@ -33,14 +43,16 @@
                 <i class="fas fa-search"></i>
             </button>
         </div>
-        {% if request.GET.status == 'jatuh_tempo' %}
+        {% if status == 'jatuh_tempo' %}
             <form action="{% url 'invoice' %}" method="GET">
                 <div class="mt-5 flex">
                     <div class="mx-1">
+                        <input type="hidden" name="status" value="jatuh_tempo">
                         <label for="per_tgl" class="block text-sm font-medium text-gray-700">Per Tanggal</label>
                         <input type="date" id="per_tgl" name="per_tgl"
                         class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-customBlue focus:border-customBlue" value="{{ request.GET.per_tgl }}">
                     </div>
+                    <button type="submit" class="h-10 md:w-auto mt-3 md:mx-0 md:mt-6 p-3 flex justify-center items-center gap-2 bg-customBlue text-white rounded-md text-sm"><i class="fa-solid fa-filter"></i><p class="block md:hidden">Filter</p></button>
                 </div>
             </form>
         {% else %}
@@ -57,14 +69,14 @@
             <tr>
                 <th>No Invoice</th>
                 <th>Tanggal Invoice</th>
-                {% if not request.GET.status %}
+                {% if not status %}
                     <th>No Referensi</th>
                 {% else %}
                     <th>Tanggal Jatuh Tempo</th>
                 {% endif %}
                 <th>Supplier</th>
                 <th>Total</th>
-                {% if not request.GET.status %}
+                {% if not status %}
                     <th>Status</th>
                     <th>Terakhir Edit</th>
                     <th>Edit</th>
@@ -76,19 +88,24 @@
             {% for invoice in invoice_list %}
                 <tr data-id="{{ invoice.id }}">
                     <td style="text-transform: uppercase;">{{ invoice.no_invoice }}</td>
-                    <td>{{ invoice.tanggal }}</td>
-                    {% if not request.GET.status %}
+                    <td>{{ invoice.tanggal|date:"F j, Y, g:i a" }}</td>
+                    {% if not status %}
                         <td style="text-transform: uppercase;">{{ invoice.no_referensi }}</td>
                     {% else %}
                         <td>{{ invoice.jatuh_tempo }}</td>
                     {% endif %}
                     <td>{{ invoice.supplier_id.perusahaan }}</td>
                     <td>{{ invoice.netto|intcomma }}</td>
-                    {% if not request.GET.status %}
-                        <td>{{ invoice.status|replace_underscore }}</td>
+                    {% if not status %}
+                        <td>{{ invoice.current_status|replace_underscore }}</td>
                         <td>{{ invoice.terakhir_edit }}</td>
-                        <td class="text-center"><a href="{% url 'tambah_invoice' id=invoice.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
-                        <td class="text-center"><button onclick="confirmPopupBtn({{ invoice.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+                        {% if invoice.status == "lunas" %}
+                            <td class="text-center"><a href="#" class="disabled"><i class="fa-regular fa-eye text-2xl text-gray-500"></i></a></td>
+                            <td class="text-center"><button disabled onclick="confirmPopupBtn({{ invoice.id }})"><i class="fa-regular fa-trash-can text-2xl text-gray-500"></i></button></td>
+                        {% else %}
+                            <td class="text-center"><a href="{% url 'tambah_invoice' id=invoice.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                            <td class="text-center"><button onclick="confirmPopupBtn({{ invoice.id }})"><i class="fa-regular fa-trash-can text-2xl text-red-500"></i></button></td>
+                        {% endif %}
                     {% endif %}
                 </tr>
             {% endfor %}

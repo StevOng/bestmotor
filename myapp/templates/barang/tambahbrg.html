@@ -56,7 +56,7 @@
         <!-- Harga Barang -->
         <div class="md:col-span-2">
           <label for="input-hrgbrg" class="block text-sm font-medium text-gray-700">Harga Jual</label>
-            <input type="text" id="input-hrgbrg" placeholder="Masukkan harga barang" {% if role == "sales"%}disabled{% endif %}
+            <input type="number" id="input-hrgbrg" placeholder="Masukkan harga barang" {% if role == "sales"%}disabled{% endif %}
                 class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-700" value="{{ detail_barang.harga_jual|default:""}}">
         </div>
         
@@ -64,7 +64,7 @@
         <div>
           <label for="stok-minimum" class="block text-sm font-medium text-gray-700">Stok Minimum</label>
           <div class="flex items-center">
-            <input type="text" id="stok-minimum" placeholder="Masukkan stok minimum barang" {% if role == "sales"%}disabled{% endif %}
+            <input type="number" id="stok-minimum" placeholder="Masukkan stok minimum barang" {% if role == "sales"%}disabled{% endif %}
               class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-sm focus:outline-none focus:ring-customBlue focus:border-customBlue" value="{{ detail_barang.stok_minimum|default:""}}">
           </div>
         </div>

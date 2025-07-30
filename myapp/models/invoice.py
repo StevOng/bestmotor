@@ -3,7 +3,7 @@ from datetime import timedelta
 from decimal import Decimal
 from .barang import *
 from .supplier import Supplier
-from django.db.models import Sum
+from django.utils import timezone
 
 class Invoice(models.Model):
     id = models.AutoField(primary_key=True)
@@ -49,6 +49,13 @@ class Invoice(models.Model):
     def set_jatuh_tempo(self):
         self.jatuh_tempo = self.tanggal + timedelta(days=self.top)
         return self.jatuh_tempo
+    
+    def current_status(self):
+        if self.sisa_bayar == 0:
+            return "lunas"
+        if self.jatuh_tempo and timezone.now() > self.jatuh_tempo:
+            return "jatuh_tempo"
+        return "belum_lunas"
     
     def save(self, *args, **kwargs):
         if not self.pk: # cek jika belum ada primary key yaitu id sudah ada atau belum
