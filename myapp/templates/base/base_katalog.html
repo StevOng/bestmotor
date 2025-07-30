@@ -206,7 +206,27 @@
         </div>
       </div>
     </div>
-    {% block content %}{% endblock %} {% block script %}{% endblock %}
+    {% block content %}{% endblock %} 
+    <div class="bg-customBlue border-t border-gray text-white py-4 px-6 md:px-12">
+      <div class="flex items-center pb-2">
+        <img
+          src="{% static 'images/logo.png' %}"
+          class="h-24 me-3 rounded-full md:h-20"
+          alt="BestMotor Logo"
+        />
+        <p class="text-lg">Best Motor</p>
+      </div>
+      <div class="flex justify-between">
+        <p>Jalan Taduan Komplek Mentari Abadi A1,</p>
+        <div class="flex items-center">
+          <img class="mr-2" src="{% static 'images/whatsapp.png' %}" width="22" height="22" />
+          <p>Contact Us (+62) 822 7786 0030</p>
+        </div>
+      </div>
+      <p class="pb-4">Medan Tembung, Sumatera Utara 20222</p>
+      <p class="flex justify-center text-gray-300">© 2025 Best Motor. All rights reserved</p>
+    </div>
+    {% block script %}{% endblock %}
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         document
