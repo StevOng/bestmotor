@@ -11,7 +11,7 @@ $(document).ready(function () {
     $('.dt-search').remove();
     $('.dt-info').remove();
 
-    $('#tableSearch').on('keyup', function () { //search
+    $('#searchInvoice').on('keyup', function () { //search
         let searchValue = $(this).val();
         table.search(searchValue).draw();
     });

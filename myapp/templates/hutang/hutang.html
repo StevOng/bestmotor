@@ -1,6 +1,7 @@
 {% extends 'base/base.html' %}
 {% load static %}
 {% load humanize %}
+{% load custom_filters %}
 
 {% block csrf %}
   <meta name="csrf-token" content="{{ csrf_token }}">
@@ -10,15 +11,79 @@
 
 {% block page_title %}Pembelian{% endblock %} 
 
+{% block style %}
+<style>
+  tr.overdue {
+    background-color: #fee2e2 !important;  /* light red */
+    border-left: 4px solid #dc2626 !important; /* red */
+    box-shadow: 0 0 4px rgba(220, 38, 38, 0.4);
+  }
+</style>
+{% endblock style %}
+
 {% block content %}
 <div class="flex flex-row gap-3 mb-3">
-    <a href="{% url 'pembayaran_hutang' %}" class="p-2 border-2 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue text-white bg-customBlue border-customBlue">
+    <a href="{% url 'pembayaran_hutang' %}" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if not request.GET.aksi %} text-white bg-customBlue border-customBlue {% endif %}">
         Pembayaran Utang
     </a>
+    <a href="{% url 'pembayaran_hutang' %}?aksi=analisis" class="p-2 border-2 border-gray-200 rounded-md text-sm focus:text-white focus:bg-customBlue focus:border-customBlue {% if request.GET.aksi == "analisis" %} text-white bg-customBlue border-customBlue {% endif %}">
+        Analisis Utang
+    </a>
 </div>
-  <div
+<div
   class="flex flex-col p-2 h-auto mb-4 rounded border-2 border-gray-200 bg-gray-50 dark:bg-gray-800"
 >
+{% if request.GET.aksi %}
+    <div class="mt-5 flex flex-row justify-between">
+        <div class="justify-start ml-3">
+            <input type="text" id="searchInvoice" class="form-control rounded-lg border-gray-200 border-2 max-w-40 focus:border-customBlue lg:max-w-full" placeholder="Cari No Bukti disini...">
+            <button class="bg-customBlue border-customBlue hover:bg-[#243F6B] p-2 rounded-lg text-white w-12" type="button">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        <div class="justify-end">
+            <button disabled class="bg-customBlue p-2 border-2 rounded-lg border-gray-200 justify-center items-center">
+                <p class="hidden lg:block p-1 text-white !important">Total Faktur: {{ total_count }} </p>
+            </button>
+            <button disabled class="bg-white p-2 border-2 rounded-lg border-gray-200 justify-center items-center">
+                <p class="hidden lg:block p-1 lg:text-black">Total: Rp {{ total_sum|intcomma }}</p>
+            </button>
+        </div>
+    </div>
+    <table id="allhutang" class="display cell-border">
+        <thead>
+            <tr>
+                <th>No Invoice</th>
+                <th>Tanggal Invoice</th>
+                <th>Tanggal Jatuh Tempo</th>
+                <th>Supplier</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Terakhir Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoice_due_soon %}
+                {% with jatuh_tempo_date=invoice.jatuh_tempo|date:"Y-m-d" %}
+                    <tr class="{% if invoice.overdue_flag %}overdue{% endif %}">
+                        <td>
+                            {{ invoice.no_invoice }}
+                            {% if invoice.overdue_flag %}
+                              <span class="ml-1 px-2 py-1 text-xs font-semibold bg-red-200 text-red-800 rounded">Overdue</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ invoice.tanggal|date:"F j, Y, g:i a" }}</td>
+                        <td>{{ invoice.jatuh_tempo }}</td>
+                        <td>{{ invoice.supplier_id.perusahaan }}</td>
+                        <td>{{ invoice.netto|floatformat:0|intcomma }}</td>
+                        <td>{{ invoice.current_status|replace_underscore }}</td>
+                        <td>{{ invoice.terakhir_edit }}</td>
+                    </tr>
+                {% endwith %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
     <div class="mt-5 flex flex-row justify-between">
         <div class="justify-start ml-3">
             <input type="text" id="searchInvoice" class="form-control rounded-lg border-gray-200 border-2 max-w-40 focus:border-customBlue lg:max-w-full" placeholder="Cari No Bukti disini...">
@@ -61,6 +126,7 @@
             {% endfor %}
         </tbody>
     </table>
+{% endif %}
 </div>
 {% endblock %}
 

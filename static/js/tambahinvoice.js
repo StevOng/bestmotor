@@ -40,24 +40,26 @@ document.getElementById("discount").addEventListener("input", callListener)
 document.getElementById("top_inv").addEventListener("input", callListener)
 
 function tanggalTop() {
-    const topInput = document.getElementById("top_inv")
-    const jtoInput = document.getElementById("jatuh_tempo")
+    const topInput = document.getElementById("top_inv");
+    const tanggalInput = document.getElementById("tanggal_inv");
+    const jtoInput = document.getElementById("jatuh_tempo");
 
-    const top = parseInt(topInput.value)
-    let today = new Date()
-    let jatuhTempo = new Date(today);
-    jatuhTempo.setDate(today.getDate() + top);
-    const yjto = jatuhTempo.getFullYear();
-    const mjto = String(jatuhTempo.getMonth() + 1).padStart(2, "0");
-    const djto = String(jatuhTempo.getDate()).padStart(2, "0");
+    const top = parseInt(topInput.value, 10) || 0;
 
-    let formattedDate = `${djto}/${mjto}/${yjto}`;
-
-    if (formattedDate) {
-        jtoInput.value = formattedDate
-    } else {
-        jtoInput.value = "dd/mm/yyyy"
+    if (!tanggalInput.value) {
+        jtoInput.value = "";
+        return;
     }
+
+    // datetime-local format: "YYYY-MM-DDTHH:MM"
+    const base = new Date(tanggalInput.value);
+    const jatuhTempo = new Date(base);
+    jatuhTempo.setDate(base.getDate() + top);
+
+    // Format dd/mm/yyyy
+    const pad = (n) => String(n).padStart(2, "0");
+    const formatted = `${pad(jatuhTempo.getDate())}/${pad(jatuhTempo.getMonth() + 1)}/${jatuhTempo.getFullYear()}`;
+    jtoInput.value = formatted;
 }
 
 //PopupModal
@@ -105,7 +107,7 @@ function confirmPopupBtn(attr) {
             }
         })
         row.querySelectorAll("td").forEach((td, i) => {
-            const toClear = [2,6,7]
+            const toClear = [2, 6, 7]
             if (toClear.includes(i)) {
                 td.textContent = ""
             }
@@ -272,7 +274,7 @@ async function submitDetail() {
     console.log("Nilai supplierId sebelum submit:", supplier)
 
     if (!supplier || barangIds.length == 0) {
-        console.log("supplier:",supplier,"barang:", barangIds)
+        console.log("supplier:", supplier, "barang:", barangIds)
         console.log(id)
         showWarningToast("Data Kurang", "Lengkapi data seperti supplier dan barang")
         return
@@ -400,9 +402,9 @@ function qtyCheck() {
 }
 
 function showWarningToast(head, msg) {
-  const toast = document.getElementById("toastWarning");
+    const toast = document.getElementById("toastWarning");
 
-  toast.innerHTML = `
+    toast.innerHTML = `
     <div class="toast flex items-start p-4 bg-yellow-50 rounded-lg border border-yellow-100 shadow-lg">
         <div class="flex-shrink-0">
           <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
@@ -421,19 +423,19 @@ function showWarningToast(head, msg) {
     </div>
   `
 
-  toast.classList.remove("hidden");
+    toast.classList.remove("hidden");
 
-  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
 
-  toast.toastTimeout = setTimeout(() => {
-    toast.classList.add("hidden");
-  }, 2000);
+    toast.toastTimeout = setTimeout(() => {
+        toast.classList.add("hidden");
+    }, 2000);
 }
 
 function showSuccessToast(head, msg) {
-  const toast = document.getElementById("toastSuccess");
+    const toast = document.getElementById("toastSuccess");
 
-  toast.innerHTML =`
+    toast.innerHTML = `
       <div class="toast flex items-start p-4 bg-green-50 rounded-lg border border-green-100 shadow-lg">
         <div class="flex-shrink-0">
           <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
@@ -452,13 +454,13 @@ function showSuccessToast(head, msg) {
       </div>
   `
 
-  toast.classList.remove("hidden");
+    toast.classList.remove("hidden");
 
-  if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
+    if (toast.toastTimeout) clearTimeout(toast.toastTimeout);
 
-  toast.toastTimeout = setTimeout(() => {
-    toast.classList.add("hidden");
-  }, 2000);
+    toast.toastTimeout = setTimeout(() => {
+        toast.classList.add("hidden");
+    }, 2000);
 }
 
 function callListener() {
