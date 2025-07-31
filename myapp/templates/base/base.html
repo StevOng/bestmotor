@@ -805,6 +805,42 @@
             </div>
           </div>
         </div>
+        <div
+          id="popupModalBatal"
+          class="fixed inset-0 hidden items-center justify-center z-50 bg-gray-500/50"
+        >
+          <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col">
+            <div class="flex justify-between items-center border-b pb-3">
+              <h3 class="text-lg font-semibold" id="confirmTitle">
+                Konfirmasi Batal
+              </h3>
+              <button
+                onclick="closeModalBatal()"
+                class="text-gray-500 hover:text-red-500"
+              >
+                <i class="fa-solid fa-x"></i>
+              </button>
+            </div>
+            <div class="py-4">
+              <p id="confirmMessage">Apakah Anda yakin ingin membatalkan Pesanan ini?</p>
+            </div>
+            <div class="flex justify-end gap-2 mt-4">
+              <button
+                onclick="closeModalBatal()"
+                class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+              >
+                Tidak
+              </button>
+              <button
+                type="button"
+                id="confirmActionBatal"
+                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+              >
+                Ya
+              </button>
+            </div>
+          </div>
+        </div>
         {% block content %}{% endblock %}
       </div>
     </div>
