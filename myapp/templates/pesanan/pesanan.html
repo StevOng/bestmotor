@@ -149,8 +149,8 @@
                 <th>Edit</th>
                 {% if role == "admin" %}
                 <th>Terima Pesanan</th>
-                <th>Tolak</th>
                 {% endif %}
+                <th>Tolak</th>
             </tr>
         </thead>
         <tbody>
@@ -176,8 +176,8 @@
                   </svg>
                 </button>
               </td>
-              <td class="text-center"><button onclick="confirmPopupBtn({{ pesanan.id }})"><i class="fa-solid fa-x text-2xl text-red-500"></i></button></td>
               {% endif %}
+              <td class="text-center"><button onclick="confirmPopupBtn({{ pesanan.id }})" {% if status == "shipped" %} disabled {% endif %}><i class="fa-solid fa-x text-2xl text-red-500 {% if status == "shipped" %} text-gray-500 {% endif %}"></i></button></td>
             </tr>
           {% endfor %}
         </tbody>
@@ -276,9 +276,7 @@
                 <th>Total</th>
                 <th>Status</th>
                 <th>Edit</th>
-                {% if role == "admin" %}
-                  <th>Tolak</th>
-                {% endif %}
+                <th>Tolak</th>
             </tr>
         </thead>
         <tbody>
@@ -293,20 +291,14 @@
               <td>Rp {{ pesanan.netto|floatformat:0|intcomma }},-</td>
               <td>{{ pesanan.status }}</td>
               {% if pesanan.status == "cancelled" %}
-                <td class="text-center"><a href="#" disabled><i class="fa-regular fa-eye text-2xl text-gray-500"></i></a></td>
-                {% if role == "admin" %}
-                  <td class="text-center"><button disabled><i class="fa-solid fa-x text-2xl text-red-500"></i></button></td>
-                {% endif %}
+                <td class="text-center"><a href="#" disabled><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                <td class="text-center"><button disabled><i class="fa-solid fa-x text-2xl text-gray-500"></i></button></td>
               {% elif pesanan.status == "shipped" %}
                 <td class="text-center"><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
-                {% if role == "admin" %}
-                  <td class="text-center"><button disabled onclick="confirmPopupBtn({{ pesanan.id }})"><i class="fa-solid fa-x text-2xl text-gray-500"></i></button></td>
-                {% endif %}
+                <td class="text-center"><button disabled onclick="confirmPopupBtn({{ pesanan.id }})"><i class="fa-solid fa-x text-2xl text-gray-500"></i></button></td>
               {% else %}
                 <td class="text-center"><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
-                {% if role == "admin" %}
-                  <td class="text-center"><button onclick="confirmPopupBtn({{ pesanan.id }})"><i class="fa-solid fa-x text-2xl text-red-500"></i></button></td>
-                {% endif %}
+                <td class="text-center"><button onclick="confirmPopupBtn({{ pesanan.id }})"><i class="fa-solid fa-x text-2xl text-red-500"></i></button></td>
               {% endif %}
             </tr>
           {% endfor %}
