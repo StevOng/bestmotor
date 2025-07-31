@@ -115,12 +115,13 @@ function getCSRFToken() {
     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
-function confirmPopupBtn(id) {
-    const modal = document.getElementById("popupModalConfirm");
+function confirmPopupBatal(id) {
+    const modal = document.getElementById("popupModalBatal");
     modal.classList.remove("hidden"); // Tampilkan modal
     modal.style.display = "flex"; // Pastikan tampil dengan flexbox
 
-    const confirmButton = document.getElementById("confirmAction");
+    const confirmButton = document.getElementById("confirmActionBatal");
+    const batalButton = document.getElementsByClassName("batalBtn")
     const csrfToken = getCSRFToken()
 
     confirmButton.onclick = async function () {
@@ -145,6 +146,19 @@ function confirmPopupBtn(id) {
                         showSuccessToast("Berhasil", "Status berhasil dibatalkan")
                     }
                 }
+
+                const batalBtn = row.querySelector("#batalBtn");
+                const iconBatal = row.querySelector(".iconBatal");
+                if (batalBtn) {
+                    batalBtn.disabled = true;
+                    iconBatal.classList.remove("text-red-500");
+                    iconBatal.classList.add("text-gray-500");
+                }
+
+                const editBtn = row.querySelector("#editBtn");
+                if (editBtn) {
+                    editBtn.setAttribute("href", "#");
+                }
             } else {
                 console.error("Gagal membatalkan pesanan");
                 showWarningToast("Gagal", "Gagal membatalkan pesanan")
@@ -153,12 +167,12 @@ function confirmPopupBtn(id) {
             console.error("Terjadi kesalahan: ", error);
             showWarningToast("Gagal", "Terjadi kesalahan")
         }
-        closeModalConfirm();
+        closeModalBatal();
     };
 }
 
-function closeModalConfirm() {
-    const modal = document.getElementById("popupModalConfirm");
+function closeModalBatal() {
+    const modal = document.getElementById("popupModalBatal");
     modal.classList.add("hidden"); // Sembunyikan modal
     modal.style.display = "none"; // Pastikan modal benar-benar hilang
 }

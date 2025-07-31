@@ -58,7 +58,7 @@ class PesananViewSet(viewsets.ModelViewSet):
 
         detail = DetailPesanan.objects.filter(pesanan_id=pesanan.id)
         for item in detail:
-            barang_id = item.barang_id
+            barang_id = item.barang_id.id
             barang = Barang.objects.get(pk=barang_id)
             barang.stok += item.qty_pesan
             barang.save(update_fields=["stok"])
