@@ -58,11 +58,12 @@ class PesananViewSet(viewsets.ModelViewSet):
 
         detail = DetailPesanan.objects.filter(pesanan_id=pesanan.id)
         for item in detail:
-            item.qty_pesan = 0
-            item.save(update_fields=["qty_pesan"])
             barang = item.barang_id
             barang.stok += item.qty_pesan
-            barang.save(update_fields=["stok"])
+            barang.qty_terjual -= item.qty_pesan
+            barang.save(update_fields=["stok", "qty_terjual"])
+            item.qty_pesan = 0
+            item.save(update_fields=["qty_pesan"])
         return Response({"status": "cancelled"}, status=status.HTTP_200_OK)
     
     @action(detail=False, methods=['get'])

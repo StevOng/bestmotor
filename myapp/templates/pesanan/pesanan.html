@@ -16,6 +16,10 @@
     opacity: 0;
     transition: opacity 0.4s ease-out;
   }
+  .disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+  }
 </style>
 {% endblock %}
 
@@ -166,7 +170,7 @@
               <td>{{ pesanan.customer_id.lokasi }}</td>
               <td>{{ pesanan.customer_id.user_id.nama }}</td>
               <td>Rp {{ pesanan.netto|floatformat:0|intcomma }},-</td>
-              <td>{{ pesanan.status }}</td>
+              <td data-field="status">{{ pesanan.status }}</td>
               <td class="text-center"><a href="{% url 'tambah_pesanan' id=pesanan.id %}" id="editBtn"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
               {% if role == "admin" %}
               <td class="text-center">
@@ -217,7 +221,7 @@
               <td>{{ pesanan.customer_id.lokasi }}</td>
               <td>{{ pesanan.customer_id.user_id.nama }}</td>
               <td>Rp {{ pesanan.netto|floatformat:0|intcomma }},-</td>
-              <td>{{ pesanan.status }}</td>
+              <td data-field="status">{{ pesanan.status }}</td>
               <td class="text-center"><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
               {% if role == "admin" %}
               <td class="text-center">
@@ -289,19 +293,19 @@
               <td>{{ pesanan.customer_id.lokasi }}</td>
               <td>{{ pesanan.customer_id.user_id.nama }}</td>
               <td>Rp {{ pesanan.netto|floatformat:0|intcomma }},-</td>
-              <td>{{ pesanan.status }}</td>
+              <td data-field="status">{{ pesanan.status }}</td>
               {% if pesanan.status == "cancelled" %}
-                <td class="text-center"><a href="#" disabled><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                <td class="text-center"><a href="#" disabled class="disabled"><i class="fa-regular fa-eye text-2xl text-gray-500"></i></a></td>
                 <td class="text-center"><button disabled><i class="fa-solid fa-x text-2xl text-gray-500"></i></button></td>
               {% elif pesanan.status == "shipped" %}
                 <td class="text-center"><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
                 <td class="text-center"><button disabled onclick="confirmPopupBatal({{ pesanan.id }})"><i class="fa-solid fa-x text-2xl text-gray-500"></i></button></td>
               {% else %}
-                <td class="text-center"><a href="{% url 'tambah_pesanan' id=pesanan.id %}" id="editBtn"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
+                <td class="text-center"><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
                 {% if pesanan.status == "ready" and role == "sales" %}
-                  <td class="text-center"><button disabled><i class="batalBtn fa-solid fa-x text-2xl text-gray-500"></i></button></td>
+                  <td class="text-center"><button disabled><i class="fa-solid fa-x text-2xl text-gray-500"></i></button></td>
                 {% else %}
-                  <td class="text-center"><button id="batalBtn" onclick="confirmPopupBatal({{ pesanan.id }})"><i class="iconBatal fa-solid fa-x text-2xl text-red-500"></i></button></td>
+                  <td class="text-center"><button onclick="confirmPopupBatal({{ pesanan.id }})"><i class="fa-solid fa-x text-2xl text-red-500"></i></button></td>
                 {% endif %}
               {% endif %}
             </tr>

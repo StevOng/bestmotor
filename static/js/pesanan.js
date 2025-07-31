@@ -121,7 +121,6 @@ function confirmPopupBatal(id) {
     modal.style.display = "flex"; // Pastikan tampil dengan flexbox
 
     const confirmButton = document.getElementById("confirmActionBatal");
-    const batalButton = document.getElementsByClassName("batalBtn")
     const csrfToken = getCSRFToken()
 
     confirmButton.onclick = async function () {
@@ -148,19 +147,6 @@ function confirmPopupBatal(id) {
                         showSuccessToast("Berhasil", "Status berhasil dibatalkan")
                     }
                     setTimeout(() => window.location.reload(), 600)
-                }
-
-                const batalBtn = row.querySelector("#batalBtn");
-                const iconBatal = row.querySelector(".iconBatal");
-                if (batalBtn) {
-                    batalBtn.disabled = true;
-                    iconBatal.classList.remove("text-red-500");
-                    iconBatal.classList.add("text-gray-500");
-                }
-
-                const editBtn = row.querySelector("#editBtn");
-                if (editBtn) {
-                    editBtn.setAttribute("href", "#");
                 }
             } else {
                 console.error("Gagal membatalkan pesanan");
