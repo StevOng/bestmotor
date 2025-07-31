@@ -135,15 +135,18 @@ function confirmPopupBtn(id) {
                     "status": "cancelled"
                 })
             })
+            const result = await response.json()
+            console.log("cancel response: ", response.status, result)
             if (response.ok) {
                 console.log("Pesanan berhasil dibatalkan");
                 const row = document.querySelector(`tr[data-id="${id}"]`)
                 if (row) {
-                    const statusCell = row.querySelector("td:nth-child(8)")
+                    const statusCell = row.querySelector('[data-field="status"]')
                     if (statusCell) {
                         statusCell.textContent = "Cancelled"
                         showSuccessToast("Berhasil", "Status berhasil dibatalkan")
                     }
+                    setTimeout(() => window.location.reload(), 600)
                 }
             } else {
                 console.error("Gagal membatalkan pesanan");

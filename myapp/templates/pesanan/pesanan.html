@@ -257,7 +257,7 @@
               <td>{{ pesanan.customer_id.lokasi }}</td>
               <td>{{ pesanan.customer_id.user_id.nama }}</td>
               <td>Rp {{ pesanan.netto|intcomma }},-</td>
-              <td>{{ pesanan.status }}</td>
+              <td data-field="status">{{ pesanan.status }}</td>
               <td><a href="{% url 'tambah_pesanan' id=pesanan.id %}"><i class="fa-regular fa-eye text-2xl text-customBlue"></i></a></td>
             </tr>
           {% endfor %}
