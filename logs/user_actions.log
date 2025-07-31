@@ -2261,3 +2261,9 @@
 2025-07-30 23:05:59,598 INFO [userlog] admin admin - GET /pembelian/invoice/?status=jatuh_tempo - Mengelola Pembelian - admin admin mengecek pembelian di halaman /pembelian/invoice/
 2025-07-30 23:06:03,022 INFO [userlog] admin admin - GET /pembelian/invoice/ - Mengelola Pembelian - admin admin mengecek pembelian di halaman /pembelian/invoice/
 2025-07-30 23:06:07,783 INFO [userlog] admin admin - GET /pembelian/pembayaran/hutang/ - Mengelola Pembelian - admin admin mengecek pembelian di halaman /pembelian/pembayaran/hutang/
+2025-07-31 20:55:33,385 INFO [userlog] Guest Guest - GET /login/ - Mencoba Masuk - Guest Bestmotor mengecek login di halaman /login/
+2025-07-31 20:55:39,264 INFO [userlog] Guest Guest - POST /login/ - Mencoba Masuk - Guest Bestmotor membuat login di halaman /login/
+2025-07-31 20:55:39,460 INFO [userlog] sales andi - GET /sales/bonus/ - Mengelola Sales - sales andi mengecek sales di halaman /sales/bonus/
+2025-07-31 20:55:42,277 INFO [userlog] sales andi - GET /pesanan/ - Mengelola Pesanan - sales andi mengecek pesanan di halaman /pesanan/
+2025-07-31 20:58:57,102 INFO [userlog] sales andi - GET /pesanan/ - Mengelola Pesanan - sales andi mengecek pesanan di halaman /pesanan/
+2025-07-31 21:03:05,595 INFO [userlog] sales andi - GET /pesanan/ - Mengelola Pesanan - sales andi mengecek pesanan di halaman /pesanan/
