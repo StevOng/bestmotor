@@ -72,8 +72,8 @@ function checkBoxPending() {
 
 function checkBox() {
     const trData = document.querySelectorAll("tbody tr")
-    const checkAll = document.getElementById("checkbox-")
-    const allCheckBox = document.querySelectorAll("[id^='default-checkbox-']")
+    const checkAll = document.getElementById("checkedAll")
+    const allCheckBox = document.querySelectorAll("[id^='checkbox-']")
     const buttonStats = document.getElementById("changeAll")
 
     // Jika elemen penting tidak ditemukan, hentikan eksekusi
@@ -193,7 +193,7 @@ async function updateBulkStatus(newStatus) {
     if (response.ok) {
         console.log(result)
         showSuccessToast("Berhasil", "Berhasil mengubah status")
-        window.location.reload()
+        setTimeout(() => window.location.reload(), 600)
     } else {
         console.error(result)
         showWarningToast("Gagal", "Gagal mengubah status")
@@ -215,7 +215,7 @@ async function updateSingleStatus(id, newStatus) {
     if (response.ok) {
         console.log(result)
         showSuccessToast("Berhasil", "Status berhasil diubah")
-        window.location.reload();
+        setTimeout(() => window.location.reload(), 600)
     } else {
         console.error(result)
         showWarningToast("Gagal", `Gagal mengubah status`)
