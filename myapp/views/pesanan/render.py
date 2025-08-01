@@ -52,7 +52,7 @@ def tambah_pesanan(request, id=None):
     if id:
         pesanan = Pesanan.objects.prefetch_related("detailpesanan_set__barang_id").select_related("customer_id").get(id=id)
         detail = pesanan.detailpesanan_set.all()
-        is_shipped = pesanan.status in ["ready", "shipped"]
+        is_shipped = pesanan.status in ["ready", "shipped", "cancelled"]
 
     barang_data_dict = {
         barang.id: {

@@ -121,7 +121,6 @@ function confirmPopupBatal(id) {
     modal.style.display = "flex"; // Pastikan tampil dengan flexbox
 
     const confirmButton = document.getElementById("confirmActionBatal");
-    const batalButton = document.getElementsByClassName("batalBtn")
     const csrfToken = getCSRFToken()
 
     confirmButton.onclick = async function () {
@@ -136,28 +135,18 @@ function confirmPopupBatal(id) {
                     "status": "cancelled"
                 })
             })
+            const result = await response.json()
+            console.log("cancel response: ", response.status, result)
             if (response.ok) {
                 console.log("Pesanan berhasil dibatalkan");
                 const row = document.querySelector(`tr[data-id="${id}"]`)
                 if (row) {
-                    const statusCell = row.querySelector("td:nth-child(8)")
+                    const statusCell = row.querySelector('[data-field="status"]')
                     if (statusCell) {
                         statusCell.textContent = "Cancelled"
                         showSuccessToast("Berhasil", "Status berhasil dibatalkan")
                     }
-                }
-
-                const batalBtn = row.querySelector("#batalBtn");
-                const iconBatal = row.querySelector(".iconBatal");
-                if (batalBtn) {
-                    batalBtn.disabled = true;
-                    iconBatal.classList.remove("text-red-500");
-                    iconBatal.classList.add("text-gray-500");
-                }
-
-                const editBtn = row.querySelector("#editBtn");
-                if (editBtn) {
-                    editBtn.setAttribute("href", "#");
+                    setTimeout(() => window.location.reload(), 600)
                 }
             } else {
                 console.error("Gagal membatalkan pesanan");

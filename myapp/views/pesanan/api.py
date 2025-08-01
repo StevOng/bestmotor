@@ -54,14 +54,16 @@ class PesananViewSet(viewsets.ModelViewSet):
     def cancelled(self, request, pk=None):
         pesanan = self.get_queryset().get(pk=pk)
         pesanan.status = "cancelled"
-        pesanan.save()
+        pesanan.save(update_fields=["status"])
 
         detail = DetailPesanan.objects.filter(pesanan_id=pesanan.id)
         for item in detail:
-            barang_id = item.barang_id.id
-            barang = Barang.objects.get(pk=barang_id)
+            barang = item.barang_id
             barang.stok += item.qty_pesan
-            barang.save(update_fields=["stok"])
+            barang.qty_terjual -= item.qty_pesan
+            barang.save(update_fields=["stok", "qty_terjual"])
+            item.qty_pesan = 0
+            item.save(update_fields=["qty_pesan"])
         return Response({"status": "cancelled"}, status=status.HTTP_200_OK)
     
     @action(detail=False, methods=['get'])

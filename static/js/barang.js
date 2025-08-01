@@ -21,10 +21,6 @@ $(document).ready(function () {
         let searchValue = $(this).val();
         table.search(searchValue).draw();
     });
-
-    table.on('draw', function () {
-        fetchGambar();
-});
 });
 
 function getCSRFToken() {
