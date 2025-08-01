@@ -73,29 +73,34 @@ function openModalFaktur(button) {
         return showWarningToast("Sales Kosong", "Pilih Sales terlebih dahulu!");
     }
 
-    fetchFakturBySales(salesId);
+    const tbody = document.querySelector("#modalFaktur tbody");
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500">Memuat data...</td></tr>`;
+
+    if ($.fn.dataTable.isDataTable("#modalFaktur")) {
+        $("#modalFaktur").DataTable().clear().destroy();
+    }
+
+    fetchFakturBySales(salesId).then(()=>{
+        const table = $('#modalFaktur').DataTable({
+            pageLength: 5,
+            lengthChange: false, // Hilangkan "Show entries"
+            ordering: false,
+            scrollX: true,
+        });
+        $('.dt-search').remove();
+        $('.dt-info').remove();
+
+        $('#fakturSearch').on('keyup', function () { //search
+            let searchValue = $(this).val();
+            table.search(searchValue).draw();
+        });
+    })
 }
 
 function closeModalFaktur() {
     document.getElementById("popupModalFaktur")
         .classList.replace("flex", "hidden");
 }
-
-$(document).ready(function () {
-    let table = $('#modalFaktur').DataTable({
-        pageLength: 5,
-        lengthChange: false, // Hilangkan "Show entries"
-        ordering: false,
-        scrollX: true,
-    });
-    $('.dt-search').remove();
-    $('.dt-info').remove();
-
-    $('#fakturSearch').on('keyup', function () { //search
-        let searchValue = $(this).val();
-        table.search(searchValue).draw();
-    });
-});
 
 function openModalCustomer() {
     let modal = document.getElementById("popupModalFaktur");
@@ -186,19 +191,19 @@ async function fetchFakturBySales(salesId) {
 
             const tr = document.createElement("tr");
             tr.innerHTML = `
-      <td>${faktur.no_faktur}</td>
-      <td>${new Date(faktur.tanggal_faktur).toLocaleDateString()}</td>
-      <td>${faktur.no_referensi}</td>
-      <td>${faktur.customer}</td>
-      <td>${formatRupiah(faktur.sisa_bayar)},-</td>
-      <td class="text-center">
-        <button onclick="pilihFaktur('${faktur.id}','${faktur.no_faktur}', '${faktur.customer_id}')">
-            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
-              <path d="M9.72217 11L12.7222 14L22.7222 4M16.7222 3H8.52217C6.84201 3 6.00193 3 5.3602 3.32698C4.79571 3.6146 4.33677 4.07354 4.04915 4.63803C3.72217 5.27976 3.72217 6.11984 3.72217 7.8V16.2C3.72217 17.8802 3.72217 18.7202 4.04915 19.362C4.33677 19.9265 4.79571 20.3854 5.3602 20.673C6.00193 21 6.84201 21 8.52217 21H16.9222C18.6023 21 19.4424 21 20.0841 20.673C20.6486 20.3854 21.1076 19.9265 21.3952 19.362C21.7222 18.7202 21.7222 17.8802 21.7222 16.2V12" stroke="#3D5A80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </button>
-      </td>
-    `;
+                <td>${faktur.no_faktur}</td>
+                <td>${new Date(faktur.tanggal_faktur).toLocaleDateString()}</td>
+                <td>${faktur.no_referensi}</td>
+                <td>${faktur.customer}</td>
+                <td>${formatRupiah(faktur.sisa_bayar)},-</td>
+                <td class="text-center">
+                    <button onclick="pilihFaktur('${faktur.id}','${faktur.no_faktur}', '${faktur.customer_id}')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
+                        <path d="M9.72217 11L12.7222 14L22.7222 4M16.7222 3H8.52217C6.84201 3 6.00193 3 5.3602 3.32698C4.79571 3.6146 4.33677 4.07354 4.04915 4.63803C3.72217 5.27976 3.72217 6.11984 3.72217 7.8V16.2C3.72217 17.8802 3.72217 18.7202 4.04915 19.362C4.33677 19.9265 4.79571 20.3854 5.3602 20.673C6.00193 21 6.84201 21 8.52217 21H16.9222C18.6023 21 19.4424 21 20.0841 20.673C20.6486 20.3854 21.1076 19.9265 21.3952 19.362C21.7222 18.7202 21.7222 17.8802 21.7222 16.2V12" stroke="#3D5A80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </td>
+            `;
             tbody.appendChild(tr);
         });
     }

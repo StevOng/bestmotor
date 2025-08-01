@@ -88,6 +88,20 @@ async function getSales() {
     }
 }
 
+document.getElementById("nohp-cust").addEventListener("input", function (e) {
+  // Hanya izinkan angka dan + di awal
+  let value = this.value;
+
+  // Jika mulai dengan +62, biarkan
+  if (value.startsWith("+")) {
+    value = "+" + value.slice(1).replace(/\D/g, "");
+  } else {
+    // Jika tidak diawali +, buang semua huruf/non-digit
+    value = value.replace(/\D/g, "");
+  }
+
+  this.value = value;
+});
 
 function showWarningToast(head, msg) {
   const toast = document.getElementById("toastWarning");

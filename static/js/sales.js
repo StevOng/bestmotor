@@ -116,22 +116,6 @@ $(document).ready(function () {
   });
 });
 
-$(document).ready(function () {
-  let table = $('#tabelDetailBonus').DataTable({
-    pageLength: 5,
-    lengthChange: false, // Hilangkan "Show entries"
-    ordering: false,
-    scrollX: true,
-  });
-  $('.dt-search').remove();
-  $('.dt-info').remove();
-
-  $('#bonusDetailSearch').on('keyup', function () { //search
-    let searchValue = $(this).val();
-    table.search(searchValue).draw();
-  });
-});
-
 function getCSRFToken() {
   return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
@@ -202,6 +186,20 @@ function openDetailModal(bonusId) {
             </tr>
           `;
           tbody.innerHTML += row;
+        });
+
+        let table = $('#tabelDetailBonus').DataTable({
+          pageLength: 5,
+          lengthChange: false, // Hilangkan "Show entries"
+          ordering: false,
+          scrollX: true,
+        });
+        $('.dt-search').remove();
+        $('.dt-info').remove();
+
+        $('#bonusDetailSearch').on('keyup', function () { //search
+          let searchValue = $(this).val();
+          table.search(searchValue).draw();
         });
 
         // Tampilkan modal

@@ -83,7 +83,32 @@ function openModalInv(btn) {
 
   // Jika supplier sudah dipilih, langsung load daftar invoice-nya
   if (supplierId) {
-    pilihSupplier(supplierId, supplierNama);
+    const tbody = document.getElementById("invoiceTbody");
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500">Memuat data...</td></tr>`;
+
+    if ($.fn.dataTable.isDataTable("#modalInvoice")) {
+      $("#modalInvoice").DataTable().clear().destroy();
+    }
+
+    pilihSupplier(supplierId, supplierNama).then(() => {
+      // Inisialisasi ulang DataTable setelah data terisi
+      const table = $("#modalInvoice").DataTable({
+        pageLength: 5,
+        lengthChange: false,
+        ordering: false,
+        scrollX: true,
+      });
+
+      $(".dt-search").remove();
+      $(".dt-info").remove();
+
+      // Pastikan event keyup tidak diduplikasi
+      $("#invoiceSearch").off("keyup").on("keyup", function () {
+        let searchValue = $(this).val();
+        table.search(searchValue).draw();
+      });
+    });
+
   } else {
     // Bisa kasih warning atau clear invoice list
     return showWarningToast("Supplier Kosong", "Supplier belum dipilih");
@@ -95,24 +120,6 @@ function closeModalInv() {
   modal.classList.remove("flex");
   modal.classList.add("hidden");
 }
-
-//Tabel Modal Popup Invoice
-$(document).ready(function () {
-  let table = $("#modalInvoice").DataTable({
-    pageLength: 20,
-    lengthChange: false, // Hilangkan "Show entries"
-    ordering: false,
-    scrollX: true,
-  });
-  $(".dt-search").remove();
-  $(".dt-info").remove();
-
-  $("#invoiceSearch").on("keyup", function () {
-    //search
-    let searchValue = $(this).val();
-    table.search(searchValue).draw();
-  });
-});
 
 async function submitDetail() {
   const id = document.getElementById("hutId")?.value
@@ -212,7 +219,7 @@ async function pilihInvoice(id, nomor) {
 
     inputInvoice.value = id;
     noInvoiceInput.value = data.no_invoice || nomor;
-    nilaiInvoiceCell.textContent = `Rp ${formatRupiah(data.netto)},-`;
+    nilaiInvoiceCell.textContent = `Rp ${formatRupiah(data.sisa_bayar)},-`;
 
     recalcTotals();
 
@@ -270,7 +277,7 @@ async function pilihSupplier(id, perusahaan) {
             <td>${new Date(invoice.tanggal).toLocaleDateString()}</td>
             <td>${invoice.no_referensi ?? '-'}</td>
             <td>${perusahaan}</td>
-            <td>Rp ${formatRupiah(invoice.netto)},-</td>
+            <td>Rp ${formatRupiah(invoice.sisa_bayar)},-</td>
             <td class="text-center">
               <button onclick="pilihInvoice('${invoice.id}', '${invoice.no_invoice}')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
