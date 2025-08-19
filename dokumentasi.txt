@@ -1,0 +1,58 @@
+PANDUAN MENJALANKAN WEBSITE BEST MOTOR
+
+-------------------------------------
+1. PERSIAPAN
+-------------------------------------
+Sebelum memulai, pastikan Anda sudah menginstal:
+- Python (disarankan versi 3.8 atau lebih baru)
+- Pip (pengelola paket Python, biasanya sudah otomatis terpasang bersama Python)
+
+Jika belum menginstalnya, silakan unduh Python di:
+https://www.python.org/downloads/
+
+-------------------------------------
+2. MEMBUKA TERMINAL / COMMAND PROMPT
+-------------------------------------
+a. Klik tombol "Start" (logo Windows) di kiri bawah layar.
+b. Ketik "cmd" pada kotak pencarian, lalu tekan ENTER.
+   → Akan muncul jendela "Command Prompt" atau "Terminal".
+
+-------------------------------------
+3. MASUK KE FOLDER SOURCE CODE
+-------------------------------------
+a. Pastikan Anda mengetahui lokasi folder tempat menyimpan source code aplikasi.
+b. Di terminal, ketik perintah berikut dan tekan ENTER:
+   cd "PATH_FOLDER_SOURCE_CODE"
+   (Ganti PATH_FOLDER_SOURCE_CODE dengan lokasi folder di komputer Anda.
+    Contoh: cd "C:\Users\NamaAnda\Documents\projekku")
+
+-------------------------------------
+4. MEMPERSIAPKAN APLIKASI (OPSIONAL, JIKA PERTAMA KALI DIJALANKAN)
+-------------------------------------
+a. Pastikan berada di folder source code.
+b. Ketik perintah berikut untuk menginstal pustaka yang dibutuhkan aplikasi:
+   pip install -r requirements.txt
+
+-------------------------------------
+5. MENJALANKAN APLIKASI
+-------------------------------------
+a. Ketik perintah berikut di terminal dan tekan ENTER:
+   python manage.py runserver
+b. Tunggu hingga muncul pesan seperti:
+   Starting development server at http://127.0.0.1:8000/
+c. Salin alamat link tersebut (contoh: http://127.0.0.1:8000/)
+
+-------------------------------------
+6. MEMBUKA APLIKASI DI BROWSER
+-------------------------------------
+a. Buka browser Anda (Google Chrome, Microsoft Edge, Mozilla Firefox, dll).
+b. Tempel (Paste) alamat link yang tadi Anda salin di kolom URL browser.
+c. Tekan ENTER.
+
+Jika halaman website muncul, artinya aplikasi berhasil dijalankan.
+
+-------------------------------------
+7. MENGHENTIKAN APLIKASI
+-------------------------------------
+Jika ingin menghentikan aplikasi, kembali ke terminal dan tekan:
+CTRL + C
